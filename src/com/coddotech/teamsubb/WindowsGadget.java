@@ -30,7 +30,7 @@ public class WindowsGadget extends CustomWindow {
 	 * Read the user information (also contains job details and stuff)
 	 * */
 	private void readUserDetails() {
-
+				
 	}
 
 	/**
@@ -46,16 +46,6 @@ public class WindowsGadget extends CustomWindow {
 	 * */
 	public void stopNotifications() {
 
-	}
-
-	/**
-	 * Read the application's position preference from the its settings
-	 * 
-	 * @return An org.eclipse.swt.graphics.Point value indicating 
-	 * the default position that the user has set for this window
-	 */
-	private Point readLocationSettings() {
-		return new Point(200, 200);
 	}
 	
 	/**
@@ -80,11 +70,8 @@ public class WindowsGadget extends CustomWindow {
 	 * Listens for when the shell for this class is displayed
 	 */
 	private Listener gadgetShownListener = new Listener(){
-		public void handleEvent(Event e) {
-			Point location = readLocationSettings();
-			getShell().setLocation(location);
-	
-			label.setText(location.x + "," + location.y);
+		public void handleEvent(Event e) {	
+			label.setText(getShell().getLocation().x + "," + getShell().getLocation().y);
 			label.pack();
 			
 			readUserDetails();
@@ -106,6 +93,8 @@ public class WindowsGadget extends CustomWindow {
 	
 		// this window's properties
 		this.getShell().setText("Team Subb");
+		this.getShell().setLocation(settings.getGadgetLocation());
+		this.getShell().setSize(400, 400);
 	
 		// event handlers
 		this.getShell().addListener(SWT.Show, gadgetShownListener);
