@@ -10,25 +10,25 @@ package com.coddotech.teamsubb;
  *
  */
 public class CommunicationManager {
-
-	private static class Job{
-		
-	}
 	
 	private WindowsGadget _gadget;
+	JobManager jobManager;
 	
 	/*
 	 * Class constructor
 	 */
 	public CommunicationManager(WindowsGadget widget){
 		_gadget = widget;
+		jobManager = new JobManager();
 	}
 	
 	/**
 	 * Clear memory from this class and its resources
 	 */
 	public void dispose(){
+		//other classes
 		_gadget = null;
+		jobManager = null;
 	}
 	
 	/*

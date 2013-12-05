@@ -1,7 +1,6 @@
 package com.coddotech.teamsubb;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -51,7 +50,7 @@ public class WindowsGadget extends CustomWindow {
 	/**
 	 * Clear memory from this class and its resources
 	 */
-	private Listener disposeListener = new Listener() {
+	private Listener shellClosingListener = new Listener() {
 		public void handleEvent(Event e) {
 			// user classes
 			jobManager.dispose();
@@ -62,10 +61,11 @@ public class WindowsGadget extends CustomWindow {
 			// user controls
 			label.dispose();
 	
-			// current instance
+			// current display instance
 			Display.getCurrent().dispose();
 		}
 	};
+	
 	/*
 	 * Listens for when the shell for this class is displayed
 	 */
@@ -99,7 +99,7 @@ public class WindowsGadget extends CustomWindow {
 		// event handlers
 		this.getShell().addListener(SWT.Show, gadgetShownListener);
 		
-		this.getShell().addListener(SWT.Close, disposeListener);
+		this.getShell().addListener(SWT.Close, shellClosingListener);
 		
 		// object packing
 		label.pack();
