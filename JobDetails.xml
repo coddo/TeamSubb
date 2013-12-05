@@ -1,13 +1,15 @@
 <staff>
 	<information>
-		<user_name>no user added</user_name>
-		<rank>no user added</rank></information>
+		<user name="no user added" email="no user added">Stores the user name and email address</user>
+		<rank type="no user added">Stores the rank that the user has in the community</rank>
+	</information>
 	<jobs>
-		<Traducator>0</Traducator>
-		<Verificator>0</Verificator>
-		<Encoder>0</Encoder>
-		<Manga>0</Manga>
-		<Stiri>0</Stiri>
-		<Postator>0</Postator>
+		<Traducator value="0">Knows how to sub(translate) files in different languages</Traducator>
+		<Verificator value="0">Knowledgeable in different languages and has the ability to spot mistakes in subbed files</Verificator>
+		<Encoder value="0">Has a powerful computer, a good internet connection and has good encoding skills</Encoder>
+		<Typesetter value="0">????</Typesetter>
+		<Manga value="0">????</Manga>
+		<Stiri value="0">Good at expressing his thoughts in words and knows how to write news articles</Stiri>
+		<Postator value="0">Knows how to post new releases on the site</Postator>
 	</jobs>
 </staff>

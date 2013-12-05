@@ -1,3 +1,4 @@
 <settings>
-	<location location_x="400" location_y="400"></location>
+	<location location_x="-1" location_y="-1">Stores the preferred location on the screen for this application</location>
+	<autosave_location value="false">Specifies whether the application should automatically save its own location on the screen</autosave_location>
 </settings>
