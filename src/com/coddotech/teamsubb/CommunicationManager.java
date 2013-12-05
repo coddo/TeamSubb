@@ -11,13 +11,13 @@ package com.coddotech.teamsubb;
  */
 public class CommunicationManager {
 	
-	private WindowsGadget _gadget;
+	private DesktopGadget _gadget;
 	JobManager jobManager;
 	
 	/*
 	 * Class constructor
 	 */
-	public CommunicationManager(WindowsGadget widget){
+	public CommunicationManager(DesktopGadget widget){
 		_gadget = widget;
 		jobManager = new JobManager();
 	}

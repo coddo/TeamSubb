@@ -43,13 +43,13 @@ public final class AppSettings {
 	}
 
 	/**
-	 * Clear memory from this class and its resources 
+	 * Clear memory from this class and its resources
 	 */
 	public void dispose() {
-		//save changes to the settings file
+		// save changes to the settings file
 		this.commitChangesToFile();
-		
-		//clear flieds
+
+		// clear flieds
 		dbFactory = null;
 		dBuilder = null;
 		settingsFile = null;
@@ -64,17 +64,21 @@ public final class AppSettings {
 	 *         gadget
 	 */
 	public Point getGadgetLocation() {
-		element = (Element) settingsFile.getElementsByTagName("location").item(
-				0);
-		int x = Integer.parseInt(element.getAttribute("location_x"));
-		int y = Integer.parseInt(element.getAttribute("location_y"));
+		try {
+			element = (Element) settingsFile.getElementsByTagName("location")
+					.item(0);
+			int x = Integer.parseInt(element.getAttribute("location_x"));
+			int y = Integer.parseInt(element.getAttribute("location_y"));
 
-		if (x < 0 || y < 0) {
-			this.setGadgetLocation(AppSettings.LOCATION_DEFAULT);
+			if (x < 0 || y < 0) {
+				this.setGadgetLocation(AppSettings.LOCATION_DEFAULT);
 
+				return AppSettings.LOCATION_DEFAULT;
+			} else
+				return new Point(x, y);
+		} catch (Exception ex) {
 			return AppSettings.LOCATION_DEFAULT;
-		} else
-			return new Point(x, y);
+		}
 	}
 
 	/**
@@ -101,7 +105,11 @@ public final class AppSettings {
 	public boolean getGadgetAutosaveLocation() {
 		element = (Element) settingsFile.getElementsByTagName(
 				"autosave_location").item(0);
-		return Boolean.parseBoolean(element.getAttribute("value"));
+		try {
+			return Boolean.parseBoolean(element.getAttribute("value"));
+		} catch (Exception ex) {
+			return AppSettings.AUTOSAVE_LOCATION_DEFAULT;
+		}
 	}
 
 	/**
@@ -127,22 +135,22 @@ public final class AppSettings {
 		// gadget autosave position
 		setGadgetAutosaveLocation(AppSettings.AUTOSAVE_LOCATION_DEFAULT);
 	}
-	
+
 	/**
-	 * Save all the changes to the actual file on
-	 * the file system.
+	 * Save all the changes to the actual file on the file system.
 	 * 
-	 * @return A boolean value indicating if the action
-	 * was finished successfully or not
+	 * @return A boolean value indicating if the action was finished
+	 *         successfully or not
 	 */
-	private boolean commitChangesToFile(){
+	private boolean commitChangesToFile() {
 		try {
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			Transformer transformer = TransformerFactory.newInstance()
+					.newTransformer();
 			StreamResult output = new StreamResult(new File("Settings.xml"));
 			Source input = new DOMSource(settingsFile);
 
 			transformer.transform(input, output);
-			
+
 			return true;
 		} catch (TransformerConfigurationException e) {
 			return false;

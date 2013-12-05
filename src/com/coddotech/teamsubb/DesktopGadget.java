@@ -12,17 +12,17 @@ import org.eclipse.swt.widgets.Listener;
  * 
  * @author Coddo
  */
-public class WindowsGadget extends CustomWindow {
+public class DesktopGadget extends CustomWindow {
 
 	private CommunicationManager jobManager;
 	private AppSettings settings;
-	
+
 	private Label label;
 
 	/*
 	 * Class constructor
 	 */
-	public WindowsGadget() {
+	public DesktopGadget() {
 		createContents();
 	}
 
@@ -81,7 +81,7 @@ public class WindowsGadget extends CustomWindow {
 			jobManager.sendJobRequest();
 		}
 	};
-	
+
 	/**
 	 * Listens for location changes done to the shell of this class.<br>
 	 * Practically, listens for when the form is moved into a new position
@@ -89,7 +89,7 @@ public class WindowsGadget extends CustomWindow {
 	private Listener gadgetPositionChangedListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			if(settings.getGadgetAutosaveLocation()){
+			if (settings.getGadgetAutosaveLocation()) {
 				settings.setGadgetLocation(getShell().getLocation());
 			}
 		}
