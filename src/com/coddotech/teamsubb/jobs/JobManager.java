@@ -3,9 +3,8 @@ package com.coddotech.teamsubb.jobs;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.lang.model.element.Element;
-
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,25 +25,15 @@ import javax.xml.transform.stream.StreamResult;
  */
 public final class JobManager {
 
-	private static final String[] DEFAULT_JOB_HEADERS = { 
-		"Traducator",
-		"Verificator", 
-		"Encoder", 
-		"Typesetter", 
-		"Manga", 
-		"Stiri",
-		"Postator"
-	};
-	private static final boolean[] DEFAULT_JOB_INFO_ARRAY = { 
-		false, 
-		false, 
-		false,	
-		false, 
-		false, 
-		false, 
-		false
-	};
-	private static final String DEFAULT_USER_INFORMATION = "new user";
+	private static final String[] DEFAULT_USER_INFO_HEADERS = { "name",
+			"email", "rank" };
+	private static final String[] DEFAULT_USER_INFO_VALUES = { "no user",
+			"no user", "no user" };
+	private static final String[] DEFAULT_JOB_INFO_HEADERS = { "Traducator",
+			"Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
+			"Postator" };
+	private static final boolean[] DEFAULT_JOB_INFO_VALUES = { false, false,
+			false, false, false, false, false };
 
 	private ArrayList<Job> jobs;
 	private Element element; // used for reading document data
@@ -64,7 +53,7 @@ public final class JobManager {
 	 * Clear memory from this class and its resources
 	 */
 	public void dispose() {
-		// save changes to the settings file
+		// save changes to the user info file
 		this.commitChangesToFile();
 
 		// clear flieds
@@ -74,76 +63,190 @@ public final class JobManager {
 		element = null;
 		jobs = null;
 	}
-	
-	public String getUserName(){
-		return null;
-	}
-	
-	public void setUserName(String name){
+
+	/**
+	 * Add a new job to the list
+	 */
+	public void addJob(){
 		
 	}
 	
-	public String getUserEmail(){
-		return null;
-	}
-	
-	public void setUserEmail(String email){
-		
-	}
-	
-	public String getUserRank(){
-		return null;
-	}
-	
-	public void setUserRank(String rank){
-		
+	/**
+	 * Get the user's name
+	 * 
+	 * @return A string indicating the name of the user of the staff
+	 */
+	public String getUserName() {
+		element = (Element) jobDetailsFile.getElementsByTagName("name").item(0);
+		return element.getAttribute("value");
 	}
 
-	public boolean isSubber(){
-		return false;
+	/**
+	 * Set the user's name
+	 * 
+	 * @param name
+	 *            A string indicating the name for this user
+	 */
+	public void setUserName(String name) {
+		element = (Element) jobDetailsFile.getElementsByTagName("name").item(0);
+		element.setAttribute("name", name);
 	}
-	
-	public boolean isVerifier(){
-		return false;
+
+	/**
+	 * Get the user's email
+	 * 
+	 * @return A string containing the email for this user
+	 */
+	public String getUserEmail() {
+		element = (Element) jobDetailsFile.getElementsByTagName("email")
+				.item(0);
+		return element.getAttribute("value");
 	}
-	
-	public boolean isEncoder(){
-		return false;
+
+	/**
+	 * Set the user's email
+	 * 
+	 * @param email
+	 *            A string containing the email for this user
+	 */
+	public void setUserEmail(String email) {
+		element = (Element) jobDetailsFile.getElementsByTagName("email")
+				.item(0);
+		element.setAttribute("email", email);
 	}
-	
-	public boolean isTypesetter(){
-		return false;
+
+	/**
+	 * Get the user's rank in the fansub
+	 * 
+	 * @return A string representing the rank that the user has in the community
+	 */
+	public String getUserRank() {
+		element = (Element) jobDetailsFile.getElementsByTagName("rank").item(0);
+		return element.getAttribute("rank");
 	}
-	
-	public boolean isManga(){
-		return false;
+
+	/**
+	 * Set the user's rank
+	 * 
+	 * @param rank
+	 *            A string representing the rank for the user
+	 */
+	public void setUserRank(String rank) {
+		element = (Element) jobDetailsFile.getElementsByTagName("name").item(0);
+		element.setAttribute("rank", rank);
 	}
-	
-	public boolean isNews(){
-		return false;
+
+	/**
+	 * Applies the job details for this user
+	 * 
+	 * @param userJobsInfo
+	 *            An array (boolean values) indicating which jobs are active for
+	 *            this user
+	 */
+	public void setUserJobsArray(boolean[] userJobsInfo) {
+		for (int i = 0; i < JobManager.DEFAULT_JOB_INFO_HEADERS.length; i++) {
+			element = (Element) jobDetailsFile.getElementsByTagName(
+					JobManager.DEFAULT_JOB_INFO_HEADERS[i]).item(0);
+			element.setAttribute("value", Boolean.toString(userJobsInfo[i]));
+		}
 	}
-	
-	public boolean isPoster(){
-		return false;
+
+	/**
+	 * Verify the user works as a subber
+	 * 
+	 * @return A boolean value indicating whether he is a subber or not
+	 */
+	public boolean isSubber() {
+		element = (Element) jobDetailsFile
+				.getElementsByTagName(JobManager.DEFAULT_USER_INFO_HEADERS[0]);
+		return Boolean.parseBoolean(element.getAttribute("value"));
 	}
-	
-	private boolean[] getUserJobsArray() {
-		return null;
+
+	/**
+	 * Verify the user works as a verifier
+	 * 
+	 * @return A boolean value indicating whether he is a verifier or not
+	 */
+	public boolean isVerifier() {
+		element = (Element) jobDetailsFile
+				.getElementsByTagName(JobManager.DEFAULT_USER_INFO_HEADERS[1]);
+		return Boolean.parseBoolean(element.getAttribute("value"));
 	}
-	
-	private void setUserJobsArray(boolean[] userJobInfo) {
-		
+
+	/**
+	 * Verify the user works as a encoder
+	 * 
+	 * @return A boolean value indicating whether he is a encoder or not
+	 */
+	public boolean isEncoder() {
+		element = (Element) jobDetailsFile
+				.getElementsByTagName(JobManager.DEFAULT_USER_INFO_HEADERS[2]);
+		return Boolean.parseBoolean(element.getAttribute("value"));
+	}
+
+	/**
+	 * Verify the user works as a typesetter
+	 * 
+	 * @return A boolean value indicating whether he is a typesetter or not
+	 */
+	public boolean isTypesetter() {
+		element = (Element) jobDetailsFile
+				.getElementsByTagName(JobManager.DEFAULT_USER_INFO_HEADERS[3]);
+		return Boolean.parseBoolean(element.getAttribute("value"));
+	}
+
+	/**
+	 * Verify the user works as a manga manager
+	 * 
+	 * @return A boolean value indicating whether he is a manga manager or not
+	 */
+	public boolean isManga() {
+		element = (Element) jobDetailsFile
+				.getElementsByTagName(JobManager.DEFAULT_USER_INFO_HEADERS[4]);
+		return Boolean.parseBoolean(element.getAttribute("value"));
+	}
+
+	/**
+	 * Verify the user works as a news manager
+	 * 
+	 * @return A boolean value indicating whether he is a new manager or not
+	 */
+	public boolean isNews() {
+		element = (Element) jobDetailsFile
+				.getElementsByTagName(JobManager.DEFAULT_USER_INFO_HEADERS[5]);
+		return Boolean.parseBoolean(element.getAttribute("value"));
+	}
+
+	/**
+	 * Verify the user works as a poster
+	 * 
+	 * @return A boolean value indicating whether he is a poster or not
+	 */
+	public boolean isPoster() {
+		element = (Element) jobDetailsFile
+				.getElementsByTagName(JobManager.DEFAULT_USER_INFO_HEADERS[6]);
+		return Boolean.parseBoolean(element.getAttribute("value"));
 	}
 
 	/**
 	 * Restore all the settings to their default values
 	 */
 	public void restoreDefaultSettings() {
-		// user information
-		
-		
-		// jobs information
+		// personal user information
+		for (int i = 0; i < JobManager.DEFAULT_USER_INFO_HEADERS.length; i++) {
+			element = (Element) jobDetailsFile
+					.getElementsByTagName(JobManager.DEFAULT_USER_INFO_HEADERS[i]);
+			element.setAttribute("value",
+					JobManager.DEFAULT_USER_INFO_VALUES[i]);
+		}
 
+		// user's jobs information
+		for (int i = 0; i < JobManager.DEFAULT_JOB_INFO_HEADERS.length; i++) {
+			element = (Element) jobDetailsFile
+					.getElementsByTagName(JobManager.DEFAULT_JOB_INFO_HEADERS[i]);
+			element.setAttribute("value",
+					Boolean.toString(JobManager.DEFAULT_JOB_INFO_VALUES[i]));
+		}
 	}
 
 	/**
