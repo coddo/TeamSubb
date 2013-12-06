@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.connections;
+package com.coddotech.teamsubb.jobs;
 
 import com.coddotech.teamsubb.gui.DesktopGadget;
 

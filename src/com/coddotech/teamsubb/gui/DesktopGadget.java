@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import com.coddotech.teamsubb.connections.ConnectionManager;
+import com.coddotech.teamsubb.jobs.ConnectionManager;
 import com.coddotech.teamsubb.settings.AppSettings;
 
 /**

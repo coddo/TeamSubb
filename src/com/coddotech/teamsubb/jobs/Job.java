@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.connections;
+package com.coddotech.teamsubb.jobs;
 
 /**
  * Entity used by the JobManager class. This class stores information about a
