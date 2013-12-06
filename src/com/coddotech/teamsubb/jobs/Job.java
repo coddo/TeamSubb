@@ -8,10 +8,11 @@ package com.coddotech.teamsubb.jobs;
  * 
  */
 public final class Job {
+	
 	/**
 	 * Class constructor
 	 */
-	public Job() {
-
+	public Job(){
+		
 	}
 }
