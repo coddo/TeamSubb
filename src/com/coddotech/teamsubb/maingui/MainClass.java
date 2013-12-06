@@ -1,11 +1,10 @@
-package com.coddotech.teamsubb.gui;
+package com.coddotech.teamsubb.maingui;
 
 public class MainClass {
 
 	public static void main(String[] args) {
 		//create and display the widget window
-		DesktopGadget mainWindow = new DesktopGadget();
-		mainWindow.show();
+		LoginWindow login = new LoginWindow();
+		login.show();
 	}
-
 }

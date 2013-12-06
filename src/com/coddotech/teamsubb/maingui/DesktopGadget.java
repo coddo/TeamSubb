@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.gui;
+package com.coddotech.teamsubb.maingui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
