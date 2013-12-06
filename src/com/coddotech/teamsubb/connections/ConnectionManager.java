@@ -1,4 +1,6 @@
-package com.coddotech.teamsubb;
+package com.coddotech.teamsubb.connections;
+
+import com.coddotech.teamsubb.gui.DesktopGadget;
 
 /**
  * Class used for realizing the communication between this client
@@ -9,7 +11,7 @@ package com.coddotech.teamsubb;
  * @author Coddo
  *
  */
-public class CommunicationManager {
+public class ConnectionManager {
 	
 	private DesktopGadget _gadget;
 	JobManager jobManager;
@@ -17,7 +19,7 @@ public class CommunicationManager {
 	/*
 	 * Class constructor
 	 */
-	public CommunicationManager(DesktopGadget widget){
+	public ConnectionManager(DesktopGadget widget){
 		_gadget = widget;
 		jobManager = new JobManager();
 	}

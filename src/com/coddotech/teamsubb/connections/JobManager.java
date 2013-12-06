@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb;
+package com.coddotech.teamsubb.connections;
 
 import java.util.ArrayList;
 

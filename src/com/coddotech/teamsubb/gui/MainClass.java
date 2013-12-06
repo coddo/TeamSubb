@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb;
+package com.coddotech.teamsubb.gui;
 
 public class MainClass {
 

@@ -1,10 +1,13 @@
-package com.coddotech.teamsubb;
+package com.coddotech.teamsubb.gui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+
+import com.coddotech.teamsubb.connections.ConnectionManager;
+import com.coddotech.teamsubb.settings.AppSettings;
 
 /**
  * Windows gadget window.<br>
@@ -14,7 +17,7 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class DesktopGadget extends CustomWindow {
 
-	private CommunicationManager jobManager;
+	private ConnectionManager jobManager;
 	private AppSettings settings;
 
 	private Label label;
@@ -100,7 +103,7 @@ public class DesktopGadget extends CustomWindow {
 	 */
 	private void createContents() {
 		// object definitions
-		jobManager = new CommunicationManager(this);
+		jobManager = new ConnectionManager(this);
 		settings = new AppSettings();
 		label = new Label(getShell(), SWT.None);
 
