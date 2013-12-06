@@ -30,6 +30,32 @@ public class DesktopGadget extends CustomWindow {
 	}
 
 	/**
+	 * Creates the graphical contents for application and defines all the fields
+	 */
+	private void createContents() {
+		// object definitions
+		jobManager = new ConnectionManager(this);
+		settings = new AppSettings();
+		label = new Label(getShell(), SWT.None);
+
+		// object properties
+		label.setLocation(10, 10);
+
+		// this window's properties
+		this.getShell().setText("Team Subb");
+		this.getShell().setLocation(settings.getGadgetLocation());
+		this.getShell().setSize(400, 400);
+
+		// event handlers
+		this.getShell().addListener(SWT.Show, gadgetShownListener);
+		this.getShell().addListener(SWT.Close, shellClosingListener);
+		this.getShell().addListener(SWT.Move, gadgetPositionChangedListener);
+
+		// object packing
+		label.pack();
+	}
+
+	/**
 	 * Read the user information (also contains job details and stuff)
 	 */
 	private void readUserDetails() {
@@ -97,30 +123,4 @@ public class DesktopGadget extends CustomWindow {
 			}
 		}
 	};
-
-	/**
-	 * Creates the graphical contents for application and defines all the fields
-	 */
-	private void createContents() {
-		// object definitions
-		jobManager = new ConnectionManager(this);
-		settings = new AppSettings();
-		label = new Label(getShell(), SWT.None);
-
-		// object properties
-		label.setLocation(10, 10);
-
-		// this window's properties
-		this.getShell().setText("Team Subb");
-		this.getShell().setLocation(settings.getGadgetLocation());
-		this.getShell().setSize(400, 400);
-
-		// event handlers
-		this.getShell().addListener(SWT.Show, gadgetShownListener);
-		this.getShell().addListener(SWT.Close, shellClosingListener);
-		this.getShell().addListener(SWT.Move, gadgetPositionChangedListener);
-
-		// object packing
-		label.pack();
-	}
 }

@@ -26,8 +26,8 @@ import org.w3c.dom.Element;
  */
 public final class AppSettings {
 
-	private static final Point LOCATION_DEFAULT = new Point(200, 200);
-	private static final boolean AUTOSAVE_LOCATION_DEFAULT = false;
+	private static final Point DEFAULT_LOCATION = new Point(200, 200);
+	private static final boolean DEFAULT_AUTOSAVE_LOCATION = false;
 
 	private Element element; // used for reading document data
 
@@ -71,13 +71,13 @@ public final class AppSettings {
 			int y = Integer.parseInt(element.getAttribute("location_y"));
 
 			if (x < 0 || y < 0) {
-				this.setGadgetLocation(AppSettings.LOCATION_DEFAULT);
+				this.setGadgetLocation(AppSettings.DEFAULT_LOCATION);
 
-				return AppSettings.LOCATION_DEFAULT;
+				return AppSettings.DEFAULT_LOCATION;
 			} else
 				return new Point(x, y);
 		} catch (Exception ex) {
-			return AppSettings.LOCATION_DEFAULT;
+			return AppSettings.DEFAULT_LOCATION;
 		}
 	}
 
@@ -108,7 +108,7 @@ public final class AppSettings {
 		try {
 			return Boolean.parseBoolean(element.getAttribute("value"));
 		} catch (Exception ex) {
-			return AppSettings.AUTOSAVE_LOCATION_DEFAULT;
+			return AppSettings.DEFAULT_AUTOSAVE_LOCATION;
 		}
 	}
 
@@ -130,10 +130,10 @@ public final class AppSettings {
 	 */
 	public void restoreDefaultSettings() {
 		// gadget position
-		setGadgetLocation(AppSettings.LOCATION_DEFAULT);
+		setGadgetLocation(AppSettings.DEFAULT_LOCATION);
 
 		// gadget autosave position
-		setGadgetAutosaveLocation(AppSettings.AUTOSAVE_LOCATION_DEFAULT);
+		setGadgetAutosaveLocation(AppSettings.DEFAULT_AUTOSAVE_LOCATION);
 	}
 
 	/**
@@ -170,10 +170,9 @@ public final class AppSettings {
 			dBuilder = dbFactory.newDocumentBuilder();
 			settingsFile = dBuilder.parse("Settings.xml");
 		} catch (Exception e) {
-			e.printStackTrace();
+			// ignore any exceptions
 		} finally { // All the other components
 
 		}
 	}
-
 }
