@@ -24,15 +24,17 @@ import javax.xml.transform.stream.StreamResult;
  */
 public final class UserDetails {
 
-	private static final String[] DEFAULT_USER_INFO_HEADERS = { "name",
-			"email", "rank" };
-	private static final String[] DEFAULT_USER_INFO_VALUES = { "no user",
+	public static final String[] DEFAULT_USER_INFO_HEADERS = { "name", "email",
+			"rank" };
+	public static final String[] DEFAULT_USER_INFO_VALUES = { "no user",
 			"no user", "no user" };
-	private static final String[] DEFAULT_JOB_INFO_HEADERS = { "Traducator",
+	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator",
 			"Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
 			"Postator" };
-	private static final boolean[] DEFAULT_JOB_INFO_VALUES = { false, false,
+	public static final boolean[] DEFAULT_JOBS_INFO_VALUES = { false, false,
 			false, false, false, false, false };
+	public static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator",
+			"Administrator", "Fondator" };
 
 	private Element element; // used for reading document data
 
@@ -60,7 +62,7 @@ public final class UserDetails {
 		jobDetailsFile = null;
 		element = null;
 	}
-	
+
 	/**
 	 * Get the user's name
 	 * 
@@ -79,7 +81,7 @@ public final class UserDetails {
 	 */
 	public void setUserName(String name) {
 		element = (Element) jobDetailsFile.getElementsByTagName("name").item(0);
-		element.setAttribute("name", name);
+		element.setAttribute("value", name);
 	}
 
 	/**
@@ -102,7 +104,7 @@ public final class UserDetails {
 	public void setUserEmail(String email) {
 		element = (Element) jobDetailsFile.getElementsByTagName("email")
 				.item(0);
-		element.setAttribute("email", email);
+		element.setAttribute("value", email);
 	}
 
 	/**
@@ -112,7 +114,7 @@ public final class UserDetails {
 	 */
 	public String getUserRank() {
 		element = (Element) jobDetailsFile.getElementsByTagName("rank").item(0);
-		return element.getAttribute("rank");
+		return element.getAttribute("value");
 	}
 
 	/**
@@ -122,23 +124,8 @@ public final class UserDetails {
 	 *            A string representing the rank for the user
 	 */
 	public void setUserRank(String rank) {
-		element = (Element) jobDetailsFile.getElementsByTagName("name").item(0);
-		element.setAttribute("rank", rank);
-	}
-
-	/**
-	 * Applies the job details for this user
-	 * 
-	 * @param userJobsInfo
-	 *            An array (boolean values) indicating which jobs are active for
-	 *            this user
-	 */
-	public void setUserJobsArray(boolean[] userJobsInfo) {
-		for (int i = 0; i < UserDetails.DEFAULT_JOB_INFO_HEADERS.length; i++) {
-			element = (Element) jobDetailsFile.getElementsByTagName(
-					UserDetails.DEFAULT_JOB_INFO_HEADERS[i]).item(0);
-			element.setAttribute("value", Boolean.toString(userJobsInfo[i]));
-		}
+		element = (Element) jobDetailsFile.getElementsByTagName("rank").item(0);
+		element.setAttribute("value", rank);
 	}
 
 	/**
@@ -224,19 +211,14 @@ public final class UserDetails {
 	public void restoreDefaultSettings() {
 		// personal user information
 		for (int i = 0; i < UserDetails.DEFAULT_USER_INFO_HEADERS.length; i++) {
-			element = (Element) jobDetailsFile
-					.getElementsByTagName(UserDetails.DEFAULT_USER_INFO_HEADERS[i]);
+			element = (Element) jobDetailsFile.getElementsByTagName(
+					UserDetails.DEFAULT_USER_INFO_HEADERS[i]).item(0);
 			element.setAttribute("value",
 					UserDetails.DEFAULT_USER_INFO_VALUES[i]);
 		}
 
 		// user's jobs information
-		for (int i = 0; i < UserDetails.DEFAULT_JOB_INFO_HEADERS.length; i++) {
-			element = (Element) jobDetailsFile
-					.getElementsByTagName(UserDetails.DEFAULT_JOB_INFO_HEADERS[i]);
-			element.setAttribute("value",
-					Boolean.toString(UserDetails.DEFAULT_JOB_INFO_VALUES[i]));
-		}
+		setUserJobsArray(UserDetails.DEFAULT_JOBS_INFO_VALUES);
 	}
 
 	/**
@@ -249,7 +231,7 @@ public final class UserDetails {
 		try {
 			Transformer transformer = TransformerFactory.newInstance()
 					.newTransformer();
-			StreamResult output = new StreamResult(new File("Settings.xml"));
+			StreamResult output = new StreamResult(new File("JobDetails.xml"));
 			Source input = new DOMSource(jobDetailsFile);
 
 			transformer.transform(input, output);
@@ -265,6 +247,44 @@ public final class UserDetails {
 	}
 
 	/**
+	 * Writes the jobs that the user has into the XML file
+	 * 
+	 * @param jobs
+	 *            A String array containing the job names that the user has
+	 */
+	public void setUserJobs(String[] jobs) {
+		boolean[] toSet = UserDetails.DEFAULT_JOBS_INFO_VALUES;
+
+		// create job values array
+		for (String job : jobs) {
+			for (int i = 0; i < UserDetails.DEFAULT_JOBS_INFO_VALUES.length; i++) {
+				if (job.equals(UserDetails.DEFAULT_JOBS_INFO_HEADERS[i])) {
+					toSet[i] = true;
+					break;
+				}
+			}
+		}
+
+		// set the array into the xml file
+		this.setUserJobsArray(toSet);
+	}
+
+	/**
+	 * Applies the job details for this user
+	 * 
+	 * @param userJobsInfo
+	 *            An array (boolean values) indicating which jobs are active for
+	 *            this user
+	 */
+	private void setUserJobsArray(boolean[] userJobsInfo) {
+		for (int i = 0; i < UserDetails.DEFAULT_JOBS_INFO_HEADERS.length; i++) {
+			element = (Element) jobDetailsFile.getElementsByTagName(
+					UserDetails.DEFAULT_JOBS_INFO_HEADERS[i]).item(0);
+			element.setAttribute("value", Boolean.toString(userJobsInfo[i]));
+		}
+	}
+
+	/**
 	 * Initialize all the components for this class
 	 */
 	private void initializeComponents() {
@@ -274,7 +294,7 @@ public final class UserDetails {
 			jobDetailsFile = dBuilder.parse("JobDetails.xml");
 		} catch (Exception e) {
 			// ignore any exceptions
-		} finally { 
+		} finally {
 			// All the other components
 		}
 	}

@@ -8,10 +8,22 @@ abstract class CustomWindow {
 	private Shell shell;
 
 	/**
-	 * @return the shell for this class
+	 * Get the shell for this class
+	 * 
+	 * @return The shell for this class
 	 */
 	public Shell getShell() {
 		return shell;
+	}
+
+	/**
+	 * Set the shell for this site
+	 * 
+	 * @param shell
+	 *            The shell to be set for this class
+	 */
+	public void setShell(Shell shell) {
+
 	}
 
 	/**
@@ -39,15 +51,16 @@ abstract class CustomWindow {
 		shell.dispose();
 		Display.getCurrent().dispose();
 	}
-	
+
 	/**
 	 * Position the window at the center of the desktop
 	 */
-	public void placeToCenter(){
+	public void placeToCenter() {
 		int x = Display.getCurrent().getMonitors()[0].getClientArea().width / 2;
 		int y = Display.getCurrent().getMonitors()[0].getClientArea().height / 2;
-		
-		shell.setLocation(x - getShell().getSize().x / 2, y - getShell().getSize().y / 2);
+
+		shell.setLocation(x - getShell().getSize().x / 2, y
+				- getShell().getSize().y / 2);
 	}
 
 	/*
@@ -56,7 +69,7 @@ abstract class CustomWindow {
 	private void createContents() {
 		// Prevent the window from being resized
 		shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM ^ SWT.RESIZE);
-	
+
 		shell.setSize(300, 300);
 		this.placeToCenter();
 
