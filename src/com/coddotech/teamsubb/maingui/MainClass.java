@@ -6,5 +6,8 @@ public class MainClass {
 		//create and display the widget window
 		LoginWindow login = new LoginWindow();
 		login.show();
+		
+		/*DesktopGadget gadget = new DesktopGadget();
+		gadget.show();*/
 	}
 }

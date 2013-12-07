@@ -9,10 +9,17 @@ package com.coddotech.teamsubb.jobs;
  */
 public final class Job {
 	
+	private String jobID;
+	private String jobType;
+	private String[] fileURLs;
+	
 	/**
-	 * Class constructor
+	 * 
+	 * @param jobID
+	 * @param jobType
+	 * @param fileURLs
 	 */
-	public Job(){
+	public Job(String jobID, String jobType, String fileURLs) {
 		
 	}
 }

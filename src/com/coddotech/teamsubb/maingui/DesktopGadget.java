@@ -1,12 +1,11 @@
 package com.coddotech.teamsubb.maingui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import com.coddotech.teamsubb.jobs.ConnectionManager;
+import com.coddotech.teamsubb.jobs.JobManager;
 import com.coddotech.teamsubb.settings.AppSettings;
 
 /**
@@ -17,7 +16,7 @@ import com.coddotech.teamsubb.settings.AppSettings;
  */
 public class DesktopGadget extends CustomWindow {
 
-	private ConnectionManager jobManager;
+	private JobManager jobManager;
 	private AppSettings settings;
 
 	private Label label;
@@ -34,7 +33,7 @@ public class DesktopGadget extends CustomWindow {
 	 */
 	private void createContents() {
 		// object definitions
-		jobManager = new ConnectionManager(this);
+		jobManager = new JobManager(this);
 		settings = new AppSettings();
 		label = new Label(getShell(), SWT.None);
 
@@ -46,7 +45,7 @@ public class DesktopGadget extends CustomWindow {
 		this.getShell().setLocation(settings.getGadgetLocation());
 		this.getShell().setSize(400, 400);
 
-		// event handlers
+		// listeners
 		this.getShell().addListener(SWT.Show, gadgetShownListener);
 		this.getShell().addListener(SWT.Close, shellClosingListener);
 		this.getShell().addListener(SWT.Move, gadgetPositionChangedListener);
@@ -78,7 +77,8 @@ public class DesktopGadget extends CustomWindow {
 	}
 
 	/**
-	 * Clear memory from this class and its resources
+	 * Listens for when the shell (GUI) closes and
+	 * clears memory from this class and its resources
 	 */
 	private Listener shellClosingListener = new Listener() {
 		public void handleEvent(Event e) {
@@ -90,9 +90,6 @@ public class DesktopGadget extends CustomWindow {
 
 			// user controls
 			label.dispose();
-
-			// current display instance
-			Display.getCurrent().dispose();
 		}
 	};
 
