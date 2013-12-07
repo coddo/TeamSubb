@@ -6,3 +6,8 @@ Logout request: "logout&user=user_name"
 
 
 RESPONSES
+_________
+
+When no user or pass: error
+If the username is wrong: user
+If the password is wrong: pass
