@@ -8,4 +8,4 @@ Logout request: "logout&user=user_name"
 RESPONSES
 _________
 
-Login response: "true&email&rangstaff"
+Login response: "true&email&rangstaff&job1&job2&..."
