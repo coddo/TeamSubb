@@ -1,0 +1,5 @@
+REQUESTS
+_________
+
+Login request: "login&user=user_name&pass=password"
+Logout request: "logout&user=user_name"

@@ -38,6 +38,9 @@ public final class LoginWindow extends CustomWindow {
 		createContents();
 	}
 	
+	/**
+	 * Initializez the components for this class
+	 */
 	private void createContents(){
 		// initializations
 		defaultFont = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
@@ -147,7 +150,7 @@ public final class LoginWindow extends CustomWindow {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {
 			if (!ConnectionManager.sendLoginRequest("", "")) {
-				
+				//show message box
 			} else {
 				
 			}
