@@ -18,8 +18,9 @@ import org.apache.http.params.CoreProtocolPNames;
 public final class ConnectionManager {
 
 	private static final String URL_USER_LOGGING = "http://anime4fun.ro/wlogin.php";
-//	private static final String URL_JOBS = "http://anime4fun.ro/jobs.php";
-//	private static final String URL_CHAT = "http://anime4fun.ro/chat.php";
+
+	// private static final String URL_JOBS = "http://anime4fun.ro/jobs.php";
+	// private static final String URL_CHAT = "http://anime4fun.ro/chat.php";
 
 	/**
 	 * Sends a login request to the server using the entered user details
@@ -32,7 +33,7 @@ public final class ConnectionManager {
 	 *         not
 	 */
 	public static String sendLoginRequest(String user, String pass) {
-		return ConnectionManager.sendMessages(
+		return ConnectionManager.sendMessage(
 				ConnectionManager.URL_USER_LOGGING, new String[] { "user",
 						"pass" }, new String[] { user, pass });
 	}
@@ -45,7 +46,7 @@ public final class ConnectionManager {
 	 *            server
 	 */
 	public static String sendLogoutRequest(String user) {
-		return ConnectionManager.sendMessages(
+		return ConnectionManager.sendMessage(
 				ConnectionManager.URL_USER_LOGGING, new String[] { "logout" },
 				new String[] { user });
 	}
@@ -58,10 +59,47 @@ public final class ConnectionManager {
 	 * @throws Exception
 	 */
 	public static void sendFilesPOST(String[] files) throws Exception {
-		ConnectionManager.sendMessages("http://anime4fun.ro/uploadimage.php",
+		ConnectionManager.sendMessage("http://anime4fun.ro/uploadimage.php",
 				new String[] { "submit" }, new String[] { "testare_finala" },
 				new String[] { "uploaded_image" },
 				new String[] { "C:\\Users\\Claudiu\\Desktop\\test2.jpg" });
+	}
+
+	/**
+	 * Send a message to a server using a MultiPartEntity as the parameter
+	 * collection to be sent along with the message
+	 * 
+	 * @param url
+	 *            The link which contains the location for the server which will
+	 *            receive the request
+	 * @param mpEntity
+	 *            An entity containg the parameters to be sent with the message.
+	 *            It can contain both plain text and files of all kinds
+	 * @return A String value containing the response that has been received
+	 *         from the server<br>
+	 *         This method returns "error" if a connection error has been
+	 *         encountered
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
+	private static String sendMessage(String url, MultipartEntity mpEntity)
+			throws IllegalStateException, IOException {
+		HttpClient httpclient = new DefaultHttpClient();
+		httpclient.getParams().setParameter(
+				CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+
+		HttpPost httppost = new HttpPost(url);
+
+		httppost.setEntity(mpEntity);
+
+		HttpResponse response = httpclient.execute(httppost);
+
+		String result = ConnectionManager.readResult(response.getEntity()
+				.getContent());
+
+		httpclient.getConnectionManager().shutdown();
+
+		return result;
 	}
 
 	/**
@@ -80,14 +118,9 @@ public final class ConnectionManager {
 	 *         This method returns "error" if a connection error has been
 	 *         encountered
 	 */
-	private static String sendMessages(String url, String[] messageHeaders,
+	private static String sendMessage(String url, String[] messageHeaders,
 			String[] messageBodies) {
 		try {
-			HttpClient httpclient = new DefaultHttpClient();
-			httpclient.getParams().setParameter(
-					CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
-
-			HttpPost httppost = new HttpPost(url);
 
 			MultipartEntity mpEntity = new MultipartEntity();
 
@@ -96,16 +129,7 @@ public final class ConnectionManager {
 						messageBodies[i]));
 			}
 
-			httppost.setEntity(mpEntity);
-
-			HttpResponse response = httpclient.execute(httppost);
-
-			String result = ConnectionManager.readResult(response.getEntity()
-					.getContent());
-
-			httpclient.getConnectionManager().shutdown();
-
-			return result;
+			return ConnectionManager.sendMessage(url, mpEntity);
 
 		} catch (Exception ex) {
 			return "error";
@@ -134,15 +158,9 @@ public final class ConnectionManager {
 	 *         This method returns "error" if a connection error has been
 	 *         encountered
 	 */
-	private static String sendMessages(String url, String[] messageHeaders,
+	private static String sendMessage(String url, String[] messageHeaders,
 			String[] messageBodies, String[] fileHeaders, String[] files) {
 		try {
-			HttpClient httpclient = new DefaultHttpClient();
-			httpclient.getParams().setParameter(
-					CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
-
-			HttpPost httppost = new HttpPost(url);
-
 			MultipartEntity mpEntity = new MultipartEntity();
 
 			for (int i = 0; i < messageBodies.length; i++) {
@@ -155,16 +173,7 @@ public final class ConnectionManager {
 						new File(files[i])));
 			}
 
-			httppost.setEntity(mpEntity);
-
-			HttpResponse response = httpclient.execute(httppost);
-
-			String result = ConnectionManager.readResult(response.getEntity()
-					.getContent());
-
-			httpclient.getConnectionManager().shutdown();
-
-			return result;
+			return ConnectionManager.sendMessage(url, mpEntity);
 
 		} catch (Exception ex) {
 			return "error";

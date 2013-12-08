@@ -5,12 +5,12 @@
 		<rank value="no user">Stores the rank that the user has in the community</rank>
 	</information>
 	<jobs>
-		<Traducator value="true">Knows how to sub(translate) files in different languages</Traducator>
-		<Verificator value="true">Knowledgeable in different languages and has the ability to spot mistakes in subbed files</Verificator>
-		<Encoder value="true">Has a powerful computer, a good internet connection and has good encoding skills</Encoder>
-		<Typesetter value="true">????</Typesetter>
-		<Manga value="true">????</Manga>
-		<Stiri value="true">Good at expressing his thoughts in words and knows how to write news articles</Stiri>
-		<Postator value="true">Knows how to post new releases on the site</Postator>
+		<Traducator value="false">Knows how to sub(translate) files in different languages</Traducator>
+		<Verificator value="false">Knowledgeable in different languages and has the ability to spot mistakes in subbed files</Verificator>
+		<Encoder value="false">Has a powerful computer, a good internet connection and has good encoding skills</Encoder>
+		<Typesetter value="false">????</Typesetter>
+		<Manga value="false">????</Manga>
+		<Stiri value="false">Good at expressing his thoughts in words and knows how to write news articles</Stiri>
+		<Postator value="false">Knows how to post new releases on the site</Postator>
 	</jobs>
 </staff>
