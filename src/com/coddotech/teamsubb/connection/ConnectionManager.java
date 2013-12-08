@@ -1,40 +1,25 @@
 package com.coddotech.teamsubb.connection;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.HttpURLConnection;
 
-public class ConnectionManager {
+import org.apache.http.*;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 
-	private static final String URL_LOGIN = "http://anime4fun.ro/wlogin.php";
-	private static final String URL_LOGOUT = "http://anime4fun.ro/wlogout.php";
+public final class ConnectionManager {
 
-	private String loginResult; // contains user data
-
-	/**
-	 * Retrieve the results of the login process
-	 * 
-	 * @return A String containing the data received from the remote server
-	 */
-	public String getLoginResult() {
-		return loginResult;
-	}
-
-	/**
-	 * Constructor for this class
-	 */
-	public ConnectionManager() {
-	}
-
-	/**
-	 * Clear the memory from this class and its components
-	 */
-	public void dispose() {
-		loginResult = null;
-	}
+	private static final String URL_USER_LOGGING = "http://anime4fun.ro/wlogin.php";
+//	private static final String URL_JOBS = "http://anime4fun.ro/jobs.php";
+//	private static final String URL_CHAT = "http://anime4fun.ro/chat.php";
 
 	/**
 	 * Sends a login request to the server using the entered user details
@@ -46,34 +31,10 @@ public class ConnectionManager {
 	 * @return A logical value indicating if the connection was successful or
 	 *         not
 	 */
-	public boolean sendLoginRequest(String user, String pass) {
-		try {
-			// create request variables
-			URL server = new URL(ConnectionManager.URL_LOGIN);
-			HttpURLConnection con = (HttpURLConnection) server.openConnection();
-			con.setRequestMethod("POST");
-
-			// send the request
-			con.setDoOutput(true);
-			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			wr.writeBytes("user=" + user + "&pass=" + pass);
-			wr.flush();
-			wr.close();
-
-			// get result
-			loginResult = this.readResult(con);
-
-			// dispose objects
-
-			server = null;
-			con.disconnect();
-			con = null;
-
-			return true;
-
-		} catch (Exception ex) {
-			return false;
-		}
+	public static String sendLoginRequest(String user, String pass) {
+		return ConnectionManager.sendMessages(
+				ConnectionManager.URL_USER_LOGGING, new String[] { "user",
+						"pass" }, new String[] { user, pass });
 	}
 
 	/**
@@ -83,41 +44,147 @@ public class ConnectionManager {
 	 *            The username of the staff member to be logged out from the
 	 *            server
 	 */
-	public static void sendLogoutRequest(String user) {
+	public static String sendLogoutRequest(String user) {
+		return ConnectionManager.sendMessages(
+				ConnectionManager.URL_USER_LOGGING, new String[] { "logout" },
+				new String[] { user });
+	}
+
+	/**
+	 * THIS IS JUST A METHOD USED FOR VERIFICATIONS. IT IS STILL USEFUL FOR
+	 * FURTHER DEBUGGING
+	 * 
+	 * @param files
+	 * @throws Exception
+	 */
+	public static void sendFilesPOST(String[] files) throws Exception {
+		ConnectionManager.sendMessages("http://anime4fun.ro/uploadimage.php",
+				new String[] { "submit" }, new String[] { "testare_finala" },
+				new String[] { "uploaded_image" },
+				new String[] { "C:\\Users\\Claudiu\\Desktop\\test2.jpg" });
+	}
+
+	/**
+	 * Send a text message to a server with the entered parameters
+	 * 
+	 * @param url
+	 *            The link which contains the location for the server which will
+	 *            receive the request
+	 * @param messageHeaders
+	 *            A String collection containing the parameters for each message
+	 * @param messageBodies
+	 *            A String collection which contains the values for the
+	 *            parameters specified in the Headers String collection
+	 * @return A String value containing the response that has been received
+	 *         from the server<br>
+	 *         This method returns "error" if a connection error has been
+	 *         encountered
+	 */
+	private static String sendMessages(String url, String[] messageHeaders,
+			String[] messageBodies) {
 		try {
-			URL server = new URL(ConnectionManager.URL_LOGOUT);
-			HttpURLConnection con = (HttpURLConnection) server.openConnection();
-			con.setRequestMethod("POST");
+			HttpClient httpclient = new DefaultHttpClient();
+			httpclient.getParams().setParameter(
+					CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
-			// send the request
-			con.setDoOutput(true);
-			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			wr.writeBytes("logout=" + user);
-			wr.flush();
-			wr.close();
+			HttpPost httppost = new HttpPost(url);
 
-			server = null;
-			con.disconnect();
-			con = null;
+			MultipartEntity mpEntity = new MultipartEntity();
+
+			for (int i = 0; i < messageBodies.length; i++) {
+				mpEntity.addPart(messageHeaders[i], new StringBody(
+						messageBodies[i]));
+			}
+
+			httppost.setEntity(mpEntity);
+
+			HttpResponse response = httpclient.execute(httppost);
+
+			String result = ConnectionManager.readResult(response.getEntity()
+					.getContent());
+
+			httpclient.getConnectionManager().shutdown();
+
+			return result;
+
 		} catch (Exception ex) {
-			// ignore exceptions
+			return "error";
+		}
+	}
+
+	/**
+	 * Send a message to a server with the entered parameters (containing both
+	 * text and files)
+	 * 
+	 * @param url
+	 *            The link which contains the location for the server which will
+	 *            receive the request
+	 * @param messageHeaders
+	 *            A String collection containing the parameters for each message
+	 * @param messageBodies
+	 *            A String collection which contains the values for the
+	 *            parameters specified in the Headers String collection
+	 * @param fileHeaders
+	 *            A String collection containing the parameters for each file
+	 * @param files
+	 *            A String collection containing the file locations on the disk,
+	 *            corresponding to each file Header
+	 * @return A String value containing the response that has been received
+	 *         from the server<br>
+	 *         This method returns "error" if a connection error has been
+	 *         encountered
+	 */
+	private static String sendMessages(String url, String[] messageHeaders,
+			String[] messageBodies, String[] fileHeaders, String[] files) {
+		try {
+			HttpClient httpclient = new DefaultHttpClient();
+			httpclient.getParams().setParameter(
+					CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+
+			HttpPost httppost = new HttpPost(url);
+
+			MultipartEntity mpEntity = new MultipartEntity();
+
+			for (int i = 0; i < messageBodies.length; i++) {
+				mpEntity.addPart(messageHeaders[i], new StringBody(
+						messageBodies[i]));
+			}
+
+			for (int i = 0; i < files.length; i++) {
+				mpEntity.addPart(fileHeaders[i], new FileBody(
+						new File(files[i])));
+			}
+
+			httppost.setEntity(mpEntity);
+
+			HttpResponse response = httpclient.execute(httppost);
+
+			String result = ConnectionManager.readResult(response.getEntity()
+					.getContent());
+
+			httpclient.getConnectionManager().shutdown();
+
+			return result;
+
+		} catch (Exception ex) {
+			return "error";
 		}
 	}
 
 	/**
 	 * Read the result details from a specific request made to the server
 	 * 
-	 * @param con
-	 *            The connection variable used to send the request
+	 * @param stream
+	 *            An ImputStream variable containing the result received after a
+	 *            request was made to a certain server
 	 * @return A String value containing the result received from this request
 	 * @throws IOException
 	 */
-	private String readResult(HttpURLConnection con) throws IOException {
+	private static String readResult(InputStream stream) throws IOException {
 		String result = "";
 
 		// read the result of the request
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				con.getInputStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
 
 		// recreate the result of the string
 		String inputLine;

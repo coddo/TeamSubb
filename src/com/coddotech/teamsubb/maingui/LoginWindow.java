@@ -35,7 +35,6 @@ public final class LoginWindow extends CustomWindow {
 
 	private Font defaultFont;
 
-	private ConnectionManager connector;
 	private UserDetails userDetailsManager;
 
 	private String mayContinue = "NO";
@@ -110,11 +109,13 @@ public final class LoginWindow extends CustomWindow {
 		boolean ok;
 		String[] result = null;
 		MessageBox message = new MessageBox(getShell(), SWT.ICON_ERROR);
-
-		if (connector.sendLoginRequest(userBox.getText(), passBox.getText())) {
+		String resultMessage = ConnectionManager.sendLoginRequest(userBox.getText(),
+				passBox.getText());
+		
+		if (!resultMessage.equals("error")) {
 			// on successful connection, check if the login credentials are
 			// correct or not
-			result = connector.getLoginResult().split("&");
+			result = resultMessage.split("&");
 
 			if (Boolean.parseBoolean(result[0])) {
 				ok = true;
@@ -131,7 +132,6 @@ public final class LoginWindow extends CustomWindow {
 
 		if (!ok) { // if the login was unsuccessful, show the an message
 			message.open();
-			message = null;
 		} else { // otherwise continue with starting the application's main
 					// functionalities and close the login window
 			setData(result);
@@ -206,7 +206,6 @@ public final class LoginWindow extends CustomWindow {
 	 */
 	private void initializeComponents() {
 		// initializations
-		connector = new ConnectionManager();
 		userDetailsManager = new UserDetails();
 
 		defaultFont = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
