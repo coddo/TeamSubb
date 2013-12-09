@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.maingui;
+package com.coddotech.teamsubb.connection;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -12,8 +12,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
-import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.jobs.UserDetails;
+import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
  * This class representes the login interface for the application. <br>
@@ -47,13 +47,14 @@ public final class LoginWindow extends CustomWindow {
 	 * Class constructor
 	 */
 	public LoginWindow() {
+		super();
 		initializeComponents();
 	}
 
 	/**
 	 * Clear the memory from this class and its resources
 	 */
-	public void dispose() {
+	private void dispose() {
 		userLabel.dispose();
 		userLabel = null;
 
@@ -230,11 +231,11 @@ public final class LoginWindow extends CustomWindow {
 
 		userBox.setFont(defaultFont);
 		userBox.setLocation(100, 10);
-		userBox.setSize(175, 21);
+		userBox.setSize(175, 23);
 
 		passBox.setFont(defaultFont);
 		passBox.setLocation(100, 60);
-		passBox.setSize(userBox.getSize());
+		passBox.setSize(175, 23);
 
 		loginButton.setFont(defaultFont);
 		loginButton.setText("Login");

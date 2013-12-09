@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.maingui;
+package com.coddotech.teamsubb.main;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -25,40 +25,22 @@ public class DesktopGadget extends CustomWindow {
 	 * Class constructor
 	 */
 	public DesktopGadget() {
-		createContents();
+		super();
+		initializeComponents();
 	}
 
 	/**
-	 * Creates the graphical contents for application and defines all the fields
+	 * Clear the memory from this class and its resources
 	 */
-	private void createContents() {
-		// object definitions
-		jobManager = new JobManager(this);
-		settings = new AppSettings();
-		label = new Label(getShell(), SWT.None);
+	private void dispose() {
+		// user classes
+		jobManager.dispose();
+		jobManager = null;
+		settings.dispose();
+		settings = null;
 
-		// object properties
-		label.setLocation(10, 10);
-
-		// this window's properties
-		this.getShell().setText("Team Subb");
-		this.getShell().setLocation(settings.getGadgetLocation());
-		this.getShell().setSize(400, 400);
-
-		// listeners
-		this.getShell().addListener(SWT.Show, gadgetShownListener);
-		this.getShell().addListener(SWT.Close, shellClosingListener);
-		this.getShell().addListener(SWT.Move, gadgetPositionChangedListener);
-
-		// object packing
-		label.pack();
-	}
-
-	/**
-	 * Read the user information (also contains job details and stuff)
-	 */
-	private void readUserDetails() {
-
+		// user controls
+		label.dispose();
 	}
 
 	/**
@@ -77,19 +59,19 @@ public class DesktopGadget extends CustomWindow {
 	}
 
 	/**
-	 * Listens for when the shell (GUI) closes and
-	 * clears memory from this class and its resources
+	 * Read the user information (also contains job details and stuff)
+	 */
+	private void readUserDetails() {
+	
+	}
+
+	/**
+	 * Listens for when the shell (GUI) closes and clears memory from this class
+	 * and its resources
 	 */
 	private Listener shellClosingListener = new Listener() {
 		public void handleEvent(Event e) {
-			// user classes
-			jobManager.dispose();
-			jobManager = null;
-			settings.dispose();
-			settings = null;
-
-			// user controls
-			label.dispose();
+			dispose();
 		}
 	};
 
@@ -120,4 +102,30 @@ public class DesktopGadget extends CustomWindow {
 			}
 		}
 	};
+
+	/**
+	 * Creates the graphical contents for application and defines all the fields
+	 */
+	private void initializeComponents () {
+		// object definitions
+		jobManager = new JobManager(this);
+		settings = new AppSettings();
+		label = new Label(getShell(), SWT.None);
+	
+		// object properties
+		label.setLocation(10, 10);
+	
+		// this window's properties
+		this.getShell().setText("Team Subb");
+		this.getShell().setLocation(settings.getGadgetLocation());
+		this.getShell().setSize(400, 400);
+	
+		// listeners
+		this.getShell().addListener(SWT.Show, gadgetShownListener);
+		this.getShell().addListener(SWT.Close, shellClosingListener);
+		this.getShell().addListener(SWT.Move, gadgetPositionChangedListener);
+	
+		// object packing
+		label.pack();
+	}
 }

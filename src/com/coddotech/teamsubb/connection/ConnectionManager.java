@@ -84,27 +84,40 @@ public final class ConnectionManager {
 	 */
 	private static String sendMessage(String url, MultipartEntity data)
 			throws IllegalStateException, IOException {
+		// create a http client used as an interface for interacting with the
+		// server
 		HttpClient httpClient = new DefaultHttpClient();
 		httpClient.getParams().setParameter(
 				CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
+		// the POST type message to be sent to the server
 		HttpPost httpPost = new HttpPost(url);
 
+		// set the MultiPartEntity (containing text commands and files <if any>
+		// ) for this message
 		httpPost.setEntity(data);
 
-		HttpResponse response = httpClient.execute(httpPost);
+		// The response from the server will be stored in this HttpResponse
+		// variable
+		HttpResponse response;
 
+		// send the message to the server
+		response = httpClient.execute(httpPost);
+
+		// convert the entire result in a single string variable
 		String result = ConnectionManager.readResult(response.getEntity()
 				.getContent());
 
+		// disconnect the client from the server
 		httpClient.getConnectionManager().shutdown();
-		
-		//dispose unnecessary objects
+
+		// dispose unnecessary objects
 		httpClient = null;
 		response = null;
 		httpPost = null;
 		data = null;
 
+		// return the server's result
 		return result;
 	}
 
@@ -128,11 +141,13 @@ public final class ConnectionManager {
 			String[] messageBodies) {
 		try {
 
+			// create a MultiPart entity which will contain the text message,
+			// representing the request that will be made to the server
 			MultipartEntity data = new MultipartEntity();
 
 			for (int i = 0; i < messageBodies.length; i++) {
-				data.addPart(messageHeaders[i], new StringBody(
-						messageBodies[i]));
+				data.addPart(messageHeaders[i],
+						new StringBody(messageBodies[i]));
 			}
 
 			return ConnectionManager.sendMessage(url, data);
@@ -167,16 +182,18 @@ public final class ConnectionManager {
 	private static String sendMessage(String url, String[] messageHeaders,
 			String[] messageBodies, String[] fileHeaders, String[] files) {
 		try {
+
+			// create a MultiPart entity which will contain the text message and
+			// files, representing the request that will be made to the server
 			MultipartEntity data = new MultipartEntity();
 
 			for (int i = 0; i < messageBodies.length; i++) {
-				data.addPart(messageHeaders[i], new StringBody(
-						messageBodies[i]));
+				data.addPart(messageHeaders[i],
+						new StringBody(messageBodies[i]));
 			}
 
 			for (int i = 0; i < files.length; i++) {
-				data.addPart(fileHeaders[i], new FileBody(
-						new File(files[i])));
+				data.addPart(fileHeaders[i], new FileBody(new File(files[i])));
 			}
 
 			return ConnectionManager.sendMessage(url, data);

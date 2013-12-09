@@ -1,7 +1,7 @@
 package com.coddotech.teamsubb.jobs;
 
-import com.coddotech.teamsubb.maingui.DesktopGadget;
-import com.coddotech.teamsubb.maingui.LoginWindow;
+import com.coddotech.teamsubb.connection.LoginWindow;
+import com.coddotech.teamsubb.main.DesktopGadget;
 
 /**
  * Class used for realizing the communication between this client and the target

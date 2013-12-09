@@ -1,11 +1,18 @@
-package com.coddotech.teamsubb.maingui;
+package com.coddotech.teamsubb.main;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 
-abstract class CustomWindow {
+public abstract class CustomWindow {
 
 	private Shell shell;
+
+	/**
+	 * Class constructor
+	 */
+	public CustomWindow() {
+		createContents();
+	}
 
 	/**
 	 * Get the shell for this class
@@ -14,23 +21,6 @@ abstract class CustomWindow {
 	 */
 	public Shell getShell() {
 		return shell;
-	}
-
-	/**
-	 * Set the shell for this site
-	 * 
-	 * @param shell
-	 *            The shell to be set for this class
-	 */
-	public void setShell(Shell shell) {
-
-	}
-
-	/**
-	 * Class constructor
-	 */
-	CustomWindow() {
-		createContents();
 	}
 
 	/**
@@ -48,6 +38,7 @@ abstract class CustomWindow {
 	 * Close the GUI for this class and dispose of its contents
 	 */
 	public void close() {
+		shell.close();
 		shell.dispose();
 		Display.getCurrent().dispose();
 	}

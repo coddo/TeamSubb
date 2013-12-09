@@ -1,12 +1,9 @@
-package com.coddotech.teamsubb.maingui;
+package com.coddotech.teamsubb.main;
 
 import java.io.IOException;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import com.coddotech.teamsubb.connection.ConnectionManager;
+import com.coddotech.teamsubb.connection.LoginWindow;
 import com.coddotech.teamsubb.jobs.UserDetails;
 
 public class MainClass {
@@ -14,15 +11,10 @@ public class MainClass {
 	public static void main(String[] args) throws IOException {
 		/*display the login window as a dialog*/
 		LoginWindow login = new LoginWindow();
-		login.setShell(new Shell(Display.getCurrent(), SWT.DIALOG_TRIM
-				| SWT.APPLICATION_MODAL));
 		login.show();
 		
 		//get the login result string
 		String mayContinue = login.getMayContinueValue();
-		
-		//dispose of the login window class
-		login.dispose();
 		login = null;
 		
 		//if the login result is "OK", then proceed with
