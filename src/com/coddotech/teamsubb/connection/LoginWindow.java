@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
-import com.coddotech.teamsubb.jobs.UserDetails;
+import com.coddotech.teamsubb.jobs.UserInformation;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
@@ -35,7 +35,7 @@ public final class LoginWindow extends CustomWindow {
 
 	private Font defaultFont;
 
-	private UserDetails userDetailsManager;
+	private UserInformation userDetailsManager;
 
 	private String mayContinue = "NO";
 
@@ -96,7 +96,7 @@ public final class LoginWindow extends CustomWindow {
 		// set the user's name, email and rank
 		userDetailsManager.setUserName(userBox.getText());
 		userDetailsManager.setUserEmail(data[1]);
-		userDetailsManager.setUserRank(UserDetails.DEFAULT_USER_RANKS[Integer
+		userDetailsManager.setUserRank(UserInformation.DEFAULT_USER_RANKS[Integer
 				.parseInt(data[2])]);
 
 		// set the user's jobs
@@ -207,7 +207,7 @@ public final class LoginWindow extends CustomWindow {
 	 */
 	private void initializeComponents() {
 		// initializations
-		userDetailsManager = new UserDetails();
+		userDetailsManager = new UserInformation();
 
 		defaultFont = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
 

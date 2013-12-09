@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.connection.LoginWindow;
-import com.coddotech.teamsubb.jobs.UserDetails;
+import com.coddotech.teamsubb.jobs.UserInformation;
 
 public class MainClass {
 
@@ -25,7 +25,7 @@ public class MainClass {
 		}
 		
 		//reset the user information file to its defaults
-		UserDetails det = new UserDetails();
+		UserInformation det = new UserInformation();
 		det.restoreDefaultSettings();
 		
 		//logout from the server if possible

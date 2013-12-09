@@ -1,6 +1,7 @@
 package com.coddotech.teamsubb.jobs;
 
-import com.coddotech.teamsubb.connection.LoginWindow;
+import java.util.ArrayList;
+
 import com.coddotech.teamsubb.main.DesktopGadget;
 
 /**
@@ -13,17 +14,24 @@ import com.coddotech.teamsubb.main.DesktopGadget;
  * 
  */
 public class JobManager {
-
+	
+	private static final String SEPARATOR_FIELDS = "&?&";
+	private static final String SEPARATOR_JOBS = "¬|¬";
+	
+	private ArrayList<Job> jobs;
+	
 	private DesktopGadget _gadget;
 
 	/**
 	 * Main class construcotr
 	 * 
-	 * @param widget
+	 * @param gadget
 	 *            The main form for this application
 	 */
-	public JobManager(DesktopGadget widget) {
-		_gadget = widget;
+	public JobManager(DesktopGadget gadget, UserInformation userInfo) {
+		this._gadget = gadget;
+		
+		jobs = new ArrayList<Job>();
 	} 
 
 	/**
@@ -38,7 +46,7 @@ public class JobManager {
 	 * Send a request to the server in order to receive a job if any available
 	 */
 	public void sendJobRequest() {
-
+		//CODE HERE
 	}
 
 	/*

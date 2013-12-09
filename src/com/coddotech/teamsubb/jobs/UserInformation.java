@@ -22,7 +22,7 @@ import javax.xml.transform.stream.StreamResult;
  * @author Coddo
  * 
  */
-public final class UserDetails {
+public final class UserInformation {
 
 	public static final String[] DEFAULT_USER_INFO_HEADERS = { "name", "email",
 			"rank" };
@@ -45,7 +45,7 @@ public final class UserDetails {
 	/**
 	 * Class constructor
 	 */
-	public UserDetails() {
+	public UserInformation() {
 		initializeComponents();
 	}
 
@@ -135,7 +135,7 @@ public final class UserDetails {
 	 */
 	public boolean isSubber() {
 		element = (Element) jobDetailsFile
-				.getElementsByTagName(UserDetails.DEFAULT_USER_INFO_HEADERS[0]);
+				.getElementsByTagName(UserInformation.DEFAULT_USER_INFO_HEADERS[0]);
 		return Boolean.parseBoolean(element.getAttribute("value"));
 	}
 
@@ -146,7 +146,7 @@ public final class UserDetails {
 	 */
 	public boolean isVerifier() {
 		element = (Element) jobDetailsFile
-				.getElementsByTagName(UserDetails.DEFAULT_USER_INFO_HEADERS[1]);
+				.getElementsByTagName(UserInformation.DEFAULT_USER_INFO_HEADERS[1]);
 		return Boolean.parseBoolean(element.getAttribute("value"));
 	}
 
@@ -157,7 +157,7 @@ public final class UserDetails {
 	 */
 	public boolean isEncoder() {
 		element = (Element) jobDetailsFile
-				.getElementsByTagName(UserDetails.DEFAULT_USER_INFO_HEADERS[2]);
+				.getElementsByTagName(UserInformation.DEFAULT_USER_INFO_HEADERS[2]);
 		return Boolean.parseBoolean(element.getAttribute("value"));
 	}
 
@@ -168,7 +168,7 @@ public final class UserDetails {
 	 */
 	public boolean isTypesetter() {
 		element = (Element) jobDetailsFile
-				.getElementsByTagName(UserDetails.DEFAULT_USER_INFO_HEADERS[3]);
+				.getElementsByTagName(UserInformation.DEFAULT_USER_INFO_HEADERS[3]);
 		return Boolean.parseBoolean(element.getAttribute("value"));
 	}
 
@@ -179,7 +179,7 @@ public final class UserDetails {
 	 */
 	public boolean isManga() {
 		element = (Element) jobDetailsFile
-				.getElementsByTagName(UserDetails.DEFAULT_USER_INFO_HEADERS[4]);
+				.getElementsByTagName(UserInformation.DEFAULT_USER_INFO_HEADERS[4]);
 		return Boolean.parseBoolean(element.getAttribute("value"));
 	}
 
@@ -190,7 +190,7 @@ public final class UserDetails {
 	 */
 	public boolean isNews() {
 		element = (Element) jobDetailsFile
-				.getElementsByTagName(UserDetails.DEFAULT_USER_INFO_HEADERS[5]);
+				.getElementsByTagName(UserInformation.DEFAULT_USER_INFO_HEADERS[5]);
 		return Boolean.parseBoolean(element.getAttribute("value"));
 	}
 
@@ -201,7 +201,7 @@ public final class UserDetails {
 	 */
 	public boolean isPoster() {
 		element = (Element) jobDetailsFile
-				.getElementsByTagName(UserDetails.DEFAULT_USER_INFO_HEADERS[6]);
+				.getElementsByTagName(UserInformation.DEFAULT_USER_INFO_HEADERS[6]);
 		return Boolean.parseBoolean(element.getAttribute("value"));
 	}
 
@@ -210,15 +210,15 @@ public final class UserDetails {
 	 */
 	public void restoreDefaultSettings() {
 		// personal user information
-		for (int i = 0; i < UserDetails.DEFAULT_USER_INFO_HEADERS.length; i++) {
+		for (int i = 0; i < UserInformation.DEFAULT_USER_INFO_HEADERS.length; i++) {
 			element = (Element) jobDetailsFile.getElementsByTagName(
-					UserDetails.DEFAULT_USER_INFO_HEADERS[i]).item(0);
+					UserInformation.DEFAULT_USER_INFO_HEADERS[i]).item(0);
 			element.setAttribute("value",
-					UserDetails.DEFAULT_USER_INFO_VALUES[i]);
+					UserInformation.DEFAULT_USER_INFO_VALUES[i]);
 		}
 
 		// user's jobs information
-		setUserJobsArray(UserDetails.DEFAULT_JOBS_INFO_VALUES);
+		setUserJobsArray(UserInformation.DEFAULT_JOBS_INFO_VALUES);
 	}
 
 	/**
@@ -253,12 +253,12 @@ public final class UserDetails {
 	 *            A String array containing the job names that the user has
 	 */
 	public void setUserJobs(String[] jobs) {
-		boolean[] toSet = UserDetails.DEFAULT_JOBS_INFO_VALUES;
+		boolean[] toSet = UserInformation.DEFAULT_JOBS_INFO_VALUES;
 
 		// create job values array
 		for (String job : jobs) {
-			for (int i = 0; i < UserDetails.DEFAULT_JOBS_INFO_VALUES.length; i++) {
-				if (job.equals(UserDetails.DEFAULT_JOBS_INFO_HEADERS[i])) {
+			for (int i = 0; i < UserInformation.DEFAULT_JOBS_INFO_VALUES.length; i++) {
+				if (job.equals(UserInformation.DEFAULT_JOBS_INFO_HEADERS[i])) {
 					toSet[i] = true;
 					break;
 				}
@@ -277,9 +277,9 @@ public final class UserDetails {
 	 *            this user
 	 */
 	private void setUserJobsArray(boolean[] userJobsInfo) {
-		for (int i = 0; i < UserDetails.DEFAULT_JOBS_INFO_HEADERS.length; i++) {
+		for (int i = 0; i < UserInformation.DEFAULT_JOBS_INFO_HEADERS.length; i++) {
 			element = (Element) jobDetailsFile.getElementsByTagName(
-					UserDetails.DEFAULT_JOBS_INFO_HEADERS[i]).item(0);
+					UserInformation.DEFAULT_JOBS_INFO_HEADERS[i]).item(0);
 			element.setAttribute("value", Boolean.toString(userJobsInfo[i]));
 		}
 	}

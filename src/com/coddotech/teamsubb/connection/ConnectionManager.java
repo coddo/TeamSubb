@@ -18,8 +18,8 @@ import org.apache.http.params.CoreProtocolPNames;
 public final class ConnectionManager {
 
 	private static final String URL_USER_LOGGING = "http://anime4fun.ro/wlogin.php";
+	private static final String URL_JOBS = "http://anime4fun.ro/jobs.php";
 
-	// private static final String URL_JOBS = "http://anime4fun.ro/jobs.php";
 	// private static final String URL_CHAT = "http://anime4fun.ro/chat.php";
 
 	/**
@@ -29,8 +29,9 @@ public final class ConnectionManager {
 	 *            The username as it is registered on the server
 	 * @param pass
 	 *            The password for this user
-	 * @return A logical value indicating if the connection was successful or
-	 *         not
+	 * @return A string containing the login result (false if wrong credentials
+	 *         or user_details if good credentials). This resturns the message
+	 *         "error" if a connection problem is encountered
 	 */
 	public static String sendLoginRequest(String user, String pass) {
 		return ConnectionManager.sendMessage(
@@ -45,10 +46,24 @@ public final class ConnectionManager {
 	 *            The username of the staff member to be logged out from the
 	 *            server
 	 */
-	public static String sendLogoutRequest(String user) {
-		return ConnectionManager.sendMessage(
-				ConnectionManager.URL_USER_LOGGING, new String[] { "logout" },
-				new String[] { user });
+	public static void sendLogoutRequest(String user) {
+		ConnectionManager.sendMessage(ConnectionManager.URL_USER_LOGGING,
+				new String[] { "logout" }, new String[] { user });
+	}
+
+	/**
+	 * Sends a job search request to the server in order to find suitable jobs
+	 * for the currently logged in staff memeber
+	 * 
+	 * @param user
+	 *            The name of the staff member that wiches to find a job
+	 * @return A String containing the details for the jobs if any available
+	 *         ones are found. Returns the message "error" if a connection
+	 *         problem is encountered
+	 */
+	public static String sendJobSearchRequest(String user) {
+		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
+				new String[] { "jobs", "staff" }, new String[] { "1", user });
 	}
 
 	/**

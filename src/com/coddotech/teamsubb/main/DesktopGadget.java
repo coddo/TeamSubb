@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.jobs.JobManager;
+import com.coddotech.teamsubb.jobs.UserInformation;
 import com.coddotech.teamsubb.settings.AppSettings;
 
 /**
@@ -18,6 +19,7 @@ public class DesktopGadget extends CustomWindow {
 
 	private JobManager jobManager;
 	private AppSettings settings;
+	private UserInformation userInfo;
 
 	private Label label;
 
@@ -108,7 +110,9 @@ public class DesktopGadget extends CustomWindow {
 	 */
 	private void initializeComponents () {
 		// object definitions
-		jobManager = new JobManager(this);
+		userInfo = new UserInformation();
+		jobManager = new JobManager(this, this.userInfo);
+		
 		settings = new AppSettings();
 		label = new Label(getShell(), SWT.None);
 	

@@ -17,6 +17,7 @@ public final class Job {
 	private String jobType;
 	private String jobDescription;
 	private Date jobDate;
+	private String previousStaffMember;
 	private String nextStaffMember;
 	private File jobSubFile;
 	private File jobFontArchive;
@@ -25,6 +26,10 @@ public final class Job {
 	 * Class constructor
 	 */
 	public Job() {
+		
+	}
+	
+	public void dispose() {
 		
 	}
 
@@ -78,6 +83,14 @@ public final class Job {
 		this.jobDate = jobDate;
 	}
 
+
+	public String getPreviousStaffMember() {
+		return previousStaffMember;
+	}
+
+	public void setPreviousStaffMember(String previousStaffMember) {
+		this.previousStaffMember = previousStaffMember;
+	}
 
 	public String getNextStaffMember() {
 		return nextStaffMember;
