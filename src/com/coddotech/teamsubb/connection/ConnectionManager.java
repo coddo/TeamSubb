@@ -72,7 +72,7 @@ public final class ConnectionManager {
 	 * @param url
 	 *            The link which contains the location for the server which will
 	 *            receive the request
-	 * @param mpEntity
+	 * @param data
 	 *            An entity containg the parameters to be sent with the message.
 	 *            It can contain both plain text and files of all kinds
 	 * @return A String value containing the response that has been received
@@ -82,22 +82,28 @@ public final class ConnectionManager {
 	 * @throws IllegalStateException
 	 * @throws IOException
 	 */
-	private static String sendMessage(String url, MultipartEntity mpEntity)
+	private static String sendMessage(String url, MultipartEntity data)
 			throws IllegalStateException, IOException {
-		HttpClient httpclient = new DefaultHttpClient();
-		httpclient.getParams().setParameter(
+		HttpClient httpClient = new DefaultHttpClient();
+		httpClient.getParams().setParameter(
 				CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
-		HttpPost httppost = new HttpPost(url);
+		HttpPost httpPost = new HttpPost(url);
 
-		httppost.setEntity(mpEntity);
+		httpPost.setEntity(data);
 
-		HttpResponse response = httpclient.execute(httppost);
+		HttpResponse response = httpClient.execute(httpPost);
 
 		String result = ConnectionManager.readResult(response.getEntity()
 				.getContent());
 
-		httpclient.getConnectionManager().shutdown();
+		httpClient.getConnectionManager().shutdown();
+		
+		//dispose unnecessary objects
+		httpClient = null;
+		response = null;
+		httpPost = null;
+		data = null;
 
 		return result;
 	}
@@ -122,14 +128,14 @@ public final class ConnectionManager {
 			String[] messageBodies) {
 		try {
 
-			MultipartEntity mpEntity = new MultipartEntity();
+			MultipartEntity data = new MultipartEntity();
 
 			for (int i = 0; i < messageBodies.length; i++) {
-				mpEntity.addPart(messageHeaders[i], new StringBody(
+				data.addPart(messageHeaders[i], new StringBody(
 						messageBodies[i]));
 			}
 
-			return ConnectionManager.sendMessage(url, mpEntity);
+			return ConnectionManager.sendMessage(url, data);
 
 		} catch (Exception ex) {
 			return "error";
@@ -161,19 +167,19 @@ public final class ConnectionManager {
 	private static String sendMessage(String url, String[] messageHeaders,
 			String[] messageBodies, String[] fileHeaders, String[] files) {
 		try {
-			MultipartEntity mpEntity = new MultipartEntity();
+			MultipartEntity data = new MultipartEntity();
 
 			for (int i = 0; i < messageBodies.length; i++) {
-				mpEntity.addPart(messageHeaders[i], new StringBody(
+				data.addPart(messageHeaders[i], new StringBody(
 						messageBodies[i]));
 			}
 
 			for (int i = 0; i < files.length; i++) {
-				mpEntity.addPart(fileHeaders[i], new FileBody(
+				data.addPart(fileHeaders[i], new FileBody(
 						new File(files[i])));
 			}
 
-			return ConnectionManager.sendMessage(url, mpEntity);
+			return ConnectionManager.sendMessage(url, data);
 
 		} catch (Exception ex) {
 			return "error";
@@ -193,17 +199,17 @@ public final class ConnectionManager {
 		String result = "";
 
 		// read the result of the request
-		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+		BufferedReader input = new BufferedReader(new InputStreamReader(stream));
 
 		// recreate the result of the string
 		String inputLine;
-		while ((inputLine = in.readLine()) != null) {
+		while ((inputLine = input.readLine()) != null) {
 			result += inputLine;
 		}
 
 		// dispose of unnecessary objects
-		in.close();
-		in = null;
+		input.close();
+		input = null;
 		inputLine = null;
 
 		// return the result
