@@ -14,12 +14,12 @@ import com.coddotech.teamsubb.main.DesktopGadget;
  * 
  */
 public class JobManager {
-	
+
 	private static final String SEPARATOR_FIELDS = "&?&";
 	private static final String SEPARATOR_JOBS = "¬|¬";
-	
+
 	private ArrayList<Job> jobs;
-	
+
 	private DesktopGadget _gadget;
 
 	/**
@@ -30,9 +30,9 @@ public class JobManager {
 	 */
 	public JobManager(DesktopGadget gadget, UserInformation userInfo) {
 		this._gadget = gadget;
-		
+
 		jobs = new ArrayList<Job>();
-	} 
+	}
 
 	/**
 	 * Clear memory from this class and its resources
@@ -45,8 +45,8 @@ public class JobManager {
 	/*
 	 * Send a request to the server in order to receive a job if any available
 	 */
-	public void sendJobRequest() {
-		//CODE HERE
+	public void findJobs() {
+		// CODE HERE
 	}
 
 	/*
@@ -62,6 +62,10 @@ public class JobManager {
 	 */
 	public void declineJob(Job job) {
 
+	}
+
+	private String downloadFile(String fileURL) {
+		return null;
 	}
 
 	/*

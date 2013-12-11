@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Connection;
 
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
@@ -14,6 +15,9 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 
 public final class ConnectionManager {
 
@@ -63,7 +67,61 @@ public final class ConnectionManager {
 	 */
 	public static String sendJobSearchRequest(String user) {
 		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
-				new String[] { "jobs", "staff" }, new String[] { "1", user });
+				new String[] { "jobs", "staff" },
+				new String[] { "search", user });
+	}
+
+	/**
+	 * Sends a request to the server in order to create a job with the specified
+	 * information
+	 * 
+	 * @param name
+	 *            The name of the job
+	 * @param type
+	 *            The type that the job needs
+	 * @param comments
+	 *            The comments that come along with the job
+	 * @param subFile
+	 *            The file representing the sub (main file)
+	 * @param fonts
+	 *            Any font files that are needed to finish the job
+	 * @return A String value indicating if the job was created successfully or
+	 *         not. <br>
+	 *         It contains "error" in case of a connection error. <br>
+	 *         It contains "false" in case the job creation failed. <br>
+	 *         It contains "true" in case the job creation was successful
+	 */
+	public static String sendJobCreateRequest(String name, String type,
+			String comments, String subFile, String[] fonts) {
+		String[] messageHeaders = new String[4];
+		String[] messages = new String[4];
+		String[] fileHeaders = new String[fonts.length + 1];
+		String[] files = new String[fileHeaders.length];
+
+		fileHeaders[0] = "sub";
+		files[0] = subFile;
+
+		if (fonts.length > 0) {
+			for (int i = 0; i < fonts.length; i++) {
+				fileHeaders[i + 1] = "font" + (i + 1);
+				files[i + 1] = fonts[i];
+			}
+		}
+
+		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
+				messageHeaders, messages, fileHeaders, files);
+	}
+
+	/**
+	 * Displays an error message telling the user that the connection to the
+	 * server was unsuccessful
+	 */
+	public static void showConnectionErrorMessage() {
+		MessageBox message = new MessageBox(
+				Display.getCurrent().getShells()[0], SWT.ICON_ERROR);
+		message.setMessage("A connection error has occured.\nPlease try again later...");
+		message.setText("Connection failed");
+		message.open();
 	}
 
 	/**
@@ -144,7 +202,7 @@ public final class ConnectionManager {
 	 *            receive the request
 	 * @param messageHeaders
 	 *            A String collection containing the parameters for each message
-	 * @param messageBodies
+	 * @param messages
 	 *            A String collection which contains the values for the
 	 *            parameters specified in the Headers String collection
 	 * @return A String value containing the response that has been received
@@ -153,16 +211,15 @@ public final class ConnectionManager {
 	 *         encountered
 	 */
 	private static String sendMessage(String url, String[] messageHeaders,
-			String[] messageBodies) {
+			String[] messages) {
 		try {
 
 			// create a MultiPart entity which will contain the text message,
 			// representing the request that will be made to the server
 			MultipartEntity data = new MultipartEntity();
 
-			for (int i = 0; i < messageBodies.length; i++) {
-				data.addPart(messageHeaders[i],
-						new StringBody(messageBodies[i]));
+			for (int i = 0; i < messages.length; i++) {
+				data.addPart(messageHeaders[i], new StringBody(messages[i]));
 			}
 
 			return ConnectionManager.sendMessage(url, data);
@@ -181,7 +238,7 @@ public final class ConnectionManager {
 	 *            receive the request
 	 * @param messageHeaders
 	 *            A String collection containing the parameters for each message
-	 * @param messageBodies
+	 * @param messages
 	 *            A String collection which contains the values for the
 	 *            parameters specified in the Headers String collection
 	 * @param fileHeaders
@@ -195,16 +252,15 @@ public final class ConnectionManager {
 	 *         encountered
 	 */
 	private static String sendMessage(String url, String[] messageHeaders,
-			String[] messageBodies, String[] fileHeaders, String[] files) {
+			String[] messages, String[] fileHeaders, String[] files) {
 		try {
 
 			// create a MultiPart entity which will contain the text message and
 			// files, representing the request that will be made to the server
 			MultipartEntity data = new MultipartEntity();
 
-			for (int i = 0; i < messageBodies.length; i++) {
-				data.addPart(messageHeaders[i],
-						new StringBody(messageBodies[i]));
+			for (int i = 0; i < messages.length; i++) {
+				data.addPart(messageHeaders[i], new StringBody(messages[i]));
 			}
 
 			for (int i = 0; i < files.length; i++) {

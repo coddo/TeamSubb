@@ -88,7 +88,6 @@ public class DesktopGadget extends CustomWindow {
 			label.pack();
 
 			readUserDetails();
-			jobManager.sendJobRequest();
 		}
 	};
 

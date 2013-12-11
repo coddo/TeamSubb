@@ -1,8 +1,6 @@
 package com.coddotech.teamsubb.jobs;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Entity used by the JobManager class. This class stores information about a
@@ -13,24 +11,15 @@ import java.util.Date;
  */
 public final class Job {
 
-	/*
-	 * IMPORTANT NOTES
-	 * 
-	 * Due to the way this entity is going to be used and considering the fact
-	 * that the messages between the client and the server are sent as String
-	 * values, THe ID for each job (which is usually an integer) is going to be
-	 * stored as a String value
-	 */
-
 	public static final String DEFAULT_NEXT_STAFF = "anyone";
 
-	private String jobID;
+	private int jobID;
 	private String jobName;
 	private String jobType;
 	private String jobDescription;
-	private Date jobStartDate;
 	private String previousStaffMember;
 	private String nextStaffMember;
+	private String jobStartDate; // store the date as a String value for now
 	private File jobSubFile;
 	private File[] jobFontArchive;
 
@@ -53,7 +42,7 @@ public final class Job {
 	 * 
 	 * @return A string representing the ID
 	 */
-	public String getJobID() {
+	public int getJobID() {
 		return jobID;
 	}
 
@@ -63,7 +52,7 @@ public final class Job {
 	 * @param jobID
 	 *            A String value representing the ID
 	 */
-	public void setJobID(String jobID) {
+	public void setJobID(int jobID) {
 		this.jobID = jobID;
 	}
 
@@ -133,7 +122,7 @@ public final class Job {
 	 * @return A Date type variable telling the date in which the job was first
 	 *         created
 	 */
-	public Date getJobStartDate() {
+	public String getJobStartDate() {
 		return jobStartDate;
 	}
 
@@ -144,30 +133,34 @@ public final class Job {
 	 *            A Date type variable representing the start date that this job
 	 *            has
 	 */
-	public void setJobStartDate(Date jobDate) {
+	public void setJobStartDate(String jobDate) {
 		this.jobStartDate = jobDate;
 	}
 
 	/**
-	 * Get the name of the staff member that worked on this job before the current one
+	 * Get the name of the staff member that worked on this job before the
+	 * current one
 	 * 
-	 * @return A String containing the name of the person 
+	 * @return A String containing the name of the person
 	 */
 	public String getPreviousStaffMember() {
 		return previousStaffMember;
 	}
 
 	/**
-	 * Set the name of the staff member that worked on this job before the current one
+	 * Set the name of the staff member that worked on this job before the
+	 * current one
 	 * 
-	 * @param previousStaffMember A String value containing the name of the person 
+	 * @param previousStaffMember
+	 *            A String value containing the name of the person
 	 */
 	public void setPreviousStaffMember(String previousStaffMember) {
 		this.previousStaffMember = previousStaffMember;
 	}
 
 	/**
-	 * Get the name of the staff member that should work on this job after it is pushed back to the server
+	 * Get the name of the staff member that should work on this job after it is
+	 * pushed back to the server
 	 * 
 	 * @return A String value containing the name of the person
 	 */
@@ -176,8 +169,11 @@ public final class Job {
 	}
 
 	/**
-	 * Set the name of the staff member that should work on this job after it is puched back to the server
-	 * @param nextStaffMember A String value containing the name of the person
+	 * Set the name of the staff member that should work on this job after it is
+	 * puched back to the server
+	 * 
+	 * @param nextStaffMember
+	 *            A String value containing the name of the person
 	 */
 	public void setNextStaffMember(String nextStaffMember) {
 		this.nextStaffMember = nextStaffMember;
@@ -185,6 +181,7 @@ public final class Job {
 
 	/**
 	 * Get the sub file that comes with this sub
+	 * 
 	 * @return A File entity which contains the file information for the sub
 	 */
 	public File getJobSubFile() {
@@ -194,7 +191,8 @@ public final class Job {
 	/**
 	 * Set the sub file that comes with this sub
 	 * 
-	 * @param jobSubFile The File entity that represents the sub
+	 * @param jobSubFile
+	 *            The File entity that represents the sub
 	 */
 	public void setJobSubFile(File jobSubFile) {
 		this.jobSubFile = jobSubFile;
@@ -204,7 +202,7 @@ public final class Job {
 	 * Get the font collection needed to finish this job
 	 * 
 	 * @return A collection (File[]) containing the File entities for each font
- 	 */
+	 */
 	public File[] getJobFontArchive() {
 		return jobFontArchive;
 	}
@@ -212,7 +210,9 @@ public final class Job {
 	/**
 	 * Set the font collection needed to finish this job
 	 * 
-	 * @param jobFontArchive A collection (File[]) representing the File entities for the fonts
+	 * @param jobFontArchive
+	 *            A collection (File[]) representing the File entities for the
+	 *            fonts
 	 */
 	public void setJobFontArchive(File[] jobFontArchive) {
 		this.jobFontArchive = jobFontArchive;

@@ -39,16 +39,16 @@ public final class LoginWindow extends CustomWindow {
 
 	private String mayContinue = "NO";
 
-	public String getMayContinueValue() {
-		return mayContinue;
-	}
-
 	/**
 	 * Class constructor
 	 */
 	public LoginWindow() {
 		super();
 		initializeComponents();
+	}
+
+	public String getMayContinueValue() {
+		return mayContinue;
 	}
 
 	/**
@@ -96,48 +96,42 @@ public final class LoginWindow extends CustomWindow {
 		// set the user's name, email and rank
 		userDetailsManager.setUserName(userBox.getText());
 		userDetailsManager.setUserEmail(data[1]);
-		userDetailsManager.setUserRank(UserInformation.DEFAULT_USER_RANKS[Integer
-				.parseInt(data[2])]);
+		userDetailsManager
+				.setUserRank(UserInformation.DEFAULT_USER_RANKS[Integer
+						.parseInt(data[2])]);
 
 		// set the user's jobs
 		userDetailsManager.setUserJobs(data);
 	}
 
 	/**
-	 * Start the login procesure
+	 * Start the login procedure
 	 */
 	private void doLogin() {
-		boolean ok;
-		String[] result = null;
 		MessageBox message = new MessageBox(getShell(), SWT.ICON_ERROR);
-		String resultMessage = ConnectionManager.sendLoginRequest(userBox.getText(),
-				passBox.getText());
-		
+		String resultMessage = ConnectionManager.sendLoginRequest(
+				userBox.getText(), passBox.getText());
+
 		if (!resultMessage.equals("error")) {
 			// on successful connection, check if the login credentials are
 			// correct or not
-			result = resultMessage.split("&");
+			String[] result = resultMessage.split("&");
 
 			if (Boolean.parseBoolean(result[0])) {
-				ok = true;
-			} else {
+				// if the login process is successful continue with starting the
+				// application's main functionalities and close the login window
+				setData(result);
+				mayContinue = "OK";
+				this.close();
+			} else { // if the login was unsuccessful, show an error message
 				message.setMessage("The entered username or password is incorrect");
 				message.setText("Wrong credentials");
-				ok = false;
+				message.open();
 			}
-		} else { // on unsuccessful connection, display an error message
-			message.setMessage("A connection error has occured.\nPlease try again later...");
-			message.setText("Connection failed");
-			ok = false;
-		}
-
-		if (!ok) { // if the login was unsuccessful, show the an message
-			message.open();
-		} else { // otherwise continue with starting the application's main
-					// functionalities and close the login window
-			setData(result);
-			mayContinue = "OK";
-			close();
+		} else {
+			// on unsuccessful connection to the server, display an error
+			// message informing the user about it
+			ConnectionManager.showConnectionErrorMessage();
 		}
 	}
 

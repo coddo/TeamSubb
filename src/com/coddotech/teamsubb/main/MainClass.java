@@ -4,14 +4,16 @@ import java.io.IOException;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.connection.LoginWindow;
+import com.coddotech.teamsubb.jobs.Job;
 import com.coddotech.teamsubb.jobs.UserInformation;
 
 public class MainClass {
 
 	public static void main(String[] args) throws IOException {
+		Job j = new Job();
 		/*display the login window as a dialog*/
 		LoginWindow login = new LoginWindow();
-		login.show();
+		login.show(); j.dispose();
 		
 		//get the login result string
 		String mayContinue = login.getMayContinueValue();
