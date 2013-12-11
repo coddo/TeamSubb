@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Connection;
 
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
@@ -110,6 +109,23 @@ public final class ConnectionManager {
 
 		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
 				messageHeaders, messages, fileHeaders, files);
+	}
+
+	/**
+	 * Send a request to the server in order to accept a certain job
+	 * 
+	 * @param jobID
+	 *            The ID of the job that you want to undertake
+	 * @param user
+	 *            The name of the user that wants to take the job
+	 * @return A String containing the response from the server
+	 */
+	public static String sendJobAcceptMessage(int jobID, String user) {
+		String[] messageHeaders = { "acceptjob", "staff" };
+		String[] messages = { Integer.toString(jobID), user };
+
+		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
+				messageHeaders, messages);
 	}
 
 	/**
