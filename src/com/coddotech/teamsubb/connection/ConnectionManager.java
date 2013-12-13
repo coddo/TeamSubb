@@ -32,14 +32,23 @@ public final class ConnectionManager {
 	 *            The username as it is registered on the server
 	 * @param pass
 	 *            The password for this user
+	 * @param showMessageOnError
+	 *            A logical value telling the method whether to display an error
+	 *            message in case the connection to the server fails
 	 * @return A string containing the login result (false if wrong credentials
 	 *         or user_details if good credentials). This resturns the message
 	 *         "error" if a connection problem is encountered
 	 */
-	public static String sendLoginRequest(String user, String pass) {
-		return ConnectionManager.sendMessage(
+	public static String sendLoginRequest(String user, String pass,
+			boolean showMessageOnError) {
+		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_USER_LOGGING, new String[] { "user",
 						"pass" }, new String[] { user, pass });
+
+		if (showMessageOnError && response.equals("error"))
+			ConnectionManager.showConnectionErrorMessage();
+
+		return response;
 	}
 
 	/**
@@ -60,20 +69,31 @@ public final class ConnectionManager {
 	 * 
 	 * @param user
 	 *            The name of the staff member that wiches to find a job
+	 * @param showMessageOnError
+	 *            A logical value telling the method whether to display an error
+	 *            message in case the connection to the server fails
 	 * @return A String containing the details for the jobs if any available
 	 *         ones are found. Returns the message "error" if a connection
 	 *         problem is encountered
 	 */
-	public static String sendJobSearchRequest(String user) {
-		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
-				new String[] { "jobs", "staff" },
+	public static String sendJobSearchRequest(String user,
+			boolean showMessageOnError) {
+		String response = ConnectionManager.sendMessage(
+				ConnectionManager.URL_JOBS, new String[] { "jobs", "staff" },
 				new String[] { "search", user });
+
+		if (showMessageOnError && response.equals("error"))
+			ConnectionManager.showConnectionErrorMessage();
+
+		return response;
 	}
 
 	/**
 	 * Sends a request to the server in order to create a job with the specified
 	 * information
 	 * 
+	 * @param user
+	 *            The name of the user who creates this job
 	 * @param name
 	 *            The name of the job
 	 * @param type
@@ -84,16 +104,24 @@ public final class ConnectionManager {
 	 *            The file representing the sub (main file)
 	 * @param fonts
 	 *            Any font files that are needed to finish the job
+	 * @param showMessageOnError
+	 *            A logical value telling the method whether to display an error
+	 *            message in case the connection to the server fails
 	 * @return A String value indicating if the job was created successfully or
 	 *         not. <br>
 	 *         It contains "error" in case of a connection error. <br>
 	 *         It contains "false" in case the job creation failed. <br>
 	 *         It contains "true" in case the job creation was successful
 	 */
-	public static String sendJobCreateRequest(String name, String type,
-			String comments, String subFile, String[] fonts) {
-		String[] messageHeaders = new String[4];
-		String[] messages = new String[4];
+	public static String sendJobCreateRequest(String user, String name,
+			String type, String comments, String subFile, String[] fonts,
+			boolean showMessageOnError) {
+		// user info handling
+		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype",
+				"comments" };
+		String[] messages = { "create", user, name, type, comments };
+
+		// files handling
 		String[] fileHeaders = new String[fonts.length + 1];
 		String[] files = new String[fileHeaders.length];
 
@@ -107,8 +135,15 @@ public final class ConnectionManager {
 			}
 		}
 
-		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
-				messageHeaders, messages, fileHeaders, files);
+		// request sending
+		String response = ConnectionManager.sendMessage(
+				ConnectionManager.URL_JOBS, messageHeaders, messages,
+				fileHeaders, files);
+
+		if (showMessageOnError && response.equals("error"))
+			ConnectionManager.showConnectionErrorMessage();
+
+		return response;
 	}
 
 	/**
@@ -118,14 +153,23 @@ public final class ConnectionManager {
 	 *            The ID of the job that you want to undertake
 	 * @param user
 	 *            The name of the user that wants to take the job
+	 * @param showMessageOnError
+	 *            A logical value telling the method whether to display an error
+	 *            message in case the connection to the server fails
 	 * @return A String containing the response from the server
 	 */
-	public static String sendJobAcceptMessage(int jobID, String user) {
+	public static String sendJobAcceptMessage(int jobID, String user,
+			boolean showMessageOnError) {
 		String[] messageHeaders = { "acceptjob", "staff" };
 		String[] messages = { Integer.toString(jobID), user };
 
-		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
-				messageHeaders, messages);
+		String response = ConnectionManager.sendMessage(
+				ConnectionManager.URL_JOBS, messageHeaders, messages);
+
+		if (showMessageOnError && response.equals("error"))
+			ConnectionManager.showConnectionErrorMessage();
+
+		return response;
 	}
 
 	/**
@@ -156,7 +200,8 @@ public final class ConnectionManager {
 
 	/**
 	 * Send a message to a server using a MultiPartEntity as the parameter
-	 * collection to be sent along with the message
+	 * collection to be sent along with the message. This type of entity can
+	 * contains both text data and file data (files)
 	 * 
 	 * @param url
 	 *            The link which contains the location for the server which will

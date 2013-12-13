@@ -20,11 +20,11 @@ public final class Job {
 	private String previousStaffMember;
 	private String nextStaffMember;
 	private String startDate; // store the date as a String value for now
+	private String directoryPath;
 	private File subFile;
 	private File[] fonts;
 	private String subFileData;
 	private String[] fontsData;
-	private String directoryPath;
 
 	/**
 	 * Class constructor
@@ -199,6 +199,34 @@ public final class Job {
 	}
 
 	/**
+	 * Get the path for the directory containing the data files for this job
+	 * 
+	 * @return A String indicating the files' location
+	 */
+	public String getDirectoryPath() {
+		return directoryPath;
+	}
+
+	/**
+	 * Set the path for the directory containing the data files for this job
+	 * 
+	 * @param directoryPath
+	 *            A String indicating the files' location
+	 */
+	public void setDirectoryPath(String directoryPath) {
+		this.directoryPath = directoryPath;
+	}
+
+	/**
+	 * Get the instance of the directory in which this job operates
+	 * 
+	 * @return A File entity representing its working directory
+	 */
+	public File getDirectoryInstance() {
+		return new File(this.directoryPath);
+	}
+
+	/**
 	 * Get the sub file that comes with this sub
 	 * 
 	 * @return A File entity which contains the file information for the sub
@@ -277,23 +305,5 @@ public final class Job {
 	 */
 	public void setFontsData(String[] fontsData) {
 		this.fontsData = fontsData;
-	}
-
-	/**
-	 * Get the path for the directory containing the data files for this job
-	 * 
-	 * @return A String indicating the files' location
-	 */
-	public String getDirectoryPath() {
-		return directoryPath;
-	}
-
-	/**
-	 * Set the path for the directory containing the data files for this job
-	 * 
-	 * @param directoryPath A String indicating the files' location
-	 */
-	public void setDirectoryPath(String directoryPath) {
-		this.directoryPath = directoryPath;
 	}
 }

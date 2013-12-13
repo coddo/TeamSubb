@@ -1,6 +1,10 @@
 package com.coddotech.teamsubb.jobs;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.net.URL;
 import java.util.List;
 
@@ -27,6 +31,7 @@ public class JobManager {
 	private static final String SEPARATOR_JOBS = "¬|¬";
 	private static final File WORKING_DIRECTORY = new File("Jobs");
 	private static final String WORKING_DIRECTORY_PATH = "Jobs\\";
+	private static final String CONFIG_FILE_NAME = "\\config.cfg";
 
 	private List<Job> jobs;
 	private List<Job> acceptedJobs;
@@ -51,14 +56,18 @@ public class JobManager {
 	 * Clear memory from this class and its resources
 	 */
 	public void dispose() {
-		//clear lists
+		// clear lists
 		jobs.clear();
 		acceptedJobs.clear();
-		
+
 		// other classes
 		_gadget = null;
 		_userInfo = null;
 		jobs = null;
+	}
+
+	public boolean createJob() {
+		return true;
 	}
 
 	/**
@@ -76,8 +85,8 @@ public class JobManager {
 		jobs.clear();
 
 		// send the jobs request to the server
-		String response = ConnectionManager.sendJobSearchRequest(_userInfo
-				.getUserName());
+		String response = ConnectionManager.sendJobSearchRequest(
+				_userInfo.getUserName(), true);
 
 		if (response.equals("false")) {
 			// if no jobs are found, notify the user
@@ -86,10 +95,7 @@ public class JobManager {
 			message.setMessage("There are no available jobs for you at this time");
 			message.setText("Nob jobs found");
 			message.open();
-		} else if (response.equals("error")) {
-			// if a connection error has been encountered, notify the user
-			ConnectionManager.showConnectionErrorMessage();
-		} else {
+		} else if (!response.equals("error")) {
 			// in case everything is ok, start processing the response that was
 			// received from the server
 			boolean jobsFound = false;
@@ -169,21 +175,24 @@ public class JobManager {
 
 				// create the configuration file containing the job data
 				// This is for later use (in case of a job pause)
-				this.createConfigFile(job);
+				this.generateConfigFile(job);
 
 				// send the accept message request to the server
 				// throw an exception if the request fails
-				if (ConnectionManager.sendJobAcceptMessage(job.getID(),
-						_userInfo.getUserName()).equals("false"))
+				String response = ConnectionManager.sendJobAcceptMessage(
+						job.getID(), _userInfo.getUserName(), true);
+				if (response.equals("false"))
 					throw new Exception();
 
 				// add the job to the list
-				acceptedJobs.add(job);
+				if (!response.equals("error"))
+					acceptedJobs.add(job);
 			}
 		} catch (Exception ex) {
 			MessageBox message = new MessageBox(Display.getCurrent()
 					.getShells()[0], SWT.ICON_ERROR);
-			message.setMessage("There was an error accepting this job");
+			message.setMessage("There was an error accepting this job."
+					+ "\nOr the server may have refused you this job.");
 			message.setText("Error");
 			message.open();
 		}
@@ -194,14 +203,38 @@ public class JobManager {
 	 * Decline a certain job. This also makes the selected job unavailable for
 	 * the user
 	 */
-	public void declineJob(Job job) {
+	public void cancelJob(Job job) {
 
 	}
 
+	/**
+	 * Find out if there is already a job with this ID accepted by the user
+	 * 
+	 * @param id
+	 *            The ID of the job to be verified
+	 * @return A logical value indicating if the job is already accepted or not
+	 */
 	private boolean isAccepted(int id) {
+		for (Job job : acceptedJobs) {
+			if (job.getID() == id)
+				return true;
+		}
+
 		return false;
 	}
 
+	/**
+	 * Download a certain file from the web
+	 * 
+	 * @param fileData
+	 *            A String containing the name of the file to be downloaded and
+	 *            the url from where it can be fetched<b> The format is:
+	 *            file_name=file_URL
+	 * @param dir
+	 *            The directory path where to save the file
+	 * @return A File entity representing the downloaded file
+	 * @throws Exception
+	 */
 	private File downloadFile(String fileData, String dir) throws Exception {
 		String[] nameURLContainer = fileData.split("=");
 
@@ -213,9 +246,45 @@ public class JobManager {
 		return file;
 	}
 
-	private void createConfigFile(Job job) throws Exception {
-		File file = new File(job.getDirectoryPath() + "\\config.cfg");
+	/**
+	 * Creates a configuration file for a certain job in its own directory and
+	 * fills it with data
+	 * 
+	 * @param job
+	 *            The Job entity for which to create this file
+	 * @throws Exception
+	 */
+	private void generateConfigFile(Job job) throws Exception {
+		File file = new File(job.getDirectoryPath()
+				+ JobManager.CONFIG_FILE_NAME);
+
+		// delete the file if it already exists
+		if (file.exists())
+			file.delete();
+
+		// recreate it (void from data)
 		file.createNewFile();
+
+		// fill it with data (exclude raw data about the subfile and font files)
+		BufferedWriter writer = new BufferedWriter(new FileWriter(
+				file.getAbsoluteFile()));
+		writer.write(job.getID() + "\n");
+		writer.write(job.getName() + "\n");
+		writer.write(job.getType() + "\n");
+		writer.write(job.getDescription() + "\n");
+		writer.write(job.getPreviousStaffMember() + "\n");
+		writer.write(job.getNextStaffMember() + "\n");
+		writer.write(job.getStartDate() + "\n");
+		writer.write(job.getDirectoryPath() + "\n");
+		writer.write(job.getSubFile().getAbsolutePath() + "\n");
+
+		for (int i = 0; i < job.getFonts().length; i++) {
+			writer.write(job.getFonts()[i].getAbsolutePath() + "\n");
+		}
+
+		// close the writer
+		writer.close();
+
 	}
 
 	/**
@@ -228,7 +297,33 @@ public class JobManager {
 		if (!JobManager.WORKING_DIRECTORY.exists())
 			JobManager.WORKING_DIRECTORY.mkdir();
 		else {
+			// get all the jobs that are accepted by this user and add them to
+			// the "accepted jobs" list
+			for (String jobDir : JobManager.WORKING_DIRECTORY.list()) {
+				File jobFolder = new File(jobDir);
+				try {
+					File config = new File(jobFolder.getAbsolutePath()
+							+ JobManager.CONFIG_FILE_NAME);
 
+					BufferedReader reader = new BufferedReader(new FileReader(
+							config.getAbsoluteFile()));
+					
+					//read the data from the file and place it in a new Job entity
+					Job job = new Job();
+					//TODO - WRITE CODE HERE
+					
+					//close the reader
+					reader.close();
+					
+					//add the Job entity to the "accepted list"
+					acceptedJobs.add(job);
+					
+				} catch (Exception ex) {
+					// warn the user about loading errors
+					// find a way to make him save his current work on the job
+					// directory that gave this error
+				}
+			}
 		}
 	}
 }

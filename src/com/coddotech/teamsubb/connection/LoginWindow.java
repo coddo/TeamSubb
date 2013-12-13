@@ -110,7 +110,7 @@ public final class LoginWindow extends CustomWindow {
 	private void doLogin() {
 		MessageBox message = new MessageBox(getShell(), SWT.ICON_ERROR);
 		String resultMessage = ConnectionManager.sendLoginRequest(
-				userBox.getText(), passBox.getText());
+				userBox.getText(), passBox.getText(), true);
 
 		if (!resultMessage.equals("error")) {
 			// on successful connection, check if the login credentials are
@@ -128,10 +128,6 @@ public final class LoginWindow extends CustomWindow {
 				message.setText("Wrong credentials");
 				message.open();
 			}
-		} else {
-			// on unsuccessful connection to the server, display an error
-			// message informing the user about it
-			ConnectionManager.showConnectionErrorMessage();
 		}
 	}
 
