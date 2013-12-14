@@ -113,6 +113,26 @@ public class JobManager {
 	}
 
 	/**
+	 * Mark a job as ended. This method also tells the server to remove it from
+	 * the pending list
+	 * 
+	 * @param jobID
+	 *            The ID of the job to be marked as finished
+	 * @param user
+	 *            The name of the user that
+	 * @return A logical value indicating if the job was ended successfully
+	 */
+	public boolean finishJob(int jobID) {
+		String response = ConnectionManager.sendJobFinishRequest(jobID,
+				_userInfo.getUserName(), true);
+
+		if (response.equals("error"))
+			return false;
+
+		return Boolean.parseBoolean(response);
+	}
+
+	/**
 	 * Send a request to the server in order to receive a job if any available
 	 * If there are available jobs, it separates them from the response string
 	 * and wraps every job in a Job entity, then they're added to the list
@@ -191,11 +211,14 @@ public class JobManager {
 		return this.jobs;
 	}
 
-	/*
-	 * Accept a certain job.<br> This method displays a popup message in case of
-	 * an error
+	/**
+	 * Accept a certain job.<br>
+	 * This method displays a popup message in case of an error
+	 * 
+	 * @param job
+	 *            The Job entity representing the job to be accepted
 	 */
-	public void acceptJob(Job job) {
+	public boolean acceptJob(Job job) {
 		try {
 			File dir = new File(job.getDirectoryPath());
 
@@ -227,16 +250,19 @@ public class JobManager {
 				if (response.equals("false"))
 					throw new Exception();
 
-				// add the job to the list
-				if (!response.equals("error"))
+				if (!response.equals("error")) {
+					// add the job to the list
 					acceptedJobs.add(job);
 
-				// delete it from the available jobs list
-				for (int i = 0; i < jobs.size(); i++) {
-					if (job.getID() == jobs.get(i).getID()) {
-						jobs.remove(i);
-						break;
+					// delete it from the available jobs list
+					for (int i = 0; i < jobs.size(); i++) {
+						if (job.getID() == jobs.get(i).getID()) {
+							jobs.remove(i);
+							break;
+						}
 					}
+
+					return true;
 				}
 			}
 		} catch (Exception ex) {
@@ -247,7 +273,7 @@ public class JobManager {
 			message.setText("Error");
 			message.open();
 		}
-
+		return false;
 	}
 
 	/**

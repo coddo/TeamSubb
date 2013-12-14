@@ -18,6 +18,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 
+import com.coddotech.teamsubb.jobs.Job;
+
 /**
  * This class is used for bridging the connection between the server and the
  * user of this instance of the client app.<br>
@@ -33,6 +35,7 @@ public final class ConnectionManager {
 
 	private static final String URL_USER_LOGGING = "http://anime4fun.ro/wlogin.php";
 	private static final String URL_JOBS = "http://anime4fun.ro/jobs.php";
+
 	// private static final String URL_CHAT = "http://anime4fun.ro/chat.php";
 
 	/**
@@ -129,7 +132,8 @@ public final class ConnectionManager {
 		// user info handling
 		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype",
 				"comments" };
-		String[] messages = { "create", user, name, Integer.toString(type), description };
+		String[] messages = { "create", user, name, Integer.toString(type),
+				description };
 
 		// files handling
 		String[] fileHeaders = new String[fonts.length + 1];
@@ -139,9 +143,9 @@ public final class ConnectionManager {
 		files[0] = subFile;
 
 		if (fonts.length > 0) {
-			for (int i = 0; i < fonts.length; i++) {
-				fileHeaders[i + 1] = "font" + (i + 1);
-				files[i + 1] = fonts[i];
+			for (int i = 1; i < files.length; i++) {
+				fileHeaders[i] = "font" + i;
+				files[i] = fonts[i - 1];
 			}
 		}
 
@@ -208,8 +212,85 @@ public final class ConnectionManager {
 
 		return response;
 	}
-	
-	//public static String sendJob
+
+	/**
+	 * Send the data of a job that the user has been working on back to the
+	 * server
+	 * 
+	 * @param job
+	 *            The Job entity representing the job data to be sent back to
+	 *            the server
+	 * @param user
+	 *            The name of the user that sends the job
+	 * @param showMessageOnError
+	 *            A logical value telling the method whether to display an error
+	 *            message in case the connection to the server fails
+	 * @return A String value representing the response received from the server
+	 */
+	public static String sendJobPushRequest(Job job, String user,
+			boolean showMessageOnError) {
+		// Text messages data
+		String[] messageHeaders = { "push", "staff", "jobid", "jobtype",
+				"comments", "prevstaff", "nextstaff" };
+		String[] messages = { "available", user, Integer.toString(job.getID()),
+				Integer.toString(job.getType()), job.getDescription(),
+				job.getPreviousStaffMember(), job.getNextStaffMember() };
+
+		// files data
+		String[] fileHeaders = new String[job.getFonts().length + 1];
+		String[] files = new String[fileHeaders.length];
+
+		fileHeaders[0] = "sub";
+		files[0] = job.getSubFile().getAbsolutePath();
+
+		for (int i = 1; i < files.length; i++) {// create fonts collection
+			fileHeaders[i] = "font" + i;
+			files[i] = job.getFonts()[i - 1].getAbsolutePath();
+		}
+
+		// send the request to the server and wait for a response
+		String response = ConnectionManager.sendMessage(
+				ConnectionManager.URL_JOBS, messageHeaders, messages,
+				fileHeaders, files);
+
+		// display connection error if any occured
+		if (response.equals("error") && showMessageOnError)
+			ConnectionManager.showConnectionErrorMessage();
+
+		// return the servers response
+		return response;
+	}
+
+	/**
+	 * Send a request to the server in order to mark a job as finished and make
+	 * it disappear from the list
+	 * 
+	 * @param jobID
+	 *            The ID of the job to be ended
+	 * @param user
+	 *            The name of the user that wants to end the job
+	 * @param showMessageOnError
+	 *            A logical value telling the method whether to display an error
+	 *            message in case the connection to the server fails
+	 * @return A String value representing the response from the server
+	 */
+	public static String sendJobFinishRequest(int jobID, String user,
+			boolean showMessageOnError) {
+		// message data
+		String[] messageHeaders = { "push", "staff", "jobid" };
+		String[] messages = { "finish", user, Integer.toString(jobID) };
+
+		// send the request to the server and wait for a response
+		String response = ConnectionManager.sendMessage(
+				ConnectionManager.URL_JOBS, messageHeaders, messages);
+
+		// display a connection error message if one is encountered
+		if (response.equals("error") && showMessageOnError)
+			ConnectionManager.showConnectionErrorMessage();
+
+		// return the response from the server
+		return response;
+	}
 
 	/**
 	 * Displays an error message telling the user that the connection to the
