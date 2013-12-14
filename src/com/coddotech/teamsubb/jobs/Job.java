@@ -11,11 +11,12 @@ import java.io.File;
  */
 public final class Job {
 
+	public static final String[] JOB_TYPES = {"Translate", "Verify", "Encode", "Typeset", "End"};
 	public static final String DEFAULT_NEXT_STAFF = "anyone";
 
 	private int id;
 	private String name;
-	private String type;
+	private int type;
 	private String description;
 	private String previousStaffMember;
 	private String nextStaffMember;
@@ -41,7 +42,6 @@ public final class Job {
 	 */
 	public void dispose() {
 		this.name = null;
-		this.type = null;
 		this.description = null;
 		this.previousStaffMember = null;
 		this.nextStaffMember = null;
@@ -99,7 +99,7 @@ public final class Job {
 	 * 
 	 * @return A String value indicating the type of work (modification) needed
 	 */
-	public String getType() {
+	public int getType() {
 		return type;
 	}
 
@@ -110,7 +110,7 @@ public final class Job {
 	 *            A String value representing the type of modifications that
 	 *            need to be done for this job
 	 */
-	public void setType(String jobType) {
+	public void setType(int jobType) {
 		this.type = jobType;
 	}
 

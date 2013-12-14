@@ -33,7 +33,6 @@ public final class ConnectionManager {
 
 	private static final String URL_USER_LOGGING = "http://anime4fun.ro/wlogin.php";
 	private static final String URL_JOBS = "http://anime4fun.ro/jobs.php";
-
 	// private static final String URL_CHAT = "http://anime4fun.ro/chat.php";
 
 	/**
@@ -125,12 +124,12 @@ public final class ConnectionManager {
 	 *         It contains "true" in case the job creation was successful
 	 */
 	public static String sendJobCreateRequest(String user, String name,
-			String type, String description, String subFile, String[] fonts,
+			int type, String description, String subFile, String[] fonts,
 			boolean showMessageOnError) {
 		// user info handling
 		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype",
 				"comments" };
-		String[] messages = { "create", user, name, type, description };
+		String[] messages = { "create", user, name, Integer.toString(type), description };
 
 		// files handling
 		String[] fileHeaders = new String[fonts.length + 1];
@@ -209,6 +208,8 @@ public final class ConnectionManager {
 
 		return response;
 	}
+	
+	//public static String sendJob
 
 	/**
 	 * Displays an error message telling the user that the connection to the
@@ -220,20 +221,6 @@ public final class ConnectionManager {
 		message.setMessage("A connection error has occured.\nPlease try again later...");
 		message.setText("Connection failed");
 		message.open();
-	}
-
-	/**
-	 * THIS IS JUST A METHOD USED FOR VERIFICATIONS. IT IS STILL USEFUL FOR
-	 * FURTHER DEBUGGING
-	 * 
-	 * @param files
-	 * @throws Exception
-	 */
-	public static void sendFilesPOST(String[] files) throws Exception {
-		ConnectionManager.sendMessage("http://anime4fun.ro/uploadimage.php",
-				new String[] { "submit" }, new String[] { "testare_finala" },
-				new String[] { "uploaded_image" },
-				new String[] { "C:\\Users\\Claudiu\\Desktop\\test2.jpg" });
 	}
 
 	/**

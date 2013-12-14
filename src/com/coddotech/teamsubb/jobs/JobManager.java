@@ -66,8 +66,22 @@ public class JobManager {
 		jobs = null;
 	}
 
-	public List<Job> getAvailableJobs() {
+	/**
+	 * Get the list of jobs that are available for this user
+	 * 
+	 * @return A List containing all the available jobs
+	 */
+	public List<Job> getAvailableJobsList() {
 		return this.jobs;
+	}
+
+	/**
+	 * Get the list of jobs that have been accepted by the user
+	 * 
+	 * @return A List containing all the accepted jobs
+	 */
+	public List<Job> getAcceptedJobsList() {
+		return this.acceptedJobs;
 	}
 
 	/**
@@ -86,7 +100,7 @@ public class JobManager {
 	 * @return A logical value indicating if the job was successfully added to
 	 *         the server or not
 	 */
-	public boolean createJob(String name, String type, String description,
+	public boolean createJob(String name, int type, String description,
 			String subFile, String[] fonts) {
 		String response = ConnectionManager.sendJobCreateRequest(
 				_userInfo.getUserName(), name, type, description, subFile,
@@ -145,7 +159,7 @@ public class JobManager {
 					// basic job information
 					job.setID(Integer.parseInt(data[0]));
 					job.setName(data[1]);
-					job.setType(data[2]);
+					job.setType(Integer.parseInt(data[2]));
 					job.setDescription(data[3]);
 					job.setPreviousStaffMember(data[4]);
 					job.setStartDate(data[5]);
@@ -245,9 +259,6 @@ public class JobManager {
 	 */
 	public void cancelJob(Job job) {
 		try {
-			// TODO - send the message to the server, analyze the response and
-			// delete the directory for the canceled job if everything is
-			// successful
 			String response = ConnectionManager.sendJobCancelRequest(
 					job.getID(), _userInfo.getUserName(), true);
 
@@ -386,7 +397,7 @@ public class JobManager {
 
 					job.setID(Integer.parseInt(reader.readLine()));
 					job.setName(reader.readLine());
-					job.setType(reader.readLine());
+					job.setType(Integer.parseInt(reader.readLine()));
 					job.setDescription(reader.readLine());
 					job.setPreviousStaffMember(reader.readLine());
 					job.setNextStaffMember(reader.readLine());

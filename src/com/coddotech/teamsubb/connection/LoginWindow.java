@@ -204,7 +204,7 @@ public final class LoginWindow extends CustomWindow {
 		userLabel = new Label(this.getShell(), SWT.None);
 		passLabel = new Label(this.getShell(), SWT.None);
 		userBox = new Text(this.getShell(), SWT.BORDER);
-		passBox = new Text(this.getShell(), SWT.PASSWORD | SWT.BORDER);
+		passBox = new Text(this.getShell(), SWT.PASSWORD | SWT.BORDER | SWT.SINGLE);
 		exitButton = new Button(this.getShell(), SWT.PUSH);
 		loginButton = new Button(this.getShell(), SWT.PUSH);
 
