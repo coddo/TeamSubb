@@ -18,6 +18,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 
+/**
+ * This class is used for bridging the connection between the server and the
+ * user of this instance of the client app.<br>
+ * 
+ * It operates as a static one: it doesn't contain a constructor and all the
+ * methods and fields are accessed in a static way.
+ * 
+ * @author Coddo
+ * 
+ */
+
 public final class ConnectionManager {
 
 	private static final String URL_USER_LOGGING = "http://anime4fun.ro/wlogin.php";
@@ -98,7 +109,7 @@ public final class ConnectionManager {
 	 *            The name of the job
 	 * @param type
 	 *            The type that the job needs
-	 * @param comments
+	 * @param description
 	 *            The comments that come along with the job
 	 * @param subFile
 	 *            The file representing the sub (main file)
@@ -114,12 +125,12 @@ public final class ConnectionManager {
 	 *         It contains "true" in case the job creation was successful
 	 */
 	public static String sendJobCreateRequest(String user, String name,
-			String type, String comments, String subFile, String[] fonts,
+			String type, String description, String subFile, String[] fonts,
 			boolean showMessageOnError) {
 		// user info handling
 		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype",
 				"comments" };
-		String[] messages = { "create", user, name, type, comments };
+		String[] messages = { "create", user, name, type, description };
 
 		// files handling
 		String[] fileHeaders = new String[fonts.length + 1];
@@ -147,7 +158,8 @@ public final class ConnectionManager {
 	}
 
 	/**
-	 * Send a request to the server in order to accept a certain job
+	 * Send a request to the server in order to accept a certain job for this
+	 * user
 	 * 
 	 * @param jobID
 	 *            The ID of the job that you want to undertake
@@ -158,7 +170,7 @@ public final class ConnectionManager {
 	 *            message in case the connection to the server fails
 	 * @return A String containing the response from the server
 	 */
-	public static String sendJobAcceptMessage(int jobID, String user,
+	public static String sendJobAcceptRequest(int jobID, String user,
 			boolean showMessageOnError) {
 		String[] messageHeaders = { "acceptjob", "staff" };
 		String[] messages = { Integer.toString(jobID), user };
@@ -167,6 +179,32 @@ public final class ConnectionManager {
 				ConnectionManager.URL_JOBS, messageHeaders, messages);
 
 		if (showMessageOnError && response.equals("error"))
+			ConnectionManager.showConnectionErrorMessage();
+
+		return response;
+	}
+
+	/**
+	 * Send a request to the server in order to cancel/abort a certain job for
+	 * this user
+	 * 
+	 * @param jobID
+	 *            The ID of the job to be canceled
+	 * @param user
+	 *            The name of the user that wants to cancel the job
+	 * @param showMessageOnError
+	 *            A logical value telling the method whether to display an error
+	 *            message in case the connection to the server fails
+	 * @return A String containing the response from the server
+	 */
+	public static String sendJobCancelRequest(int jobID, String user,
+			boolean showMessageOnError) {
+		String response = ConnectionManager.sendMessage(
+				ConnectionManager.URL_JOBS,
+				new String[] { "canceljob", "staff" },
+				new String[] { Integer.toString(jobID), user });
+
+		if (response.equals("error") && showMessageOnError)
 			ConnectionManager.showConnectionErrorMessage();
 
 		return response;

@@ -66,8 +66,36 @@ public class JobManager {
 		jobs = null;
 	}
 
-	public boolean createJob() {
-		return true;
+	public List<Job> getAvailableJobs() {
+		return this.jobs;
+	}
+
+	/**
+	 * Create a new job and try to add it to the server
+	 * 
+	 * @param name
+	 *            The name of the job
+	 * @param type
+	 *            The type of the job
+	 * @param description
+	 *            The description/comments for the job
+	 * @param subFile
+	 *            The main file of the job (file to be subbed)
+	 * @param fonts
+	 *            The font files that are needed in order to finish this job
+	 * @return A logical value indicating if the job was successfully added to
+	 *         the server or not
+	 */
+	public boolean createJob(String name, String type, String description,
+			String subFile, String[] fonts) {
+		String response = ConnectionManager.sendJobCreateRequest(
+				_userInfo.getUserName(), name, type, description, subFile,
+				fonts, true);
+
+		if (response.equals("error"))
+			return false;
+
+		return Boolean.parseBoolean(response);
 	}
 
 	/**
@@ -150,7 +178,8 @@ public class JobManager {
 	}
 
 	/*
-	 * Accept a certain job
+	 * Accept a certain job.<br> This method displays a popup message in case of
+	 * an error
 	 */
 	public void acceptJob(Job job) {
 		try {
@@ -179,7 +208,7 @@ public class JobManager {
 
 				// send the accept message request to the server
 				// throw an exception if the request fails
-				String response = ConnectionManager.sendJobAcceptMessage(
+				String response = ConnectionManager.sendJobAcceptRequest(
 						job.getID(), _userInfo.getUserName(), true);
 				if (response.equals("false"))
 					throw new Exception();
@@ -187,6 +216,14 @@ public class JobManager {
 				// add the job to the list
 				if (!response.equals("error"))
 					acceptedJobs.add(job);
+
+				// delete it from the available jobs list
+				for (int i = 0; i < jobs.size(); i++) {
+					if (job.getID() == jobs.get(i).getID()) {
+						jobs.remove(i);
+						break;
+					}
+				}
 			}
 		} catch (Exception ex) {
 			MessageBox message = new MessageBox(Display.getCurrent()
@@ -199,12 +236,46 @@ public class JobManager {
 
 	}
 
-	/*
-	 * Decline a certain job. This also makes the selected job unavailable for
-	 * the user
+	/**
+	 * Cancel/Abort a certain job on which the user is currently working.<br>
+	 * This method displays a popup message in case of an error
+	 * 
+	 * @param job
+	 *            The Job entity that needs to be canceled
 	 */
 	public void cancelJob(Job job) {
+		try {
+			// TODO - send the message to the server, analyze the response and
+			// delete the directory for the canceled job if everything is
+			// successful
+			String response = ConnectionManager.sendJobCancelRequest(
+					job.getID(), _userInfo.getUserName(), true);
 
+			// if the request was refused, display a message by entering the
+			// catch block
+			if (response.equals("false"))
+				throw new Exception();
+
+			if (response.equals("true")) {
+				// if the request is accepted, delete the job from the accepted
+				// list and delete its directory and files
+				FileUtils.deleteDirectory(job.getDirectoryInstance());
+
+				for (int i = 0; i < acceptedJobs.size(); i++) {
+					if (job.getID() == acceptedJobs.get(i).getID()) {
+						acceptedJobs.remove(i);
+						break;
+					}
+				}
+			}
+		} catch (Exception ex) {
+			MessageBox message = new MessageBox(Display.getCurrent()
+					.getShells()[0], SWT.ICON_ERROR);
+			message.setMessage("There waas an error canceling this job."
+					+ "\nOr the server may have refused your request.");
+			message.setText("Error");
+			message.open();
+		}
 	}
 
 	/**
@@ -278,6 +349,7 @@ public class JobManager {
 		writer.write(job.getDirectoryPath() + "\n");
 		writer.write(job.getSubFile().getAbsolutePath() + "\n");
 
+		writer.write(job.getFonts().length + "\n");
 		for (int i = 0; i < job.getFonts().length; i++) {
 			writer.write(job.getFonts()[i].getAbsolutePath() + "\n");
 		}
@@ -288,10 +360,10 @@ public class JobManager {
 	}
 
 	/**
-	 * If the working directory doesn't exist, it creates it.
+	 * If the working directory doesn't exist, this method creates it.
 	 * 
 	 * If it exists, then it tries to reload all the jobs that are still present
-	 * in it
+	 * in it (accepted jobs)
 	 */
 	private void initializeWorkingDirectory() {
 		if (!JobManager.WORKING_DIRECTORY.exists())
@@ -307,19 +379,35 @@ public class JobManager {
 
 					BufferedReader reader = new BufferedReader(new FileReader(
 							config.getAbsoluteFile()));
-					
-					//read the data from the file and place it in a new Job entity
+
+					// read the data from the file and place it in a new Job
+					// entity
 					Job job = new Job();
-					//TODO - WRITE CODE HERE
-					
-					//close the reader
+
+					job.setID(Integer.parseInt(reader.readLine()));
+					job.setName(reader.readLine());
+					job.setType(reader.readLine());
+					job.setDescription(reader.readLine());
+					job.setPreviousStaffMember(reader.readLine());
+					job.setNextStaffMember(reader.readLine());
+					job.setStartDate(reader.readLine());
+					job.setDirectoryPath(reader.readLine());
+					job.setSubFile(new File(reader.readLine()));
+
+					File[] fonts = new File[Integer.parseInt(reader.readLine())];
+					for (int i = 0; i < fonts.length; i++)
+						fonts[i] = new File(reader.readLine());
+
+					job.setFonts(fonts);
+
+					// close the reader
 					reader.close();
-					
-					//add the Job entity to the "accepted list"
+
+					// add the Job entity to the "accepted list"
 					acceptedJobs.add(job);
-					
+
 				} catch (Exception ex) {
-					// warn the user about loading errors
+					// TODO - warn the user about loading errors
 					// find a way to make him save his current work on the job
 					// directory that gave this error
 				}
