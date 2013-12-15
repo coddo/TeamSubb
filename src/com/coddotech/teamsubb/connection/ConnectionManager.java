@@ -191,21 +191,19 @@ public final class ConnectionManager {
 	 * Send a request to the server in order to cancel/abort a certain job for
 	 * this user
 	 * 
-	 * @param jobID
-	 *            The ID of the job to be canceled
+	 * @param job
+	 *            The Job entity representing the job to be canceled
 	 * @param user
-	 *            The name of the user that wants to cancel the job
+	 *            The name of the user that cancels the job
 	 * @param showMessageOnError
 	 *            A logical value telling the method whether to display an error
 	 *            message in case the connection to the server fails
-	 * @return A String containing the response from the server
+	 * @return A String value representing the response received from the server
 	 */
-	public static String sendJobCancelRequest(int jobID, String user,
+	public static String sendJobCancelRequest(Job job, String user,
 			boolean showMessageOnError) {
-		String response = ConnectionManager.sendMessage(
-				ConnectionManager.URL_JOBS,
-				new String[] { "canceljob", "staff" },
-				new String[] { Integer.toString(jobID), user });
+		String response = ConnectionManager.sendJobPushRequest(job, user, true,
+				showMessageOnError);
 
 		if (response.equals("error") && showMessageOnError)
 			ConnectionManager.showConnectionErrorMessage();
@@ -228,13 +226,16 @@ public final class ConnectionManager {
 	 * @return A String value representing the response received from the server
 	 */
 	public static String sendJobPushRequest(Job job, String user,
-			boolean showMessageOnError) {
+			boolean canceled, boolean showMessageOnError) {
 		// Text messages data
 		String[] messageHeaders = { "push", "staff", "jobid", "jobtype",
 				"comments", "prevstaff", "nextstaff" };
 		String[] messages = { "available", user, Integer.toString(job.getID()),
 				Integer.toString(job.getType()), job.getDescription(),
 				job.getPreviousStaffMember(), job.getNextStaffMember() };
+
+		if (canceled)
+			messages[0] = "canceled";
 
 		// files data
 		String[] fileHeaders = new String[job.getFonts().length + 1];
@@ -263,7 +264,7 @@ public final class ConnectionManager {
 
 	/**
 	 * Send a request to the server in order to mark a job as finished and make
-	 * it disappear from the list
+	 * it disappear from the global list (on the server)
 	 * 
 	 * @param jobID
 	 *            The ID of the job to be ended
@@ -274,11 +275,11 @@ public final class ConnectionManager {
 	 *            message in case the connection to the server fails
 	 * @return A String value representing the response from the server
 	 */
-	public static String sendJobFinishRequest(int jobID, String user,
+	public static String sendJobEndRequest(int jobID, String user,
 			boolean showMessageOnError) {
 		// message data
 		String[] messageHeaders = { "push", "staff", "jobid" };
-		String[] messages = { "finish", user, Integer.toString(jobID) };
+		String[] messages = { "end", user, Integer.toString(jobID) };
 
 		// send the request to the server and wait for a response
 		String response = ConnectionManager.sendMessage(

@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
@@ -113,8 +114,59 @@ public class JobManager {
 	}
 
 	/**
+	 * Send all the user's work for a job back to the server and remove its data
+	 * from the disk
+	 * 
+	 * @param job
+	 *            The Job entity representing the job to be sent
+	 * @return A logical value indicating if the server accepted the data
+	 */
+	public boolean pushJob(Job job) {
+		// send the request and wait for the servers response
+		String response = ConnectionManager.sendJobPushRequest(job,
+				_userInfo.getUserName(), false, true);
+
+		boolean status = false;
+
+		if (!response.equals("error")) {
+			// wrap the reponse from the server into a logical variable
+			status = Boolean.parseBoolean(response);
+
+			// if the response is ok, then delete the data from the disk
+			if (status) {
+				try {
+					this.removeJobFromDisk(job);
+
+					MessageBox message = new MessageBox(Display.getCurrent()
+							.getShells()[0], SWT.ICON_INFORMATION);
+					message.setMessage("The job has successfully been sent back to the server and its data deleted from your disk !");
+					message.setText("Success");
+					message.open();
+
+				} catch (Exception ex) {
+					MessageBox message = new MessageBox(Display.getCurrent()
+							.getShells()[0], SWT.ICON_ERROR);
+					message.setMessage("The job has successfully been sent back to the server, but the data on your disk could not be removed..."
+							+ "\nPlease delete the remaining data manually :).");
+					message.setText("Data not removed");
+					message.open();
+				}
+			} else { // if the server refused the request, tell the user
+				MessageBox message = new MessageBox(Display.getCurrent()
+						.getShells()[0], SWT.ICON_ERROR);
+				message.setMessage("The server has refused your job data. Please contact the website's manager");
+				message.setText("Job data refused");
+				message.open();
+			}
+		}
+
+		// return the response value
+		return status;
+	}
+
+	/**
 	 * Mark a job as ended. This method also tells the server to remove it from
-	 * the pending list
+	 * the pending list.
 	 * 
 	 * @param jobID
 	 *            The ID of the job to be marked as finished
@@ -122,8 +174,8 @@ public class JobManager {
 	 *            The name of the user that
 	 * @return A logical value indicating if the job was ended successfully
 	 */
-	public boolean finishJob(int jobID) {
-		String response = ConnectionManager.sendJobFinishRequest(jobID,
+	public boolean endJob(int jobID) {
+		String response = ConnectionManager.sendJobEndRequest(jobID,
 				_userInfo.getUserName(), true);
 
 		if (response.equals("error"))
@@ -285,8 +337,8 @@ public class JobManager {
 	 */
 	public void cancelJob(Job job) {
 		try {
-			String response = ConnectionManager.sendJobCancelRequest(
-					job.getID(), _userInfo.getUserName(), true);
+			String response = ConnectionManager.sendJobCancelRequest(job,
+					_userInfo.getUserName(), true);
 
 			// if the request was refused, display a message by entering the
 			// catch block
@@ -296,14 +348,7 @@ public class JobManager {
 			if (response.equals("true")) {
 				// if the request is accepted, delete the job from the accepted
 				// list and delete its directory and files
-				FileUtils.deleteDirectory(job.getDirectoryInstance());
-
-				for (int i = 0; i < acceptedJobs.size(); i++) {
-					if (job.getID() == acceptedJobs.get(i).getID()) {
-						acceptedJobs.remove(i);
-						break;
-					}
-				}
+				this.removeJobFromDisk(job);
 			}
 		} catch (Exception ex) {
 			MessageBox message = new MessageBox(Display.getCurrent()
@@ -312,6 +357,17 @@ public class JobManager {
 					+ "\nOr the server may have refused your request.");
 			message.setText("Error");
 			message.open();
+		}
+	}
+
+	private void removeJobFromDisk(Job job) throws IOException {
+		FileUtils.deleteDirectory(job.getDirectoryInstance());
+
+		for (int i = 0; i < acceptedJobs.size(); i++) {
+			if (job.getID() == acceptedJobs.get(i).getID()) {
+				acceptedJobs.remove(i);
+				break;
+			}
 		}
 	}
 
