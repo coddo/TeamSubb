@@ -1,17 +1,15 @@
 package com.coddotech.teamsubb.main;
 
-import java.io.IOException;
-
 import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.connection.LoginWindow;
 import com.coddotech.teamsubb.jobs.UserInformation;
 
 public class MainClass {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		/*display the login window as a dialog*/
 		LoginWindow login = new LoginWindow();
-		login.show();
+		login.open();
 		
 		//get the login result string
 		String mayContinue = login.getMayContinueValue();
@@ -21,7 +19,7 @@ public class MainClass {
 		//opening the gadget 
 		if (mayContinue.equals("OK")) {
 			DesktopGadget gadget = new DesktopGadget();
-			gadget.show();
+			gadget.open();
 		}
 		
 		//reset the user information file to its defaults

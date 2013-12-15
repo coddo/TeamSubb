@@ -142,7 +142,7 @@ public final class AppSettings {
 	 * @return A boolean value indicating if the action was finished
 	 *         successfully or not
 	 */
-	private boolean commitChangesToFile() {
+	public boolean commitChangesToFile() {
 		try {
 			Transformer transformer = TransformerFactory.newInstance()
 					.newTransformer();

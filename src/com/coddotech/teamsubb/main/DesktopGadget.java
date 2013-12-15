@@ -117,8 +117,9 @@ public class DesktopGadget extends CustomWindow {
 	
 		// object properties
 		label.setLocation(10, 10);
+		label.pack();
 	
-		// this window's properties
+		// shell properties
 		this.getShell().setText("Team Subb");
 		this.getShell().setLocation(settings.getGadgetLocation());
 		this.getShell().setSize(400, 400);
@@ -127,8 +128,5 @@ public class DesktopGadget extends CustomWindow {
 		this.getShell().addListener(SWT.Show, gadgetShownListener);
 		this.getShell().addListener(SWT.Close, shellClosingListener);
 		this.getShell().addListener(SWT.Move, gadgetPositionChangedListener);
-	
-		// object packing
-		label.pack();
 	}
 }

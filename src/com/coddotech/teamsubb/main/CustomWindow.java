@@ -26,7 +26,7 @@ public abstract class CustomWindow {
 	/**
 	 * Display the GUI (shell) for this class
 	 */
-	public void show() {
+	public void open() {
 		shell.open();
 		while (!shell.isDisposed()) {
 			if (!Display.getCurrent().readAndDispatch())
@@ -39,7 +39,6 @@ public abstract class CustomWindow {
 	 */
 	public void close() {
 		shell.close();
-		shell.dispose();
 		Display.getCurrent().dispose();
 	}
 

@@ -237,13 +237,13 @@ public final class LoginWindow extends CustomWindow {
 		exitButton.setLocation(10, 100);
 		exitButton.setSize(50, 25);
 
-		// this window's properties
-		getShell().setText("Login into your account");
-		getShell().setSize(295, 165);
+		// shell properties
+		this.getShell().setText("Login into your account");
+		this.getShell().setSize(295, 165);
 		this.placeToCenter();
 
 		// listeners
-		getShell().addListener(SWT.Close, shellClosingListener);
+		this.getShell().addListener(SWT.Close, shellClosingListener);
 		userBox.addListener(SWT.Traverse, keyPressed);
 		passBox.addListener(SWT.Traverse, keyPressed);
 		exitButton.addSelectionListener(exitButtonPressed);
