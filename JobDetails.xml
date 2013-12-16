@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><staff>
 	<information>
-		<name value="coddo">Stores the user's name/codename/nickname</name>
-		<email value="codobanclaudiu@yahoo.com">Stores the user's email address</email>
-		<rank value="Administrator">Stores the rank that the user has in the community</rank>
+		<name value="no user">Stores the user's name/codename/nickname</name>
+		<email value="no user">Stores the user's email address</email>
+		<rank value="no user">Stores the rank that the user has in the community</rank>
 	</information>
 	<jobs>
 		<Traducator value="true">Knows how to sub(translate) files in different languages</Traducator>

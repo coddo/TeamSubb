@@ -39,7 +39,6 @@ public abstract class CustomWindow {
 	 */
 	public void close() {
 		shell.close();
-		Display.getCurrent().dispose();
 	}
 
 	/**

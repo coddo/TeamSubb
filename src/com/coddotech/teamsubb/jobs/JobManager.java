@@ -1,6 +1,7 @@
 package com.coddotech.teamsubb.jobs;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -38,6 +39,8 @@ public class JobManager {
 	 */
 	public JobManager(DesktopGadget gadget, UserInformation userInfo) {
 		this.userInfo = userInfo;
+		jobs = new ArrayList<Job>();
+		acceptedJobs = new ArrayList<Job>();
 
 		initializeWorkingDirectory();
 	}

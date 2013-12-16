@@ -1,5 +1,7 @@
 package com.coddotech.teamsubb.main;
 
+import org.eclipse.swt.widgets.Display;
+
 import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.connection.LoginWindow;
 import com.coddotech.teamsubb.jobs.UserInformation;
@@ -31,6 +33,8 @@ public class MainClass {
 			ConnectionManager.sendLogoutRequest(det.getUserName());
 		
 		det.dispose();
-		det = null;//*/
+		det = null;
+		
+		Display.getCurrent().dispose();//*/
 	}
 }

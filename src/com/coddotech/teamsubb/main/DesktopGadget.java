@@ -27,7 +27,7 @@ public class DesktopGadget extends CustomWindow {
 	 * Class constructor
 	 */
 	public DesktopGadget() {
-		super();
+		//super();
 		initializeComponents();
 	}
 
