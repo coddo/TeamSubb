@@ -1,6 +1,17 @@
 package com.coddotech.teamsubb.jobs;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+
+import org.apache.commons.io.FileUtils;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+
+import com.coddotech.teamsubb.connection.ConnectionManager;
 
 /**
  * Entity used by the JobManager class. This class stores information about a
@@ -11,13 +22,16 @@ import java.io.File;
  */
 public final class Job {
 
-	public static final String[] JOB_TYPES = {"Translate", "Verify", "Encode", "Typeset", "End"};
-	public static final String DEFAULT_NEXT_STAFF = "anyone";
+	public static final String[] JOB_TYPES = { "Translate", "Verify", "Encode",
+			"Typeset", "End" };
+	private static final String DEFAULT_NEXT_STAFF = "anyone";
+	private static final String CONFIG_FILE_NAME = "\\config.cfg";
 
 	private int id;
 	private String name;
 	private int type;
 	private String description;
+	private String currentStaffMember;
 	private String previousStaffMember;
 	private String nextStaffMember;
 	private String startDate; // store the date as a String value for now
@@ -48,9 +62,13 @@ public final class Job {
 		this.startDate = null;
 
 		// delete files
-		this.subFile.delete();
-		for (File file : this.fonts)
-			file.delete();
+		if (subFile.exists())
+			this.subFile.delete();
+
+		for (File file : this.fonts) {
+			if (file.exists())
+				file.delete();
+		}
 
 		this.subFile = null;
 		this.fonts = null;
@@ -154,6 +172,25 @@ public final class Job {
 	 */
 	public void setStartDate(String jobDate) {
 		this.startDate = jobDate;
+	}
+
+	/**
+	 * Get the name of the user that currently works on this project
+	 * 
+	 * @return A String representing the name of the staff member
+	 */
+	public String getCurrentStaffMember() {
+		return currentStaffMember;
+	}
+
+	/**
+	 * Set the name of the user that currently works on this project
+	 * 
+	 * @param currentStaffMember
+	 *            A String representing the name of the staff member
+	 */
+	public void setCurrentStaffMember(String currentStaffMember) {
+		this.currentStaffMember = currentStaffMember;
 	}
 
 	/**
@@ -305,5 +342,223 @@ public final class Job {
 	 */
 	public void setFontsData(String[] fontsData) {
 		this.fontsData = fontsData;
+	}
+
+	/**
+	 * Accept a certain job.<br>
+	 * This method displays a popup message in case of an error
+	 */
+	public boolean acceptJob() {
+		try {
+			// send the accept message request to the server
+			String response = ConnectionManager.sendJobAcceptRequest(this.id,
+					this.currentStaffMember, true);
+
+			// if no errors are encountered, proceed with the job accepting
+			// procedures that take place locally
+			if (!response.equals("error")) {
+				boolean result = Boolean.parseBoolean(response);
+
+				// continue only if the server accepted the request
+				if (result) {
+					// create a directory for this this
+					File dir = new File(this.directoryPath);
+					if (!dir.exists())
+						dir.mkdir();
+
+					// sub file (download + add to the Job entity)
+					this.setSubFile(ConnectionManager.downloadFile(
+							this.subFileData, this.directoryPath));
+
+					// font files (download + add to the Job entity)
+					File[] fonts = new File[this.fontsData.length];
+
+					for (int i = 0; i < fonts.length; i++) {
+						fonts[i] = ConnectionManager.downloadFile(
+								this.fontsData[i], this.directoryPath);
+					}
+					this.setFonts(fonts);
+
+					// create the configuration file containing the this data
+					// This is for later use (in case of a this pause)
+					this.generateConfigFile();
+
+				} else
+					// throw an exception if the job was refused
+					throw new Exception();
+
+				// return the server response as a logical value
+				return result;
+
+			} else
+				return false;
+
+		} catch (Exception ex) { // diplay error message
+			MessageBox message = new MessageBox(Display.getCurrent()
+					.getShells()[0], SWT.ICON_ERROR);
+			message.setMessage("There was an error accepting this job."
+					+ "\nOr the server may have refused you this job.");
+			message.setText("Error");
+			message.open();
+
+			return false;
+		}
+	}
+
+	/**
+	 * Cancel/Abort a certain job on which the user is currently working.<br>
+	 * This method displays a popup message in case of an error
+	 */
+	public boolean cancelJob() {
+		try {
+			// send the cancel message request to the server
+			String response = ConnectionManager.sendJobCancelRequest(this,
+					this.currentStaffMember, true);
+
+			// store the result in a logical variable
+			boolean result = false;
+			if (!response.equals("error"))
+				result = Boolean.parseBoolean(response);
+
+			// if the request was refused, display a message by entering the
+			// catch block, otherwise delete the job from the accepted
+			// list and delete its directory and files
+			if (!result)
+				throw new Exception();
+			else
+				FileUtils.deleteDirectory(this.getDirectoryInstance());
+
+			// return the logical value representing the server's response
+			return result;
+
+		} catch (Exception ex) {
+			MessageBox message = new MessageBox(Display.getCurrent()
+					.getShells()[0], SWT.ICON_ERROR);
+			message.setMessage("There waas an error canceling this job."
+					+ "\nOr the server may have refused your request.");
+			message.setText("Error");
+			message.open();
+
+			return false;
+		}
+
+	}
+
+	/**
+	 * Send all the user's work for a job back to the server and remove its data
+	 * from the disk
+	 * 
+	 * @return A logical value indicating if the server accepted the data
+	 */
+	public boolean pushJob() {
+		// send the request and wait for the servers response
+		String response = ConnectionManager.sendJobPushRequest(this,
+				this.currentStaffMember, false, true);
+
+		boolean status = false;
+
+		if (!response.equals("error")) {
+			// wrap the reponse from the server into a logical variable
+			status = Boolean.parseBoolean(response);
+
+			// if the response is ok, then delete the data from the disk
+			if (status) {
+				try {
+					FileUtils.deleteDirectory(this.getDirectoryInstance());
+
+					MessageBox message = new MessageBox(Display.getCurrent()
+							.getShells()[0], SWT.ICON_INFORMATION);
+					message.setMessage("The job has successfully been sent back to the server and its data deleted from your disk !");
+					message.setText("Success");
+					message.open();
+
+				} catch (Exception ex) {
+					MessageBox message = new MessageBox(Display.getCurrent()
+							.getShells()[0], SWT.ICON_ERROR);
+					message.setMessage("The job has successfully been sent back to the server, but the data on your disk could not be removed..."
+							+ "\nPlease delete the remaining data manually :).");
+					message.setText("Data not removed");
+					message.open();
+				}
+			} else { // if the server refused the request, tell the user
+				MessageBox message = new MessageBox(Display.getCurrent()
+						.getShells()[0], SWT.ICON_ERROR);
+				message.setMessage("The server has refused your job data. Please contact the website's manager");
+				message.setText("Job data refused");
+				message.open();
+			}
+		}
+
+		// return the response value
+		return status;
+	}
+
+	public void readConfigFile(File jobFolder) throws Exception {
+		File config = new File(jobFolder.getAbsolutePath() + File.separator
+				+ Job.CONFIG_FILE_NAME);
+
+		BufferedReader reader = new BufferedReader(new FileReader(
+				config.getAbsoluteFile()));
+
+		this.setID(Integer.parseInt(reader.readLine()));
+		this.setName(reader.readLine());
+		this.setType(Integer.parseInt(reader.readLine()));
+		this.setDescription(reader.readLine());
+		this.setPreviousStaffMember(reader.readLine());
+		this.setNextStaffMember(reader.readLine());
+		this.setStartDate(reader.readLine());
+		this.setDirectoryPath(reader.readLine());
+		this.setSubFile(new File(reader.readLine()));
+
+		File[] fonts = new File[Integer.parseInt(reader.readLine())];
+		for (int i = 0; i < fonts.length; i++)
+			fonts[i] = new File(reader.readLine());
+
+		this.setFonts(fonts);
+
+		// close the reader
+		reader.close();
+	}
+
+	/**
+	 * Creates a configuration file for a certain job in its own directory and
+	 * fills it with data
+	 * 
+	 * @param job
+	 *            The Job entity for which to create this file
+	 * @throws Exception
+	 */
+	private void generateConfigFile() throws Exception {
+		File file = new File(this.directoryPath + Job.CONFIG_FILE_NAME);
+
+		// delete the file if it already exists
+		if (file.exists())
+			file.delete();
+
+		// recreate it (void from data)
+		file.createNewFile();
+
+		// fill it with data (exclude raw data about the subfile and font files)
+		BufferedWriter writer = new BufferedWriter(new FileWriter(
+				file.getAbsoluteFile()));
+		writer.write(this.id + "\n");
+		writer.write(this.name + "\n");
+		writer.write(this.type + "\n");
+		writer.write(this.description + "\n");
+		writer.write(this.currentStaffMember + "\n");
+		writer.write(this.previousStaffMember + "\n");
+		writer.write(this.nextStaffMember + "\n");
+		writer.write(this.startDate + "\n");
+		writer.write(this.directoryPath + "\n");
+		writer.write(this.subFile.getAbsolutePath() + "\n");
+
+		writer.write(this.fonts.length + "\n");
+		for (int i = 0; i < this.fonts.length; i++) {
+			writer.write(this.fonts[i].getAbsolutePath() + "\n");
+		}
+
+		// close the writer
+		writer.close();
+
 	}
 }

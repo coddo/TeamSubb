@@ -1,18 +1,11 @@
 package com.coddotech.teamsubb.jobs;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
-import org.apache.commons.io.FileUtils;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.main.DesktopGadget;
@@ -31,14 +24,11 @@ public class JobManager {
 	private static final String SEPARATOR_FIELDS = "&?&";
 	private static final String SEPARATOR_JOBS = "¬|¬";
 	private static final File WORKING_DIRECTORY = new File("Jobs");
-	private static final String WORKING_DIRECTORY_PATH = "Jobs\\";
-	private static final String CONFIG_FILE_NAME = "\\config.cfg";
 
 	private List<Job> jobs;
 	private List<Job> acceptedJobs;
 
-	private DesktopGadget _gadget;
-	private UserInformation _userInfo;
+	private UserInformation userInfo;
 
 	/**
 	 * Main class construcotr
@@ -47,8 +37,7 @@ public class JobManager {
 	 *            The main form for this application
 	 */
 	public JobManager(DesktopGadget gadget, UserInformation userInfo) {
-		this._gadget = gadget;
-		this._userInfo = userInfo;
+		this.userInfo = userInfo;
 
 		initializeWorkingDirectory();
 	}
@@ -58,13 +47,13 @@ public class JobManager {
 	 */
 	public void dispose() {
 		// clear lists
-		jobs.clear();
-		acceptedJobs.clear();
+		this.clearJobList(jobs);
+		this.clearJobList(acceptedJobs);
+		jobs = null;
+		acceptedJobs = null;
 
 		// other classes
-		_gadget = null;
-		_userInfo = null;
-		jobs = null;
+		userInfo = null;
 	}
 
 	/**
@@ -83,6 +72,10 @@ public class JobManager {
 	 */
 	public List<Job> getAcceptedJobsList() {
 		return this.acceptedJobs;
+	}
+
+	public String getUserName() {
+		return this.userInfo.getUserName();
 	}
 
 	/**
@@ -104,64 +97,13 @@ public class JobManager {
 	public boolean createJob(String name, int type, String description,
 			String subFile, String[] fonts) {
 		String response = ConnectionManager.sendJobCreateRequest(
-				_userInfo.getUserName(), name, type, description, subFile,
+				userInfo.getUserName(), name, type, description, subFile,
 				fonts, true);
 
 		if (response.equals("error"))
 			return false;
 
 		return Boolean.parseBoolean(response);
-	}
-
-	/**
-	 * Send all the user's work for a job back to the server and remove its data
-	 * from the disk
-	 * 
-	 * @param job
-	 *            The Job entity representing the job to be sent
-	 * @return A logical value indicating if the server accepted the data
-	 */
-	public boolean pushJob(Job job) {
-		// send the request and wait for the servers response
-		String response = ConnectionManager.sendJobPushRequest(job,
-				_userInfo.getUserName(), false, true);
-
-		boolean status = false;
-
-		if (!response.equals("error")) {
-			// wrap the reponse from the server into a logical variable
-			status = Boolean.parseBoolean(response);
-
-			// if the response is ok, then delete the data from the disk
-			if (status) {
-				try {
-					this.removeJobFromDisk(job);
-
-					MessageBox message = new MessageBox(Display.getCurrent()
-							.getShells()[0], SWT.ICON_INFORMATION);
-					message.setMessage("The job has successfully been sent back to the server and its data deleted from your disk !");
-					message.setText("Success");
-					message.open();
-
-				} catch (Exception ex) {
-					MessageBox message = new MessageBox(Display.getCurrent()
-							.getShells()[0], SWT.ICON_ERROR);
-					message.setMessage("The job has successfully been sent back to the server, but the data on your disk could not be removed..."
-							+ "\nPlease delete the remaining data manually :).");
-					message.setText("Data not removed");
-					message.open();
-				}
-			} else { // if the server refused the request, tell the user
-				MessageBox message = new MessageBox(Display.getCurrent()
-						.getShells()[0], SWT.ICON_ERROR);
-				message.setMessage("The server has refused your job data. Please contact the website's manager");
-				message.setText("Job data refused");
-				message.open();
-			}
-		}
-
-		// return the response value
-		return status;
 	}
 
 	/**
@@ -176,7 +118,7 @@ public class JobManager {
 	 */
 	public boolean endJob(int jobID) {
 		String response = ConnectionManager.sendJobEndRequest(jobID,
-				_userInfo.getUserName(), true);
+				userInfo.getUserName(), true);
 
 		if (response.equals("error"))
 			return false;
@@ -196,11 +138,11 @@ public class JobManager {
 	public List<Job> findJobs(boolean notify) {
 
 		// clear the jobs list
-		jobs.clear();
+		this.clearJobList(jobs);
 
 		// send the jobs request to the server
 		String response = ConnectionManager.sendJobSearchRequest(
-				_userInfo.getUserName(), true);
+				userInfo.getUserName(), true);
 
 		if (response.equals("false")) {
 			// if no jobs are found, notify the user
@@ -212,7 +154,6 @@ public class JobManager {
 		} else if (!response.equals("error")) {
 			// in case everything is ok, start processing the response that was
 			// received from the server
-			boolean jobsFound = false;
 			String[] jobFragments = response.split(JobManager.SEPARATOR_JOBS);
 
 			// take each job and wrap it in a Job entity
@@ -223,39 +164,15 @@ public class JobManager {
 				// ignore this job if it already in the accepted list
 				if (!isAccepted(Integer.parseInt(data[0]))) {
 					// create variables representing this job's folder
-					String dirPath = JobManager.WORKING_DIRECTORY_PATH
-							+ data[1];
+					String dirPath = JobManager.WORKING_DIRECTORY
+							.getAbsolutePath() + File.separator + data[1];
 
-					Job job = new Job();
+					// create a new Job entity with the data
+					Job job = createJobEntity(data, dirPath);
 
-					// basic job information
-					job.setID(Integer.parseInt(data[0]));
-					job.setName(data[1]);
-					job.setType(Integer.parseInt(data[2]));
-					job.setDescription(data[3]);
-					job.setPreviousStaffMember(data[4]);
-					job.setStartDate(data[5]);
-					job.setDirectoryPath(dirPath);
-
-					// sub file
-					job.setSubFileData(data[6]);
-
-					// font files
-					String[] fontsData = null;
-					if (data.length - 7 > 0) {
-						fontsData = new String[data.length - 7];
-						for (int i = 7; i < data.length; i++)
-							fontsData[i - 7] = data[i];
-					}
-					job.setFontsData(fontsData);
-
+					// add it to the list
 					jobs.add(job);
-					jobsFound = true;
 				}
-
-				// start notifying the user about available jobs
-				if (notify && jobsFound)
-					_gadget.startNotifications();
 			}
 		}
 
@@ -263,112 +180,95 @@ public class JobManager {
 		return this.jobs;
 	}
 
-	/**
-	 * Accept a certain job.<br>
-	 * This method displays a popup message in case of an error
-	 * 
-	 * @param job
-	 *            The Job entity representing the job to be accepted
-	 */
-	public boolean acceptJob(Job job) {
-		try {
-			File dir = new File(job.getDirectoryPath());
+	public boolean acceptJob(int jobID) {
+		boolean result = false;
+		for (Job job : jobs) {
 
-			if (!dir.exists()) {
-				// create a directory for this job
-				dir.mkdir();
+			if (job.getID() == jobID) {
+				result = job.acceptJob();
 
-				// sub file (download + add to the Job entity)
-				job.setSubFile(this.downloadFile(job.getSubFileData(),
-						job.getDirectoryPath()));
-
-				// font files (download + add to the Job entity)
-				File[] fonts = new File[job.getFontsData().length];
-
-				for (int i = 0; i < fonts.length; i++) {
-					fonts[i] = this.downloadFile(job.getFontsData()[i],
-							job.getDirectoryPath());
-				}
-				job.setFonts(fonts);
-
-				// create the configuration file containing the job data
-				// This is for later use (in case of a job pause)
-				this.generateConfigFile(job);
-
-				// send the accept message request to the server
-				// throw an exception if the request fails
-				String response = ConnectionManager.sendJobAcceptRequest(
-						job.getID(), _userInfo.getUserName(), true);
-				if (response.equals("false"))
-					throw new Exception();
-
-				if (!response.equals("error")) {
-					// add the job to the list
+				if (result) {
+					jobs.remove(job);
 					acceptedJobs.add(job);
-
-					// delete it from the available jobs list
-					for (int i = 0; i < jobs.size(); i++) {
-						if (job.getID() == jobs.get(i).getID()) {
-							jobs.remove(i);
-							break;
-						}
-					}
-
-					return true;
 				}
+
 			}
-		} catch (Exception ex) {
-			MessageBox message = new MessageBox(Display.getCurrent()
-					.getShells()[0], SWT.ICON_ERROR);
-			message.setMessage("There was an error accepting this job."
-					+ "\nOr the server may have refused you this job.");
-			message.setText("Error");
-			message.open();
 		}
-		return false;
+
+		return result;
+	}
+
+	public boolean cancelJob(int jobID) {
+		boolean result = false;
+		for (Job job : acceptedJobs) {
+
+			if (job.getID() == jobID) {
+				result = job.cancelJob();
+				;
+
+				if (result) {
+					acceptedJobs.remove(job);
+				}
+
+			}
+		}
+
+		return result;
+	}
+
+	public boolean pushJob(int jobID) {
+		boolean result = false;
+		for (Job job : acceptedJobs) {
+
+			if (job.getID() == jobID) {
+				result = job.pushJob();
+				;
+
+				if (result) {
+					acceptedJobs.remove(job);
+				}
+
+			}
+		}
+
+		return result;
 	}
 
 	/**
-	 * Cancel/Abort a certain job on which the user is currently working.<br>
-	 * This method displays a popup message in case of an error
+	 * Create and get a new Job entity that contains the entered data
 	 * 
-	 * @param job
-	 *            The Job entity that needs to be canceled
+	 * @param data
+	 *            The entire data that represents this new job that will be
+	 *            created
+	 * @param dirPath
+	 *            The directory where this job's data files will be stored
+	 * @return The new Job entity that is created with the entered data
 	 */
-	public void cancelJob(Job job) {
-		try {
-			String response = ConnectionManager.sendJobCancelRequest(job,
-					_userInfo.getUserName(), true);
+	private Job createJobEntity(String[] data, String dirPath) {
+		// basic job information
+		Job job = new Job();
+		job.setID(Integer.parseInt(data[0]));
+		job.setName(data[1]);
+		job.setType(Integer.parseInt(data[2]));
+		job.setDescription(data[3]);
+		job.setPreviousStaffMember(data[4]);
+		job.setStartDate(data[5]);
+		job.setDirectoryPath(dirPath);
+		job.setCurrentStaffMember(this.userInfo.getUserName());
 
-			// if the request was refused, display a message by entering the
-			// catch block
-			if (response.equals("false"))
-				throw new Exception();
+		// sub file
+		job.setSubFileData(data[6]);
 
-			if (response.equals("true")) {
-				// if the request is accepted, delete the job from the accepted
-				// list and delete its directory and files
-				this.removeJobFromDisk(job);
-			}
-		} catch (Exception ex) {
-			MessageBox message = new MessageBox(Display.getCurrent()
-					.getShells()[0], SWT.ICON_ERROR);
-			message.setMessage("There waas an error canceling this job."
-					+ "\nOr the server may have refused your request.");
-			message.setText("Error");
-			message.open();
+		// font files
+		String[] fontsData = null;
+		if (data.length - 7 > 0) {
+			fontsData = new String[data.length - 7];
+			for (int i = 7; i < data.length; i++)
+				fontsData[i - 7] = data[i];
 		}
-	}
+		job.setFontsData(fontsData);
 
-	private void removeJobFromDisk(Job job) throws IOException {
-		FileUtils.deleteDirectory(job.getDirectoryInstance());
-
-		for (int i = 0; i < acceptedJobs.size(); i++) {
-			if (job.getID() == acceptedJobs.get(i).getID()) {
-				acceptedJobs.remove(i);
-				break;
-			}
-		}
+		return job;
 	}
 
 	/**
@@ -388,68 +288,15 @@ public class JobManager {
 	}
 
 	/**
-	 * Download a certain file from the web
+	 * Clears a list of all the Job entiteis that it contains
 	 * 
-	 * @param fileData
-	 *            A String containing the name of the file to be downloaded and
-	 *            the url from where it can be fetched<b> The format is:
-	 *            file_name=file_URL
-	 * @param dir
-	 *            The directory path where to save the file
-	 * @return A File entity representing the downloaded file
-	 * @throws Exception
+	 * @param list
+	 *            The list that needs to be disposed
 	 */
-	private File downloadFile(String fileData, String dir) throws Exception {
-		String[] nameURLContainer = fileData.split("=");
-
-		File file = new File(dir + "\\" + nameURLContainer[0]);
-		URL fileURL = new URL(nameURLContainer[1]);
-
-		FileUtils.copyURLToFile(fileURL, file);
-
-		return file;
-	}
-
-	/**
-	 * Creates a configuration file for a certain job in its own directory and
-	 * fills it with data
-	 * 
-	 * @param job
-	 *            The Job entity for which to create this file
-	 * @throws Exception
-	 */
-	private void generateConfigFile(Job job) throws Exception {
-		File file = new File(job.getDirectoryPath()
-				+ JobManager.CONFIG_FILE_NAME);
-
-		// delete the file if it already exists
-		if (file.exists())
-			file.delete();
-
-		// recreate it (void from data)
-		file.createNewFile();
-
-		// fill it with data (exclude raw data about the subfile and font files)
-		BufferedWriter writer = new BufferedWriter(new FileWriter(
-				file.getAbsoluteFile()));
-		writer.write(job.getID() + "\n");
-		writer.write(job.getName() + "\n");
-		writer.write(job.getType() + "\n");
-		writer.write(job.getDescription() + "\n");
-		writer.write(job.getPreviousStaffMember() + "\n");
-		writer.write(job.getNextStaffMember() + "\n");
-		writer.write(job.getStartDate() + "\n");
-		writer.write(job.getDirectoryPath() + "\n");
-		writer.write(job.getSubFile().getAbsolutePath() + "\n");
-
-		writer.write(job.getFonts().length + "\n");
-		for (int i = 0; i < job.getFonts().length; i++) {
-			writer.write(job.getFonts()[i].getAbsolutePath() + "\n");
-		}
-
-		// close the writer
-		writer.close();
-
+	private void clearJobList(List<Job> list) {
+		for (Job job : list)
+			job.dispose();
+		list.clear();
 	}
 
 	/**
@@ -467,34 +314,10 @@ public class JobManager {
 			for (String jobDir : JobManager.WORKING_DIRECTORY.list()) {
 				File jobFolder = new File(jobDir);
 				try {
-					File config = new File(jobFolder.getAbsolutePath()
-							+ JobManager.CONFIG_FILE_NAME);
 
-					BufferedReader reader = new BufferedReader(new FileReader(
-							config.getAbsoluteFile()));
-
-					// read the data from the file and place it in a new Job
-					// entity
+					// read the data from the file and place it in the entity
 					Job job = new Job();
-
-					job.setID(Integer.parseInt(reader.readLine()));
-					job.setName(reader.readLine());
-					job.setType(Integer.parseInt(reader.readLine()));
-					job.setDescription(reader.readLine());
-					job.setPreviousStaffMember(reader.readLine());
-					job.setNextStaffMember(reader.readLine());
-					job.setStartDate(reader.readLine());
-					job.setDirectoryPath(reader.readLine());
-					job.setSubFile(new File(reader.readLine()));
-
-					File[] fonts = new File[Integer.parseInt(reader.readLine())];
-					for (int i = 0; i < fonts.length; i++)
-						fonts[i] = new File(reader.readLine());
-
-					job.setFonts(fonts);
-
-					// close the reader
-					reader.close();
+					job.readConfigFile(jobFolder);
 
 					// add the Job entity to the "accepted list"
 					acceptedJobs.add(job);

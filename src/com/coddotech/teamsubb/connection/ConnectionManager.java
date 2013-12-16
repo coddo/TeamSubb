@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -303,6 +305,29 @@ public final class ConnectionManager {
 		message.setMessage("A connection error has occured.\nPlease try again later...");
 		message.setText("Connection failed");
 		message.open();
+	}
+	
+	/**
+	 * Download a certain file from the web
+	 * 
+	 * @param fileData
+	 *            A String containing the name of the file to be downloaded and
+	 *            the url from where it can be fetched<b> The format is:
+	 *            file_name=file_URL
+	 * @param dir
+	 *            The directory path where to save the file
+	 * @return A File entity representing the downloaded file
+	 * @throws Exception
+	 */
+	public static File downloadFile(String fileData, String dir) throws Exception {
+		String[] nameURLContainer = fileData.split("=");
+
+		File file = new File(dir + "\\" + nameURLContainer[0]);
+		URL fileURL = new URL(nameURLContainer[1]);
+
+		FileUtils.copyURLToFile(fileURL, file);
+
+		return file;
 	}
 
 	/**
