@@ -22,8 +22,6 @@ import com.coddotech.teamsubb.connection.ConnectionManager;
  */
 public final class Job {
 
-	public static final String[] JOB_TYPES = { "Translate", "Verify", "Encode",
-			"Typeset", "End" };
 	private static final String DEFAULT_NEXT_STAFF = "anyone";
 	private static final String CONFIG_FILE_NAME = "\\config.cfg";
 

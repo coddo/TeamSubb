@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
-import com.coddotech.teamsubb.main.DesktopGadget;
+import com.coddotech.teamsubb.main.Gadget;
 
 /**
  * Class used for realizing the communication between this client and the target
@@ -29,7 +29,7 @@ public class JobManager {
 	private List<Job> jobs;
 	private List<Job> acceptedJobs;
 
-	private UserInformation userInfo;
+	private String userName;;
 
 	/**
 	 * Main class construcotr
@@ -37,8 +37,8 @@ public class JobManager {
 	 * @param gadget
 	 *            The main form for this application
 	 */
-	public JobManager(DesktopGadget gadget, UserInformation userInfo) {
-		this.userInfo = userInfo;
+	public JobManager(Gadget gadget, String userName) {
+		this.userName = userName;
 		jobs = new ArrayList<Job>();
 		acceptedJobs = new ArrayList<Job>();
 
@@ -55,8 +55,7 @@ public class JobManager {
 		jobs = null;
 		acceptedJobs = null;
 
-		// other classes
-		userInfo = null;
+		userName = null;
 	}
 
 	/**
@@ -78,7 +77,7 @@ public class JobManager {
 	}
 
 	public String getUserName() {
-		return this.userInfo.getUserName();
+		return this.userName;
 	}
 
 	/**
@@ -100,7 +99,7 @@ public class JobManager {
 	public boolean createJob(String name, int type, String description,
 			String subFile, String[] fonts) {
 		String response = ConnectionManager.sendJobCreateRequest(
-				userInfo.getUserName(), name, type, description, subFile,
+				userName, name, type, description, subFile,
 				fonts, true);
 
 		if (response.equals("error"))
@@ -121,7 +120,7 @@ public class JobManager {
 	 */
 	public boolean endJob(int jobID) {
 		String response = ConnectionManager.sendJobEndRequest(jobID,
-				userInfo.getUserName(), true);
+				userName, true);
 
 		if (response.equals("error"))
 			return false;
@@ -145,7 +144,7 @@ public class JobManager {
 
 		// send the jobs request to the server
 		String response = ConnectionManager.sendJobSearchRequest(
-				userInfo.getUserName(), true);
+				userName, true);
 
 		if (response.equals("false")) {
 			// if no jobs are found, notify the user
@@ -257,7 +256,7 @@ public class JobManager {
 		job.setPreviousStaffMember(data[4]);
 		job.setStartDate(data[5]);
 		job.setDirectoryPath(dirPath);
-		job.setCurrentStaffMember(this.userInfo.getUserName());
+		job.setCurrentStaffMember(this.userName);
 
 		// sub file
 		job.setSubFileData(data[6]);

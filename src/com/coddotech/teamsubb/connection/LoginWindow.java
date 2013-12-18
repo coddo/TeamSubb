@@ -12,8 +12,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
-import com.coddotech.teamsubb.jobs.UserInformation;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.main.Gadget;
 
 /**
  * This class representes the login interface for the application. <br>
@@ -26,6 +26,9 @@ import com.coddotech.teamsubb.main.CustomWindow;
  */
 public final class LoginWindow extends CustomWindow {
 
+	private static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator",
+			"Administrator", "Fondator" };
+
 	private Label userLabel;
 	private Label passLabel;
 	private Text userBox;
@@ -35,20 +38,12 @@ public final class LoginWindow extends CustomWindow {
 
 	private Font defaultFont;
 
-	private UserInformation userDetailsManager;
-
-	private String mayContinue = "NO";
-
 	/**
 	 * Class constructor
 	 */
 	public LoginWindow() {
 		super();
 		initializeComponents();
-	}
-
-	public String getMayContinueValue() {
-		return mayContinue;
 	}
 
 	/**
@@ -75,33 +70,6 @@ public final class LoginWindow extends CustomWindow {
 
 		defaultFont.dispose();
 		defaultFont = null;
-
-		userDetailsManager.dispose();
-		userDetailsManager = null;
-	}
-
-	/**
-	 * Set the fetched user information into the XML file containing the
-	 * appriopriate data <br>
-	 * <br>
-	 * data[0] -> true/false <br>
-	 * data[1] -> email <br>
-	 * data[2] -> rank <br>
-	 * data[3 -> n] -> job titles
-	 * 
-	 * @param data
-	 *            A String collection containing the user information
-	 */
-	private void setData(String[] data) {
-		// set the user's name, email and rank
-		userDetailsManager.setUserName(userBox.getText());
-		userDetailsManager.setUserEmail(data[1]);
-		userDetailsManager
-				.setUserRank(UserInformation.DEFAULT_USER_RANKS[Integer
-						.parseInt(data[2])]);
-
-		// set the user's jobs
-		userDetailsManager.setUserJobs(data);
 	}
 
 	/**
@@ -120,15 +88,76 @@ public final class LoginWindow extends CustomWindow {
 			if (Boolean.parseBoolean(result[0])) {
 				// if the login process is successful continue with starting the
 				// application's main functionalities and close the login window
-				setData(result);
-				mayContinue = "OK";
+				Gadget gadget = new Gadget(this.getUserInfo(result),
+						this.getJobsInfo(result));
+
 				this.close();
+				gadget.open();
+
 			} else { // if the login was unsuccessful, show an error message
 				message.setMessage("The entered username or password is incorrect");
 				message.setText("Wrong credentials");
 				message.open();
 			}
 		}
+	}
+
+	/**
+	 * Extract the jobs data into a boolean array indicating the jobs types that
+	 * this user can work on <br>
+	 * <br>
+	 * data[0] -> true/false <br>
+	 * data[1] -> email <br>
+	 * data[2] -> rank <br>
+	 * data[3 -> n] -> job titles
+	 * 
+	 * @param data
+	 *            A String collection containing the user information
+	 * @return A boolean array containing the possible jobs for this user
+	 */
+	private boolean[] getJobsInfo(String[] data) {
+		boolean[] jobsData = { false, false, false, false, false, false, false };
+
+		for (int i = 3; i < data.length; i++) {
+
+			for (int j = 0; j < Gadget.DEFAULT_JOBS_INFO_HEADERS.length; j++) {
+
+				if (data[i].equals(Gadget.DEFAULT_JOBS_INFO_HEADERS[j])) {
+					jobsData[j] = true;
+					break;
+				}
+			}
+		}
+
+		return jobsData;
+	}
+
+	/**
+	 * Extract the user information into a String array. Information contains:
+	 * user name, email and rank <br>
+	 * <br>
+	 * data[0] -> true/false <br>
+	 * data[1] -> email <br>
+	 * data[2] -> rank (integer)<br>
+	 * data[3 -> n] -> job titles
+	 * 
+	 * @param data
+	 *            A String collection containing the user information
+	 * @return A boolean array containing the possible jobs for this user
+	 */
+	private String[] getUserInfo(String[] data) {
+		String[] info = new String[3];
+
+		info[0] = data[0];
+		info[1] = data[1];
+
+		/*
+		 * The rank is stored as an integer, indicating on of the following
+		 * ranks: 0 - Membru 1 - Moderator 2 - Administrator 3 - Fondator
+		 */
+		info[2] = LoginWindow.DEFAULT_USER_RANKS[Integer.parseInt(data[2])];
+
+		return info;
 	}
 
 	/**
@@ -197,14 +226,13 @@ public final class LoginWindow extends CustomWindow {
 	 */
 	private void initializeComponents() {
 		// initializations
-		userDetailsManager = new UserInformation();
-
 		defaultFont = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
 
 		userLabel = new Label(this.getShell(), SWT.None);
 		passLabel = new Label(this.getShell(), SWT.None);
 		userBox = new Text(this.getShell(), SWT.BORDER);
-		passBox = new Text(this.getShell(), SWT.PASSWORD | SWT.BORDER | SWT.SINGLE);
+		passBox = new Text(this.getShell(), SWT.PASSWORD | SWT.BORDER
+				| SWT.SINGLE);
 		exitButton = new Button(this.getShell(), SWT.PUSH);
 		loginButton = new Button(this.getShell(), SWT.PUSH);
 

@@ -5,5 +5,5 @@
 *.war
 *.ear
 bin/
-jobs/
+Jobs/
 *.classpath

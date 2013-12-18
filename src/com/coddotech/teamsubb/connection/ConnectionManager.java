@@ -26,7 +26,7 @@ import com.coddotech.teamsubb.jobs.Job;
  * This class is used for bridging the connection between the server and the
  * user of this instance of the client app.<br>
  * 
- * It operates as a static one: it doesn't contain a constructor and all the
+ * It operates as a static class: it doesn't contain a constructor and all the
  * methods and fields are accessed in a static way.
  * 
  * @author Coddo

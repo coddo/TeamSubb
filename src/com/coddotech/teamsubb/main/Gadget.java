@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.jobs.JobManager;
-import com.coddotech.teamsubb.jobs.UserInformation;
 import com.coddotech.teamsubb.settings.AppSettings;
 
 /**
@@ -15,19 +14,30 @@ import com.coddotech.teamsubb.settings.AppSettings;
  * 
  * @author Coddo
  */
-public class DesktopGadget extends CustomWindow {
+public class Gadget extends CustomWindow {
 
+	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator",
+		"Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
+		"Postator" };
+	public static final String[] DEFAULT_USER_INFORMATION = {"Name", "Email", "Rank"};
+	
+	private boolean[] jobs = {false, false, false, false, false, false, false};
+	private String[] userInfo = new String[3];
+	
 	private JobManager jobManager;
 	private AppSettings settings;
-	private UserInformation userInfo;
 
 	private Label label;
 
 	/*
 	 * Class constructor
 	 */
-	public DesktopGadget() {
-		//super();
+	public Gadget(String[] userInfo, boolean[] jobs) {
+		super();
+		
+		this.userInfo = userInfo;
+		this.jobs = jobs;
+		
 		initializeComponents();
 	}
 
@@ -43,6 +53,14 @@ public class DesktopGadget extends CustomWindow {
 
 		// user controls
 		label.dispose();
+	}
+
+	public boolean[] getJobs() {
+		return jobs;
+	}
+
+	public void setJobs(boolean[] jobs) {
+		this.jobs = jobs;
 	}
 
 	/**
@@ -109,8 +127,7 @@ public class DesktopGadget extends CustomWindow {
 	 */
 	private void initializeComponents () {
 		// object definitions
-		userInfo = new UserInformation();
-		jobManager = new JobManager(this, this.userInfo);
+		jobManager = new JobManager(this, this.userInfo[0]);
 		
 		settings = new AppSettings();
 		label = new Label(getShell(), SWT.None);
