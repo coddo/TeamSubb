@@ -85,7 +85,7 @@ public final class AppSettingsWindow extends CustomWindow {
 		// object properties
 		autosaveLocation.setText("Automatically save the gadget's location");
 		autosaveLocation.setLocation(10, 10);
-		autosaveLocation.setSelection(settings.getGadgetAutosaveLocation());
+		autosaveLocation.setSelection(settings.isGadgetAutosaveLocation());
 		autosaveLocation.pack();
 
 		// shell properties

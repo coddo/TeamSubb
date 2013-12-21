@@ -116,7 +116,7 @@ public class Gadget extends CustomWindow {
 	private Listener gadgetPositionChangedListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			if (settings.getGadgetAutosaveLocation()) {
+			if (settings.isGadgetAutosaveLocation()) {
 				settings.setGadgetLocation(getShell().getLocation());
 			}
 		}

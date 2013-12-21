@@ -12,7 +12,7 @@ public class Login extends Observable {
 	/**
 	 * Start the login procedure
 	 */
-	void doLogin(String user, String pass) {
+	public void doLogin(String user, String pass) {
 
 		String resultMessage = ConnectionManager.sendLoginRequest(user, pass);
 		this.setChanged();
