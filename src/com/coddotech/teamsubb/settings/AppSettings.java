@@ -1,6 +1,7 @@
 package com.coddotech.teamsubb.settings;
 
 import java.io.File;
+import java.util.Observable;
 
 import org.eclipse.swt.graphics.Point;
 
@@ -8,10 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -24,14 +22,14 @@ import org.w3c.dom.Element;
  * @author Coddo
  * 
  */
-public final class AppSettings {
+public final class AppSettings extends Observable {
 
 	private static final Point DEFAULT_LOCATION = new Point(200, 200);
 	private static final boolean DEFAULT_AUTOSAVE_LOCATION = false;
 
 	private Point gadgetLocation;
 	private boolean gadgetAutosaveLocation;
-	
+
 	private DocumentBuilderFactory dbFactory;
 	private DocumentBuilder dBuilder;
 	private Document settingsFile;
@@ -40,8 +38,7 @@ public final class AppSettings {
 	 * Class constructor
 	 */
 	public AppSettings() {
-		initializeComponents();
-		readSettings();
+		createXMLComponents();
 	}
 
 	/**
@@ -78,10 +75,13 @@ public final class AppSettings {
 	 */
 	public void restoreDefaultSettings() {
 		// gadget position
-		this.setGadgetLocation(AppSettings.DEFAULT_LOCATION);
+		this.gadgetLocation = AppSettings.DEFAULT_LOCATION;
 
 		// gadget autosave position
-		this.setGadgetAutosaveLocation(AppSettings.DEFAULT_AUTOSAVE_LOCATION);
+		this.gadgetAutosaveLocation = AppSettings.DEFAULT_AUTOSAVE_LOCATION;
+
+		// notify the observers about this
+		notifyCompleteSettings();
 	}
 
 	/**
@@ -94,7 +94,7 @@ public final class AppSettings {
 		try {
 			saveGadgetLocation(gadgetLocation);
 			saveGadgetAutosaveLocation(gadgetAutosaveLocation);
-			
+
 			Transformer transformer = TransformerFactory.newInstance()
 					.newTransformer();
 			StreamResult output = new StreamResult(new File("Settings.xml"));
@@ -103,15 +103,21 @@ public final class AppSettings {
 			transformer.transform(input, output);
 
 			return true;
-		} catch (TransformerConfigurationException e) {
-			return false;
-		} catch (TransformerFactoryConfigurationError e) {
-			return false;
-		} catch (TransformerException e) {
+		} catch (Exception ex) {
 			return false;
 		}
 	}
+
+	/**
+	 * Reads all the settings from the XML file and stores them in the HEAP
+	 */
+	public void readSettings() {
+		readGadgetLocation();
+		readGadgetAutosaveLocation();
 	
+		notifyCompleteSettings();
+	}
+
 	/**
 	 * Sets the default position for the gadget
 	 * 
@@ -120,9 +126,9 @@ public final class AppSettings {
 	 *            for the gadget
 	 */
 	private void saveGadgetLocation(Point gadgetLocation) {
-		Element element = (Element) settingsFile.getElementsByTagName("location").item(
-				0);
-	
+		Element element = (Element) settingsFile.getElementsByTagName(
+				"location").item(0);
+
 		element.setAttribute("location_x", Integer.toString(gadgetLocation.x));
 		element.setAttribute("location_y", Integer.toString(gadgetLocation.y));
 	}
@@ -149,16 +155,16 @@ public final class AppSettings {
 	 */
 	private void readGadgetLocation() {
 		try {
-			Element element = (Element) settingsFile.getElementsByTagName("location")
-					.item(0);
+			Element element = (Element) settingsFile.getElementsByTagName(
+					"location").item(0);
 			int x = Integer.parseInt(element.getAttribute("location_x"));
 			int y = Integer.parseInt(element.getAttribute("location_y"));
-	
-			if (x < 0 || y < 0) 
+
+			if (x < 0 || y < 0)
 				this.gadgetLocation = DEFAULT_LOCATION;
 			else
 				this.gadgetLocation = new Point(x, y);
-			
+
 		} catch (Exception ex) {
 			this.gadgetLocation = DEFAULT_LOCATION;
 		}
@@ -174,29 +180,34 @@ public final class AppSettings {
 		Element element = (Element) settingsFile.getElementsByTagName(
 				"autosave_location").item(0);
 		try {
-			this.gadgetAutosaveLocation = Boolean.parseBoolean(element.getAttribute("value"));
+			this.gadgetAutosaveLocation = Boolean.parseBoolean(element
+					.getAttribute("value"));
 		} catch (Exception ex) {
 			this.gadgetAutosaveLocation = DEFAULT_AUTOSAVE_LOCATION;
 		}
 	}
 
-	private void readSettings() {
-		readGadgetLocation();
-		readGadgetAutosaveLocation();
+	/**
+	 * Notifies the registered GUI about all the settings that are available for
+	 * the application
+	 */
+	private void notifyCompleteSettings() {
+		this.setChanged();
+		
+		notifyObservers(this.gadgetAutosaveLocation);
+		notifyObservers(this.gadgetLocation);
 	}
 
 	/**
 	 * Initialize all the components for this class
 	 */
-	private void initializeComponents() {
+	private void createXMLComponents() {
 		try { // XML builders and documents
 			dbFactory = DocumentBuilderFactory.newInstance();
 			dBuilder = dbFactory.newDocumentBuilder();
 			settingsFile = dBuilder.parse("Settings.xml");
 		} catch (Exception e) {
 			// ignore any exceptions
-		} finally { // All the other components
-
 		}
 	}
 }

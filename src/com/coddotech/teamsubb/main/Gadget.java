@@ -17,13 +17,14 @@ import com.coddotech.teamsubb.settings.AppSettings;
 public class Gadget extends CustomWindow {
 
 	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator",
-		"Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
-		"Postator" };
-	public static final String[] DEFAULT_USER_INFORMATION = {"Name", "Email", "Rank"};
-	
-	private boolean[] jobs = {false, false, false, false, false, false, false};
-	private String[] userInfo = new String[3];
-	
+			"Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
+			"Postator" };
+	public static final String[] DEFAULT_USER_INFORMATION = { "Name", "Email",
+			"Rank" };
+
+	private boolean[] jobs;
+	private String[] userInfo;
+
 	private JobManager jobManager;
 	private AppSettings settings;
 
@@ -37,8 +38,6 @@ public class Gadget extends CustomWindow {
 		
 		this.userInfo = userInfo;
 		this.jobs = jobs;
-		
-		initializeComponents();
 	}
 
 	/**
@@ -53,6 +52,10 @@ public class Gadget extends CustomWindow {
 
 		// user controls
 		label.dispose();
+	}
+	
+	public String getUserName() {
+		return this.userInfo[0];
 	}
 
 	public boolean[] getJobs() {
@@ -79,13 +82,6 @@ public class Gadget extends CustomWindow {
 	}
 
 	/**
-	 * Read the user information (also contains job details and stuff)
-	 */
-	private void readUserDetails() {
-	
-	}
-
-	/**
 	 * Listens for when the shell (GUI) closes and clears memory from this class
 	 * and its resources
 	 */
@@ -99,14 +95,14 @@ public class Gadget extends CustomWindow {
 	 * Listens for when the shell (GUI) for this class is displayed
 	 */
 	private Listener gadgetShownListener = new Listener() {
+		
 		@Override
 		public void handleEvent(Event e) {
-			label.setText(getShell().getLocation().x + ","
+			/*label.setText(getShell().getLocation().x + ","
 					+ getShell().getLocation().y);
-			label.pack();
-
-			readUserDetails();
+			label.pack();*/
 		}
+		
 	};
 
 	/**
@@ -122,28 +118,37 @@ public class Gadget extends CustomWindow {
 		}
 	};
 
-	/**
-	 * Creates the graphical contents for application and defines all the fields
-	 */
-	private void initializeComponents () {
-		// object definitions
-		jobManager = new JobManager(this, this.userInfo[0]);
+	@Override
+	protected void performInitializations() {
+		jobManager = new JobManager(this);
 		
 		settings = new AppSettings();
 		label = new Label(getShell(), SWT.None);
-	
-		// object properties
+
+	}
+
+	@Override
+	protected void createObjectProperties() {
+		settings.readSettings();
+		
 		label.setLocation(10, 10);
 		label.pack();
-	
-		// shell properties
+
+	}
+
+	@Override
+	protected void createShellProperties() {
 		this.getShell().setText("Team Subb");
 		this.getShell().setLocation(settings.getGadgetLocation());
 		this.getShell().setSize(400, 400);
-	
-		// listeners
-		this.getShell().addListener(SWT.Show, gadgetShownListener);
-		this.getShell().addListener(SWT.Close, shellClosingListener);
-		this.getShell().addListener(SWT.Move, gadgetPositionChangedListener);
+
+	}
+
+	@Override
+	protected void createListeners() {
+		//this.getShell().addListener(SWT.Show, gadgetShownListener);
+		//this.getShell().addListener(SWT.Close, shellClosingListener);
+		//this.getShell().addListener(SWT.Move, gadgetPositionChangedListener);
+
 	}
 }

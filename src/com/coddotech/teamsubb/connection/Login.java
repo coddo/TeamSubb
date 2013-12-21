@@ -25,16 +25,15 @@ public class Login extends Observable {
 			// notify the views about the success or failure of the login
 			// process that took place
 			notifyObservers(Boolean.parseBoolean(result[0]));
-			
+
 			if (Boolean.parseBoolean(result[0])) {
 				// if the login process is successful continue with starting the
 				// application's main functionalities and close the login window
-				Gadget gadget = new Gadget(this.getUserInfo(result),
+				Gadget gadget = new Gadget(this.getUserInfo(result, user),
 						this.getJobsInfo(result));
 
 				gadget.open();
 			}
-
 
 		} else
 			// tell the views that the connection could not be established
@@ -84,10 +83,10 @@ public class Login extends Observable {
 	 *            A String collection containing the user information
 	 * @return A boolean array containing the possible jobs for this user
 	 */
-	private String[] getUserInfo(String[] data) {
+	private String[] getUserInfo(String[] data, String user) {
 		String[] info = new String[3];
 
-		info[0] = data[0];
+		info[0] = user;
 		info[1] = data[1];
 
 		/*

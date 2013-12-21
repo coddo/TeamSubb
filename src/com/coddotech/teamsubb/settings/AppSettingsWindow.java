@@ -1,11 +1,11 @@
 package com.coddotech.teamsubb.settings;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.main.CustomWindow;
 
@@ -17,85 +17,87 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * @author Coddo
  * 
  */
-public final class AppSettingsWindow extends CustomWindow {
+public final class AppSettingsWindow extends CustomWindow implements Observer {
 
-	private Button autosaveLocation;
+	private Button gadgetAutosaveLocation;
 
-	private AppSettings settings;
+	private AppSettingsController controller;
+
+	private Point gadgetLocation;
 
 	/**
 	 * Class constructor
 	 */
 	public AppSettingsWindow() {
 		super();
-		initializeComponents();
 	}
 
 	/**
 	 * Clear the memory from this class and its components
 	 */
-	private void dispose() {
-		settings.dispose();
-
-		autosaveLocation.dispose();
+	public void dispose() {
+		gadgetAutosaveLocation.dispose();
+		gadgetAutosaveLocation = null;
 	}
 
 	/**
-	 * Listener for when the autosaveLocation button is checked or not This sets
-	 * the value for autosaving the gadget's location based on the state of this
-	 * checkbox
+	 * Tells the user is the gadget is set to automatically save its own
+	 * location on the screen
+	 * 
+	 * @return A logical value indicating the result
 	 */
-	private SelectionListener autosaveChecked = new SelectionListener() {
-
-		@Override
-		public void widgetSelected(SelectionEvent arg0) {
-			// change the autosave property value
-			settings.setGadgetAutosaveLocation(autosaveLocation.getSelection());
-		}
-
-		@Override
-		public void widgetDefaultSelected(SelectionEvent arg0) {
-			// TODO Auto-generated method stub
-
-		}
-	};
+	public boolean isGadgetAutosaveLocation() {
+		return this.gadgetAutosaveLocation.getSelection();
+	}
 
 	/**
-	 * Listener for when the shell is closing in order to know when to start
-	 * disposing all the components for this class
+	 * Retrieve the location the is stored for the gadget
+	 * 
+	 * @return A Point variable indicating the saved location for the gadget
+	 *         window
 	 */
-	private Listener shellClosingListener = new Listener() {
-
-		@Override
-		public void handleEvent(Event arg0) {
-			dispose();
-
-		}
-	};
+	public Point getGadgetLocation() {
+		return this.gadgetLocation;
+	}
 
 	/**
-	 * Initialize all the components for this class and set their initial
-	 * properties (default ones)
+	 * Updates the interface based on the way the model has changed
 	 */
-	private void initializeComponents() {
-		// initializations
-		settings = new AppSettings();
-		autosaveLocation = new Button(this.getShell(), SWT.CHECK);
+	@Override
+	public void update(Observable obs, Object obj) {
+		if (obj instanceof Boolean) {
+			this.gadgetAutosaveLocation.setSelection((Boolean) obj);
+		} else if (obj instanceof Point) {
+			this.gadgetLocation = (Point) obj;
+		}
+	}
 
-		// object properties
-		autosaveLocation.setText("Automatically save the gadget's location");
-		autosaveLocation.setLocation(10, 10);
-		autosaveLocation.setSelection(settings.isGadgetAutosaveLocation());
-		autosaveLocation.pack();
+	@Override
+	protected void performInitializations() {
+		controller = new AppSettingsController(this);
+		gadgetAutosaveLocation = new Button(this.getShell(), SWT.CHECK);
+	}
 
-		// shell properties
+	@Override
+	protected void createObjectProperties() {
+		gadgetAutosaveLocation
+				.setText("Automatically save the gadget's location");
+		gadgetAutosaveLocation.setLocation(10, 10);
+		gadgetAutosaveLocation.pack();
+	}
+
+	@Override
+	protected void createShellProperties() {
 		this.getShell().setText("Application settings");
 		this.placeToCenter();
 		this.getShell().setSize(260, 70);
-		this.getShell().addListener(SWT.Close, shellClosingListener);
+	}
 
-		// listeners
-		autosaveLocation.addSelectionListener(autosaveChecked);
+	@Override
+	protected void createListeners() {
+		gadgetAutosaveLocation.addSelectionListener(controller.autosaveChecked);
+		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
+		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 	}
 
 }

@@ -28,8 +28,8 @@ public class JobManager {
 
 	private List<Job> jobs;
 	private List<Job> acceptedJobs;
-
-	private String userName;;
+	
+	private Gadget gadget;
 
 	/**
 	 * Main class construcotr
@@ -37,8 +37,8 @@ public class JobManager {
 	 * @param gadget
 	 *            The main form for this application
 	 */
-	public JobManager(Gadget gadget, String userName) {
-		this.userName = userName;
+	public JobManager(Gadget gadget) {
+		this.gadget = gadget;
 		jobs = new ArrayList<Job>();
 		acceptedJobs = new ArrayList<Job>();
 
@@ -55,7 +55,7 @@ public class JobManager {
 		jobs = null;
 		acceptedJobs = null;
 
-		userName = null;
+		gadget = null;
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class JobManager {
 	}
 
 	public String getUserName() {
-		return this.userName;
+		return gadget.getUserName();
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class JobManager {
 	public boolean createJob(String name, int type, String description,
 			String subFile, String[] fonts) {
 		String response = ConnectionManager.sendJobCreateRequest(
-				userName, name, type, description, subFile, fonts);
+				gadget.getUserName(), name, type, description, subFile, fonts);
 
 		if (response.equals("error"))
 			return false;
@@ -118,7 +118,7 @@ public class JobManager {
 	 * @return A logical value indicating if the job was ended successfully
 	 */
 	public boolean endJob(int jobID) {
-		String response = ConnectionManager.sendJobEndRequest(jobID, userName);
+		String response = ConnectionManager.sendJobEndRequest(jobID, gadget.getUserName());
 
 		if (response.equals("error"))
 			return false;
@@ -141,7 +141,7 @@ public class JobManager {
 		this.clearJobList(jobs);
 
 		// send the jobs request to the server
-		String response = ConnectionManager.sendJobSearchRequest(userName);
+		String response = ConnectionManager.sendJobSearchRequest(gadget.getUserName());
 
 		if (response.equals("false")) {
 			// if no jobs are found, notify the user
@@ -253,7 +253,7 @@ public class JobManager {
 		job.setPreviousStaffMember(data[4]);
 		job.setStartDate(data[5]);
 		job.setDirectoryPath(dirPath);
-		job.setCurrentStaffMember(this.userName);
+		job.setCurrentStaffMember(this.gadget.getUserName());
 
 		// sub file
 		job.setSubFileData(data[6]);

@@ -40,7 +40,6 @@ public class LoginWindow extends CustomWindow implements Observer {
 	 */
 	public LoginWindow() {
 		super();
-		initializeComponents();
 	}
 
 	/**
@@ -67,6 +66,8 @@ public class LoginWindow extends CustomWindow implements Observer {
 
 		defaultFont.dispose();
 		defaultFont = null;
+		
+		controller = null;
 	}
 
 	/**
@@ -112,24 +113,8 @@ public class LoginWindow extends CustomWindow implements Observer {
 		}
 	}
 
-	/**
-	 * Initializez the components for this class
-	 */
-	private void initializeComponents() {
-		// initializations
-		this.performInitializations();
-
-		// object properties
-		this.createObjectProperties();
-
-		// shell properties
-		this.createShellProperties();
-
-		// listeners
-		this.createObjectListeners();
-	}
-
-	private void performInitializations() {
+	@Override
+	protected void performInitializations() {
 		controller = new LoginController(this);
 
 		defaultFont = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
@@ -143,7 +128,8 @@ public class LoginWindow extends CustomWindow implements Observer {
 		loginButton = new Button(this.getShell(), SWT.PUSH);
 	}
 
-	private void createObjectProperties() {
+	@Override
+	protected void createObjectProperties() {
 		userLabel.setFont(defaultFont);
 		userLabel.setText("User name:");
 		userLabel.setLocation(10, 10);
@@ -173,13 +159,15 @@ public class LoginWindow extends CustomWindow implements Observer {
 		exitButton.setSize(50, 25);
 	}
 
-	private void createShellProperties() {
+	@Override
+	protected void createShellProperties() {
 		this.getShell().setText("Login into your account");
 		this.getShell().setSize(295, 165);
 		this.placeToCenter();
 	}
 
-	private void createObjectListeners() {
+	@Override
+	protected void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 		userBox.addListener(SWT.Traverse, controller.keyPressed);
 		passBox.addListener(SWT.Traverse, controller.keyPressed);

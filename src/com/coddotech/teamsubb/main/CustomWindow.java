@@ -8,10 +8,11 @@ public abstract class CustomWindow {
 	private Shell shell;
 
 	/**
-	 * Class constructor
+	 * Class constructor. Initializez all the components for the GUI class
 	 */
 	public CustomWindow() {
-		createContents();
+		createShell();
+		initializeComponents();
 	}
 
 	/**
@@ -52,24 +53,6 @@ public abstract class CustomWindow {
 				- getShell().getSize().y / 2);
 	}
 
-	/*
-	 * creates the contents for this shell instance
-	 */
-	private void createContents() {
-		// Prevent the window from being resized
-		shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM ^ SWT.RESIZE);
-
-		shell.setSize(300, 300);
-		this.placeToCenter();
-
-		shell.addListener(SWT.Close, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				shell.dispose();
-			}
-		});
-	}
-	
 	/**
 	 * Displays an error message telling the user that the connection to the
 	 * server was unsuccessful
@@ -81,4 +64,59 @@ public abstract class CustomWindow {
 		message.setText("Connection failed");
 		message.open();
 	}
+
+	/*
+	 * creates the contents for this shell instance
+	 */
+	private void createShell() {
+		// Prevent the window from being resized
+		shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM ^ SWT.RESIZE);
+	
+		shell.setSize(300, 300);
+		this.placeToCenter();
+	
+		shell.addListener(SWT.Close, new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				shell.dispose();
+			}
+		});
+	}
+
+	/**
+	 * Initializez all the components that are used in this GUI
+	 */
+	private void initializeComponents() {
+		// initializations
+		this.performInitializations();
+
+		// object properties
+		this.createObjectProperties();
+
+		// shell properties
+		this.createShellProperties();
+
+		// listeners
+		this.createListeners();
+	}
+
+	/**
+	 * Object initializations and instance creation
+	 */
+	protected abstract void performInitializations();
+
+	/**
+	 * Set the properties for all the components used in this GUI instance
+	 */
+	protected abstract void createObjectProperties();
+
+	/**
+	 * Set the shell properties for this GUI instance
+	 */
+	protected abstract void createShellProperties();
+
+	/**
+	 * Set the listeners that will be used in this GUI instance
+	 */
+	protected abstract void createListeners();
 }
