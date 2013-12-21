@@ -16,9 +16,6 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 
 import com.coddotech.teamsubb.jobs.Job;
 
@@ -54,14 +51,10 @@ public final class ConnectionManager {
 	 *         or user_details if good credentials). This resturns the message
 	 *         "error" if a connection problem is encountered
 	 */
-	public static String sendLoginRequest(String user, String pass,
-			boolean showMessageOnError) {
+	public static String sendLoginRequest(String user, String pass) {
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_USER_LOGGING, new String[] { "user",
 						"pass" }, new String[] { user, pass });
-
-		if (showMessageOnError && response.equals("error"))
-			ConnectionManager.showConnectionErrorMessage();
 
 		return response;
 	}
@@ -91,14 +84,10 @@ public final class ConnectionManager {
 	 *         ones are found. Returns the message "error" if a connection
 	 *         problem is encountered
 	 */
-	public static String sendJobSearchRequest(String user,
-			boolean showMessageOnError) {
+	public static String sendJobSearchRequest(String user) {
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, new String[] { "jobs", "staff" },
 				new String[] { "search", user });
-
-		if (showMessageOnError && response.equals("error"))
-			ConnectionManager.showConnectionErrorMessage();
 
 		return response;
 	}
@@ -129,8 +118,7 @@ public final class ConnectionManager {
 	 *         It contains "true" in case the job creation was successful
 	 */
 	public static String sendJobCreateRequest(String user, String name,
-			int type, String description, String subFile, String[] fonts,
-			boolean showMessageOnError) {
+			int type, String description, String subFile, String[] fonts) {
 		// user info handling
 		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype",
 				"comments" };
@@ -156,9 +144,6 @@ public final class ConnectionManager {
 				ConnectionManager.URL_JOBS, messageHeaders, messages,
 				fileHeaders, files);
 
-		if (showMessageOnError && response.equals("error"))
-			ConnectionManager.showConnectionErrorMessage();
-
 		return response;
 	}
 
@@ -175,16 +160,12 @@ public final class ConnectionManager {
 	 *            message in case the connection to the server fails
 	 * @return A String containing the response from the server
 	 */
-	public static String sendJobAcceptRequest(int jobID, String user,
-			boolean showMessageOnError) {
+	public static String sendJobAcceptRequest(int jobID, String user) {
 		String[] messageHeaders = { "acceptjob", "staff" };
 		String[] messages = { Integer.toString(jobID), user };
 
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, messageHeaders, messages);
-
-		if (showMessageOnError && response.equals("error"))
-			ConnectionManager.showConnectionErrorMessage();
 
 		return response;
 	}
@@ -202,13 +183,8 @@ public final class ConnectionManager {
 	 *            message in case the connection to the server fails
 	 * @return A String value representing the response received from the server
 	 */
-	public static String sendJobCancelRequest(Job job, String user,
-			boolean showMessageOnError) {
-		String response = ConnectionManager.sendJobPushRequest(job, user, true,
-				showMessageOnError);
-
-		if (response.equals("error") && showMessageOnError)
-			ConnectionManager.showConnectionErrorMessage();
+	public static String sendJobCancelRequest(Job job, String user) {
+		String response = ConnectionManager.sendJobPushRequest(job, user, true);
 
 		return response;
 	}
@@ -228,7 +204,7 @@ public final class ConnectionManager {
 	 * @return A String value representing the response received from the server
 	 */
 	public static String sendJobPushRequest(Job job, String user,
-			boolean canceled, boolean showMessageOnError) {
+			boolean canceled) {
 		// Text messages data
 		String[] messageHeaders = { "push", "staff", "jobid", "jobtype",
 				"comments", "prevstaff", "nextstaff" };
@@ -256,10 +232,6 @@ public final class ConnectionManager {
 				ConnectionManager.URL_JOBS, messageHeaders, messages,
 				fileHeaders, files);
 
-		// display connection error if any occured
-		if (response.equals("error") && showMessageOnError)
-			ConnectionManager.showConnectionErrorMessage();
-
 		// return the servers response
 		return response;
 	}
@@ -277,8 +249,7 @@ public final class ConnectionManager {
 	 *            message in case the connection to the server fails
 	 * @return A String value representing the response from the server
 	 */
-	public static String sendJobEndRequest(int jobID, String user,
-			boolean showMessageOnError) {
+	public static String sendJobEndRequest(int jobID, String user) {
 		// message data
 		String[] messageHeaders = { "push", "staff", "jobid" };
 		String[] messages = { "end", user, Integer.toString(jobID) };
@@ -287,24 +258,8 @@ public final class ConnectionManager {
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, messageHeaders, messages);
 
-		// display a connection error message if one is encountered
-		if (response.equals("error") && showMessageOnError)
-			ConnectionManager.showConnectionErrorMessage();
-
 		// return the response from the server
 		return response;
-	}
-
-	/**
-	 * Displays an error message telling the user that the connection to the
-	 * server was unsuccessful
-	 */
-	public static void showConnectionErrorMessage() {
-		MessageBox message = new MessageBox(
-				Display.getCurrent().getShells()[0], SWT.ICON_ERROR);
-		message.setMessage("A connection error has occured.\nPlease try again later...");
-		message.setText("Connection failed");
-		message.open();
 	}
 	
 	/**

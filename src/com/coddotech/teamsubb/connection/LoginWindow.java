@@ -1,19 +1,17 @@
 package com.coddotech.teamsubb.connection;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.main.CustomWindow;
-import com.coddotech.teamsubb.main.Gadget;
 
 /**
  * This class representes the login interface for the application. <br>
@@ -24,10 +22,11 @@ import com.coddotech.teamsubb.main.Gadget;
  * @author Coddo
  * 
  */
-public final class LoginWindow extends CustomWindow {
+public class LoginWindow extends CustomWindow implements Observer {
 
-	private static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator",
-			"Administrator", "Fondator" };
+	private Font defaultFont;
+
+	private LoginController controller;
 
 	private Label userLabel;
 	private Label passLabel;
@@ -35,8 +34,6 @@ public final class LoginWindow extends CustomWindow {
 	private Text passBox;
 	private Button exitButton;
 	private Button loginButton;
-
-	private Font defaultFont;
 
 	/**
 	 * Class constructor
@@ -49,7 +46,7 @@ public final class LoginWindow extends CustomWindow {
 	/**
 	 * Clear the memory from this class and its resources
 	 */
-	private void dispose() {
+	void dispose() {
 		userLabel.dispose();
 		userLabel = null;
 
@@ -73,159 +70,68 @@ public final class LoginWindow extends CustomWindow {
 	}
 
 	/**
-	 * Start the login procedure
+	 * Retrieve the username that has been entered by the user
+	 * 
+	 * @return A String representing the user's registered name
 	 */
-	private void doLogin() {
-		MessageBox message = new MessageBox(getShell(), SWT.ICON_ERROR);
-		String resultMessage = ConnectionManager.sendLoginRequest(
-				userBox.getText(), passBox.getText(), true);
+	public String getUserName() {
+		return this.userBox.getText();
+	}
 
-		if (!resultMessage.equals("error")) {
-			// on successful connection, check if the login credentials are
-			// correct or not
-			String[] result = resultMessage.split("&");
+	/**
+	 * Retrieve the password that has been entered by the user
+	 * 
+	 * @return A String representing the user's login password
+	 */
+	public String getPassword() {
+		return this.passBox.getText();
+	}
 
-			if (Boolean.parseBoolean(result[0])) {
-				// if the login process is successful continue with starting the
-				// application's main functionalities and close the login window
-				Gadget gadget = new Gadget(this.getUserInfo(result),
-						this.getJobsInfo(result));
+	/**
+	 * Update the GUI based on the modifications that took place in the
+	 * registered models
+	 */
+	@Override
+	public void update(Observable obs, Object obj) {
+		if (obj instanceof Boolean) {
 
-				this.close();
-				gadget.open();
-
-			} else { // if the login was unsuccessful, show an error message
+			if (!(boolean) obj) {
+				// On failed login, show the "wrong credentials" message
+				MessageBox message = new MessageBox(getShell(), SWT.ICON_ERROR);
 				message.setMessage("The entered username or password is incorrect");
 				message.setText("Wrong credentials");
 				message.open();
+			} else { // On successful login, close this windows
+				this.close();
 			}
+
+		} else if (obj instanceof String) {
+			// This means that the "error" message was sent from the server
+			// and that the connection could not be established
+			this.showConnectionErrorMessage();
 		}
 	}
-
-	/**
-	 * Extract the jobs data into a boolean array indicating the jobs types that
-	 * this user can work on <br>
-	 * <br>
-	 * data[0] -> true/false <br>
-	 * data[1] -> email <br>
-	 * data[2] -> rank <br>
-	 * data[3 -> n] -> job titles
-	 * 
-	 * @param data
-	 *            A String collection containing the user information
-	 * @return A boolean array containing the possible jobs for this user
-	 */
-	private boolean[] getJobsInfo(String[] data) {
-		boolean[] jobsData = { false, false, false, false, false, false, false };
-
-		for (int i = 3; i < data.length; i++) {
-
-			for (int j = 0; j < Gadget.DEFAULT_JOBS_INFO_HEADERS.length; j++) {
-
-				if (data[i].equals(Gadget.DEFAULT_JOBS_INFO_HEADERS[j])) {
-					jobsData[j] = true;
-					break;
-				}
-			}
-		}
-
-		return jobsData;
-	}
-
-	/**
-	 * Extract the user information into a String array. Information contains:
-	 * user name, email and rank <br>
-	 * <br>
-	 * data[0] -> true/false <br>
-	 * data[1] -> email <br>
-	 * data[2] -> rank (integer)<br>
-	 * data[3 -> n] -> job titles
-	 * 
-	 * @param data
-	 *            A String collection containing the user information
-	 * @return A boolean array containing the possible jobs for this user
-	 */
-	private String[] getUserInfo(String[] data) {
-		String[] info = new String[3];
-
-		info[0] = data[0];
-		info[1] = data[1];
-
-		/*
-		 * The rank is stored as an integer, indicating on of the following
-		 * ranks: 0 - Membru 1 - Moderator 2 - Administrator 3 - Fondator
-		 */
-		info[2] = LoginWindow.DEFAULT_USER_RANKS[Integer.parseInt(data[2])];
-
-		return info;
-	}
-
-	/**
-	 * Listens for when the shell (GUI) closes and clears memory from this class
-	 * and its resources
-	 */
-	Listener shellClosingListener = new Listener() {
-		public void handleEvent(Event arg0) {
-			dispose();
-		}
-	};
-
-	/*
-	 * Listener for the exit button. When pressed, it quits the application
-	 */
-	SelectionListener exitButtonPressed = new SelectionListener() {
-
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			close();
-		}
-
-		@Override
-		public void widgetDefaultSelected(SelectionEvent e) {
-
-		}
-
-	};
-
-	/**
-	 * Listener for the login button. When pressed, it sends a login request to
-	 * the server and waits for a response. The response is then processed and
-	 * the appropriate actions are taken
-	 */
-	SelectionListener loginButtonPressed = new SelectionListener() {
-
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			doLogin();
-		}
-
-		@Override
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-
-	};
-
-	/**
-	 * Listener for the text boxes in this window. Listens for when the "Enter"
-	 * key is pressed in either of them and attempts to do a login with the
-	 * entered data
-	 * 
-	 * Helps the user login faster by avoiding the login button push
-	 */
-	Listener keyPressed = new Listener() {
-
-		public void handleEvent(Event e) {
-			if (e.detail == SWT.TRAVERSE_RETURN)
-				doLogin();
-		}
-
-	};
 
 	/**
 	 * Initializez the components for this class
 	 */
 	private void initializeComponents() {
 		// initializations
+		this.performInitializations();
+
+		// object properties
+		this.createObjectProperties();
+
+		// shell properties
+		this.createShellProperties();
+
+		// listeners
+		this.createObjectListeners();
+	}
+
+	private void performInitializations() {
+		controller = new LoginController(this);
+
 		defaultFont = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
 
 		userLabel = new Label(this.getShell(), SWT.None);
@@ -235,8 +141,9 @@ public final class LoginWindow extends CustomWindow {
 				| SWT.SINGLE);
 		exitButton = new Button(this.getShell(), SWT.PUSH);
 		loginButton = new Button(this.getShell(), SWT.PUSH);
+	}
 
-		// object properties
+	private void createObjectProperties() {
 		userLabel.setFont(defaultFont);
 		userLabel.setText("User name:");
 		userLabel.setLocation(10, 10);
@@ -264,17 +171,19 @@ public final class LoginWindow extends CustomWindow {
 		exitButton.setText("Exit");
 		exitButton.setLocation(10, 100);
 		exitButton.setSize(50, 25);
+	}
 
-		// shell properties
+	private void createShellProperties() {
 		this.getShell().setText("Login into your account");
 		this.getShell().setSize(295, 165);
 		this.placeToCenter();
+	}
 
-		// listeners
-		this.getShell().addListener(SWT.Close, shellClosingListener);
-		userBox.addListener(SWT.Traverse, keyPressed);
-		passBox.addListener(SWT.Traverse, keyPressed);
-		exitButton.addSelectionListener(exitButtonPressed);
-		loginButton.addSelectionListener(loginButtonPressed);
+	private void createObjectListeners() {
+		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
+		userBox.addListener(SWT.Traverse, controller.keyPressed);
+		passBox.addListener(SWT.Traverse, controller.keyPressed);
+		exitButton.addSelectionListener(controller.exitButtonPressed);
+		loginButton.addSelectionListener(controller.loginButtonPressed);
 	}
 }

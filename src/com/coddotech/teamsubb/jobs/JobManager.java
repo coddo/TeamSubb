@@ -99,8 +99,7 @@ public class JobManager {
 	public boolean createJob(String name, int type, String description,
 			String subFile, String[] fonts) {
 		String response = ConnectionManager.sendJobCreateRequest(
-				userName, name, type, description, subFile,
-				fonts, true);
+				userName, name, type, description, subFile, fonts);
 
 		if (response.equals("error"))
 			return false;
@@ -119,8 +118,7 @@ public class JobManager {
 	 * @return A logical value indicating if the job was ended successfully
 	 */
 	public boolean endJob(int jobID) {
-		String response = ConnectionManager.sendJobEndRequest(jobID,
-				userName, true);
+		String response = ConnectionManager.sendJobEndRequest(jobID, userName);
 
 		if (response.equals("error"))
 			return false;
@@ -143,8 +141,7 @@ public class JobManager {
 		this.clearJobList(jobs);
 
 		// send the jobs request to the server
-		String response = ConnectionManager.sendJobSearchRequest(
-				userName, true);
+		String response = ConnectionManager.sendJobSearchRequest(userName);
 
 		if (response.equals("false")) {
 			// if no jobs are found, notify the user

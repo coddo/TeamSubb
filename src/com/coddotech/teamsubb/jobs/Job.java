@@ -350,7 +350,7 @@ public final class Job {
 		try {
 			// send the accept message request to the server
 			String response = ConnectionManager.sendJobAcceptRequest(this.id,
-					this.currentStaffMember, true);
+					this.currentStaffMember);
 
 			// if no errors are encountered, proceed with the job accepting
 			// procedures that take place locally
@@ -411,7 +411,7 @@ public final class Job {
 		try {
 			// send the cancel message request to the server
 			String response = ConnectionManager.sendJobCancelRequest(this,
-					this.currentStaffMember, true);
+					this.currentStaffMember);
 
 			// store the result in a logical variable
 			boolean result = false;
@@ -451,7 +451,7 @@ public final class Job {
 	public boolean pushJob() {
 		// send the request and wait for the servers response
 		String response = ConnectionManager.sendJobPushRequest(this,
-				this.currentStaffMember, false, true);
+				this.currentStaffMember, false);
 
 		boolean status = false;
 

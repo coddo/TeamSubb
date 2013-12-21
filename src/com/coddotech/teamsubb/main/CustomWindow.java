@@ -69,4 +69,16 @@ public abstract class CustomWindow {
 			}
 		});
 	}
+	
+	/**
+	 * Displays an error message telling the user that the connection to the
+	 * server was unsuccessful
+	 */
+	public void showConnectionErrorMessage() {
+		MessageBox message = new MessageBox(
+				Display.getCurrent().getShells()[0], SWT.ICON_ERROR);
+		message.setMessage("A connection error has occured.\nPlease try again later...");
+		message.setText("Connection failed");
+		message.open();
+	}
 }
