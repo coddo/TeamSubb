@@ -7,9 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 
 import org.apache.commons.io.FileUtils;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
 
@@ -382,8 +379,8 @@ public final class Job {
 					this.generateConfigFile();
 
 				} else
-					// throw an exception if the job was refused
-					throw new Exception();
+					// return false if the job was refused
+					return false;
 
 				// return the server response as a logical value
 				return result;
@@ -392,13 +389,6 @@ public final class Job {
 				return false;
 
 		} catch (Exception ex) { // diplay error message
-			MessageBox message = new MessageBox(Display.getCurrent()
-					.getShells()[0], SWT.ICON_ERROR);
-			message.setMessage("There was an error accepting this job."
-					+ "\nOr the server may have refused you this job.");
-			message.setText("Error");
-			message.open();
-
 			return false;
 		}
 	}
@@ -418,25 +408,14 @@ public final class Job {
 			if (!response.equals("error"))
 				result = Boolean.parseBoolean(response);
 
-			// if the request was refused, display a message by entering the
-			// catch block, otherwise delete the job from the accepted
-			// list and delete its directory and files
-			if (!result)
-				throw new Exception();
-			else
+			//if the request was accepted, delete the entire job directory
+			if(result)
 				FileUtils.deleteDirectory(this.getDirectoryInstance());
 
 			// return the logical value representing the server's response
 			return result;
 
 		} catch (Exception ex) {
-			MessageBox message = new MessageBox(Display.getCurrent()
-					.getShells()[0], SWT.ICON_ERROR);
-			message.setMessage("There waas an error canceling this job."
-					+ "\nOr the server may have refused your request.");
-			message.setText("Error");
-			message.open();
-
 			return false;
 		}
 
@@ -463,28 +442,10 @@ public final class Job {
 			if (status) {
 				try {
 					FileUtils.deleteDirectory(this.getDirectoryInstance());
-
-					MessageBox message = new MessageBox(Display.getCurrent()
-							.getShells()[0], SWT.ICON_INFORMATION);
-					message.setMessage("The job has successfully been sent back to the server and its data deleted from your disk !");
-					message.setText("Success");
-					message.open();
-
 				} catch (Exception ex) {
-					MessageBox message = new MessageBox(Display.getCurrent()
-							.getShells()[0], SWT.ICON_ERROR);
-					message.setMessage("The job has successfully been sent back to the server, but the data on your disk could not be removed..."
-							+ "\nPlease delete the remaining data manually :).");
-					message.setText("Data not removed");
-					message.open();
+					return false;
 				}
-			} else { // if the server refused the request, tell the user
-				MessageBox message = new MessageBox(Display.getCurrent()
-						.getShells()[0], SWT.ICON_ERROR);
-				message.setMessage("The server has refused your job data. Please contact the website's manager");
-				message.setText("Job data refused");
-				message.open();
-			}
+			} 
 		}
 
 		// return the response value
