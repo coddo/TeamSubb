@@ -3,13 +3,10 @@ package com.coddotech.teamsubb.jobs;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
+import java.util.Observable;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
-import com.coddotech.teamsubb.main.Gadget;
+import com.coddotech.teamsubb.main.Notifier;
 
 /**
  * Class used for realizing the communication between this client and the target
@@ -20,24 +17,25 @@ import com.coddotech.teamsubb.main.Gadget;
  * @author Coddo
  * 
  */
-public class JobManager {
+public class JobManager extends Observable {
 
 	private static final String SEPARATOR_FIELDS = "&?&";
 	private static final String SEPARATOR_JOBS = "¬|¬";
+	public static final String SEPARATOR_NOTIFICATION = "{#$$%}";
 	private static final File WORKING_DIRECTORY = new File("Jobs");
 
 	private List<Job> jobs;
 	private List<Job> acceptedJobs;
-	
-	private Gadget gadget;
+
+	private Notifier gadget;
 
 	/**
 	 * Main class construcotr
 	 * 
 	 * @param gadget
-	 *            The main form for this application
+	 *            The main window for this application
 	 */
-	public JobManager(Gadget gadget) {
+	public JobManager(Notifier gadget) {
 		this.gadget = gadget;
 		jobs = new ArrayList<Job>();
 		acceptedJobs = new ArrayList<Job>();
@@ -76,12 +74,10 @@ public class JobManager {
 		return this.acceptedJobs;
 	}
 
-	public String getUserName() {
-		return gadget.getUserName();
-	}
-
 	/**
-	 * Create a new job and try to add it to the server
+	 * Create a new job and try to add it to the server. <br>
+	 * This notifies the observers with the response that has been received from
+	 * the server
 	 * 
 	 * @param name
 	 *            The name of the job
@@ -93,23 +89,26 @@ public class JobManager {
 	 *            The main file of the job (file to be subbed)
 	 * @param fonts
 	 *            The font files that are needed in order to finish this job
-	 * @return A logical value indicating if the job was successfully added to
-	 *         the server or not
 	 */
-	public boolean createJob(String name, int type, String description,
+	public void createJob(String name, int type, String description,
 			String subFile, String[] fonts) {
-		String response = ConnectionManager.sendJobCreateRequest(
+
+		boolean response = ConnectionManager.sendJobCreateRequest(
 				gadget.getUserName(), name, type, description, subFile, fonts);
 
-		if (response.equals("error"))
-			return false;
+		this.hasChanged();
+		notifyObservers("create" + JobManager.SEPARATOR_NOTIFICATION + response);
 
-		return Boolean.parseBoolean(response);
+		// after the job is created, start a new search in order to update the
+		// job list
+		this.findJobs(gadget.getUserJobs());
 	}
 
 	/**
 	 * Mark a job as ended. This method also tells the server to remove it from
-	 * the pending list.
+	 * the pending list.<br>
+	 * This notifies the observers with the response that has been received from
+	 * the server
 	 * 
 	 * @param jobID
 	 *            The ID of the job to be marked as finished
@@ -117,40 +116,45 @@ public class JobManager {
 	 *            The name of the user that
 	 * @return A logical value indicating if the job was ended successfully
 	 */
-	public boolean endJob(int jobID) {
-		String response = ConnectionManager.sendJobEndRequest(jobID, gadget.getUserName());
+	public void endJob(int jobID) {
+		boolean response = ConnectionManager.sendJobEndRequest(jobID,
+				gadget.getUserName());
 
-		if (response.equals("error"))
-			return false;
+		if (response) {
+			for (Job job : jobs) {
+				if (job.getID() == jobID)
+					jobs.remove(job);
+			}
+		}
 
-		return Boolean.parseBoolean(response);
+		this.hasChanged();
+		notifyObservers("end" + JobManager.SEPARATOR_NOTIFICATION + response);
 	}
 
 	/**
 	 * Send a request to the server in order to receive a job if any available
 	 * If there are available jobs, it separates them from the response string
-	 * and wraps every job in a Job entity, then they're added to the list
+	 * and wraps every job in a Job entity, then they're added to the list<br>
+	 * This notifies the observers with the response that has been received from
+	 * the server
 	 * 
 	 * @param notify
 	 *            A logical value telling the app whether to notify the user or
 	 *            not in case new jobs are available for him
 	 */
-	public List<Job> findJobs(boolean notify) {
+	public void findJobs(String[] possibleJobs) {
+
+		// logical value indicating if any suitable jobs for the user are found
+		List<Job> suitable = new ArrayList<Job>();
 
 		// clear the jobs list
 		this.clearJobList(jobs);
 
 		// send the jobs request to the server
-		String response = ConnectionManager.sendJobSearchRequest(gadget.getUserName());
+		String response = ConnectionManager.sendJobSearchRequest(gadget
+				.getUserName());
 
-		if (response.equals("false")) {
-			// if no jobs are found, notify the user
-			MessageBox message = new MessageBox(Display.getDefault()
-					.getShells()[0], SWT.ICON_INFORMATION);
-			message.setMessage("There are no available jobs for you at this time");
-			message.setText("Nob jobs found");
-			message.open();
-		} else if (!response.equals("error")) {
+		if (!response.equals("error") && !response.equals("false")) {
 			// in case everything is ok, start processing the response that was
 			// received from the server
 			String[] jobFragments = response.split(JobManager.SEPARATOR_JOBS);
@@ -169,24 +173,43 @@ public class JobManager {
 					// create a new Job entity with the data
 					Job job = createJobEntity(data, dirPath);
 
+					// note if the job is suitable for this user
+					if (job.isAcceptable(possibleJobs))
+						;
+					suitable.add(job);
+
 					// add it to the list
 					jobs.add(job);
 				}
 			}
 		}
 
-		// return the jobs list
-		return this.jobs;
+		// notify about the newly created list of jobs
+		this.hasChanged();
+		notifyObservers("find" + JobManager.SEPARATOR_NOTIFICATION + jobs);
+
+		// notify about the new list of acceptable jobs
+		this.hasChanged();
+		notifyObservers("acceptable" + JobManager.SEPARATOR_NOTIFICATION
+				+ suitable);
 	}
 
-	public boolean acceptJob(int jobID) {
-		boolean result = false;
+	/**
+	 * Accepts a certain job for this user.<br>
+	 * This notifies the observers with the response that has been received from
+	 * the server
+	 * 
+	 * @param jobID
+	 */
+	public void acceptJob(int jobID) {
+		boolean response = false;
+
 		for (Job job : jobs) {
 
 			if (job.getID() == jobID) {
-				result = job.acceptJob();
+				response = job.accept();
 
-				if (result) {
+				if (response) {
 					jobs.remove(job);
 					acceptedJobs.add(job);
 				}
@@ -194,43 +217,65 @@ public class JobManager {
 			}
 		}
 
-		return result;
+		// notify all the observers about the change
+		this.hasChanged();
+		notifyObservers("accept" + JobManager.SEPARATOR_NOTIFICATION + response);
 	}
 
-	public boolean cancelJob(int jobID) {
-		boolean result = false;
+	/**
+	 * Cancel a certain job that has been previously accepted by the user.<br>
+	 * This notifies the observers with the response that has been received from
+	 * the server
+	 * 
+	 * @param jobID
+	 *            The ID of the job to be canceled
+	 */
+	public void cancelJob(int jobID) {
+		boolean response = false;
 		for (Job job : acceptedJobs) {
 
 			if (job.getID() == jobID) {
-				result = job.cancelJob();
+				response = job.cancel();
 				;
 
-				if (result) {
+				if (response) {
 					acceptedJobs.remove(job);
 				}
 
 			}
 		}
 
-		return result;
+		// notify all the observers about the change
+		this.hasChanged();
+		notifyObservers("cancel" + JobManager.SEPARATOR_NOTIFICATION + response);
 	}
 
-	public boolean pushJob(int jobID) {
-		boolean result = false;
+	/**
+	 * Send all the data that has been worked on for a certains job to the
+	 * server.<br>
+	 * This notifies the observers with the response that has been received from
+	 * the server
+	 * 
+	 * @param jobID
+	 *            The ID of the job to be sent back to the server
+	 */
+	public void pushJob(int jobID) {
+		boolean response = false;
 		for (Job job : acceptedJobs) {
 
 			if (job.getID() == jobID) {
-				result = job.pushJob();
-				;
+				response = job.push();
 
-				if (result) {
+				if (response) {
 					acceptedJobs.remove(job);
 				}
 
 			}
 		}
 
-		return result;
+		// notify all the observers about the change
+		this.hasChanged();
+		notifyObservers("push" + JobManager.SEPARATOR_NOTIFICATION + response);
 	}
 
 	/**

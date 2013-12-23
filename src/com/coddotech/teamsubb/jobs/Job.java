@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import org.apache.commons.io.FileUtils;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
+import com.coddotech.teamsubb.main.Notifier;
 
 /**
  * Entity used by the JobManager class. This class stores information about a
@@ -329,6 +330,25 @@ public final class Job {
 	}
 
 	/**
+	 * Verifiy in the job type that this job needs is within the skill list that
+	 * the user has and determines if this job is acceptable by this user or not
+	 * 
+	 * @param possible
+	 *            A collection of jobs that can be done by the user
+	 * @return A logical value indicating whether this job can be accepted by
+	 *         the user of not
+	 */
+	public boolean isAcceptable(String[] possible) {
+
+		for (String pos : possible) {
+			if (Notifier.DEFAULT_JOBS_INFO_HEADERS[this.type].equals(pos))
+				return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Set the raw data about the font files and their location on the web, data
 	 * that has been extracted from the response string from the server
 	 * 
@@ -343,50 +363,39 @@ public final class Job {
 	 * Accept a certain job.<br>
 	 * This method displays a popup message in case of an error
 	 */
-	public boolean acceptJob() {
+	public boolean accept() {
 		try {
 			// send the accept message request to the server
-			String response = ConnectionManager.sendJobAcceptRequest(this.id,
+			boolean response = ConnectionManager.sendJobAcceptRequest(this.id,
 					this.currentStaffMember);
 
-			// if no errors are encountered, proceed with the job accepting
-			// procedures that take place locally
-			if (!response.equals("error")) {
-				boolean result = Boolean.parseBoolean(response);
-
-				// continue only if the server accepted the request
-				if (result) {
-					// create a directory for this this
-					File dir = new File(this.directoryPath);
-					if (!dir.exists())
-						dir.mkdir();
-
-					// sub file (download + add to the Job entity)
-					this.setSubFile(ConnectionManager.downloadFile(
-							this.subFileData, this.directoryPath));
-
-					// font files (download + add to the Job entity)
-					File[] fonts = new File[this.fontsData.length];
-
-					for (int i = 0; i < fonts.length; i++) {
-						fonts[i] = ConnectionManager.downloadFile(
-								this.fontsData[i], this.directoryPath);
-					}
-					this.setFonts(fonts);
-
-					// create the configuration file containing the this data
-					// This is for later use (in case of a this pause)
-					this.generateConfigFile();
-
-				} else
-					// return false if the job was refused
-					return false;
-
-				// return the server response as a logical value
-				return result;
-
-			} else
+			// continue only if the server accepted the request
+			if (!response)
 				return false;
+
+			// create a directory for this this
+			File dir = new File(this.directoryPath);
+			if (!dir.exists())
+				dir.mkdir();
+
+			// sub file (download + add to the Job entity)
+			this.setSubFile(ConnectionManager.downloadFile(this.subFileData,
+					this.directoryPath));
+
+			// font files (download + add to the Job entity)
+			File[] fonts = new File[this.fontsData.length];
+
+			for (int i = 0; i < fonts.length; i++) {
+				fonts[i] = ConnectionManager.downloadFile(this.fontsData[i],
+						this.directoryPath);
+			}
+			this.setFonts(fonts);
+
+			// create the configuration file containing the this data
+			// This is for later use (in case of a this pause)
+			this.generateConfigFile();
+
+			return true;
 
 		} catch (Exception ex) { // diplay error message
 			return false;
@@ -397,23 +406,19 @@ public final class Job {
 	 * Cancel/Abort a certain job on which the user is currently working.<br>
 	 * This method displays a popup message in case of an error
 	 */
-	public boolean cancelJob() {
+	public boolean cancel() {
+		// send the cancel message request to the server
+		boolean response = ConnectionManager.sendJobCancelRequest(this,
+				this.currentStaffMember);
+
+		// continue only if the server has accepted the request
+		if (!response)
+			return false;
+
 		try {
-			// send the cancel message request to the server
-			String response = ConnectionManager.sendJobCancelRequest(this,
-					this.currentStaffMember);
+			FileUtils.deleteDirectory(this.getDirectoryInstance());
 
-			// store the result in a logical variable
-			boolean result = false;
-			if (!response.equals("error"))
-				result = Boolean.parseBoolean(response);
-
-			//if the request was accepted, delete the entire job directory
-			if(result)
-				FileUtils.deleteDirectory(this.getDirectoryInstance());
-
-			// return the logical value representing the server's response
-			return result;
+			return true;
 
 		} catch (Exception ex) {
 			return false;
@@ -427,29 +432,24 @@ public final class Job {
 	 * 
 	 * @return A logical value indicating if the server accepted the data
 	 */
-	public boolean pushJob() {
+	public boolean push() {
 		// send the request and wait for the servers response
-		String response = ConnectionManager.sendJobPushRequest(this,
+		boolean response = ConnectionManager.sendJobPushRequest(this,
 				this.currentStaffMember, false);
 
-		boolean status = false;
+		// continue only if the server has accepted the request
+		if (!response)
+			return false;
 
-		if (!response.equals("error")) {
-			// wrap the reponse from the server into a logical variable
-			status = Boolean.parseBoolean(response);
+		// if the response is ok, then delete the data from the disk
+		try {
+			FileUtils.deleteDirectory(this.getDirectoryInstance());
 
-			// if the response is ok, then delete the data from the disk
-			if (status) {
-				try {
-					FileUtils.deleteDirectory(this.getDirectoryInstance());
-				} catch (Exception ex) {
-					return false;
-				}
-			} 
+			return true;
+
+		} catch (Exception ex) {
+			return false;
 		}
-
-		// return the response value
-		return status;
 	}
 
 	public void readConfigFile(File jobFolder) throws Exception {
