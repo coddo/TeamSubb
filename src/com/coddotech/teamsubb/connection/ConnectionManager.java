@@ -38,6 +38,19 @@ public final class ConnectionManager {
 	// private static final String URL_CHAT = "http://anime4fun.ro/chat.php";
 
 	/**
+	 * Check whether there is any connection to the internet or not
+	 * 
+	 * @return A logical value representing the connection state
+	 */
+	public static boolean isConnected() {
+		if (ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
+				new String[] { "" }, new String[] { "" }).equals("error"))
+			return false;
+		else
+			return true;
+	}
+
+	/**
 	 * Sends a login request to the server using the entered user details
 	 * 
 	 * @param user
@@ -111,13 +124,10 @@ public final class ConnectionManager {
 	 * @param showMessageOnError
 	 *            A logical value telling the method whether to display an error
 	 *            message in case the connection to the server fails
-	 * @return A String value indicating if the job was created successfully or
-	 *         not. <br>
-	 *         It contains "error" in case of a connection error. <br>
-	 *         It contains "false" in case the job creation failed. <br>
-	 *         It contains "true" in case the job creation was successful
+	 * @return A Logical value telling the user if the request was accepted or
+	 *         not by the server
 	 */
-	public static String sendJobCreateRequest(String user, String name,
+	public static boolean sendJobCreateRequest(String user, String name,
 			int type, String description, String subFile, String[] fonts) {
 		// user info handling
 		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype",
@@ -144,7 +154,7 @@ public final class ConnectionManager {
 				ConnectionManager.URL_JOBS, messageHeaders, messages,
 				fileHeaders, files);
 
-		return response;
+		return Boolean.parseBoolean(response);
 	}
 
 	/**
@@ -158,16 +168,17 @@ public final class ConnectionManager {
 	 * @param showMessageOnError
 	 *            A logical value telling the method whether to display an error
 	 *            message in case the connection to the server fails
-	 * @return A String containing the response from the server
+	 * @return A Logical value telling the user if the request was accepted or
+	 *         not by the server
 	 */
-	public static String sendJobAcceptRequest(int jobID, String user) {
+	public static boolean sendJobAcceptRequest(int jobID, String user) {
 		String[] messageHeaders = { "acceptjob", "staff" };
 		String[] messages = { Integer.toString(jobID), user };
 
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, messageHeaders, messages);
 
-		return response;
+		return Boolean.parseBoolean(response);
 	}
 
 	/**
@@ -181,12 +192,11 @@ public final class ConnectionManager {
 	 * @param showMessageOnError
 	 *            A logical value telling the method whether to display an error
 	 *            message in case the connection to the server fails
-	 * @return A String value representing the response received from the server
+	 * @return A Logical value telling the user if the request was accepted or
+	 *         not by the server
 	 */
-	public static String sendJobCancelRequest(Job job, String user) {
-		String response = ConnectionManager.sendJobPushRequest(job, user, true);
-
-		return response;
+	public static boolean sendJobCancelRequest(Job job, String user) {
+		return ConnectionManager.sendJobPushRequest(job, user, true);
 	}
 
 	/**
@@ -201,9 +211,10 @@ public final class ConnectionManager {
 	 * @param showMessageOnError
 	 *            A logical value telling the method whether to display an error
 	 *            message in case the connection to the server fails
-	 * @return A String value representing the response received from the server
+	 * @return A Logical value telling the user if the request was accepted or
+	 *         not by the server
 	 */
-	public static String sendJobPushRequest(Job job, String user,
+	public static boolean sendJobPushRequest(Job job, String user,
 			boolean canceled) {
 		// Text messages data
 		String[] messageHeaders = { "push", "staff", "jobid", "jobtype",
@@ -233,7 +244,7 @@ public final class ConnectionManager {
 				fileHeaders, files);
 
 		// return the servers response
-		return response;
+		return Boolean.parseBoolean(response);
 	}
 
 	/**
@@ -247,9 +258,10 @@ public final class ConnectionManager {
 	 * @param showMessageOnError
 	 *            A logical value telling the method whether to display an error
 	 *            message in case the connection to the server fails
-	 * @return A String value representing the response from the server
+	 * @return A Logical value telling the user if the request was accepted or
+	 *         not by the server
 	 */
-	public static String sendJobEndRequest(int jobID, String user) {
+	public static boolean sendJobEndRequest(int jobID, String user) {
 		// message data
 		String[] messageHeaders = { "push", "staff", "jobid" };
 		String[] messages = { "end", user, Integer.toString(jobID) };
@@ -259,9 +271,9 @@ public final class ConnectionManager {
 				ConnectionManager.URL_JOBS, messageHeaders, messages);
 
 		// return the response from the server
-		return response;
+		return Boolean.parseBoolean(response);
 	}
-	
+
 	/**
 	 * Download a certain file from the web
 	 * 
@@ -274,7 +286,8 @@ public final class ConnectionManager {
 	 * @return A File entity representing the downloaded file
 	 * @throws Exception
 	 */
-	public static File downloadFile(String fileData, String dir) throws Exception {
+	public static File downloadFile(String fileData, String dir)
+			throws Exception {
 		String[] nameURLContainer = fileData.split("=");
 
 		File file = new File(dir + "\\" + nameURLContainer[0]);
@@ -298,7 +311,7 @@ public final class ConnectionManager {
 	 *            It can contain both plain text and files of all kinds
 	 * @return A String value containing the response that has been received
 	 *         from the server<br>
-	 *         This method returns "error" if a connection error has been
+	 *         This method returns "false" if a connection error has been
 	 *         encountered
 	 * @throws IllegalStateException
 	 * @throws IOException
@@ -355,7 +368,7 @@ public final class ConnectionManager {
 	 *            parameters specified in the Headers String collection
 	 * @return A String value containing the response that has been received
 	 *         from the server<br>
-	 *         This method returns "error" if a connection error has been
+	 *         This method returns "false" if a connection error has been
 	 *         encountered
 	 */
 	private static String sendMessage(String url, String[] messageHeaders,
@@ -373,7 +386,7 @@ public final class ConnectionManager {
 			return ConnectionManager.sendMessage(url, data);
 
 		} catch (Exception ex) {
-			return "error";
+			return "false";
 		}
 	}
 
@@ -396,7 +409,7 @@ public final class ConnectionManager {
 	 *            corresponding to each file Header
 	 * @return A String value containing the response that has been received
 	 *         from the server<br>
-	 *         This method returns "error" if a connection error has been
+	 *         This method returns "false" if a connection error has been
 	 *         encountered
 	 */
 	private static String sendMessage(String url, String[] messageHeaders,
@@ -418,7 +431,7 @@ public final class ConnectionManager {
 			return ConnectionManager.sendMessage(url, data);
 
 		} catch (Exception ex) {
-			return "error";
+			return "false";
 		}
 	}
 

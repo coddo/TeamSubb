@@ -3,6 +3,8 @@ package com.coddotech.teamsubb.main;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 
+import com.coddotech.teamsubb.connection.ConnectionManager;
+
 public abstract class CustomWindow {
 
 	private Shell shell;
@@ -55,14 +57,21 @@ public abstract class CustomWindow {
 
 	/**
 	 * Displays an error message telling the user that the connection to the
-	 * server was unsuccessful
+	 * server was unsuccessful if the app cannot establish a a connection to the
+	 * server
 	 */
-	public void showConnectionErrorMessage() {
-		MessageBox message = new MessageBox(
-				Display.getCurrent().getShells()[0], SWT.ICON_ERROR);
-		message.setMessage("A connection error has occured.\nPlease try again later...");
-		message.setText("Connection failed");
-		message.open();
+	public boolean isConnected() {
+		boolean connected = ConnectionManager.isConnected();
+		if (!connected) {
+
+			MessageBox message = new MessageBox(Display.getCurrent()
+					.getShells()[0], SWT.ICON_ERROR);
+			message.setMessage("A connection error has occured.\nPlease try again later...");
+			message.setText("Connection failed");
+			message.open();
+		}
+
+		return connected;
 	}
 
 	/*
@@ -71,10 +80,10 @@ public abstract class CustomWindow {
 	private void createShell() {
 		// Prevent the window from being resized
 		shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM ^ SWT.RESIZE);
-	
+
 		shell.setSize(300, 300);
 		this.placeToCenter();
-	
+
 		shell.addListener(SWT.Close, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
