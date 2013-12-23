@@ -109,7 +109,7 @@ public class LoginWindow extends CustomWindow implements Observer {
 		} else if (obj instanceof String) {
 			// This means that the "error" message was sent from the server
 			// and that the connection could not be established
-			this.showConnectionErrorMessage();
+			this.isConnected();
 		}
 	}
 

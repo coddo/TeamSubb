@@ -2,7 +2,7 @@ package com.coddotech.teamsubb.connection;
 
 import java.util.Observable;
 
-import com.coddotech.teamsubb.main.Gadget;
+import com.coddotech.teamsubb.main.Notifier;
 
 public class Login extends Observable {
 
@@ -29,7 +29,7 @@ public class Login extends Observable {
 			if (Boolean.parseBoolean(result[0])) {
 				// if the login process is successful continue with starting the
 				// application's main functionalities and close the login window
-				Gadget gadget = new Gadget(this.getUserInfo(result, user),
+				Notifier gadget = new Notifier(this.getUserInfo(result, user),
 						this.getJobsInfo(result));
 
 				gadget.open();
@@ -58,9 +58,9 @@ public class Login extends Observable {
 
 		for (int i = 3; i < data.length; i++) {
 
-			for (int j = 0; j < Gadget.DEFAULT_JOBS_INFO_HEADERS.length; j++) {
+			for (int j = 0; j < Notifier.DEFAULT_JOBS_INFO_HEADERS.length; j++) {
 
-				if (data[i].equals(Gadget.DEFAULT_JOBS_INFO_HEADERS[j])) {
+				if (data[i].equals(Notifier.DEFAULT_JOBS_INFO_HEADERS[j])) {
 					jobsData[j] = true;
 					break;
 				}

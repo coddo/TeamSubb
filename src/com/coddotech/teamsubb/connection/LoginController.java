@@ -56,7 +56,8 @@ public class LoginController {
 	
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			model.doLogin(view.getUserName(), view.getPassword());
+			if (view.isConnected())
+				model.doLogin(view.getUserName(), view.getPassword());
 		}
 	
 		@Override
@@ -76,6 +77,7 @@ public class LoginController {
 		@Override
 		public void handleEvent(Event e) {
 			if (e.detail == org.eclipse.swt.SWT.TRAVERSE_RETURN)
+				if (view.isConnected())
 				model.doLogin(view.getUserName(), view.getPassword());
 		}
 		
