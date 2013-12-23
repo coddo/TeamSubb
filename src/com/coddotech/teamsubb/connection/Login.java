@@ -2,7 +2,8 @@ package com.coddotech.teamsubb.connection;
 
 import java.util.Observable;
 
-import com.coddotech.teamsubb.main.Notifier;
+import com.coddotech.teamsubb.main.GadgetWindow;
+import com.coddotech.teamsubb.jobs.JobManager;
 
 public class Login extends Observable {
 
@@ -14,30 +15,23 @@ public class Login extends Observable {
 	 */
 	public void doLogin(String user, String pass) {
 
-		String resultMessage = ConnectionManager.sendLoginRequest(user, pass);
+		String response = ConnectionManager.sendLoginRequest(user, pass);
+
+		String[] result = response.split("&");
+
+		// notify the views about the success or failure of the login
+		// process that took place
 		this.setChanged();
+		notifyObservers(Boolean.parseBoolean(result[0]));
 
-		if (!resultMessage.equals("error")) {
-			// on successful connection, check if the login credentials are
-			// correct or not
-			String[] result = resultMessage.split("&");
+		if (Boolean.parseBoolean(result[0])) {
+			// if the login process is successful continue with starting the
+			// application's main functionalities and close the login window
+			GadgetWindow gadget = new GadgetWindow(this.getUserInfo(result,
+					user), this.getJobsInfo(result));
 
-			// notify the views about the success or failure of the login
-			// process that took place
-			notifyObservers(Boolean.parseBoolean(result[0]));
-
-			if (Boolean.parseBoolean(result[0])) {
-				// if the login process is successful continue with starting the
-				// application's main functionalities and close the login window
-				Notifier gadget = new Notifier(this.getUserInfo(result, user),
-						this.getJobsInfo(result));
-
-				gadget.open();
-			}
-
-		} else
-			// tell the views that the connection could not be established
-			notifyObservers(resultMessage);
+			gadget.open();
+		}
 	}
 
 	/**
@@ -58,9 +52,9 @@ public class Login extends Observable {
 
 		for (int i = 3; i < data.length; i++) {
 
-			for (int j = 0; j < Notifier.DEFAULT_JOBS_INFO_HEADERS.length; j++) {
+			for (int j = 0; j < JobManager.DEFAULT_JOBS_INFO_HEADERS.length; j++) {
 
-				if (data[i].equals(Notifier.DEFAULT_JOBS_INFO_HEADERS[j])) {
+				if (data[i].equals(JobManager.DEFAULT_JOBS_INFO_HEADERS[j])) {
 					jobsData[j] = true;
 					break;
 				}

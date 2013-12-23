@@ -66,7 +66,7 @@ public class LoginWindow extends CustomWindow implements Observer {
 
 		defaultFont.dispose();
 		defaultFont = null;
-		
+
 		controller = null;
 	}
 
@@ -94,22 +94,15 @@ public class LoginWindow extends CustomWindow implements Observer {
 	 */
 	@Override
 	public void update(Observable obs, Object obj) {
-		if (obj instanceof Boolean) {
-
-			if (!(boolean) obj) {
-				// On failed login, show the "wrong credentials" message
-				MessageBox message = new MessageBox(getShell(), SWT.ICON_ERROR);
-				message.setMessage("The entered username or password is incorrect");
-				message.setText("Wrong credentials");
-				message.open();
-			} else { // On successful login, close this windows
-				this.close();
-			}
-
-		} else if (obj instanceof String) {
-			// This means that the "error" message was sent from the server
-			// and that the connection could not be established
-			this.isConnected();
+		if (!(boolean) obj) {
+			// On failed login, show the "wrong credentials" message
+			MessageBox message = new MessageBox(getShell(), SWT.ICON_ERROR);
+			message.setMessage("The entered username or password is incorrect");
+			message.setText("Wrong credentials");
+			message.open();
+		} else {
+			// On successful login, close this windows
+			this.close();
 		}
 	}
 

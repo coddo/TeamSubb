@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import org.apache.commons.io.FileUtils;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
-import com.coddotech.teamsubb.main.Notifier;
 
 /**
  * Entity used by the JobManager class. This class stores information about a
@@ -341,7 +340,7 @@ public final class Job {
 	public boolean isAcceptable(String[] possible) {
 
 		for (String pos : possible) {
-			if (Notifier.DEFAULT_JOBS_INFO_HEADERS[this.type].equals(pos))
+			if (JobManager.DEFAULT_JOBS_INFO_HEADERS[this.type].equals(pos))
 				return true;
 		}
 

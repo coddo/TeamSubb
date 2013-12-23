@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Observable;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
-import com.coddotech.teamsubb.main.Notifier;
 
 /**
  * Class used for realizing the communication between this client and the target
@@ -18,16 +17,23 @@ import com.coddotech.teamsubb.main.Notifier;
  * 
  */
 public class JobManager extends Observable {
-
+	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator",
+			"Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
+			"Postator" };
+	public static final String[] DEFAULT_USER_INFORMATION = { "Name", "Email",
+			"Rank" };
+	
 	private static final String SEPARATOR_FIELDS = "&?&";
 	private static final String SEPARATOR_JOBS = "¬|¬";
 	public static final String SEPARATOR_NOTIFICATION = "{#$$%}";
+	
 	private static final File WORKING_DIRECTORY = new File("Jobs");
 
 	private List<Job> jobs;
 	private List<Job> acceptedJobs;
 
-	private Notifier gadget;
+	private String userName;
+	private String[] userJobs;
 
 	/**
 	 * Main class construcotr
@@ -35,8 +41,10 @@ public class JobManager extends Observable {
 	 * @param gadget
 	 *            The main window for this application
 	 */
-	public JobManager(Notifier gadget) {
-		this.gadget = gadget;
+	public JobManager(String userName, String[] userJobs) {
+		this.userName = userName;
+		this.userJobs = userJobs;
+
 		jobs = new ArrayList<Job>();
 		acceptedJobs = new ArrayList<Job>();
 
@@ -53,25 +61,9 @@ public class JobManager extends Observable {
 		jobs = null;
 		acceptedJobs = null;
 
-		gadget = null;
-	}
-
-	/**
-	 * Get the list of jobs that are available for this user
-	 * 
-	 * @return A List containing all the available jobs
-	 */
-	public List<Job> getAvailableJobsList() {
-		return this.jobs;
-	}
-
-	/**
-	 * Get the list of jobs that have been accepted by the user
-	 * 
-	 * @return A List containing all the accepted jobs
-	 */
-	public List<Job> getAcceptedJobsList() {
-		return this.acceptedJobs;
+		// fields
+		this.userJobs = null;
+		this.userName = null;
 	}
 
 	/**
@@ -94,14 +86,14 @@ public class JobManager extends Observable {
 			String subFile, String[] fonts) {
 
 		boolean response = ConnectionManager.sendJobCreateRequest(
-				gadget.getUserName(), name, type, description, subFile, fonts);
+				this.userName, name, type, description, subFile, fonts);
 
-		this.hasChanged();
+		this.setChanged();
 		notifyObservers("create" + JobManager.SEPARATOR_NOTIFICATION + response);
 
 		// after the job is created, start a new search in order to update the
 		// job list
-		this.findJobs(gadget.getUserJobs());
+		this.findJobs();
 	}
 
 	/**
@@ -118,7 +110,7 @@ public class JobManager extends Observable {
 	 */
 	public void endJob(int jobID) {
 		boolean response = ConnectionManager.sendJobEndRequest(jobID,
-				gadget.getUserName());
+				this.userName);
 
 		if (response) {
 			for (Job job : jobs) {
@@ -127,7 +119,8 @@ public class JobManager extends Observable {
 			}
 		}
 
-		this.hasChanged();
+		// notify all the observers about the change
+		this.setChanged();
 		notifyObservers("end" + JobManager.SEPARATOR_NOTIFICATION + response);
 	}
 
@@ -142,7 +135,7 @@ public class JobManager extends Observable {
 	 *            A logical value telling the app whether to notify the user or
 	 *            not in case new jobs are available for him
 	 */
-	public void findJobs(String[] possibleJobs) {
+	public void findJobs() {
 
 		// logical value indicating if any suitable jobs for the user are found
 		List<Job> suitable = new ArrayList<Job>();
@@ -151,8 +144,7 @@ public class JobManager extends Observable {
 		this.clearJobList(jobs);
 
 		// send the jobs request to the server
-		String response = ConnectionManager.sendJobSearchRequest(gadget
-				.getUserName());
+		String response = ConnectionManager.sendJobSearchRequest(this.userName);
 
 		if (!response.equals("error") && !response.equals("false")) {
 			// in case everything is ok, start processing the response that was
@@ -174,7 +166,7 @@ public class JobManager extends Observable {
 					Job job = createJobEntity(data, dirPath);
 
 					// note if the job is suitable for this user
-					if (job.isAcceptable(possibleJobs))
+					if (job.isAcceptable(this.userJobs))
 						;
 					suitable.add(job);
 
@@ -185,11 +177,11 @@ public class JobManager extends Observable {
 		}
 
 		// notify about the newly created list of jobs
-		this.hasChanged();
+		this.setChanged();
 		notifyObservers("find" + JobManager.SEPARATOR_NOTIFICATION + jobs);
 
 		// notify about the new list of acceptable jobs
-		this.hasChanged();
+		this.setChanged();
 		notifyObservers("acceptable" + JobManager.SEPARATOR_NOTIFICATION
 				+ suitable);
 	}
@@ -218,7 +210,7 @@ public class JobManager extends Observable {
 		}
 
 		// notify all the observers about the change
-		this.hasChanged();
+		this.setChanged();
 		notifyObservers("accept" + JobManager.SEPARATOR_NOTIFICATION + response);
 	}
 
@@ -246,7 +238,7 @@ public class JobManager extends Observable {
 		}
 
 		// notify all the observers about the change
-		this.hasChanged();
+		this.setChanged();
 		notifyObservers("cancel" + JobManager.SEPARATOR_NOTIFICATION + response);
 	}
 
@@ -274,7 +266,7 @@ public class JobManager extends Observable {
 		}
 
 		// notify all the observers about the change
-		this.hasChanged();
+		this.setChanged();
 		notifyObservers("push" + JobManager.SEPARATOR_NOTIFICATION + response);
 	}
 
@@ -298,7 +290,7 @@ public class JobManager extends Observable {
 		job.setPreviousStaffMember(data[4]);
 		job.setStartDate(data[5]);
 		job.setDirectoryPath(dirPath);
-		job.setCurrentStaffMember(this.gadget.getUserName());
+		job.setCurrentStaffMember(this.userName);
 
 		// sub file
 		job.setSubFileData(data[6]);
