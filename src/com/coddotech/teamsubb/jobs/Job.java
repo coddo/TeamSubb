@@ -27,6 +27,7 @@ public final class Job {
 	private String name;
 	private int type;
 	private String description;
+	private boolean booked;
 	private String currentStaffMember;
 	private String previousStaffMember;
 	private String nextStaffMember;
@@ -147,6 +148,25 @@ public final class Job {
 	 */
 	public void setDescription(String jobDescription) {
 		this.description = jobDescription;
+	}
+
+	/**
+	 * Verifiy if this job is currently booked by someone else
+	 * 
+	 * @return A logical value
+	 */
+	public boolean isBooked() {
+		return booked;
+	}
+
+	/**
+	 * Set whether this job is booked or not
+	 * 
+	 * @param booked
+	 *            A logical value to be set for this field
+	 */
+	public void setBooked(boolean booked) {
+		this.booked = booked;
 	}
 
 	/**
@@ -340,6 +360,9 @@ public final class Job {
 	 */
 	public boolean isAcceptable(String[] possible) {
 
+		if (this.booked)
+			return false;
+		
 		for (String pos : possible) {
 			if (GadgetWindow.DEFAULT_JOBS_INFO_HEADERS[this.type].equals(pos))
 				return true;
