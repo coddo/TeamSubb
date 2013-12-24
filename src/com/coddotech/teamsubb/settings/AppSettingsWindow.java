@@ -36,9 +36,10 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	 */
 	public AppSettingsWindow() {
 		super();
-		
-		//make the window a modal one
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM));
+
+		// make the window a modal one
+		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL
+				| SWT.DIALOG_TRIM));
 
 		this.initializeComponents();
 	}

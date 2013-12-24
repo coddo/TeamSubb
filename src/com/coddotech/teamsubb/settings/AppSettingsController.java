@@ -13,60 +13,67 @@ public class AppSettingsController {
 	/**
 	 * The constructor for this view controller class
 	 * 
-	 * @param view The view which uses this controller
+	 * @param view
+	 *            The view which uses this controller
 	 */
 	public AppSettingsController(AppSettingsWindow view) {
 		this.view = view;
-		model = new AppSettings();
-		
-		model.addObserver(this.view);
 	}
-	
+
 	/**
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
 		model.deleteObserver(view);
-		
+
 		view = null;
-		
-		model.dispose();
 		model = null;
 	}
-	
+
+	/**
+	 * Set the model to be used by the controller
+	 * 
+	 * @param model
+	 *            An AppSettings instance
+	 */
+	public void setModel(AppSettings model) {
+		this.model = model;
+		model.addObserver(this.view);
+	}
+
 	/**
 	 * Listener for when the apply button is clicked
 	 */
 	public SelectionListener applyClicked = new SelectionListener() {
-		
+
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			model.setGadgetAutosaveLocation(view.isGadgetAutosaveLocation());
 			model.setSearchInterval(view.getSearchInterval());
-			
+
 			model.commitChangesToFile();
 		}
-		
+
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {
-			
+
 		}
 	};
-	
+
 	/**
 	 * Listener for when the cancel button is clicked
 	 */
 	public SelectionListener cancelClicked = new SelectionListener() {
-		
+
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			view.close();
-			
+
 		}
-		
+
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {
-			
+
 		}
 	};
 
@@ -81,7 +88,7 @@ public class AppSettingsController {
 		public void handleEvent(Event arg0) {
 			model.readSettings();
 		}
-		
+
 	};
 
 	/**
