@@ -7,6 +7,8 @@ import com.coddotech.teamsubb.connection.ConnectionManager;
 
 public abstract class CustomWindow {
 
+	public static final String NOTIFICATION_SEPARATOR = "#@&!#@&!";
+	
 	private Shell shell;
 
 	/**
@@ -37,13 +39,13 @@ public abstract class CustomWindow {
 		}
 	}
 
-	/*
+	/**
 	 * Close the GUI for this class and dispose of its contents
 	 */
 	public void close() {
 		shell.close();
 	}
-
+	
 	/**
 	 * Position the window at the center of the desktop
 	 */
@@ -79,7 +81,7 @@ public abstract class CustomWindow {
 	 */
 	private void createShell() {
 		// Prevent the window from being resized
-		shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM ^ SWT.RESIZE);
+		shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM ^ SWT.RESIZE ^ SWT.DIALOG_TRIM);
 
 		shell.setSize(300, 300);
 		this.placeToCenter();

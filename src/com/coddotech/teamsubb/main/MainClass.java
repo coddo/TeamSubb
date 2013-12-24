@@ -15,7 +15,13 @@ public class MainClass {
 		login = null;//*/
 		
 		/*AppSettingsWindow settings = new AppSettingsWindow();
-		settings.open();*/
+		settings.open();//*/
+		
+		/*
+		String[] ui = new String[] {"a", "b", "c"};
+		boolean[] uj = new boolean[] {true, true, true, true, true, true, true};
+		GadgetWindow gadget = new GadgetWindow(ui, uj);
+		gadget.open();//*/
 		
 		Display.getCurrent().dispose();
 	}
