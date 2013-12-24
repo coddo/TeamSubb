@@ -4,8 +4,10 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.main.CustomWindow;
 
@@ -19,11 +21,13 @@ import com.coddotech.teamsubb.main.CustomWindow;
  */
 public final class AppSettingsWindow extends CustomWindow implements Observer {
 
-	private Button gadgetAutosaveLocation;
+	private Button cancel;
+	private Button apply;
+	private Button autosaveLocation;
+	private Label searchIntervalLabel;
+	private Text searchInterval;
 
 	private AppSettingsController controller;
-
-	private Point gadgetLocation;
 
 	/**
 	 * Class constructor
@@ -36,8 +40,8 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		gadgetAutosaveLocation.dispose();
-		gadgetAutosaveLocation = null;
+		autosaveLocation.dispose();
+		autosaveLocation = null;
 	}
 
 	/**
@@ -47,17 +51,26 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	 * @return A logical value indicating the result
 	 */
 	public boolean isGadgetAutosaveLocation() {
-		return this.gadgetAutosaveLocation.getSelection();
+		return this.autosaveLocation.getSelection();
 	}
 
 	/**
-	 * Retrieve the location the is stored for the gadget
+	 * Get the search interval entered by the user in the box
 	 * 
-	 * @return A Point variable indicating the saved location for the gadget
-	 *         window
+	 * @return A String representing the interval (written in numbers)
 	 */
-	public Point getGadgetLocation() {
-		return this.gadgetLocation;
+	public int getSearchInterval() {
+		return Integer.parseInt(this.searchInterval.getText());
+	}
+
+	/**
+	 * Get the settings class used to manage the application specific settings
+	 * (from the XML file)
+	 * 
+	 * @return A AppSettings class instance
+	 */
+	public AppSettings getModel() {
+		return controller.getModel();
 	}
 
 	/**
@@ -65,37 +78,81 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	 */
 	@Override
 	public void update(Observable obs, Object obj) {
-		if (obj instanceof Boolean) {
-			this.gadgetAutosaveLocation.setSelection((Boolean) obj);
-		} else if (obj instanceof Point) {
-			this.gadgetLocation = (Point) obj;
+		String[] data = ((String) obj)
+				.split(CustomWindow.NOTIFICATION_SEPARATOR);
+
+		switch (data[0]) {
+		case AppSettings.MESSAGE_AUTOSAVE_LOCATION: {
+			this.autosaveLocation.setSelection(Boolean.parseBoolean(data[1]));
+		}
+			break;
+		case AppSettings.MESSAGE_SEARCH_INTERVAL: {
+			this.searchInterval.setText(data[1]);
+		}
+			break;
+		case AppSettings.MESSAGE_SAVE: {
+			MessageBox message;
+			
+			if(Boolean.parseBoolean(data[1])) {
+				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
+				message.setText("Success");
+				message.setMessage("The settings have been successfully applied !");
+			} else {
+				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+				message.setText("Error");
+				message.setMessage("An error has been encountered while saving the changes !");
+			}
+			
+			message.open();
+		}
+			break;
 		}
 	}
 
 	@Override
 	protected void performInitializations() {
 		controller = new AppSettingsController(this);
-		gadgetAutosaveLocation = new Button(this.getShell(), SWT.CHECK);
+
+		cancel = new Button(this.getShell(), SWT.PUSH);
+		apply = new Button(this.getShell(), SWT.PUSH);
+		autosaveLocation = new Button(this.getShell(), SWT.CHECK);
+		searchIntervalLabel = new Label(this.getShell(), SWT.None);
+		searchInterval = new Text(this.getShell(), SWT.BORDER);
 	}
 
 	@Override
 	protected void createObjectProperties() {
-		gadgetAutosaveLocation
-				.setText("Automatically save the gadget's location");
-		gadgetAutosaveLocation.setLocation(10, 10);
-		gadgetAutosaveLocation.pack();
+		autosaveLocation.setText("Automatically save the gadget's location");
+		autosaveLocation.setLocation(10, 10);
+		autosaveLocation.pack();
+
+		searchIntervalLabel.setText("Job search interval (minutes):");
+		searchIntervalLabel.setLocation(10, 40);
+		searchIntervalLabel.pack();
+
+		searchInterval.setSize(67, 20);
+		searchInterval.setLocation(175, 38);
+
+		cancel.setText("Cancel");
+		cancel.setLocation(195, 70);
+		cancel.pack();
+
+		apply.setText("Apply");
+		apply.setLocation(10, 70);
+		apply.pack();
 	}
 
 	@Override
 	protected void createShellProperties() {
 		this.getShell().setText("Application settings");
+		this.getShell().setSize(258, 128);
 		this.placeToCenter();
-		this.getShell().setSize(260, 70);
 	}
 
 	@Override
 	protected void createListeners() {
-		gadgetAutosaveLocation.addSelectionListener(controller.autosaveChecked);
+		apply.addSelectionListener(controller.applyClicked);
+		cancel.addSelectionListener(controller.cancelClicked);
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 	}

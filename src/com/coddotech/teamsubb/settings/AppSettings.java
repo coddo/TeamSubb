@@ -16,6 +16,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.coddotech.teamsubb.main.CustomWindow;
+
 /**
  * Class used for managing the settings for this application
  * 
@@ -24,11 +26,29 @@ import org.w3c.dom.Element;
  */
 public final class AppSettings extends Observable {
 
-	private static final Point DEFAULT_LOCATION = new Point(200, 200);
-	private static final boolean DEFAULT_AUTOSAVE_LOCATION = false;
+	/*
+	 * Defautl values for each all the settings
+	 */
+	public static final Point DEFAULT_LOCATION = new Point(200, 200);
+	public static final boolean DEFAULT_AUTOSAVE_LOCATION = false;
+	public static final int DEFAULT_SEARCH_INTERVAL = 1; // one minute
 
+	/*
+	 * Constants representing the settings headers from the XML file and other
+	 * Strings that are used in order to relay what type of notification is sent
+	 * to the observers
+	 */
+	public static final String MESSAGE_SAVE = "save changes";
+	public static final String MESSAGE_LOCATION = "location";
+	public static final String MESSAGE_AUTOSAVE_LOCATION = "autosave_location";
+	public static final String MESSAGE_SEARCH_INTERVAL = "search_interval";
+	
+	/*
+	 * All the settings are retained in the apps memory
+	 */
 	private Point gadgetLocation;
 	private boolean gadgetAutosaveLocation;
+	private int searchInterval;
 
 	private DocumentBuilderFactory dbFactory;
 	private DocumentBuilder dBuilder;
@@ -45,13 +65,11 @@ public final class AppSettings extends Observable {
 	 * Clear memory from this class and its resources
 	 */
 	public void dispose() {
-		// save changes to the settings file
-		this.commitChangesToFile();
-
 		// clear flieds
 		dbFactory = null;
 		dBuilder = null;
-		settingsFile = null;
+		settingsFile = null;	
+		gadgetLocation = null;
 	}
 
 	public Point getGadgetLocation() {
@@ -70,6 +88,14 @@ public final class AppSettings extends Observable {
 		this.gadgetAutosaveLocation = gadgetAutosaveLocation;
 	}
 
+	public int getSearchInterval() {
+		return this.searchInterval;
+	}
+
+	public void setSearchInterval(int searchInterval) {
+		this.searchInterval = searchInterval;
+	}
+
 	/**
 	 * Restore all the settings to their default values
 	 */
@@ -79,6 +105,9 @@ public final class AppSettings extends Observable {
 
 		// gadget autosave position
 		this.gadgetAutosaveLocation = AppSettings.DEFAULT_AUTOSAVE_LOCATION;
+
+		// job search interval
+		this.searchInterval = AppSettings.DEFAULT_SEARCH_INTERVAL;
 
 		// notify the observers about this
 		notifyCompleteSettings();
@@ -90,10 +119,11 @@ public final class AppSettings extends Observable {
 	 * @return A boolean value indicating if the action was finished
 	 *         successfully or not
 	 */
-	public boolean commitChangesToFile() {
+	public void commitChangesToFile() {
 		try {
-			saveGadgetLocation(gadgetLocation);
-			saveGadgetAutosaveLocation(gadgetAutosaveLocation);
+			saveGadgetLocation(this.gadgetLocation);
+			saveGadgetAutosaveLocation(this.gadgetAutosaveLocation);
+			saveSearchInterval(this.searchInterval);
 
 			Transformer transformer = TransformerFactory.newInstance()
 					.newTransformer();
@@ -102,9 +132,12 @@ public final class AppSettings extends Observable {
 
 			transformer.transform(input, output);
 
-			return true;
+			this.setChanged();
+			notifyObservers(AppSettings.MESSAGE_SAVE + CustomWindow.NOTIFICATION_SEPARATOR + true);
+			
 		} catch (Exception ex) {
-			return false;
+			this.setChanged();
+			notifyObservers(AppSettings.MESSAGE_SAVE + CustomWindow.NOTIFICATION_SEPARATOR + false);
 		}
 	}
 
@@ -114,12 +147,13 @@ public final class AppSettings extends Observable {
 	public void readSettings() {
 		readGadgetLocation();
 		readGadgetAutosaveLocation();
-	
+		readSearchInterval();
+
 		notifyCompleteSettings();
 	}
 
 	/**
-	 * Sets the default position for the gadget
+	 * Save the new position for the gadget into the XML settings file
 	 * 
 	 * @param gadgetLocation
 	 *            An org.eclipse.graphics.Point determining the default position
@@ -134,8 +168,8 @@ public final class AppSettings extends Observable {
 	}
 
 	/**
-	 * Set the value that indicates whether the application should automatically
-	 * save its own location on the screen or not
+	 * Save the setting that tells the app whether to save the gadget's location
+	 * automatically into the XML settings file
 	 * 
 	 * @param gadgetAutosaveLocation
 	 *            A boolean value representing the save statement
@@ -147,8 +181,20 @@ public final class AppSettings extends Observable {
 	}
 
 	/**
-	 * Get the default location for the gadget, saved in the application
-	 * settings (configuration file: Settings.xml)
+	 * Save the interval used for searching new jobs into the XML settings file
+	 * 
+	 * @param searchInterval
+	 *            The interval to be written to the file
+	 */
+	private void saveSearchInterval(int searchInterval) {
+		Element element = (Element) settingsFile.getElementsByTagName(
+				"search_interval").item(0);
+		element.setAttribute("value", Integer.toString(searchInterval));
+	}
+
+	/**
+	 * Read the default location for the gadget from the application's settings
+	 * XML file
 	 * 
 	 * @return An org.eclipse.swt.graphics.Point indicating the position for the
 	 *         gadget
@@ -171,10 +217,8 @@ public final class AppSettings extends Observable {
 	}
 
 	/**
-	 * Get a value indicating whether the application automatically saves its
-	 * own location on the screen
-	 * 
-	 * @return A boolean value representing the save statement
+	 * Read the value indicating whether the application automatically saves its
+	 * own location on the screen from the XML settings file
 	 */
 	private void readGadgetAutosaveLocation() {
 		Element element = (Element) settingsFile.getElementsByTagName(
@@ -183,7 +227,23 @@ public final class AppSettings extends Observable {
 			this.gadgetAutosaveLocation = Boolean.parseBoolean(element
 					.getAttribute("value"));
 		} catch (Exception ex) {
-			this.gadgetAutosaveLocation = DEFAULT_AUTOSAVE_LOCATION;
+			this.gadgetAutosaveLocation = AppSettings.DEFAULT_AUTOSAVE_LOCATION;
+		}
+	}
+
+	/**
+	 * Read the value representing the search interval used by the app in order
+	 * to find new jobs for the user from the XML settings file
+	 */
+	private void readSearchInterval() {
+		Element element = (Element) settingsFile.getElementsByTagName(
+				"search_interval").item(0);
+
+		try {
+			this.searchInterval = Integer.parseInt(element
+					.getAttribute("value"));
+		} catch (Exception ex) {
+			this.searchInterval = AppSettings.DEFAULT_SEARCH_INTERVAL;
 		}
 	}
 
@@ -193,9 +253,13 @@ public final class AppSettings extends Observable {
 	 */
 	private void notifyCompleteSettings() {
 		this.setChanged();
+		notifyObservers(AppSettings.MESSAGE_AUTOSAVE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR + this.gadgetAutosaveLocation);
 		
-		notifyObservers(this.gadgetAutosaveLocation);
-		notifyObservers(this.gadgetLocation);
+		this.setChanged();
+		notifyObservers(AppSettings.MESSAGE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR + this.gadgetLocation);
+		
+		this.setChanged();
+		notifyObservers(AppSettings.MESSAGE_SEARCH_INTERVAL + CustomWindow.NOTIFICATION_SEPARATOR + this.searchInterval);
 	}
 
 	/**
@@ -207,7 +271,7 @@ public final class AppSettings extends Observable {
 			dBuilder = dbFactory.newDocumentBuilder();
 			settingsFile = dBuilder.parse("Settings.xml");
 		} catch (Exception e) {
-			// ignore any exceptions
+			e.printStackTrace();
 		}
 	}
 }

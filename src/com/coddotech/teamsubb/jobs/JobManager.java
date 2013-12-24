@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Observable;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
+import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
  * Class used for realizing the communication between this client and the target
@@ -17,15 +18,9 @@ import com.coddotech.teamsubb.connection.ConnectionManager;
  * 
  */
 public class JobManager extends Observable {
-	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator",
-			"Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
-			"Postator" };
-	public static final String[] DEFAULT_USER_INFORMATION = { "Name", "Email",
-			"Rank" };
 	
 	private static final String SEPARATOR_FIELDS = "&?&";
 	private static final String SEPARATOR_JOBS = "¬|¬";
-	public static final String SEPARATOR_NOTIFICATION = "{#$$%}";
 	
 	private static final File WORKING_DIRECTORY = new File("Jobs");
 
@@ -89,7 +84,7 @@ public class JobManager extends Observable {
 				this.userName, name, type, description, subFile, fonts);
 
 		this.setChanged();
-		notifyObservers("create" + JobManager.SEPARATOR_NOTIFICATION + response);
+		notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR + response);
 
 		// after the job is created, start a new search in order to update the
 		// job list
@@ -121,7 +116,7 @@ public class JobManager extends Observable {
 
 		// notify all the observers about the change
 		this.setChanged();
-		notifyObservers("end" + JobManager.SEPARATOR_NOTIFICATION + response);
+		notifyObservers("end" + CustomWindow.NOTIFICATION_SEPARATOR + response);
 	}
 
 	/**
@@ -178,11 +173,11 @@ public class JobManager extends Observable {
 
 		// notify about the newly created list of jobs
 		this.setChanged();
-		notifyObservers("find" + JobManager.SEPARATOR_NOTIFICATION + jobs);
+		notifyObservers("find" + CustomWindow.NOTIFICATION_SEPARATOR + jobs);
 
 		// notify about the new list of acceptable jobs
 		this.setChanged();
-		notifyObservers("acceptable" + JobManager.SEPARATOR_NOTIFICATION
+		notifyObservers("acceptable" + CustomWindow.NOTIFICATION_SEPARATOR
 				+ suitable);
 	}
 
@@ -211,7 +206,7 @@ public class JobManager extends Observable {
 
 		// notify all the observers about the change
 		this.setChanged();
-		notifyObservers("accept" + JobManager.SEPARATOR_NOTIFICATION + response);
+		notifyObservers("accept" + CustomWindow.NOTIFICATION_SEPARATOR + response);
 	}
 
 	/**
@@ -239,7 +234,7 @@ public class JobManager extends Observable {
 
 		// notify all the observers about the change
 		this.setChanged();
-		notifyObservers("cancel" + JobManager.SEPARATOR_NOTIFICATION + response);
+		notifyObservers("cancel" + CustomWindow.NOTIFICATION_SEPARATOR + response);
 	}
 
 	/**
@@ -267,7 +262,7 @@ public class JobManager extends Observable {
 
 		// notify all the observers about the change
 		this.setChanged();
-		notifyObservers("push" + JobManager.SEPARATOR_NOTIFICATION + response);
+		notifyObservers("push" + CustomWindow.NOTIFICATION_SEPARATOR + response);
 	}
 
 	/**
