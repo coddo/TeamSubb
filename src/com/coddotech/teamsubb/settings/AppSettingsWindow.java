@@ -5,8 +5,10 @@ import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -34,31 +36,45 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	 */
 	public AppSettingsWindow() {
 		super();
+		
+		//make the window a modal one
+		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM));
+
+		this.initializeComponents();
 	}
 
 	/**
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		//user classes
+		// user classes
 		controller.dispose();
 		controller = null;
-		
-		//GUI objects
+
+		// GUI objects
 		apply.dispose();
 		apply = null;
-		
+
 		cancel.dispose();
 		cancel = null;
-		
+
 		autosaveLocation.dispose();
 		autosaveLocation = null;
-		
+
 		searchIntervalLabel.dispose();
 		searchIntervalLabel = null;
-		
+
 		searchInterval.dispose();
 		searchInterval = null;
+	}
+
+	/**
+	 * Get the controller used by this class
+	 * 
+	 * @return A AppSettingsController class instance
+	 */
+	public AppSettingsController getController() {
+		return this.controller;
 	}
 
 	/**
@@ -72,22 +88,12 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	}
 
 	/**
-	 * Get the search interval entered by the user in the box
+	 * Get the search interval set by the user
 	 * 
-	 * @return A String representing the interval (written in numbers)
+	 * @return An integer representing the number of minutes set by the user
 	 */
 	public int getSearchInterval() {
 		return Integer.parseInt(this.searchInterval.getText());
-	}
-
-	/**
-	 * Set the settings class used to manage the application specific settings
-	 * (from the XML file)
-	 * 
-	 * @return A AppSettings class instance
-	 */
-	public void setModel(AppSettings model) {
-		this.controller.setModel(model);
 	}
 
 	/**
@@ -99,6 +105,7 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 				.split(CustomWindow.NOTIFICATION_SEPARATOR);
 
 		switch (data[0]) {
+
 		case AppSettings.MESSAGE_AUTOSAVE_LOCATION: {
 			this.autosaveLocation.setSelection(Boolean.parseBoolean(data[1]));
 		}
@@ -109,8 +116,8 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 			break;
 		case AppSettings.MESSAGE_SAVE: {
 			MessageBox message;
-			
-			if(Boolean.parseBoolean(data[1])) {
+
+			if (Boolean.parseBoolean(data[1])) {
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
 				message.setMessage("The settings have been successfully applied !");
@@ -119,10 +126,11 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 				message.setText("Error");
 				message.setMessage("An error has been encountered while saving the changes !");
 			}
-			
+
 			message.open();
 		}
 			break;
+
 		}
 	}
 
@@ -161,7 +169,7 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 
 	@Override
 	protected void createShellProperties() {
-		this.getShell().setText("Application settings");
+		this.getShell().setText("Settings");
 		this.getShell().setSize(258, 128);
 		this.placeToCenter();
 	}

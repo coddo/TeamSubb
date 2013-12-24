@@ -31,6 +31,7 @@ public final class Job {
 	private String currentStaffMember;
 	private String previousStaffMember;
 	private String nextStaffMember;
+	private String intendedTo;
 	private String startDate; // store the date as a String value for now
 	private String directoryPath;
 	private File subFile;
@@ -252,6 +253,25 @@ public final class Job {
 	}
 
 	/**
+	 * Get the name of the staff member to which this job was initially intended
+	 * 
+	 * @return A String value representing the name of the staff member
+	 */
+	public String getIntendedTo() {
+		return intendedTo;
+	}
+
+	/**
+	 * Set the name of the staff member to which this job was initially intended
+	 * 
+	 * @param intendedTo
+	 *            A String value representing the name of the staff member
+	 */
+	public void setIntendedTo(String intendedTo) {
+		this.intendedTo = intendedTo;
+	}
+
+	/**
 	 * Get the path for the directory containing the data files for this job
 	 * 
 	 * @return A String indicating the files' location
@@ -362,7 +382,7 @@ public final class Job {
 
 		if (this.booked)
 			return false;
-		
+
 		for (String pos : possible) {
 			if (GadgetWindow.DEFAULT_JOBS_INFO_HEADERS[this.type].equals(pos))
 				return true;

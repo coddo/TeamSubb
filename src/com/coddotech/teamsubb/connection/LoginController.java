@@ -23,6 +23,8 @@ public class LoginController {
 	 * Clears the memory from this class and its controls
 	 */
 	public void dispose() {
+		model.deleteObserver(view);
+		
 		model = null;
 		view = null;
 	}

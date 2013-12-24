@@ -18,10 +18,10 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * 
  */
 public class JobManager extends Observable {
-	
+
 	private static final String SEPARATOR_FIELDS = "&?&";
 	private static final String SEPARATOR_JOBS = "¬|¬";
-	
+
 	private static final File WORKING_DIRECTORY = new File("Jobs");
 
 	private List<Job> jobs;
@@ -33,8 +33,10 @@ public class JobManager extends Observable {
 	/**
 	 * Main class construcotr
 	 * 
-	 * @param gadget
-	 *            The main window for this application
+	 * @param userName
+	 *            The name of the user logged in to this app
+	 * @param userJobs
+	 *            The jobs that can be done by this user
 	 */
 	public JobManager(String userName, String[] userJobs) {
 		this.userName = userName;
@@ -78,13 +80,15 @@ public class JobManager extends Observable {
 	 *            The font files that are needed in order to finish this job
 	 */
 	public void createJob(String name, int type, String description,
-			String subFile, String[] fonts) {
+			String nextStaff, String subFile, String[] fonts) {
 
 		boolean response = ConnectionManager.sendJobCreateRequest(
-				this.userName, name, type, description, subFile, fonts);
+				this.userName, name, type, description, nextStaff, subFile,
+				fonts);
 
 		this.setChanged();
-		notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR + response);
+		notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR
+				+ response);
 
 		// after the job is created, start a new search in order to update the
 		// job list
@@ -205,7 +209,8 @@ public class JobManager extends Observable {
 
 		// notify all the observers about the change
 		this.setChanged();
-		notifyObservers("accept" + CustomWindow.NOTIFICATION_SEPARATOR + response);
+		notifyObservers("accept" + CustomWindow.NOTIFICATION_SEPARATOR
+				+ response);
 	}
 
 	/**
@@ -233,7 +238,8 @@ public class JobManager extends Observable {
 
 		// notify all the observers about the change
 		this.setChanged();
-		notifyObservers("cancel" + CustomWindow.NOTIFICATION_SEPARATOR + response);
+		notifyObservers("cancel" + CustomWindow.NOTIFICATION_SEPARATOR
+				+ response);
 	}
 
 	/**
@@ -281,8 +287,10 @@ public class JobManager extends Observable {
 		job.setName(data[1]);
 		job.setType(Integer.parseInt(data[2]));
 		job.setDescription(data[3]);
-		job.setPreviousStaffMember(data[4]);
-		job.setStartDate(data[5]);
+		job.setBooked(Boolean.parseBoolean(data[4]));
+		job.setPreviousStaffMember(data[5]);
+		job.setIntendedTo(data[6]);
+		job.setStartDate(data[7]);
 		job.setDirectoryPath(dirPath);
 		job.setCurrentStaffMember(this.userName);
 

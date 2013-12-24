@@ -128,12 +128,12 @@ public final class ConnectionManager {
 	 *         not by the server
 	 */
 	public static boolean sendJobCreateRequest(String user, String name,
-			int type, String description, String subFile, String[] fonts) {
+			int type, String description, String nextStaff, String subFile, String[] fonts) {
 		// user info handling
 		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype",
-				"comments" };
+				"comments", "nextstaff" };
 		String[] messages = { "create", user, name, Integer.toString(type),
-				description };
+				description, nextStaff };
 
 		// files handling
 		String[] fileHeaders = new String[fonts.length + 1];

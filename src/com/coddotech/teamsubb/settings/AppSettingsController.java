@@ -17,24 +17,21 @@ public class AppSettingsController {
 	 */
 	public AppSettingsController(AppSettingsWindow view) {
 		this.view = view;
+		model = new AppSettings();
+		
+		model.addObserver(this.view);
 	}
 	
 	/**
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
+		model.deleteObserver(view);
+		
 		view = null;
-	}
-	
-	/**
-	 * Get the settings class used to manage the application specific settings
-	 * (from the XML file)
-	 * 
-	 * @return A AppSettings class instance
-	 */
-	public void setModel(AppSettings model) {
-		this.model = model;
-		this.model.addObserver(this.view);
+		
+		model.dispose();
+		model = null;
 	}
 	
 	/**
@@ -95,7 +92,6 @@ public class AppSettingsController {
 
 		@Override
 		public void handleEvent(Event arg0) {
-			model.deleteObserver(view);
 			view.dispose();
 		}
 	};

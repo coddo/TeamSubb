@@ -256,7 +256,7 @@ public final class AppSettings extends Observable {
 		notifyObservers(AppSettings.MESSAGE_AUTOSAVE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR + this.gadgetAutosaveLocation);
 		
 		this.setChanged();
-		notifyObservers(AppSettings.MESSAGE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR + this.gadgetLocation);
+		notifyObservers(AppSettings.MESSAGE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR + this.gadgetLocation.x + "," + gadgetLocation.y);
 		
 		this.setChanged();
 		notifyObservers(AppSettings.MESSAGE_SEARCH_INTERVAL + CustomWindow.NOTIFICATION_SEPARATOR + this.searchInterval);

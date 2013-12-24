@@ -40,6 +40,8 @@ public class LoginWindow extends CustomWindow implements Observer {
 	 */
 	public LoginWindow() {
 		super();
+		
+		this.initializeComponents();
 	}
 
 	/**
