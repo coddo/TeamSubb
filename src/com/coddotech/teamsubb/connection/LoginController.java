@@ -18,19 +18,15 @@ public class LoginController {
 		//add the view as an observer for the model
 		model.addObserver(view);
 	}
-
+	
 	/**
-	 * Listens for when the shell (GUI) closes and clears memory from this class
-	 * and its resources
+	 * Clears the memory from this class and its controls
 	 */
-	public Listener shellClosingListener = new Listener() {
-		
-		@Override
-		public void handleEvent(Event arg0) {
-			view.dispose();
-		}
-		
-	};
+	public void dispose() {
+		model = null;
+		view = null;
+	}
+
 	/*
 	 * Listener for the exit button. When pressed, it quits the application
 	 */
@@ -79,6 +75,18 @@ public class LoginController {
 			if (e.detail == org.eclipse.swt.SWT.TRAVERSE_RETURN)
 				if (view.isConnected())
 				model.doLogin(view.getUserName(), view.getPassword());
+		}
+		
+	};
+	/**
+	 * Listens for when the shell (GUI) closes and clears memory from this class
+	 * and its resources
+	 */
+	public Listener shellClosingListener = new Listener() {
+		
+		@Override
+		public void handleEvent(Event arg0) {
+			view.dispose();
 		}
 		
 	};

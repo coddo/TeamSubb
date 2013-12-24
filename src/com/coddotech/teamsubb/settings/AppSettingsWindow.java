@@ -40,8 +40,25 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
+		//user classes
+		controller.dispose();
+		controller = null;
+		
+		//GUI objects
+		apply.dispose();
+		apply = null;
+		
+		cancel.dispose();
+		cancel = null;
+		
 		autosaveLocation.dispose();
 		autosaveLocation = null;
+		
+		searchIntervalLabel.dispose();
+		searchIntervalLabel = null;
+		
+		searchInterval.dispose();
+		searchInterval = null;
 	}
 
 	/**
@@ -64,13 +81,13 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	}
 
 	/**
-	 * Get the settings class used to manage the application specific settings
+	 * Set the settings class used to manage the application specific settings
 	 * (from the XML file)
 	 * 
 	 * @return A AppSettings class instance
 	 */
-	public AppSettings getModel() {
-		return controller.getModel();
+	public void setModel(AppSettings model) {
+		this.controller.setModel(model);
 	}
 
 	/**

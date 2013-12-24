@@ -162,8 +162,7 @@ public class JobManager extends Observable {
 
 					// note if the job is suitable for this user
 					if (job.isAcceptable(this.userJobs))
-						;
-					suitable.add(job);
+						suitable.add(job);
 
 					// add it to the list
 					jobs.add(job);

@@ -46,6 +46,11 @@ public class LoginWindow extends CustomWindow implements Observer {
 	 * Clear the memory from this class and its resources
 	 */
 	void dispose() {
+		//user classes
+		controller.dispose();
+		controller = null;
+		
+		// GUI objects
 		userLabel.dispose();
 		userLabel = null;
 
@@ -66,8 +71,6 @@ public class LoginWindow extends CustomWindow implements Observer {
 
 		defaultFont.dispose();
 		defaultFont = null;
-
-		controller = null;
 	}
 
 	/**

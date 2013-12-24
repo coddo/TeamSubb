@@ -17,9 +17,13 @@ public class AppSettingsController {
 	 */
 	public AppSettingsController(AppSettingsWindow view) {
 		this.view = view;
-		this.model = new AppSettings();
-		
-		this.model.addObserver(this.view);
+	}
+	
+	/**
+	 * Clear the memory from this class and its components
+	 */
+	public void dispose() {
+		view = null;
 	}
 	
 	/**
@@ -28,10 +32,14 @@ public class AppSettingsController {
 	 * 
 	 * @return A AppSettings class instance
 	 */
-	public AppSettings getModel() {
-		return this.model;
+	public void setModel(AppSettings model) {
+		this.model = model;
+		this.model.addObserver(this.view);
 	}
 	
+	/**
+	 * Listener for when the apply button is clicked
+	 */
 	public SelectionListener applyClicked = new SelectionListener() {
 		
 		@Override
@@ -44,11 +52,13 @@ public class AppSettingsController {
 		
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {
-			// TODO Auto-generated method stub
 			
 		}
 	};
 	
+	/**
+	 * Listener for when the cancel button is clicked
+	 */
 	public SelectionListener cancelClicked = new SelectionListener() {
 		
 		@Override
@@ -59,7 +69,6 @@ public class AppSettingsController {
 		
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {
-			// TODO Auto-generated method stub
 			
 		}
 	};
@@ -86,7 +95,7 @@ public class AppSettingsController {
 
 		@Override
 		public void handleEvent(Event arg0) {
-			model.dispose();
+			model.deleteObserver(view);
 			view.dispose();
 		}
 	};
