@@ -4,6 +4,7 @@ import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.connection.LoginWindow;
 import com.coddotech.teamsubb.settings.AppSettingsWindow;
+import com.coddotech.teamsubb.jobs.JobManager;
 
 @SuppressWarnings("unused")
 public class MainClass {
@@ -22,6 +23,11 @@ public class MainClass {
 		boolean[] uj = new boolean[] {true, true, true, true, true, true, true};
 		GadgetWindow gadget = new GadgetWindow(ui, uj);
 		gadget.open();//*/
+		
+		/*
+		JobManager jobs = new JobManager("coddo", new String[] {"Traducator", "Verificator", "Encoder"});
+		jobs.createJob("TESTARE MARE", 0, "WTF IS THIS SHIT", "NBI", "Settings.xml", new String[] {"Settings.xml", "README.md"});
+		//*/
 		
 		Display.getCurrent().dispose();
 	}

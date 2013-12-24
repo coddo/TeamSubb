@@ -4,7 +4,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 import com.coddotech.teamsubb.jobs.JobManager;
 import com.coddotech.teamsubb.settings.AppSettings;
@@ -21,8 +22,10 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	private String[] userInfo;
 
 	private GadgetController controller;
-	
-	private Button test;
+
+	// this lets the app be repositioned with the value stored in the settings
+	// file only once
+	private boolean first = true;
 
 	/**
 	 * Class constructor
@@ -32,16 +35,20 @@ public class GadgetWindow extends CustomWindow implements Observer {
 
 		this.userInfo = userInfo;
 		this.jobs = jobs;
+
+		this.setShell(new Shell(Display.getCurrent(), SWT.NO_TRIM));
+
+		this.initializeComponents();
 	}
 
 	/**
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		//user classes
+		// user classes
 		controller.dispose();
 		controller = null;
-		
+
 		// fields
 		jobs = null;
 		userInfo = null;
@@ -54,6 +61,15 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	 */
 	public String getUserName() {
 		return this.userInfo[0];
+	}
+
+	/**
+	 * Get the user information for the currently logged in staff
+	 * 
+	 * @return A String collection
+	 */
+	public String[] getUserInfo() {
+		return this.userInfo;
 	}
 
 	/**
@@ -85,36 +101,43 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	@Override
 	public void update(Observable obs, Object obj) {
 		if (obs instanceof JobManager) {
-			
+
 		} else if (obs instanceof AppSettings) {
-			
+			String[] data = ((String) obj)
+					.split(CustomWindow.NOTIFICATION_SEPARATOR);
+
+			if (data[0].equals(AppSettings.MESSAGE_LOCATION) && first) {
+				int x = Integer.parseInt(data[1].split(",")[0]);
+				int y = Integer.parseInt(data[1].split(",")[1]);
+
+				this.getShell().setLocation(x, y);
+				first = false;
+			} else if (data[0].equals(AppSettings.MESSAGE_SEARCH_INTERVAL)) {
+				controller.setInterval(Integer.parseInt(data[1]));
+			}
 		}
 	}
 
 	@Override
 	protected void performInitializations() {
 		controller = new GadgetController(this);
-		
-		test = new Button(this.getShell(), SWT.PUSH);
 	}
 
 	@Override
 	protected void createObjectProperties() {
-		test.setText("hello");
-		test.setLocation(10, 10);
-		test.pack();
 	}
 
 	@Override
 	protected void createShellProperties() {
 		this.getShell().setText("TeamSubb");
-		this.getShell().setSize(100, 100);
+		this.getShell().setSize(200, 200);
 	}
 
 	@Override
 	protected void createListeners() {
-		test.addSelectionListener(controller.settingsClicked);
-		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
+		this.getShell().addListener(SWT.Show, controller.shellShownListener);
+		this.getShell().addMouseListener(controller.shellClicked);
+		this.getShell().addMouseMoveListener(controller.shellMoved);
 	}
 }
