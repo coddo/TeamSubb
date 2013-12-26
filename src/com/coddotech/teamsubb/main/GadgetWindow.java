@@ -12,6 +12,16 @@ import org.eclipse.swt.widgets.Shell;
 import com.coddotech.teamsubb.jobs.JobWindow;
 import com.coddotech.teamsubb.settings.AppSettings;
 
+/**
+ * A window similar to a gadget that stays stationary on the workspace of the
+ * user and is responsible to transmit announcements to the user and inform him
+ * about different jobs that become available for him.<br>
+ * 
+ * The JobWindow and SettingsWindow can be opened from here.
+ * 
+ * @author Coddo
+ * 
+ */
 public class GadgetWindow extends CustomWindow implements Observer {
 
 	private boolean[] jobs;

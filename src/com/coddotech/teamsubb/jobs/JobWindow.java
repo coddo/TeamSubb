@@ -3,12 +3,15 @@ package com.coddotech.teamsubb.jobs;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import com.coddotech.teamsubb.main.CustomWindow;
 
+/**
+ * Main window that is used by the user to manage his/her jobs and communicate
+ * with the main server about them.
+ * 
+ * @author Coddo
+ * 
+ */
 public class JobWindow extends CustomWindow implements Observer {
 
 	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator",
@@ -25,10 +28,6 @@ public class JobWindow extends CustomWindow implements Observer {
 	public JobWindow(String[] userInfo, String[] userJobs) {
 		this.userInfo = userInfo;
 		this.userJobs = userJobs;
-
-		// make the window a modal one
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL
-				| SWT.DIALOG_TRIM));
 
 		this.initializeComponents();
 	}

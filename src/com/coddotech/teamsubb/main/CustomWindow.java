@@ -71,9 +71,9 @@ public abstract class CustomWindow {
 	 * server was unsuccessful if the app cannot establish a a connection to the
 	 * server
 	 */
-	public boolean isConnected() {
+	public boolean isConnected(boolean displayMessage) {
 		boolean connected = ConnectionManager.isConnected();
-		if (!connected) {
+		if (!connected && displayMessage) {
 
 			MessageBox message = new MessageBox(Display.getCurrent()
 					.getShells()[0], SWT.ICON_ERROR);

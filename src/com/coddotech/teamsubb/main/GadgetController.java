@@ -18,6 +18,13 @@ import com.coddotech.teamsubb.jobs.JobWindow;
 import com.coddotech.teamsubb.settings.AppSettings;
 import com.coddotech.teamsubb.settings.AppSettingsWindow;
 
+/**
+ * Controller class for the GadgetWindow.<br>
+ * The vast majority of models used for the workflow intersect here.
+ * 
+ * @author Coddo
+ * 
+ */
 public class GadgetController {
 
 	private GadgetWindow gadget;
@@ -31,7 +38,7 @@ public class GadgetController {
 	private AnimationRenderer animations;
 
 	// 1 min = 60000 ms
-	int searchInterval = AppSettings.DEFAULT_SEARCH_INTERVAL * 6000;
+	int searchInterval = AppSettings.DEFAULT_SEARCH_INTERVAL * 60000;
 
 	boolean disposed = false;
 
@@ -53,7 +60,7 @@ public class GadgetController {
 		this.initializeController();
 
 		// start the timer in order for it to search for new jobs
-		Display.getCurrent().timerExec(this.searchInterval, timer);
+		Display.getCurrent().timerExec(50, timer);
 	}
 
 	/**
@@ -96,14 +103,16 @@ public class GadgetController {
 	}
 
 	/**
-	 * Timer used to search for new jobs
+	 * Timer used to search for new jobs. This method checks if there is an
+	 * internet connection available before sending the request
 	 */
 	Runnable timer = new Runnable() {
 
 		@Override
 		public void run() {
 			if (!disposed) {
-				jobs.findJobs();
+				if (gadget.isConnected(false))
+					jobs.findJobs();
 
 				Display.getCurrent().timerExec(searchInterval, this);
 			}
@@ -135,14 +144,26 @@ public class GadgetController {
 			}
 		}
 
+		// opening of the JobWindow class is done in such a way to prevent
+		// overflowing the workspace with instances of the same type of view
 		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 			if (e.button == 1) {
-				jobsWindow = new JobWindow(gadget.getUserInfo(),
-						gadget.getUserJobs());
-				jobsWindow.getController().setModel(jobs);
-				jobs.addObserver(jobsWindow);
-				jobsWindow.open();
+				boolean visible = false;
+				
+				try {
+					visible = jobsWindow.getShell().isVisible();
+				} catch (Exception ex) {
+					jobsWindow = new JobWindow(gadget.getUserInfo(),
+							gadget.getUserJobs());
+				} finally {
+					jobsWindow.getController().setModel(jobs);
+					jobs.addObserver(jobsWindow);
+					
+					if(!visible)
+						jobsWindow.open();
+					
+				}
 			} else if (e.button == 3) {
 				settingsWindow = new AppSettingsWindow();
 				settingsWindow.getController().setModel(settings);

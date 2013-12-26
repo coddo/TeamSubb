@@ -128,7 +128,8 @@ public final class ConnectionManager {
 	 *         not by the server
 	 */
 	public static boolean sendJobCreateRequest(String user, String name,
-			int type, String description, String nextStaff, String subFile, String[] fonts) {
+			int type, String description, String nextStaff, String subFile,
+			String[] fonts) {
 		// user info handling
 		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype",
 				"comments", "nextstaff" };
@@ -272,6 +273,11 @@ public final class ConnectionManager {
 
 		// return the response from the server
 		return Boolean.parseBoolean(response);
+	}
+
+	public static String sendStaffRequest() {
+		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
+				new String[] { "liststaff" }, new String[] { "1" });
 	}
 
 	/**
