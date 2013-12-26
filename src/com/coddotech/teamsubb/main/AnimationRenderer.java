@@ -2,26 +2,48 @@ package com.coddotech.teamsubb.main;
 
 import java.io.File;
 import java.util.Observable;
-import java.util.regex.Pattern;
+import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-public class AnimationRenderer extends Observable {
+/**
+ * Class which has the purpose to guide the gadget's animation. It also observes
+ * the changes in the JobManager entity in order to determine which type of
+ * animation and alerts to use
+ * 
+ * There are 3 types of animation:<br>
+ * -> IDLE: animation which looks like a radar scanning something => this is
+ * used for when the app doesn't have anything important to report to the user. <br>
+ * -> LOW_PRIORITY: animation used to grab the attention of the user because
+ * there are certain jobs available for him.<br>
+ * -> HIGH_PRIORITY: this is a more aggressive animation used to alert the user
+ * that there are some jobs which are intended strictly for him. These types of
+ * jobs are considered to be urgent ones.
+ * 
+ * @author Coddo
+ * 
+ */
+public class AnimationRenderer extends Observable implements Observer {
 
+	// used for determining the type of animation that the gadget will perform
 	public static final int TYPE_IDLE = 0x001;
 	public static final int TYPE_LOW_PRIORITY = 0x002;
 	public static final int TYPE_HIGH_PRIORITY = 0x003;
 
+	// paths where the files necessary for the gadget's animation are stored
 	private static final String DIR_IDLE = "resources" + File.separator
 			+ "idle";
 	private static final String DIR_LOW = "resources" + File.separator + "low";
 	private static final String DIR_HIGH = "resources" + File.separator
 			+ "high";
 
+	// interval used to
 	private int imageInterval = 100;
+
+	// the image collections with the help of which the animation is done
 	private Image[] idle = new Image[23];
 	private Image[] lowPriority = new Image[2];
 	private Image[] highPriority = new Image[2];
@@ -30,10 +52,16 @@ public class AnimationRenderer extends Observable {
 	private int counter = 0;
 	private boolean disposed = false;
 
+	/**
+	 * Class constructor
+	 */
 	public AnimationRenderer() {
 		initializeAnimationData();
 	}
 
+	/**
+	 * Clears the memory from this class and its resources
+	 */
 	public void dispose() {
 		this.disposed = true;
 
@@ -51,22 +79,39 @@ public class AnimationRenderer extends Observable {
 		highPriority = null;
 	}
 
+	/**
+	 * Set the type of animation that should be done by the gadget. These types
+	 * are stored in the static fields TYPE_XXXX of this class
+	 * 
+	 * @param type
+	 *            The animation type that should be set
+	 */
 	public void setAnimationType(int type) {
 		this.type = type;
 		counter = 0;
 	}
 
+	/**
+	 * Start animating the gadget
+	 */
 	public void startAnimations() {
-		Display.getCurrent().timerExec(this.imageInterval, animationRenderer);
+		Display.getCurrent().timerExec(this.imageInterval, animationTimer);
 	}
 
-	private Runnable animationRenderer = new Runnable() {
+	/**
+	 * Timer used for changing the resources between them at set intervals in
+	 * order to perform the animation for the gadget
+	 */
+	private Runnable animationTimer = new Runnable() {
 
 		@Override
 		public void run() {
 			if (!disposed) {
+				// mark this model as being changed
 				setChanged();
 
+				// send the animation data to the gadget based on the animation
+				// type currently selected
 				switch (type) {
 				case AnimationRenderer.TYPE_IDLE: {
 					if (counter == idle.length)
@@ -93,12 +138,46 @@ public class AnimationRenderer extends Observable {
 
 				counter++;
 
+				// recursive method calling in order to mimic a real timer
 				Display.getCurrent().timerExec(imageInterval, this);
 			}
 		}
 	};
 
-	private Image resize(Image image, int width, int height) {
+	@Override
+	public void update(Observable obs, Object obj) {
+		// update is done only by the job manager in order to know what type of
+		// animation needs to be done
+		String[] data = ((String) obj)
+				.split(CustomWindow.NOTIFICATION_SEPARATOR);
+
+		switch (data[0]) {
+		case "acceptable": {
+			if (((String) obj).split("@").length > 0)
+				this.setAnimationType(TYPE_LOW_PRIORITY);
+			else
+				this.setAnimationType(TYPE_IDLE);
+		}
+			break;
+		case "important": {
+			this.setAnimationType(AnimationRenderer.TYPE_HIGH_PRIORITY);
+		}
+			break;
+		}
+	}
+
+	/**
+	 * Reize an image to the given dimensions
+	 * 
+	 * @param image
+	 *            The image to be resized
+	 * @param width
+	 *            The width to be set
+	 * @param height
+	 *            The height to be set
+	 * @return An Image entity representing the resized image
+	 */
+	private Image resizeImage(Image image, int width, int height) {
 		Image scaled = new Image(Display.getDefault(), width, height);
 		GC gc = new GC(scaled);
 		gc.setAntialias(SWT.ON);
@@ -106,34 +185,37 @@ public class AnimationRenderer extends Observable {
 		gc.drawImage(image, 0, 0, image.getBounds().width,
 				image.getBounds().height, 0, 0, width, height);
 		gc.dispose();
-		image.dispose(); // don't forget about me!
+		image.dispose();
 		return scaled;
 	}
 
+	/**
+	 * Gets and stores the animation files and data into the local memory of the
+	 * app for faster use
+	 */
 	private void initializeAnimationData() {
 		// idle image sequence - taken directly in a sorted (ascending) order
 		for (String img : new File(AnimationRenderer.DIR_IDLE).list()) {
-			
-			idle[Integer.parseInt(img.split(".png")[0])] = resize(new Image(Display.getCurrent(),
-					AnimationRenderer.DIR_IDLE + File.separator + img), 170,
-					170);
+
+			idle[Integer.parseInt(img.split(".png")[0])] = resizeImage(
+					new Image(Display.getCurrent(), AnimationRenderer.DIR_IDLE
+							+ File.separator + img), 113, 113);
 		}
-		// sort these images as they are not retrieved in a preferable order
 
 		// low priority image sequence
 		int k = 0;
 		for (String img : new File(AnimationRenderer.DIR_LOW).list()) {
-			lowPriority[k] = resize(new Image(Display.getCurrent(),
-					AnimationRenderer.DIR_LOW + File.separator + img), 170, 170);
+			lowPriority[k] = resizeImage(new Image(Display.getCurrent(),
+					AnimationRenderer.DIR_LOW + File.separator + img), 113, 113);
 			k++;
 		}
 
 		// high priority image sequence
 		k = 0;
 		for (String img : new File(AnimationRenderer.DIR_HIGH).list()) {
-			highPriority[k] = resize(new Image(Display.getCurrent(),
-					AnimationRenderer.DIR_HIGH + File.separator + img), 170,
-					170);
+			highPriority[k] = resizeImage(new Image(Display.getCurrent(),
+					AnimationRenderer.DIR_HIGH + File.separator + img), 113,
+					113);
 			k++;
 		}
 	}

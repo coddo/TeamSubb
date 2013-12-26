@@ -2,6 +2,7 @@ package com.coddotech.teamsubb.connection;
 
 import java.util.Observable;
 
+import com.coddotech.teamsubb.jobs.JobWindow;
 import com.coddotech.teamsubb.main.GadgetWindow;
 
 public class Login extends Observable {
@@ -51,9 +52,9 @@ public class Login extends Observable {
 
 		for (int i = 3; i < data.length; i++) {
 
-			for (int j = 0; j < GadgetWindow.DEFAULT_JOBS_INFO_HEADERS.length; j++) {
+			for (int j = 0; j < JobWindow.DEFAULT_JOBS_INFO_HEADERS.length; j++) {
 
-				if (data[i].equals(GadgetWindow.DEFAULT_JOBS_INFO_HEADERS[j])) {
+				if (data[i].equals(JobWindow.DEFAULT_JOBS_INFO_HEADERS[j])) {
 					jobsData[j] = true;
 					break;
 				}

@@ -74,6 +74,9 @@ public class JobManager extends Observable {
 	 *            The type of the job
 	 * @param description
 	 *            The description/comments for the job
+	 * @param nextStaff
+	 *            The name of the user that will be obligated to take over this
+	 *            job
 	 * @param subFile
 	 *            The main file of the job (file to be subbed)
 	 * @param fonts
@@ -136,6 +139,8 @@ public class JobManager extends Observable {
 	 */
 	public void findJobs() {
 
+		boolean important = false;
+
 		// logical value indicating if any suitable jobs for the user are found
 		List<Job> suitable = new ArrayList<Job>();
 
@@ -165,8 +170,12 @@ public class JobManager extends Observable {
 					Job job = createJobEntity(data, dirPath);
 
 					// note if the job is suitable for this user
-					if (job.isAcceptable(this.userJobs))
+					if (job.isAcceptable(this.userJobs)) {
 						suitable.add(job);
+
+						if (job.getIntendedTo().equals(this.userName))
+							important = true;
+					}
 
 					// add it to the list
 					jobs.add(job);
@@ -182,6 +191,13 @@ public class JobManager extends Observable {
 		this.setChanged();
 		notifyObservers("acceptable" + CustomWindow.NOTIFICATION_SEPARATOR
 				+ suitable);
+
+		// if there are jobs which are intended to this specific user, alert him
+		// about these very important jobs
+		if (important) {
+			this.setChanged();
+			notifyObservers("important");
+		}
 	}
 
 	/**

@@ -5,12 +5,16 @@ import java.awt.MouseInfo;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Event;
 
 import com.coddotech.teamsubb.jobs.JobManager;
-import com.coddotech.teamsubb.jobs.JobsWindow;
+import com.coddotech.teamsubb.jobs.JobWindow;
 import com.coddotech.teamsubb.settings.AppSettings;
 import com.coddotech.teamsubb.settings.AppSettingsWindow;
 
@@ -19,15 +23,17 @@ public class GadgetController {
 	private GadgetWindow gadget;
 
 	private JobManager jobs;
-	private JobsWindow jobsWindow;
+	private JobWindow jobsWindow;
 
 	private AppSettings settings;
 	private AppSettingsWindow settingsWindow;
 
-	// 1 min = 60000 ms
-	int interval = AppSettings.DEFAULT_SEARCH_INTERVAL * 60000;
+	private AnimationRenderer animations;
 
-	boolean isDisposed = false;
+	// 1 min = 60000 ms
+	int searchInterval = AppSettings.DEFAULT_SEARCH_INTERVAL * 6000;
+
+	boolean disposed = false;
 
 	// data used for moving the form around
 	boolean move = false;
@@ -47,23 +53,28 @@ public class GadgetController {
 		this.initializeController();
 
 		// start the timer in order for it to search for new jobs
-		Display.getCurrent().timerExec(this.interval, timer);
+		Display.getCurrent().timerExec(this.searchInterval, timer);
 	}
 
 	/**
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		this.isDisposed = true;
+		this.disposed = true;
+
+		animations.dispose();
+		animations = null;
 
 		timer = null;
 		gadget = null;
 
 		jobsWindow = null;
 		jobs.dispose();
+		jobs = null;
 
 		settingsWindow = null;
 		settings.dispose();
+		settings = null;
 	}
 
 	/**
@@ -71,8 +82,17 @@ public class GadgetController {
 	 * 
 	 * @param mins
 	 */
-	public void setInterval(int mins) {
-		this.interval = mins * 60000;
+	public void setSearchInterval(int mins) {
+		this.searchInterval = mins * 60000;
+	}
+
+	/**
+	 * Chek if the controller has been disposed or not
+	 * 
+	 * @return A logical value
+	 */
+	public boolean isDisposed() {
+		return this.disposed;
 	}
 
 	/**
@@ -82,10 +102,11 @@ public class GadgetController {
 
 		@Override
 		public void run() {
-			jobs.findJobs();
+			if (!disposed) {
+				jobs.findJobs();
 
-			if (!isDisposed)
-				Display.getCurrent().timerExec(interval, this);
+				Display.getCurrent().timerExec(searchInterval, this);
+			}
 		}
 
 	};
@@ -117,7 +138,7 @@ public class GadgetController {
 		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 			if (e.button == 1) {
-				jobsWindow = new JobsWindow(gadget.getUserInfo(),
+				jobsWindow = new JobWindow(gadget.getUserInfo(),
 						gadget.getUserJobs());
 				jobsWindow.getController().setModel(jobs);
 				jobs.addObserver(jobsWindow);
@@ -128,8 +149,8 @@ public class GadgetController {
 				settings.addObserver(settingsWindow);
 				settingsWindow.open();
 			}
-			
-			//don't let the window be moved because it was a double-click
+
+			// don't let the window be moved because it was a double-click
 			move = false;
 		}
 	};
@@ -167,6 +188,9 @@ public class GadgetController {
 		public void handleEvent(Event e) {
 			// read the app settings to get the position for the gadget
 			settings.readSettings();
+
+			animations.setAnimationType(AnimationRenderer.TYPE_IDLE);
+			animations.startAnimations();
 		}
 
 	};
@@ -191,6 +215,51 @@ public class GadgetController {
 	};
 
 	/**
+	 * Draws the shell into a circle form
+	 */
+	public PaintListener shellPaint = new PaintListener() {
+
+		@Override
+		public void paintControl(PaintEvent arg0) {
+			// create the region defining the gadget
+			Region region = new Region();
+
+			// set the circle data to the region
+			region.add(circle(45, 45, 45));
+
+			// define the shape of the shell
+			gadget.getShell().setRegion(region);
+			Rectangle size = region.getBounds();
+			gadget.getShell().setSize(size.width, size.height);
+		}
+	};
+
+	/**
+	 * Get the ecuation defining a circle with the set radius
+	 * 
+	 * @param r
+	 *            The radius of the circle
+	 * @param offsetX
+	 *            Horizontal offset
+	 * @param offsetY
+	 *            Vertical offset
+	 * @return The polygon ecuation for the circle
+	 */
+	private int[] circle(int r, int offsetX, int offsetY) {
+		int[] polygon = new int[8 * r + 4];
+		// x^2 + y^2 = r^2
+		for (int i = 0; i < 2 * r + 1; i++) {
+			int x = i - r;
+			int y = (int) Math.sqrt(r * r - x * x);
+			polygon[2 * i] = offsetX + x;
+			polygon[2 * i + 1] = offsetY + y;
+			polygon[8 * r - 2 * i - 2] = offsetX + x;
+			polygon[8 * r - 2 * i - 1] = offsetY - y;
+		}
+		return polygon;
+	}
+
+	/**
 	 * Creates all the components for this class
 	 */
 	private void initializeController() {
@@ -198,10 +267,12 @@ public class GadgetController {
 		jobs = new JobManager(this.gadget.getUserName(),
 				this.gadget.getUserJobs());
 		settings = new AppSettings();
+		animations = new AnimationRenderer();
 
 		// set the observers for the models
 		settings.addObserver(this.gadget);
-		jobs.addObserver(this.gadget);
+		jobs.addObserver(animations);
+		animations.addObserver(this.gadget);
 	}
 
 }

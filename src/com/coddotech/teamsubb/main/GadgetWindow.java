@@ -4,24 +4,22 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import com.coddotech.teamsubb.jobs.JobManager;
+import com.coddotech.teamsubb.jobs.JobWindow;
 import com.coddotech.teamsubb.settings.AppSettings;
 
 public class GadgetWindow extends CustomWindow implements Observer {
-
-	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator",
-			"Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
-			"Postator" };
-	public static final String[] DEFAULT_USER_INFORMATION = { "Name", "Email",
-			"Rank" };
 
 	private boolean[] jobs;
 	private String[] userInfo;
 
 	private GadgetController controller;
+
+	private Label imageContainer;
 
 	// this lets the app be repositioned with the value stored in the settings
 	// file only once
@@ -88,7 +86,7 @@ public class GadgetWindow extends CustomWindow implements Observer {
 		String[] userJobs = new String[available];
 		for (int i = 0; i < jobs.length; i++) {
 			if (jobs[i]) {
-				userJobs[counter] = GadgetWindow.DEFAULT_JOBS_INFO_HEADERS[i];
+				userJobs[counter] = JobWindow.DEFAULT_JOBS_INFO_HEADERS[i];
 				counter++;
 			}
 		}
@@ -96,35 +94,42 @@ public class GadgetWindow extends CustomWindow implements Observer {
 		return userJobs;
 	}
 
-	int k = 0;
-
 	@Override
 	public void update(Observable obs, Object obj) {
-		if (obs instanceof JobManager) {
+		if (!controller.isDisposed()) {
+			if (obs instanceof AnimationRenderer)
+				imageContainer.setBackgroundImage((Image) obj);
+			else if (obs instanceof AppSettings) {
 
-		} else if (obs instanceof AppSettings) {
-			String[] data = ((String) obj)
-					.split(CustomWindow.NOTIFICATION_SEPARATOR);
+				String[] data = ((String) obj)
+						.split(CustomWindow.NOTIFICATION_SEPARATOR);
 
-			if (data[0].equals(AppSettings.MESSAGE_LOCATION) && first) {
-				int x = Integer.parseInt(data[1].split(",")[0]);
-				int y = Integer.parseInt(data[1].split(",")[1]);
+				if (data[0].equals(AppSettings.MESSAGE_LOCATION) && first) {
+					int x = Integer.parseInt(data[1].split(",")[0]);
+					int y = Integer.parseInt(data[1].split(",")[1]);
 
-				this.getShell().setLocation(x, y);
-				first = false;
-			} else if (data[0].equals(AppSettings.MESSAGE_SEARCH_INTERVAL)) {
-				controller.setInterval(Integer.parseInt(data[1]));
+					this.getShell().setLocation(x, y);
+					first = false;
+
+				} else if (data[0].equals(AppSettings.MESSAGE_SEARCH_INTERVAL)) {
+
+					controller.setSearchInterval(Integer.parseInt(data[1]));
+				}
 			}
+
 		}
 	}
 
 	@Override
 	protected void performInitializations() {
 		controller = new GadgetController(this);
+		imageContainer = new Label(getShell(), SWT.NO_TRIM);
 	}
 
 	@Override
 	protected void createObjectProperties() {
+		imageContainer.setLocation(-12, -11);
+		imageContainer.setSize(110, 110);
 	}
 
 	@Override
@@ -137,7 +142,8 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	protected void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 		this.getShell().addListener(SWT.Show, controller.shellShownListener);
-		this.getShell().addMouseListener(controller.shellClicked);
-		this.getShell().addMouseMoveListener(controller.shellMoved);
+		this.imageContainer.addMouseListener(controller.shellClicked);
+		this.imageContainer.addMouseMoveListener(controller.shellMoved);
+		this.getShell().addPaintListener(controller.shellPaint);
 	}
 }

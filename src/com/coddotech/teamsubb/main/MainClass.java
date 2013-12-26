@@ -26,7 +26,7 @@ public class MainClass {
 		
 		/*
 		JobManager jobs = new JobManager("coddo", new String[] {"Traducator", "Verificator", "Encoder"});
-		jobs.createJob("TESTARE MARE", 0, "WTF IS THIS SHIT", "NBI", "Settings.xml", new String[] {"Settings.xml", "README.md"});
+		jobs.createJob("NI MA ACI O LOVITURA DE TARAN", 0, "WTF IS THIS SHIT", "Coddo", "Settings.xml", new String[] {"Settings.xml", "README.md"});
 		//*/
 		
 		Display.getCurrent().dispose();
