@@ -55,17 +55,25 @@ public final class Job {
 	public void dispose() {
 		this.name = null;
 		this.description = null;
+		this.currentStaffMember = null;
 		this.previousStaffMember = null;
 		this.nextStaffMember = null;
+		this.intendedTo = null;
 		this.startDate = null;
+		this.directoryPath = null;
+		this.subFileData = null;
+		this.fontsData = null;
 
 		// delete files
-		if (subFile.exists())
-			this.subFile.delete();
+		try {
+			if (subFile.exists())
+				this.subFile.delete();
 
-		for (File file : this.fonts) {
-			if (file.exists())
-				file.delete();
+			for (File file : this.fonts) {
+				if (file.exists())
+					file.delete();
+			}
+		} catch (Exception ex) {
 		}
 
 		this.subFile = null;

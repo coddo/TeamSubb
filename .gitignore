@@ -7,3 +7,7 @@
 bin/
 Jobs/
 *.classpath
+resources/attention.png
+resources/idle.png
+resources/loading.gif
+Settings.xml

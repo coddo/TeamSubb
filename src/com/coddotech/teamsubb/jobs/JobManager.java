@@ -332,8 +332,9 @@ public class JobManager extends Observable {
 	 *            The list that needs to be disposed
 	 */
 	private void clearJobList(List<Job> list) {
-		for (Job job : list)
+		for (Job job : list) {
 			job.dispose();
+		}
 		list.clear();
 	}
 
