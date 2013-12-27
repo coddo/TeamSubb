@@ -3,16 +3,15 @@ package com.coddotech.teamsubb.settings;
 import java.io.File;
 import java.util.Observable;
 
-import org.eclipse.swt.graphics.Point;
-
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.swt.graphics.Point;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -42,7 +41,7 @@ public final class AppSettings extends Observable {
 	public static final String MESSAGE_LOCATION = "location";
 	public static final String MESSAGE_AUTOSAVE_LOCATION = "autosave_location";
 	public static final String MESSAGE_SEARCH_INTERVAL = "search_interval";
-	
+
 	/*
 	 * All the settings are retained in the apps memory
 	 */
@@ -68,7 +67,7 @@ public final class AppSettings extends Observable {
 		// clear flieds
 		dbFactory = null;
 		dBuilder = null;
-		settingsFile = null;	
+		settingsFile = null;
 		gadgetLocation = null;
 	}
 
@@ -133,11 +132,13 @@ public final class AppSettings extends Observable {
 			transformer.transform(input, output);
 
 			this.setChanged();
-			notifyObservers(AppSettings.MESSAGE_SAVE + CustomWindow.NOTIFICATION_SEPARATOR + true);
-			
+			notifyObservers(AppSettings.MESSAGE_SAVE
+					+ CustomWindow.NOTIFICATION_SEPARATOR + true);
+
 		} catch (Exception ex) {
 			this.setChanged();
-			notifyObservers(AppSettings.MESSAGE_SAVE + CustomWindow.NOTIFICATION_SEPARATOR + false);
+			notifyObservers(AppSettings.MESSAGE_SAVE
+					+ CustomWindow.NOTIFICATION_SEPARATOR + false);
 		}
 	}
 
@@ -253,17 +254,23 @@ public final class AppSettings extends Observable {
 	 */
 	private void notifyCompleteSettings() {
 		this.setChanged();
-		notifyObservers(AppSettings.MESSAGE_AUTOSAVE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR + this.gadgetAutosaveLocation);
-		
+		notifyObservers(AppSettings.MESSAGE_AUTOSAVE_LOCATION
+				+ CustomWindow.NOTIFICATION_SEPARATOR
+				+ this.gadgetAutosaveLocation);
+
 		this.setChanged();
-		notifyObservers(AppSettings.MESSAGE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR + this.gadgetLocation.x + "," + gadgetLocation.y);
-		
+		notifyObservers(AppSettings.MESSAGE_LOCATION
+				+ CustomWindow.NOTIFICATION_SEPARATOR + this.gadgetLocation.x
+				+ "," + gadgetLocation.y);
+
 		this.setChanged();
-		notifyObservers(AppSettings.MESSAGE_SEARCH_INTERVAL + CustomWindow.NOTIFICATION_SEPARATOR + this.searchInterval);
+		notifyObservers(AppSettings.MESSAGE_SEARCH_INTERVAL
+				+ CustomWindow.NOTIFICATION_SEPARATOR + this.searchInterval);
 	}
 
 	/**
-	 * Initialize all the components for this class
+	 * Initialize the XML builders and files in which to persist the application
+	 * settings
 	 */
 	private void createXMLComponents() {
 		try { // XML builders and documents

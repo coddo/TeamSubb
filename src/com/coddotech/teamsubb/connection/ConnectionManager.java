@@ -8,7 +8,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.*;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;

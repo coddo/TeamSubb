@@ -3,10 +3,7 @@ package com.coddotech.teamsubb.main;
 import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.connection.LoginWindow;
-import com.coddotech.teamsubb.settings.AppSettingsWindow;
-import com.coddotech.teamsubb.jobs.JobManager;
 
-@SuppressWarnings("unused")
 public class MainClass {
 
 	public static void main(String[] args) {
