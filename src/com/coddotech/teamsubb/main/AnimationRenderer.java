@@ -44,9 +44,9 @@ public class AnimationRenderer extends Observable implements Observer {
 	private int imageInterval = 100;
 
 	// the image collections with the help of which the animation is done
-	private Image[] idle = new Image[23];
-	private Image[] lowPriority = new Image[2];
-	private Image[] highPriority = new Image[2];
+	private Image[] idle;
+	private Image[] lowPriority;
+	private Image[] highPriority;
 
 	private int type;
 	private int counter = 0;
@@ -194,17 +194,26 @@ public class AnimationRenderer extends Observable implements Observer {
 	 * app for faster use
 	 */
 	private void initializeAnimationData() {
-		// idle image sequence - taken directly in a sorted (ascending) order
-		for (String img : new File(AnimationRenderer.DIR_IDLE).list()) {
+		File idleFolder = new File(AnimationRenderer.DIR_IDLE);
+		File lowFolder = new File(AnimationRenderer.DIR_LOW);
+		File highFolder = new File(AnimationRenderer.DIR_HIGH);
 
-			idle[Integer.parseInt(img.split(".png")[0])] = resizeImage(
-					new Image(Display.getCurrent(), AnimationRenderer.DIR_IDLE
-							+ File.separator + img), 113, 113);
+		idle = new Image[idleFolder.list().length];
+		lowPriority = new Image[lowFolder.list().length];
+		highPriority = new Image[highFolder.list().length];
+
+		// idle image sequence
+		int k = 0;
+		for (String img : idleFolder.list()) {
+
+			idle[k] = resizeImage(new Image(Display.getCurrent(),
+					AnimationRenderer.DIR_IDLE + File.separator + img), 113,
+					113);
 		}
 
 		// low priority image sequence
-		int k = 0;
-		for (String img : new File(AnimationRenderer.DIR_LOW).list()) {
+		k = 0;
+		for (String img : lowFolder.list()) {
 			lowPriority[k] = resizeImage(new Image(Display.getCurrent(),
 					AnimationRenderer.DIR_LOW + File.separator + img), 113, 113);
 			k++;
@@ -212,12 +221,16 @@ public class AnimationRenderer extends Observable implements Observer {
 
 		// high priority image sequence
 		k = 0;
-		for (String img : new File(AnimationRenderer.DIR_HIGH).list()) {
+		for (String img : highFolder.list()) {
 			highPriority[k] = resizeImage(new Image(Display.getCurrent(),
 					AnimationRenderer.DIR_HIGH + File.separator + img), 113,
 					113);
 			k++;
 		}
+
+		idleFolder = null;
+		lowFolder = null;
+		highFolder = null;
 	}
 
 }
