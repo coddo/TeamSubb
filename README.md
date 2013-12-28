@@ -8,6 +8,10 @@ Jobs contain: subbing, verifying, encoding, typesetting, posting etc..
 
 Message structures and types + other details can be found at: https://docs.google.com/document/d/1p6O1vvbzpcSV-NiplpJVOxpeRQbWFkZQPbcS9_C_t7Q/edit?usp=sharing
 
+
+This is and Eclipse project (Kepler version used here).
+
+
 For testing purposes, there is a user prepaired on the server
 	-> user: testcoddo
 	-> pass: codoban
