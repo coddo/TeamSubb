@@ -1,5 +1,7 @@
 package com.coddotech.teamsubb.jobs;
 
+import com.coddotech.teamsubb.jobs.JobWindow;
+
 /**
  * Controller class used by the JobWindow in order to complete the job actions
  * that are requested by the user
@@ -11,6 +13,10 @@ public class JobController {
 
 	private JobWindow view;
 	private JobManager model;
+	
+	public JobController() {
+		
+	}
 
 	public JobController(JobWindow view) {
 		this.view = view;

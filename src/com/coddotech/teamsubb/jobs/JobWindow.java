@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
+import com.coddotech.teamsubb.jobs.JobController;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
@@ -105,7 +106,7 @@ public class JobWindow extends CustomWindow implements Observer {
 
 	@Override
 	protected void performInitializations() {
-		controller = new JobController(this);
+		controller = new JobController();
 
 		// window objects
 		userInfo = new Group(this.getShell(), SWT.None);
@@ -122,7 +123,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		aboutMenuItem  = new MenuItem(menuBar, SWT.CASCADE);
 		
 		//applications menu objects
-		openSettingsMenuItem = new MenuItem(parent, style)
+		//openSettingsMenuItem = new MenuItem(parent, style;
 	}
 
 	@Override
