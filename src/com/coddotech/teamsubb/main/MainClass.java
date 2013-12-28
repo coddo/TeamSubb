@@ -8,7 +8,7 @@ import com.coddotech.teamsubb.jobs.JobWindow;
 public class MainClass {
 
 	public static void main(String[] args) {
-		/*display the login window as a dialog
+		/*display the login window as a dialog*/
 		LoginWindow login = new LoginWindow();
 		login.open();
 		login = null;//*/
@@ -27,9 +27,9 @@ public class MainClass {
 		jobs.createJob("NI MA ACI O LOVITURA DE TARAN", 0, "WTF IS THIS SHIT", "Coddo", "Settings.xml", new String[] {"Settings.xml", "README.md"});
 		//*/
 		
-		JobWindow j = new JobWindow(new String[] {"Coddo", "codobanclaudiu@gmail.com", "Administrator"}, 
-				new String[] {"Traducator", "Verificator", "Encoder", "Stiri"});
-		j.open();
+//		JobWindow j = new JobWindow(new String[] {"Coddo", "codobanclaudiu@gmail.com", "Administrator"}, 
+//				new String[] {"Traducator", "Verificator", "Encoder", "Stiri"});
+//		j.open();
 		
 		Display.getCurrent().dispose();
 	}

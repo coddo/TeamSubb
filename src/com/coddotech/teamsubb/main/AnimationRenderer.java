@@ -34,10 +34,10 @@ public class AnimationRenderer extends Observable implements Observer {
 	public static final int TYPE_HIGH_PRIORITY = 0x003;
 
 	// paths where the files necessary for the gadget's animation are stored
-	private static final String DIR_IDLE = "resources" + File.separator
+	private static final String DIR_IDLE = System.getProperty("user.dir") + File.separator + "resources" + File.separator
 			+ "idle";
-	private static final String DIR_LOW = "resources" + File.separator + "low";
-	private static final String DIR_HIGH = "resources" + File.separator
+	private static final String DIR_LOW = System.getProperty("user.dir") + File.separator +  "resources" + File.separator + "low";
+	private static final String DIR_HIGH = System.getProperty("user.dir") + File.separator +  "resources" + File.separator
 			+ "high";
 
 	// interval used to

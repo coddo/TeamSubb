@@ -276,7 +276,7 @@ public final class AppSettings extends Observable {
 		try { // XML builders and documents
 			dbFactory = DocumentBuilderFactory.newInstance();
 			dBuilder = dbFactory.newDocumentBuilder();
-			settingsFile = dBuilder.parse("Settings.xml");
+			settingsFile = dBuilder.parse(System.getProperty("user.dir") + File.separator + "Settings.xml");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
