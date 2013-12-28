@@ -38,6 +38,7 @@ public abstract class CustomWindow {
 	 *            The new desired shell
 	 */
 	public void setShell(Shell shell) {
+		this.shell.dispose();
 		this.shell = shell;
 	}
 

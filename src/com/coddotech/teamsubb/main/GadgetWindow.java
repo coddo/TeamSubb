@@ -45,7 +45,7 @@ public class GadgetWindow extends CustomWindow implements Observer {
 		this.jobs = jobs;
 
 		this.setShell(new Shell(Display.getCurrent(), SWT.NO_TRIM));
-
+		
 		this.initializeComponents();
 	}
 
