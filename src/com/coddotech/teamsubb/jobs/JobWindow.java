@@ -24,6 +24,8 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * NOTE: THIS CLASS IS STILL INCOMPLETE. NOT ALL THE COMPONENTS HAVE BEEN
  * CREATED YET
  * 
+ * importante adresate tie -> visiniu ceva, acceptate - verde, acceptabile - galben 
+ * 
  * @author Coddo
  * 
  */
@@ -60,10 +62,14 @@ public class JobWindow extends CustomWindow implements Observer {
 	// jobs menu objects
 	private Menu jobsMenu;
 	private MenuItem createJobMenuItem;
-	private MenuItem endJobMenuItem;
 	private MenuItem refreshJobListMenuItem;
 
 	// actions menu objects
+	private Menu actionsMenu;
+	private MenuItem acceptJobMenuItem;
+	private MenuItem cancelJobMenuItem;
+	private MenuItem finishJobMenuItem;
+	private MenuItem endJobMenuItem;
 
 	public JobWindow(String[] userInfo, String[] userJobs) {
 		super();
@@ -95,10 +101,14 @@ public class JobWindow extends CustomWindow implements Observer {
 		// jobs menu objects
 		createJobMenuItem.dispose();
 		refreshJobListMenuItem.dispose();
-		endJobMenuItem.dispose();
 		jobsMenu.dispose();
 
 		// actions menu objects
+		acceptJobMenuItem.dispose();
+		cancelJobMenuItem.dispose();
+		finishJobMenuItem.dispose();
+		endJobMenuItem.dispose();
+		actionsMenu.dispose();
 
 		// menu bar objects
 		menuBar.dispose();
@@ -111,6 +121,14 @@ public class JobWindow extends CustomWindow implements Observer {
 
 	public JobController getController() {
 		return this.controller;
+	}
+
+	/**
+	 * Change the active fields of the actions menu based on the selected job in
+	 * the list
+	 */
+	public void morphActionsMenu() {
+
 	}
 
 	@Override
@@ -145,10 +163,14 @@ public class JobWindow extends CustomWindow implements Observer {
 		// jobs menu objects
 		jobsMenu = new Menu(this.getShell(), SWT.DROP_DOWN);
 		createJobMenuItem = new MenuItem(jobsMenu, SWT.PUSH);
-		endJobMenuItem = new MenuItem(jobsMenu, SWT.PUSH);
 		refreshJobListMenuItem = new MenuItem(jobsMenu, SWT.PUSH);
 
 		// actions menu objects
+		actionsMenu = new Menu(this.getShell(), SWT.DROP_DOWN);
+		acceptJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
+		cancelJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
+		finishJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
+		endJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 	}
 
 	@Override
@@ -188,8 +210,14 @@ public class JobWindow extends CustomWindow implements Observer {
 		// jobs menu objects
 		jobsMenuItem.setMenu(jobsMenu);
 		createJobMenuItem.setText("Create a new job");
-		endJobMenuItem.setText("End a certain job");
 		refreshJobListMenuItem.setText("Refresh job list");
+
+		// actions menu objects
+		actionsMenuItem.setMenu(actionsMenu);
+		acceptJobMenuItem.setText("Accept job");
+		cancelJobMenuItem.setText("Cancel job");
+		finishJobMenuItem.setText("Finish job");
+		endJobMenuItem.setText("End job");
 	}
 
 	@Override
