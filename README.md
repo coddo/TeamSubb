@@ -12,10 +12,10 @@ Message structures and types + other details can be found at: https://docs.googl
 This is and Eclipse project (Kepler version used here).
 
 
-For testing purposes, there is a user prepaired on the server
-	-> user: testcoddo
+For testing purposes, there is a user prepaired on the server <br>
+	-> user: testcoddo<br>
 	-> pass: codoban
 	
-If exporting the project to a runnable jar file, you need to place the following things in the same location as the jar file in order for the application to run:
-	-> resources folder
+If exporting the project to a runnable jar file, you need to place the following things in the same location as the jar file in order for the application to run:<br>
+	-> resources folder<br>
 	-> Settings.xml file
