@@ -27,8 +27,7 @@ public class Login extends Observable {
 		if (Boolean.parseBoolean(result[0])) {
 			// if the login process is successful continue with starting the
 			// application's main functionalities and close the login window
-			GadgetWindow gadget = new GadgetWindow(this.getUserInfo(result,
-					user), this.getJobsInfo(result));
+			GadgetWindow gadget = new GadgetWindow(this.getUserInfo(result), this.getJobsInfo(result));
 
 			gadget.open();
 		}
@@ -44,7 +43,7 @@ public class Login extends Observable {
 	 * data[3 -> n] -> job titles
 	 * 
 	 * @param data
-	 *            A String collection containing the user information
+	 *            A String collection containing the server's response
 	 * @return A boolean array containing the possible jobs for this user
 	 */
 	private boolean[] getJobsInfo(String[] data) {
@@ -74,20 +73,20 @@ public class Login extends Observable {
 	 * data[3 -> n] -> job titles
 	 * 
 	 * @param data
-	 *            A String collection containing the user information
-	 * @return A boolean array containing the possible jobs for this user
+	 *            A String collection containing the server's response
+	 * @return A String array containing the user's information
 	 */
-	private String[] getUserInfo(String[] data, String user) {
+	private String[] getUserInfo(String[] data) {
 		String[] info = new String[3];
 
-		info[0] = user;
-		info[1] = data[1];
+		info[0] = data[1];
+		info[1] = data[2];
 
 		/*
 		 * The rank is stored as an integer, indicating on of the following
-		 * ranks: 0 - Membru 1 - Moderator 2 - Administrator 3 - Fondator
+		 * ranks: 0 - Membru; 1 - Moderator; 2 - Administrator; 3 - Fondator;
 		 */
-		info[2] = Login.DEFAULT_USER_RANKS[Integer.parseInt(data[2])];
+		info[2] = Login.DEFAULT_USER_RANKS[Integer.parseInt(data[3])];
 
 		return info;
 	}

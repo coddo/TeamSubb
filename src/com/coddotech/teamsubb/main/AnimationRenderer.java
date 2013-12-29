@@ -34,11 +34,12 @@ public class AnimationRenderer extends Observable implements Observer {
 	public static final int TYPE_HIGH_PRIORITY = 0x003;
 
 	// paths where the files necessary for the gadget's animation are stored
-	private static final String DIR_IDLE = System.getProperty("user.dir") + File.separator + "resources" + File.separator
-			+ "idle";
-	private static final String DIR_LOW = System.getProperty("user.dir") + File.separator +  "resources" + File.separator + "low";
-	private static final String DIR_HIGH = System.getProperty("user.dir") + File.separator +  "resources" + File.separator
-			+ "high";
+	private static final String DIR_IDLE = System.getProperty("user.dir")
+			+ File.separator + "resources" + File.separator + "idle";
+	private static final String DIR_LOW = System.getProperty("user.dir")
+			+ File.separator + "resources" + File.separator + "low";
+	private static final String DIR_HIGH = System.getProperty("user.dir")
+			+ File.separator + "resources" + File.separator + "high";
 
 	// interval used to
 	private int imageInterval = 100;
@@ -148,15 +149,13 @@ public class AnimationRenderer extends Observable implements Observer {
 	public void update(Observable obs, Object obj) {
 		// update is done only by the job manager in order to know what type of
 		// animation needs to be done
-		String[] data = ((String) obj)
-				.split(CustomWindow.NOTIFICATION_SEPARATOR);
-
-		switch (data[0]) {
+		switch ((String) obj) {
+		case "normal": {
+			this.setAnimationType(TYPE_IDLE);
+		}
+			break;
 		case "acceptable": {
-			if (((String) obj).split("@").length > 0)
-				this.setAnimationType(TYPE_LOW_PRIORITY);
-			else
-				this.setAnimationType(TYPE_IDLE);
+			this.setAnimationType(TYPE_LOW_PRIORITY);
 		}
 			break;
 		case "important": {

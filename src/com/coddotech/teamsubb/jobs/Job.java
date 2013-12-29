@@ -19,7 +19,7 @@ import com.coddotech.teamsubb.connection.ConnectionManager;
  */
 public final class Job {
 
-	private static final String DEFAULT_NEXT_STAFF = "anyone";
+	public static final String DEFAULT_NEXT_STAFF = "anyone";
 	private static final String CONFIG_FILE_NAME = "\\config.cfg";
 
 	private int id;

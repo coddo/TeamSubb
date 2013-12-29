@@ -127,22 +127,17 @@ public class JobManager extends Observable {
 	}
 
 	/**
-	 * Send a request to the server in order to receive a job if any available
-	 * If there are available jobs, it separates them from the response string
-	 * and wraps every job in a Job entity, then they're added to the list<br>
-	 * This notifies the observers with the response that has been received from
-	 * the server
+	 * Sends a request to the server in order to receive a list with all the
+	 * jobs that currently exist in the servers database. Based on the response,
+	 * thos method tells the observers whether there are jobs that can be
+	 * accepted by this user or if there are jobs which are intended especially
+	 * for him (important) <br>
 	 * 
-	 * @param notify
-	 *            A logical value telling the app whether to notify the user or
-	 *            not in case new jobs are available for him
+	 * The messages are: "important", "acceptable" or "normal"
 	 */
 	public void findJobs() {
 
-		boolean important = false;
-
-		// logical value indicating if any suitable jobs for the user are found
-		List<Job> suitable = new ArrayList<Job>();
+		String message = "normal";
 
 		// clear the jobs list
 		this.clearJobList(jobs);
@@ -169,12 +164,16 @@ public class JobManager extends Observable {
 					// create a new Job entity with the data
 					Job job = createJobEntity(data, dirPath);
 
-					// note if the job is suitable for this user
-					if (job.isAcceptable(this.userJobs)) {
-						suitable.add(job);
+					// note if the job is suitable or is it actually intended to
+					// this user
+					if (!message.equals("important")) {
 
 						if (job.getIntendedTo().equals(this.userName))
-							important = true;
+							message = "important";
+						else if (job.isAcceptable(this.userJobs)) {
+							message = "acceptable";
+
+						}
 					}
 
 					// add it to the list
@@ -183,21 +182,9 @@ public class JobManager extends Observable {
 			}
 		}
 
-		// notify about the newly created list of jobs
+		// send the according notification to the observers
 		this.setChanged();
-		notifyObservers("find" + CustomWindow.NOTIFICATION_SEPARATOR + jobs);
-
-		// notify about the new list of acceptable jobs
-		this.setChanged();
-		notifyObservers("acceptable" + CustomWindow.NOTIFICATION_SEPARATOR
-				+ suitable);
-
-		// if there are jobs which are intended to this specific user, alert him
-		// about these very important jobs
-		if (important) {
-			this.setChanged();
-			notifyObservers("important");
-		}
+		this.notifyObservers(message);
 	}
 
 	/**
@@ -311,14 +298,14 @@ public class JobManager extends Observable {
 		job.setCurrentStaffMember(this.userName);
 
 		// sub file
-		job.setSubFileData(data[6]);
+		job.setSubFileData(data[8]);
 
 		// font files
 		String[] fontsData = null;
-		if (data.length - 7 > 0) {
-			fontsData = new String[data.length - 7];
-			for (int i = 7; i < data.length; i++)
-				fontsData[i - 7] = data[i];
+		if (data.length - 9 > 0) {
+			fontsData = new String[data.length - 9];
+			for (int i = 9; i < data.length; i++)
+				fontsData[i - 9] = data[i];
 		}
 		job.setFontsData(fontsData);
 

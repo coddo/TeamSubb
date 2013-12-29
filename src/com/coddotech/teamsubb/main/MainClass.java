@@ -3,7 +3,9 @@ package com.coddotech.teamsubb.main;
 import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.connection.LoginWindow;
-//import com.coddotech.teamsubb.jobs.JobWindow;
+import com.coddotech.teamsubb.jobs.Job;
+import com.coddotech.teamsubb.jobs.JobManager;
+import com.coddotech.teamsubb.jobs.JobWindow;
 
 public class MainClass {
 
@@ -21,8 +23,11 @@ public class MainClass {
 //		GadgetWindow gadget = new GadgetWindow(ui, uj);
 //		gadget.open();
 		
-//		JobManager jobs = new JobManager("coddo", new String[] {"Traducator", "Verificator", "Encoder"});
-//		jobs.createJob("NI MA ACI O LOVITURA DE TARAN", 0, "WTF IS THIS SHIT", "Coddo", "Settings.xml", new String[] {"Settings.xml", "README.md"});
+//		JobManager jobs = new JobManager("Coddo", new String[] {"Traducator", "Verificator", "Encoder"});
+//		jobs.createJob("TEST1", 0, "WTF 1", Job.DEFAULT_NEXT_STAFF, "Settings.xml", new String[] {"Settings.xml", "README.md"});
+//		jobs.createJob("TEST2", 0, "WTF 2", "Coddo", "Settings.xml", new String[] {"Settings.xml", "README.md"});
+//		jobs.createJob("TEST3", 0, "WTF 3", Job.DEFAULT_NEXT_STAFF, "Settings.xml", new String[] {"Settings.xml", "README.md"});
+//		jobs.dispose();
 		
 //		JobWindow j = new JobWindow(new String[] {"Coddo", "codobanclaudiu@gmail.com", "Administrator"}, 
 //				new String[] {"Traducator", "Verificator", "Encoder", "Stiri"});
