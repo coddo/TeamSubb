@@ -4,11 +4,14 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -24,7 +27,8 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * NOTE: THIS CLASS IS STILL INCOMPLETE. NOT ALL THE COMPONENTS HAVE BEEN
  * CREATED YET
  * 
- * importante adresate tie -> visiniu ceva, acceptate - verde, acceptabile - galben 
+ * importante adresate tie -> visiniu ceva, acceptate - verde, acceptabile -
+ * galben
  * 
  * @author Coddo
  * 
@@ -34,18 +38,23 @@ public class JobWindow extends CustomWindow implements Observer {
 	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator",
 			"Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
 			"Postator" };
-	public static final String[] DEFAULT_USER_INFORMATION = { "Name", "Email",
-			"Rank" };
+
+	//auxiliary data
+	private String[] tempUserInfo;
+	private String[] tempUserJobs;
+	
+	// font used by some components
+	private Font defaultFont;
 
 	// controller used for interpreting user actions
 	private JobController controller;
 
 	// window objects
-	private Group userInfo;
-	private Group userJobs;
-	private Group jobs;
-	private Group jobInfo;
-	private Group helpChart;
+	private Group userInfoGroup;
+	private Group userJobsGroup;
+	private Group jobsGroup;
+	private Group jobInfoGroup;
+	private Group helpChartGroup;
 	private Menu menuBar;
 
 	// menu bar objects
@@ -71,27 +80,49 @@ public class JobWindow extends CustomWindow implements Observer {
 	private MenuItem finishJobMenuItem;
 	private MenuItem endJobMenuItem;
 
+	// user information
+	private Label userNameLabel;
+	private Label userEmailLabel;
+	private Label userRankLabel;
+	private Label[] userJobsLabels;
+
+	// job list (table)
+	private List jobsList;
+	
+	// job information
+	private Label jobTypeLabel;
+	private Label jobType;
+	private Label jobPreviousStaffLabel;
+	private Label jobPreviousStaff;
+	private Label jobIntendedToLabel;
+	private Label jobIntendedTo;
+	private Label jobBookedByLabel;
+	private Label jobBookedBy;
+
 	public JobWindow(String[] userInfo, String[] userJobs) {
 		super();
-
+		tempUserInfo = userInfo;
+		tempUserJobs = userJobs;
+		
 		// make the shell resizable
 		this.setShell(new Shell(Display.getCurrent(), SWT.SHELL_TRIM));
 
 		this.initializeComponents();
-
-		this.generateUserInfo(userInfo, userJobs);
 	}
 
 	public void dispose() {
 		// controller
 		controller.dispose();
-
-		// window objects
-		userInfo.dispose();
-		userJobs.dispose();
-		jobs.dispose();
-		jobInfo.dispose();
-		helpChart.dispose();
+		
+		//job information
+		jobTypeLabel.dispose();
+		jobType.dispose();
+		jobPreviousStaffLabel.dispose();
+		jobPreviousStaff.dispose();
+		jobIntendedToLabel.dispose();
+		jobIntendedTo.dispose();
+		jobBookedByLabel.dispose();
+		jobBookedBy.dispose();
 
 		// application menu objects
 		openSettingsMenuItem.dispose();
@@ -111,11 +142,34 @@ public class JobWindow extends CustomWindow implements Observer {
 		actionsMenu.dispose();
 
 		// menu bar objects
-		menuBar.dispose();
 		applicationMenuItem.dispose();
 		jobsMenuItem.dispose();
 		actionsMenuItem.dispose();
 		aboutMenuItem.dispose();
+		menuBar.dispose();
+
+		// user information objects
+		userNameLabel.dispose();
+		userEmailLabel.dispose();
+		userRankLabel.dispose();
+
+		// jobs list
+		if (jobsList.getItemCount() > 0)
+			jobsList.removeAll();
+		jobsList.dispose();
+
+		for (int i = 0; i < userJobsLabels.length; i++)
+			userJobsLabels[i].dispose();
+
+		// fonts and other stuff
+		defaultFont.dispose();
+
+		// window objects
+		userInfoGroup.dispose();
+		userJobsGroup.dispose();
+		jobsGroup.dispose();
+		jobInfoGroup.dispose();
+		helpChartGroup.dispose();
 
 	}
 
@@ -139,14 +193,15 @@ public class JobWindow extends CustomWindow implements Observer {
 
 	@Override
 	protected void performInitializations() {
+		defaultFont = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
 		controller = new JobController(this);
 
 		// window objects
-		userInfo = new Group(this.getShell(), SWT.None);
-		userJobs = new Group(this.getShell(), SWT.None);
-		jobs = new Group(this.getShell(), SWT.None);
-		jobInfo = new Group(this.getShell(), SWT.None);
-		helpChart = new Group(this.getShell(), SWT.None);
+		userInfoGroup = new Group(this.getShell(), SWT.None);
+		userJobsGroup = new Group(this.getShell(), SWT.None);
+		jobsGroup = new Group(this.getShell(), SWT.None);
+		jobInfoGroup = new Group(this.getShell(), SWT.None);
+		helpChartGroup = new Group(this.getShell(), SWT.None);
 		menuBar = new Menu(this.getShell(), SWT.BAR);
 
 		// menu bar objects
@@ -171,30 +226,65 @@ public class JobWindow extends CustomWindow implements Observer {
 		cancelJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 		finishJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 		endJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
+
+		// user information objects
+		userNameLabel = new Label(this.userInfoGroup, SWT.None);
+		userRankLabel = new Label(this.userInfoGroup, SWT.None);
+		userEmailLabel = new Label(this.userInfoGroup, SWT.None);
+
+		// jobs list
+		jobsList = new List(this.jobsGroup, SWT.VIRTUAL | SWT.V_SCROLL);
+		
+		// job information
+		jobTypeLabel = new Label(this.jobInfoGroup, SWT.None);
+		jobType = new Label(this.jobInfoGroup, SWT.None);
+		jobPreviousStaffLabel = new Label(this.jobInfoGroup, SWT.None);
+		jobPreviousStaff = new Label(this.jobInfoGroup, SWT.None);
+		jobIntendedToLabel = new Label(this.jobInfoGroup, SWT.None);
+		jobIntendedTo = new Label(this.jobInfoGroup, SWT.None);
+		jobBookedByLabel = new Label(this.jobInfoGroup, SWT.None);
+		jobBookedBy = new Label(this.jobInfoGroup, SWT.None);
 	}
 
 	@Override
 	protected void createObjectProperties() {
+		// create layouts for different sectiions
+		GridLayout userInfoLayout = new GridLayout();
+		userInfoLayout.numColumns = 2;
+		userInfoLayout.makeColumnsEqualWidth = true;
+
+		GridLayout userJobsLayout = new GridLayout();
+		userJobsLayout.numColumns = 3;
+		userJobsLayout.makeColumnsEqualWidth = true;
+
+		GridLayout jobsLayout = new GridLayout();
+		jobsLayout.numColumns = 1;
+
 		// groups
-		userInfo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1,
+		userInfoGroup.setLayout(userInfoLayout);
+		userInfoGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				false, 1, 1));
+		userInfoGroup.setText("User information");
+
+		userJobsGroup.setLayout(userJobsLayout);
+		userJobsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				false, 1, 1));
+		userJobsGroup.setText("User abilities");
+		// userJobsGroup.setOrientation(SWT.RIGHT_TO_LEFT);
+
+		jobsGroup.setLayout(jobsLayout);
+		jobsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,
 				1));
-		userInfo.setText("User information");
+		jobsGroup.setText("Job lists");
 
-		userJobs.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1,
-				1));
-		userJobs.setText("User abilities");
-		userJobs.setOrientation(SWT.RIGHT_TO_LEFT);
+		jobInfoGroup.setLayout(userInfoLayout);
+		jobInfoGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
+				1, 1));
+		jobInfoGroup.setText("Job information");
 
-		jobs.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-		jobs.setText("Job lists");
-
-		jobInfo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		jobInfo.setText("Job information");
-
-		helpChart.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,
-				1));
-		helpChart.setText("Help chart");
-		helpChart.setOrientation(SWT.RIGHT_TO_LEFT);
+		helpChartGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true, 1, 1));
+		helpChartGroup.setText("Help chart");
 
 		// menu bar items
 		applicationMenuItem.setText("Application");
@@ -218,16 +308,71 @@ public class JobWindow extends CustomWindow implements Observer {
 		cancelJobMenuItem.setText("Cancel job");
 		finishJobMenuItem.setText("Finish job");
 		endJobMenuItem.setText("End job");
+
+		// user information objects
+		userNameLabel
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		userNameLabel.setFont(defaultFont);
+
+		userRankLabel
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		userRankLabel.setFont(defaultFont);
+
+		userEmailLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true, 2, 1));
+		userEmailLabel.setFont(defaultFont);
+
+		// jobs list
+		jobsList.setFont(defaultFont);
+		jobsList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		jobsList.setBackground(this.getShell().getBackground());
+		
+		//job information
+		jobTypeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		jobTypeLabel.setFont(this.defaultFont);
+		jobTypeLabel.setText("Type:");
+		jobTypeLabel.pack();
+
+		jobType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		jobType.setFont(this.defaultFont);
+		
+		jobPreviousStaffLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		jobPreviousStaffLabel.setFont(this.defaultFont);
+		jobPreviousStaffLabel.setText("Worked on by:");
+		jobPreviousStaffLabel.pack();
+		
+		jobPreviousStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		jobPreviousStaff.setFont(this.defaultFont);
+		
+		jobIntendedToLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		jobIntendedToLabel.setFont(this.defaultFont);
+		jobIntendedToLabel.setText("Intended to:");
+		jobIntendedToLabel.pack();
+		
+		jobIntendedTo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		jobIntendedTo.setFont(this.defaultFont);
+		
+		jobBookedByLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		jobBookedByLabel.setFont(this.defaultFont);
+		jobBookedByLabel.setText("Taken by:");
+		jobBookedByLabel.pack();
+		
+		jobBookedBy.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		jobBookedBy.setFont(this.defaultFont);
+		
+		//generate the user information
+		this.generateUserInfo();
 	}
 
 	@Override
 	protected void createShellProperties() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
 
 		this.getShell().setLayout(layout);
-		this.getShell().setSize(800, 600);
 		this.getShell().setMenuBar(menuBar);
+		this.getShell().setSize(800, 600);
 		this.placeToCenter();
 	}
 
@@ -246,8 +391,26 @@ public class JobWindow extends CustomWindow implements Observer {
 
 	}
 
-	private void generateUserInfo(String[] userInfo, String[] userJob) {
-		// TODO Auto-generated method stub
+	private void generateUserInfo() {
+		userNameLabel.setText(tempUserInfo[0]);
+		userEmailLabel.setText(tempUserInfo[1]);
+		userRankLabel.setText(tempUserInfo[2]);
 
+		userNameLabel.pack();
+		userEmailLabel.pack();
+		userRankLabel.pack();
+
+		userJobsLabels = new Label[tempUserJobs.length];
+		for (int i = 0; i < tempUserJobs.length; i++) {
+			userJobsLabels[i] = new Label(this.userJobsGroup, SWT.None);
+			userJobsLabels[i].setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+					true, true));
+			userJobsLabels[i].setText(tempUserJobs[i]);
+			userJobsLabels[i].setFont(this.defaultFont);
+			userJobsLabels[i].pack();
+		}
+		
+		this.tempUserInfo = null;
+		this.tempUserJobs = null;
 	}
 }
