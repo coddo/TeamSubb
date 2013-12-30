@@ -31,6 +31,24 @@ public class JobManager extends Observable {
 	private String[] userJobs;
 
 	/**
+	 * Get the list of jobs
+	 * 
+	 * @return A List of type Job representing all the found jobs
+	 */
+	public List<Job> getJobs() {
+		return this.jobs;
+	}
+
+	/**
+	 * Get the list of jobs that have been accepted by the user
+	 * 
+	 * @return A List of type Job representing all the accepted jobs
+	 */
+	public List<Job> getAcceptedJobs() {
+		return this.acceptedJobs;
+	}
+
+	/**
 	 * Main class construcotr
 	 * 
 	 * @param userName
@@ -177,7 +195,7 @@ public class JobManager extends Observable {
 					}
 
 					// add it to the list
-					jobs.add(job);
+					this.jobs.add(job);
 				}
 			}
 		}

@@ -149,19 +149,22 @@ public class AnimationRenderer extends Observable implements Observer {
 	public void update(Observable obs, Object obj) {
 		// update is done only by the job manager in order to know what type of
 		// animation needs to be done
-		switch ((String) obj) {
-		case "normal": {
-			this.setAnimationType(TYPE_IDLE);
-		}
-			break;
-		case "acceptable": {
-			this.setAnimationType(TYPE_LOW_PRIORITY);
-		}
-			break;
-		case "important": {
-			this.setAnimationType(AnimationRenderer.TYPE_HIGH_PRIORITY);
-		}
-			break;
+		if (obj instanceof String) {
+			
+			switch ((String) obj) {
+			case "normal": {
+				this.setAnimationType(TYPE_IDLE);
+			}
+				break;
+			case "acceptable": {
+				this.setAnimationType(TYPE_LOW_PRIORITY);
+			}
+				break;
+			case "important": {
+				this.setAnimationType(AnimationRenderer.TYPE_HIGH_PRIORITY);
+			}
+				break;
+			}
 		}
 	}
 
