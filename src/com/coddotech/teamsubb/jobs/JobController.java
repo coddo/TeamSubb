@@ -1,7 +1,5 @@
 package com.coddotech.teamsubb.jobs;
 
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
@@ -103,8 +101,9 @@ public class JobController {
 		
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			// TODO Auto-generated method stub
-			
+			CreateJobWindow creator = new CreateJobWindow(model);
+			model.addObserver(creator);
+			creator.open();
 		}
 		
 		@Override

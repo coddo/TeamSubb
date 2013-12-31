@@ -108,6 +108,14 @@ public class JobWindow extends CustomWindow implements Observer {
 	private Label jobBookedByLabel;
 	private Label jobBookedBy;
 
+	// help chart objects
+	private Label itemAcceptedColor;
+	private Label itemAcceptedLabel;
+	private Label itemAcceptableColor;
+	private Label itemAcceptableLabel;
+	private Label itemImportantColor;
+	private Label itemImportantLabel;
+
 	public JobWindow(String[] userInfo, String[] userJobs) {
 		super();
 		tempUserInfo = userInfo;
@@ -183,6 +191,14 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobInfoGroup.dispose();
 		helpChartGroup.dispose();
 
+		// help chart
+		itemAcceptableColor.dispose();
+		itemAcceptableLabel.dispose();
+		itemAcceptedColor.dispose();
+		itemAcceptedLabel.dispose();
+		itemImportantColor.dispose();
+		itemImportantLabel.dispose();
+
 	}
 
 	public JobController getController() {
@@ -195,14 +211,6 @@ public class JobWindow extends CustomWindow implements Observer {
 		} catch (Exception ex) {
 			return -1;
 		}
-	}
-
-	/**
-	 * Change the active fields of the actions menu based on the selected job in
-	 * the list
-	 */
-	public void morphActionsMenu() {
-
 	}
 
 	@Override
@@ -241,6 +249,9 @@ public class JobWindow extends CustomWindow implements Observer {
 				else if (job.isAcceptable(this.tempUserJobs))
 					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
 			}
+			
+			if(jobsList.getItemCount() > 0)
+				jobsList.select(0);
 		}
 			break;
 		case "jobinformation": {
@@ -250,33 +261,17 @@ public class JobWindow extends CustomWindow implements Observer {
 			this.jobBookedBy.setText(data[4]);
 		}
 			break;
-		case "create": {
-			MessageBox message;
-
-			if (Boolean.parseBoolean(data[1])) {
-				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
-				message.setText("Success");
-				message.setMessage("The job has been successfully created");
-			} else {
-				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-				message.setText("Error");
-				message.setMessage("There was a problem while ending this job");
-			}
-
-			message.open();
-		}
-			break;
 		case "end": {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
-				message.setMessage("");
+				message.setMessage("The job has been successfully ended");
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 				message.setText("Error");
-				message.setMessage("");
+				message.setMessage("There was an error while ending the job");
 			}
 
 			message.open();
@@ -288,11 +283,11 @@ public class JobWindow extends CustomWindow implements Observer {
 			if (Boolean.parseBoolean(data[1])) {
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
-				message.setMessage("");
+				message.setMessage("The job has been successfully accepted");
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 				message.setText("Error");
-				message.setMessage("");
+				message.setMessage("There was an error while accepting the job");
 			}
 
 			message.open();
@@ -304,11 +299,11 @@ public class JobWindow extends CustomWindow implements Observer {
 			if (Boolean.parseBoolean(data[1])) {
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
-				message.setMessage("");
+				message.setMessage("The job has been successfully canceled");
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 				message.setText("Error");
-				message.setMessage("");
+				message.setMessage("There was an error while cancelling the job");
 			}
 
 			message.open();
@@ -320,11 +315,11 @@ public class JobWindow extends CustomWindow implements Observer {
 			if (Boolean.parseBoolean(data[1])) {
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
-				message.setMessage("");
+				message.setMessage("The job has been successfully pushed back to the server");
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 				message.setText("Error");
-				message.setMessage("");
+				message.setMessage("There was an error while pushing the job back to the server");
 			}
 
 			message.open();
@@ -387,6 +382,14 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobIntendedTo = new Label(this.jobInfoGroup, SWT.None);
 		jobBookedByLabel = new Label(this.jobInfoGroup, SWT.None);
 		jobBookedBy = new Label(this.jobInfoGroup, SWT.None);
+
+		// help chart items
+		itemAcceptedColor = new Label(this.helpChartGroup, SWT.None);
+		itemAcceptedLabel = new Label(this.helpChartGroup, SWT.None);
+		itemAcceptableColor = new Label(this.helpChartGroup, SWT.None);
+		itemAcceptableLabel = new Label(this.helpChartGroup, SWT.None);
+		itemImportantColor = new Label(this.helpChartGroup, SWT.None);
+		itemImportantLabel = new Label(this.helpChartGroup, SWT.None);
 	}
 
 	@Override
@@ -402,6 +405,9 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		GridLayout jobsLayout = new GridLayout();
 		jobsLayout.numColumns = 1;
+		
+		GridLayout helpLayout = new GridLayout();
+		helpLayout.numColumns = 2;
 
 		// groups
 		userInfoGroup.setLayout(userInfoLayout);
@@ -425,8 +431,9 @@ public class JobWindow extends CustomWindow implements Observer {
 				1, 1));
 		jobInfoGroup.setText("Job information");
 
+		helpChartGroup.setLayout(helpLayout);
 		helpChartGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 1, 1));
+				true));
 		helpChartGroup.setText("Help chart");
 
 		// menu bar items
@@ -509,6 +516,34 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		jobBookedBy.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		jobBookedBy.setFont(this.defaultFont);
+
+		// help chart item
+		itemAcceptedColor.setText("          ");
+		itemAcceptedColor.setBackground(JobWindow.COLOR_ACCEPTED);
+		itemAcceptedColor.setFont(this.defaultFont);
+		itemAcceptedColor.pack();
+		
+		itemAcceptableColor.setText("          ");
+		itemAcceptableColor.setBackground(JobWindow.COLOR_ACCEPTABLE);
+		itemAcceptableColor.setFont(this.defaultFont);
+		itemAcceptableColor.pack();
+
+		itemImportantColor.setText("          ");
+		itemImportantColor.setBackground(JobWindow.COLOR_IMPORTANT);
+		itemImportantColor.setFont(this.defaultFont);
+		itemImportantColor.pack();
+
+		itemAcceptableLabel.setText("Jobs that can be accepted by you");
+		itemAcceptableLabel.setFont(this.defaultFont);
+		itemAcceptableLabel.pack();
+		
+		itemAcceptedLabel.setText("Jobs that have been accepted by you");
+		itemAcceptedLabel.setFont(this.defaultFont);
+		itemAcceptedLabel.pack();
+		
+		itemImportantLabel.setText("Jobs that are only for you (important)");
+		itemImportantLabel.setFont(this.defaultFont);
+		itemImportantLabel.pack();
 
 		// generate the user information
 		this.generateUserInfo();
