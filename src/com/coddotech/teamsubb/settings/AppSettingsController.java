@@ -48,10 +48,12 @@ public class AppSettingsController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			model.setGadgetAutosaveLocation(view.isGadgetAutosaveLocation());
-			model.setSearchInterval(view.getSearchInterval());
+			if (view.verifySettings()) {
+				model.setGadgetAutosaveLocation(view.isGadgetAutosaveLocation());
+				model.setSearchInterval(view.getSearchInterval());
 
-			model.commitChangesToFile();
+				model.commitChangesToFile();
+			}
 		}
 
 		@Override

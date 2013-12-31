@@ -4,18 +4,19 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 
 import com.coddotech.teamsubb.jobs.JobController;
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -39,10 +40,17 @@ public class JobWindow extends CustomWindow implements Observer {
 			"Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
 			"Postator" };
 
-	//auxiliary data
+	private static final Color COLOR_ACCEPTED = Display.getCurrent()
+			.getSystemColor(SWT.COLOR_GREEN);
+	private static final Color COLOR_ACCEPTABLE = Display.getCurrent()
+			.getSystemColor(SWT.COLOR_YELLOW);
+	private static final Color COLOR_IMPORTANT = Display.getCurrent()
+			.getSystemColor(SWT.COLOR_MAGENTA);
+
+	// auxiliary data
 	private String[] tempUserInfo;
 	private String[] tempUserJobs;
-	
+
 	// font used by some components
 	private Font defaultFont;
 
@@ -66,6 +74,7 @@ public class JobWindow extends CustomWindow implements Observer {
 	// application menu objects
 	private Menu applicationMenu;
 	private MenuItem openSettingsMenuItem;
+	private MenuItem closeWindowMenuItem;
 	private MenuItem exitApplicationMenuItem;
 
 	// jobs menu objects
@@ -87,8 +96,8 @@ public class JobWindow extends CustomWindow implements Observer {
 	private Label[] userJobsLabels;
 
 	// job list (table)
-	private List jobsList;
-	
+	private Table jobsList;
+
 	// job information
 	private Label jobTypeLabel;
 	private Label jobType;
@@ -103,7 +112,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		super();
 		tempUserInfo = userInfo;
 		tempUserJobs = userJobs;
-		
+
 		// make the shell resizable
 		this.setShell(new Shell(Display.getCurrent(), SWT.SHELL_TRIM));
 
@@ -113,8 +122,8 @@ public class JobWindow extends CustomWindow implements Observer {
 	public void dispose() {
 		// controller
 		controller.dispose();
-		
-		//job information
+
+		// job information
 		jobTypeLabel.dispose();
 		jobType.dispose();
 		jobPreviousStaffLabel.dispose();
@@ -126,6 +135,7 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		// application menu objects
 		openSettingsMenuItem.dispose();
+		closeWindowMenuItem.dispose();
 		exitApplicationMenuItem.dispose();
 		applicationMenu.dispose();
 
@@ -154,8 +164,10 @@ public class JobWindow extends CustomWindow implements Observer {
 		userRankLabel.dispose();
 
 		// jobs list
-		if (jobsList.getItemCount() > 0)
+		if (jobsList.getItemCount() > 0) {
+			jobsList.clearAll();
 			jobsList.removeAll();
+		}
 		jobsList.dispose();
 
 		for (int i = 0; i < userJobsLabels.length; i++)
@@ -177,6 +189,14 @@ public class JobWindow extends CustomWindow implements Observer {
 		return this.controller;
 	}
 
+	public int getSelectedJobID() {
+		try {
+			return (int) this.jobsList.getSelection()[0].getData();
+		} catch (Exception ex) {
+			return -1;
+		}
+	}
+
 	/**
 	 * Change the active fields of the actions menu based on the selected job in
 	 * the list
@@ -187,8 +207,130 @@ public class JobWindow extends CustomWindow implements Observer {
 
 	@Override
 	public void update(Observable obs, Object obj) {
-		// TODO Auto-generated method stub
+		// the only observable that this class has is the JobManager class
 
+		String[] data = obj.toString().split(
+				CustomWindow.NOTIFICATION_SEPARATOR);
+
+		switch (data[0]) {
+		case "find": {
+			this.jobsList.clearAll();
+			this.jobsList.removeAll();
+			this.clearJobInformation();
+
+			for (Job job : ((JobManager) obs).getAcceptedJobs()) {
+				TableItem item = new TableItem(this.jobsList, SWT.None);
+
+				item.setText(job.getName());
+				item.setData(job.getID());
+
+				if (job.getIntendedTo().equals(this.tempUserInfo[0]))
+					item.setBackground(JobWindow.COLOR_IMPORTANT);
+				else
+					item.setBackground(JobWindow.COLOR_ACCEPTED);
+			}
+
+			for (Job job : ((JobManager) obs).getJobs()) {
+				TableItem item = new TableItem(this.jobsList, SWT.None);
+
+				item.setText(job.getName());
+				item.setData(job.getID());
+
+				if (job.getIntendedTo().equals(this.tempUserInfo[0]))
+					item.setBackground(JobWindow.COLOR_IMPORTANT);
+				else if (job.isAcceptable(this.tempUserJobs))
+					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
+			}
+		}
+			break;
+		case "jobinformation": {
+			this.jobType.setText(data[1]);
+			this.jobPreviousStaff.setText(data[2]);
+			this.jobIntendedTo.setText(data[3]);
+			this.jobBookedBy.setText(data[4]);
+		}
+			break;
+		case "create": {
+			MessageBox message;
+
+			if (Boolean.parseBoolean(data[1])) {
+				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
+				message.setText("Success");
+				message.setMessage("The job has been successfully created");
+			} else {
+				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+				message.setText("Error");
+				message.setMessage("There was a problem while ending this job");
+			}
+
+			message.open();
+		}
+			break;
+		case "end": {
+			MessageBox message;
+
+			if (Boolean.parseBoolean(data[1])) {
+				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
+				message.setText("Success");
+				message.setMessage("");
+			} else {
+				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+				message.setText("Error");
+				message.setMessage("");
+			}
+
+			message.open();
+		}
+			break;
+		case "accept": {
+			MessageBox message;
+
+			if (Boolean.parseBoolean(data[1])) {
+				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
+				message.setText("Success");
+				message.setMessage("");
+			} else {
+				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+				message.setText("Error");
+				message.setMessage("");
+			}
+
+			message.open();
+		}
+			break;
+		case "cancel": {
+			MessageBox message;
+
+			if (Boolean.parseBoolean(data[1])) {
+				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
+				message.setText("Success");
+				message.setMessage("");
+			} else {
+				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+				message.setText("Error");
+				message.setMessage("");
+			}
+
+			message.open();
+		}
+			break;
+		case "push": {
+			MessageBox message;
+
+			if (Boolean.parseBoolean(data[1])) {
+				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
+				message.setText("Success");
+				message.setMessage("");
+			} else {
+				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+				message.setText("Error");
+				message.setMessage("");
+			}
+
+			message.open();
+		}
+			break;
+		}
 	}
 
 	@Override
@@ -213,6 +355,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		// application menu objects
 		applicationMenu = new Menu(this.getShell(), SWT.DROP_DOWN);
 		openSettingsMenuItem = new MenuItem(applicationMenu, SWT.PUSH);
+		closeWindowMenuItem = new MenuItem(applicationMenu, SWT.PUSH);
 		exitApplicationMenuItem = new MenuItem(applicationMenu, SWT.PUSH);
 
 		// jobs menu objects
@@ -233,8 +376,8 @@ public class JobWindow extends CustomWindow implements Observer {
 		userEmailLabel = new Label(this.userInfoGroup, SWT.None);
 
 		// jobs list
-		jobsList = new List(this.jobsGroup, SWT.VIRTUAL | SWT.V_SCROLL);
-		
+		jobsList = new Table(this.jobsGroup, SWT.VIRTUAL | SWT.V_SCROLL);
+
 		// job information
 		jobTypeLabel = new Label(this.jobInfoGroup, SWT.None);
 		jobType = new Label(this.jobInfoGroup, SWT.None);
@@ -295,7 +438,8 @@ public class JobWindow extends CustomWindow implements Observer {
 		// application menu objects
 		applicationMenuItem.setMenu(applicationMenu);
 		openSettingsMenuItem.setText("Settings");
-		exitApplicationMenuItem.setText("Exit");
+		closeWindowMenuItem.setText("Close");
+		exitApplicationMenuItem.setText("Exit TeamSubb");
 
 		// jobs menu objects
 		jobsMenuItem.setMenu(jobsMenu);
@@ -326,41 +470,47 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobsList.setFont(defaultFont);
 		jobsList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		jobsList.setBackground(this.getShell().getBackground());
-		
-		//job information
-		jobTypeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		// job information
+		jobTypeLabel
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		jobTypeLabel.setFont(this.defaultFont);
 		jobTypeLabel.setText("Type:");
 		jobTypeLabel.pack();
 
 		jobType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		jobType.setFont(this.defaultFont);
-		
-		jobPreviousStaffLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		jobPreviousStaffLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+				true, true));
 		jobPreviousStaffLabel.setFont(this.defaultFont);
 		jobPreviousStaffLabel.setText("Worked on by:");
 		jobPreviousStaffLabel.pack();
-		
-		jobPreviousStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		jobPreviousStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true));
 		jobPreviousStaff.setFont(this.defaultFont);
-		
-		jobIntendedToLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		jobIntendedToLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true));
 		jobIntendedToLabel.setFont(this.defaultFont);
 		jobIntendedToLabel.setText("Intended to:");
 		jobIntendedToLabel.pack();
-		
-		jobIntendedTo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		jobIntendedTo
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		jobIntendedTo.setFont(this.defaultFont);
-		
-		jobBookedByLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		jobBookedByLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true));
 		jobBookedByLabel.setFont(this.defaultFont);
 		jobBookedByLabel.setText("Taken by:");
 		jobBookedByLabel.pack();
-		
+
 		jobBookedBy.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		jobBookedBy.setFont(this.defaultFont);
-		
-		//generate the user information
+
+		// generate the user information
 		this.generateUserInfo();
 	}
 
@@ -370,6 +520,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
 
+		this.getShell().setText("TeamSubb - Jobs window");
 		this.getShell().setLayout(layout);
 		this.getShell().setMenuBar(menuBar);
 		this.getShell().setSize(800, 600);
@@ -378,19 +529,30 @@ public class JobWindow extends CustomWindow implements Observer {
 
 	@Override
 	protected void createListeners() {
-		// temporary listener - used just for testing the GUI
-		this.getShell().addListener(SWT.Close, new Listener() {
+		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
+		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 
-			@Override
-			public void handleEvent(Event arg0) {
-				dispose();
+		openSettingsMenuItem
+				.addSelectionListener(controller.openSettingsClicked);
+		closeWindowMenuItem.addSelectionListener(controller.closeWindowClicked);
+		exitApplicationMenuItem
+				.addSelectionListener(controller.exitApplicationClicked);
+		createJobMenuItem.addSelectionListener(controller.createJobClicked);
+		refreshJobListMenuItem
+				.addSelectionListener(controller.refreshJobListClicked);
+		acceptJobMenuItem.addSelectionListener(controller.acceptJobClicked);
+		cancelJobMenuItem.addSelectionListener(controller.cancelJobClicked);
+		finishJobMenuItem.addSelectionListener(controller.finishJobClicked);
+		endJobMenuItem.addSelectionListener(controller.endJobClicked);
+		aboutMenuItem.addSelectionListener(controller.aboutClicked);
 
-			}
-
-		});
-
+		jobsList.addSelectionListener(controller.jobsListItemSelected);
 	}
 
+	/**
+	 * Generate the user information objects and display the on the GUI for the
+	 * user to see
+	 */
 	private void generateUserInfo() {
 		userNameLabel.setText(tempUserInfo[0]);
 		userEmailLabel.setText(tempUserInfo[1]);
@@ -409,8 +571,12 @@ public class JobWindow extends CustomWindow implements Observer {
 			userJobsLabels[i].setFont(this.defaultFont);
 			userJobsLabels[i].pack();
 		}
-		
-		this.tempUserInfo = null;
-		this.tempUserJobs = null;
+	}
+
+	private void clearJobInformation() {
+		this.jobType.setText("");
+		this.jobPreviousStaff.setText("");
+		this.jobIntendedTo.setText("");
+		this.jobBookedBy.setText("");
 	}
 }

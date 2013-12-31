@@ -10,7 +10,7 @@ import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
  * Class used for realizing the communication between this client and the target
- * server for job management (@www.anime4fun.ro).
+ * server for job management (www.anime4fun.ro).
  * 
  * The server implementation is done separately in python and javascript.
  * 
@@ -79,6 +79,58 @@ public class JobManager extends Observable {
 		// fields
 		this.userJobs = null;
 		this.userName = null;
+	}
+
+	/**
+	 * Notifies the observers with the details of the job that has the entered
+	 * ID. This sends the following fields: <br>
+	 * -> Type -> The staff which previously worked on it -> The staff to which
+	 * this is intended -> The staff who currently works on this job
+	 * 
+	 * @param jobID
+	 *            The ID of the job for which to send the information
+	 */
+	public void notifyJobInformation(int jobID) {
+		this.setChanged();
+
+		Job job = null;
+
+		// seach for the job in the main jobs list
+		for (int i = 0; i < jobs.size(); i++) {
+			if (jobs.get(i).getID() == jobID) {
+				job = jobs.get(i);
+				break;
+			}
+		}
+
+		// if not found, search for it in the accepted jobs list
+		if (job == null) {
+			for (int i = 0; i < jobs.size(); i++) {
+				if (acceptedJobs.get(i).getID() == jobID) {
+					job = acceptedJobs.get(i);
+					break;
+				}
+			}
+		}
+
+		String message = "jobinformation" + CustomWindow.NOTIFICATION_SEPARATOR;
+
+		// if the job could not be found, it means that the list is out of date.
+		// tell the user that the list needs to be refreshed, otherwise, append
+		// the job information to the message
+		if (job == null) {
+			message += "Error. Refresh job list !" + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += "Error. Refresh job list !" + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += "Error. Refresh job list !" + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += "Error. Refresh job list !";
+		} else {
+			message += JobWindow.DEFAULT_JOBS_INFO_HEADERS[job.getType()] + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += job.getPreviousStaffMember() + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += job.getIntendedTo() + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += job.isBooked();
+		}
+
+		notifyObservers(message);
 	}
 
 	/**
@@ -199,6 +251,8 @@ public class JobManager extends Observable {
 				}
 			}
 		}
+		
+		message = "find" + CustomWindow.NOTIFICATION_SEPARATOR + message;
 
 		// send the according notification to the observers
 		this.setChanged();
@@ -223,6 +277,7 @@ public class JobManager extends Observable {
 				if (response) {
 					jobs.remove(job);
 					acceptedJobs.add(job);
+					job.setBooked(true);
 				}
 
 			}

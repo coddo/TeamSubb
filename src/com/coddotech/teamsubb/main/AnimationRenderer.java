@@ -42,7 +42,7 @@ public class AnimationRenderer extends Observable implements Observer {
 			+ File.separator + "resources" + File.separator + "high";
 
 	// interval used to
-	private int imageInterval = 100;
+	private int imageInterval = 300;
 
 	// the image collections with the help of which the animation is done
 	private Image[] idle;
@@ -151,7 +151,7 @@ public class AnimationRenderer extends Observable implements Observer {
 		// animation needs to be done
 		if (obj instanceof String) {
 			
-			switch ((String) obj) {
+			switch (obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR)[1]) {
 			case "normal": {
 				this.setAnimationType(TYPE_IDLE);
 			}

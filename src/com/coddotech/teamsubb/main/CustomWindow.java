@@ -11,7 +11,7 @@ import com.coddotech.teamsubb.connection.ConnectionManager;
 
 public abstract class CustomWindow {
 
-	public static final String NOTIFICATION_SEPARATOR = "#@&!#@&!";
+	public static final String NOTIFICATION_SEPARATOR = "#@&!#&@!";
 
 	private Shell shell;
 

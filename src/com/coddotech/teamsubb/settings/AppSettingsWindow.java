@@ -98,6 +98,37 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	}
 
 	/**
+	 * Verify the entered settings
+	 * 
+	 * @return A logical value indicating if the entered settings are correct or
+	 *         not
+	 */
+	public boolean verifySettings() {
+		MessageBox message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+		int interval;
+
+		try {
+			interval = Integer.parseInt(this.searchInterval.getText());
+
+			if (interval < 0 || interval > 60) {
+				message.setText("Number error");
+				message.setMessage("The entered number is out of bounds. The search interval must be a number between 0 and 60");
+				message.open();
+
+				return false;
+			}
+
+			return true;
+		} catch (Exception ex) {
+			message.setText("Format error");
+			message.setMessage("The search interval must be a NUMBER between 0 and 60");
+			message.open();
+
+			return false;
+		}
+	}
+
+	/**
 	 * Updates the interface based on the way the model has changed
 	 */
 	@Override
