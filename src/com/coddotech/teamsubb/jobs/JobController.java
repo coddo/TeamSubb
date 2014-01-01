@@ -271,6 +271,28 @@ public class JobController {
 	};
 
 	/**
+	 * Listener for when the configure fonts button is clicked from the actions
+	 * menu. This opens a new window for configuring the fonts for the selected
+	 * job, other than those which came at first with the job
+	 */
+	public SelectionListener configureFontsClicked = new SelectionListener() {
+
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			FontsWindow fonts = new FontsWindow(model.getAcceptedJob(view
+					.getSelectedJobID()));
+			fonts.open();
+
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
+	/**
 	 * Listener for when the open job directory button is clicked from the
 	 * actions menu. This opens the directory where the selected job's files are
 	 * stored, using the default file explorer in the operating system.

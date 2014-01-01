@@ -81,6 +81,7 @@ public class JobWindow extends CustomWindow implements Observer {
 	private MenuItem cancelJobMenuItem;
 	private MenuItem finishJobMenuItem;
 	private MenuItem endJobMenuItem;
+	private MenuItem configureFontssMenuItem;
 	private MenuItem openJobDirectoryMenuItem;
 
 	// user information
@@ -165,6 +166,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		finishJobMenuItem.dispose();
 		endJobMenuItem.dispose();
 		actionsMenu.dispose();
+		configureFontssMenuItem.dispose();
 		openJobDirectoryMenuItem.dispose();
 
 		// menu bar objects
@@ -256,12 +258,14 @@ public class JobWindow extends CustomWindow implements Observer {
 			cancelJobMenuItem.setEnabled(false);
 			finishJobMenuItem.setEnabled(false);
 			endJobMenuItem.setEnabled(false);
+			configureFontssMenuItem.setEnabled(false);
 			openJobDirectoryMenuItem.setEnabled(false);
 		} else if (this.getSelectedJobColor().equals(JobWindow.COLOR_ACCEPTED)) {
 			acceptJobMenuItem.setEnabled(false);
 			cancelJobMenuItem.setEnabled(true);
 			finishJobMenuItem.setEnabled(true);
 			endJobMenuItem.setEnabled(false);
+			configureFontssMenuItem.setEnabled(true);
 			openJobDirectoryMenuItem.setEnabled(true);
 		} else {
 			acceptJobMenuItem.setEnabled(true);
@@ -269,6 +273,7 @@ public class JobWindow extends CustomWindow implements Observer {
 			finishJobMenuItem.setEnabled(false);
 			endJobMenuItem.setEnabled(Boolean.parseBoolean(jobBookedBy
 					.getText()));
+			configureFontssMenuItem.setEnabled(false);
 			openJobDirectoryMenuItem.setEnabled(false);
 		}
 	}
@@ -431,6 +436,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		cancelJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 		finishJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 		endJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
+		configureFontssMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 		openJobDirectoryMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 
 		// user information objects
@@ -527,6 +533,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		cancelJobMenuItem.setText("Cancel job");
 		finishJobMenuItem.setText("Finish job");
 		endJobMenuItem.setText("End job");
+		configureFontssMenuItem.setText("Configure fonts");
 		openJobDirectoryMenuItem.setText("Open storage");
 
 		// user information objects
@@ -651,6 +658,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		endJobMenuItem.addSelectionListener(controller.endJobClicked);
 		openJobDirectoryMenuItem
 				.addSelectionListener(controller.openJobDirectoryClicked);
+		configureFontssMenuItem.addSelectionListener(controller.configureFontsClicked);
 		aboutMenuItem.addSelectionListener(controller.aboutClicked);
 
 		jobsList.addSelectionListener(controller.jobsListItemSelected);

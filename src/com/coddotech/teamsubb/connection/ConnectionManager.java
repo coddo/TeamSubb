@@ -220,10 +220,10 @@ public final class ConnectionManager {
 			boolean canceled) {
 		// Text messages data
 		String[] messageHeaders = { "push", "staff", "jobid", "jobtype",
-				"comments", "prevstaff", "nextstaff" };
+				"comments", "nextstaff" };
 		String[] messages = { "available", user, Integer.toString(job.getID()),
 				Integer.toString(job.getType()), job.getDescription(),
-				job.getPreviousStaffMember(), job.getNextStaffMember() };
+				job.getNextStaffMember() };
 
 		if (canceled)
 			messages[0] = "canceled";
