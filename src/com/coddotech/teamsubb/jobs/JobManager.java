@@ -38,6 +38,21 @@ public class JobManager extends Observable {
 	public List<Job> getJobs() {
 		return this.jobs;
 	}
+	
+	/**
+	 * Get the job from the accepted jobs list, which has the specified ID
+	 * @param jobID The ID of the job to be fetched
+	 * @return A Job instance
+	 */
+	public Job getAcceptedJob(int jobID) {
+		for(Job job : acceptedJobs) {
+			if (job.getID() == jobID) {
+				return job;
+			}
+		}
+		
+		return null;
+	}
 
 	/**
 	 * Get the list of jobs that have been accepted by the user
@@ -124,10 +139,10 @@ public class JobManager extends Observable {
 			message += "Error. Refresh job list !" + CustomWindow.NOTIFICATION_SEPARATOR;
 			message += "Error. Refresh job list !";
 		} else {
-			message += JobWindow.DEFAULT_JOBS_INFO_HEADERS[job.getType()] + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += Job.DEFAULT_JOB_TYPES[job.getType()] + CustomWindow.NOTIFICATION_SEPARATOR;
 			message += job.getPreviousStaffMember() + CustomWindow.NOTIFICATION_SEPARATOR;
 			message += job.getIntendedTo() + CustomWindow.NOTIFICATION_SEPARATOR;
-			message += job.isBooked();
+			message += job.getBookedBy();
 		}
 
 		notifyObservers(message);
@@ -277,7 +292,7 @@ public class JobManager extends Observable {
 				if (response) {
 					jobs.remove(job);
 					acceptedJobs.add(job);
-					job.setBooked(true);
+					job.setBookedBy("Yourself");
 				}
 
 			}
@@ -345,6 +360,19 @@ public class JobManager extends Observable {
 		this.setChanged();
 		notifyObservers("push" + CustomWindow.NOTIFICATION_SEPARATOR + response);
 	}
+	
+	/**
+	 * Open the directory for a certain job
+	 * @param jobID The ID of the job
+	 */
+	public void openJobDirectory(int jobID) {
+		for(Job job : acceptedJobs) {
+			if (jobID == job.getID()) {
+				job.openDirectory();
+				break;
+			}
+		}
+	}
 
 	/**
 	 * Create and get a new Job entity that contains the entered data
@@ -363,7 +391,7 @@ public class JobManager extends Observable {
 		job.setName(data[1]);
 		job.setType(Integer.parseInt(data[2]));
 		job.setDescription(data[3]);
-		job.setBooked(Boolean.parseBoolean(data[4]));
+		job.setBookedBy(data[4]);
 		job.setPreviousStaffMember(data[5]);
 		job.setIntendedTo(data[6]);
 		job.setStartDate(data[7]);

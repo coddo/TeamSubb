@@ -1,5 +1,6 @@
 package com.coddotech.teamsubb.jobs;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,14 +20,17 @@ import com.coddotech.teamsubb.connection.ConnectionManager;
  */
 public final class Job {
 
+	public static final String[] DEFAULT_JOB_TYPES = { "Traducere",
+			"Verificare", "Encode", "Typeset" };
 	public static final String DEFAULT_NEXT_STAFF = "anyone";
+
 	private static final String CONFIG_FILE_NAME = "\\config.cfg";
 
 	private int id;
 	private String name;
 	private int type;
 	private String description;
-	private boolean booked;
+	private String bookedBy;
 	private String currentStaffMember;
 	private String previousStaffMember;
 	private String nextStaffMember;
@@ -163,8 +167,8 @@ public final class Job {
 	 * 
 	 * @return A logical value
 	 */
-	public boolean isBooked() {
-		return booked;
+	public String getBookedBy() {
+		return bookedBy;
 	}
 
 	/**
@@ -173,8 +177,8 @@ public final class Job {
 	 * @param booked
 	 *            A logical value to be set for this field
 	 */
-	public void setBooked(boolean booked) {
-		this.booked = booked;
+	public void setBookedBy(String bookedBy) {
+		this.bookedBy = bookedBy;
 	}
 
 	/**
@@ -387,7 +391,7 @@ public final class Job {
 	 */
 	public boolean isAcceptable(String[] possible) {
 
-		if (this.booked)
+		if (!this.bookedBy.equals("-"))
 			return false;
 
 		for (String pos : possible) {
@@ -499,6 +503,19 @@ public final class Job {
 
 		} catch (Exception ex) {
 			return false;
+		}
+	}
+
+	/**
+	 * Open the directory where all this job's files are stored, using the OS's
+	 * default file explorer
+	 */
+	public void openDirectory() {
+		File dir = new File(this.directoryPath);
+		
+		try {
+			Desktop.getDesktop().open(dir);
+		} catch (Exception ex) {
 		}
 	}
 

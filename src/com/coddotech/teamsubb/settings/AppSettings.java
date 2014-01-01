@@ -29,7 +29,7 @@ public final class AppSettings extends Observable {
 	 * Defautl values for each all the settings
 	 */
 	public static final Point DEFAULT_LOCATION = new Point(200, 200);
-	public static final boolean DEFAULT_AUTOSAVE_LOCATION = false;
+	public static final boolean DEFAULT_AUTOSAVE_LOCATION = true;
 	public static final int DEFAULT_SEARCH_INTERVAL = 1; // one minute
 
 	/*

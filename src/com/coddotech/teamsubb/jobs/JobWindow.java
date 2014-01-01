@@ -25,12 +25,6 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * Main window that is used by the user to manage his/her jobs and communicate
  * with the main server about them.
  * 
- * NOTE: THIS CLASS IS STILL INCOMPLETE. NOT ALL THE COMPONENTS HAVE BEEN
- * CREATED YET
- * 
- * importante adresate tie -> visiniu ceva, acceptate - verde, acceptabile -
- * galben
- * 
  * @author Coddo
  * 
  */
@@ -69,7 +63,6 @@ public class JobWindow extends CustomWindow implements Observer {
 	private MenuItem applicationMenuItem;
 	private MenuItem aboutMenuItem;
 	private MenuItem jobsMenuItem;
-	private MenuItem actionsMenuItem;
 
 	// application menu objects
 	private Menu applicationMenu;
@@ -88,6 +81,7 @@ public class JobWindow extends CustomWindow implements Observer {
 	private MenuItem cancelJobMenuItem;
 	private MenuItem finishJobMenuItem;
 	private MenuItem endJobMenuItem;
+	private MenuItem openJobDirectoryMenuItem;
 
 	// user information
 	private Label userNameLabel;
@@ -116,6 +110,14 @@ public class JobWindow extends CustomWindow implements Observer {
 	private Label itemImportantColor;
 	private Label itemImportantLabel;
 
+	/**
+	 * Class constructor
+	 * 
+	 * @param userInfo
+	 *            Information about the user: name, rank, email
+	 * @param userJobs
+	 *            Information about the jobs that the user can take
+	 */
 	public JobWindow(String[] userInfo, String[] userJobs) {
 		super();
 		tempUserInfo = userInfo;
@@ -127,6 +129,9 @@ public class JobWindow extends CustomWindow implements Observer {
 		this.initializeComponents();
 	}
 
+	/**
+	 * Clear the memory from this class and its components
+	 */
 	public void dispose() {
 		// controller
 		controller.dispose();
@@ -158,11 +163,11 @@ public class JobWindow extends CustomWindow implements Observer {
 		finishJobMenuItem.dispose();
 		endJobMenuItem.dispose();
 		actionsMenu.dispose();
+		openJobDirectoryMenuItem.dispose();
 
 		// menu bar objects
 		applicationMenuItem.dispose();
 		jobsMenuItem.dispose();
-		actionsMenuItem.dispose();
 		aboutMenuItem.dispose();
 		menuBar.dispose();
 
@@ -201,15 +206,68 @@ public class JobWindow extends CustomWindow implements Observer {
 
 	}
 
+	/**
+	 * Retrieve the controller used by this class
+	 * 
+	 * @return A JobController class instance
+	 */
 	public JobController getController() {
 		return this.controller;
 	}
 
+	/**
+	 * Get the ID of the selected job in the list
+	 * 
+	 * @return An integer representing the ID of the selected job, or the value
+	 *         -1 if there are no jobs in the list
+	 */
 	public int getSelectedJobID() {
 		try {
 			return (int) this.jobsList.getSelection()[0].getData();
 		} catch (Exception ex) {
 			return -1;
+		}
+	}
+
+	/**
+	 * Get the background color that the selected job from the list has
+	 * 
+	 * @return A Color instance
+	 */
+	public Color getSelectedJobColor() {
+		return this.jobsList.getSelection()[0].getBackground();
+	}
+
+	/**
+	 * Change the active items in the actions menu based on the type of the
+	 * selected job. <br><br>
+	 * 
+	 * All items are disabled if there are no jobs in the list<br><br>
+	 * If the job is an accepted job, then the user can do most of the actions,
+	 * except ending the job.<br><br>
+	 * If the job is of normal status, then the user can only accept it, or
+	 * depending on the booked status, end it.
+	 */
+	public void morphActionsMenu() {
+		if (this.getSelectedJobID() == -1) {
+			acceptJobMenuItem.setEnabled(false);
+			cancelJobMenuItem.setEnabled(false);
+			finishJobMenuItem.setEnabled(false);
+			endJobMenuItem.setEnabled(false);
+			openJobDirectoryMenuItem.setEnabled(false);
+		} else if (this.getSelectedJobColor().equals(JobWindow.COLOR_ACCEPTED)) {
+			acceptJobMenuItem.setEnabled(false);
+			cancelJobMenuItem.setEnabled(true);
+			finishJobMenuItem.setEnabled(true);
+			endJobMenuItem.setEnabled(false);
+			openJobDirectoryMenuItem.setEnabled(true);
+		} else {
+			acceptJobMenuItem.setEnabled(true);
+			cancelJobMenuItem.setEnabled(false);
+			finishJobMenuItem.setEnabled(false);
+			endJobMenuItem.setEnabled(Boolean.parseBoolean(jobBookedBy
+					.getText()));
+			openJobDirectoryMenuItem.setEnabled(false);
 		}
 	}
 
@@ -249,8 +307,8 @@ public class JobWindow extends CustomWindow implements Observer {
 				else if (job.isAcceptable(this.tempUserJobs))
 					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
 			}
-			
-			if(jobsList.getItemCount() > 0)
+
+			if (jobsList.getItemCount() > 0)
 				jobsList.select(0);
 		}
 			break;
@@ -265,6 +323,8 @@ public class JobWindow extends CustomWindow implements Observer {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
+				((JobManager) obs).findJobs();
+
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
 				message.setMessage("The job has been successfully ended");
@@ -281,6 +341,8 @@ public class JobWindow extends CustomWindow implements Observer {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
+				((JobManager) obs).findJobs();
+
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
 				message.setMessage("The job has been successfully accepted");
@@ -297,6 +359,8 @@ public class JobWindow extends CustomWindow implements Observer {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
+				((JobManager) obs).findJobs();
+
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
 				message.setMessage("The job has been successfully canceled");
@@ -313,6 +377,8 @@ public class JobWindow extends CustomWindow implements Observer {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
+				((JobManager) obs).findJobs();
+
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
 				message.setMessage("The job has been successfully pushed back to the server");
@@ -344,7 +410,6 @@ public class JobWindow extends CustomWindow implements Observer {
 		// menu bar objects
 		applicationMenuItem = new MenuItem(menuBar, SWT.CASCADE);
 		jobsMenuItem = new MenuItem(menuBar, SWT.CASCADE);
-		actionsMenuItem = new MenuItem(menuBar, SWT.CASCADE);
 		aboutMenuItem = new MenuItem(menuBar, SWT.CASCADE);
 
 		// application menu objects
@@ -359,11 +424,12 @@ public class JobWindow extends CustomWindow implements Observer {
 		refreshJobListMenuItem = new MenuItem(jobsMenu, SWT.PUSH);
 
 		// actions menu objects
-		actionsMenu = new Menu(this.getShell(), SWT.DROP_DOWN);
+		actionsMenu = new Menu(this.getShell(), SWT.MENU);
 		acceptJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 		cancelJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 		finishJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 		endJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
+		openJobDirectoryMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 
 		// user information objects
 		userNameLabel = new Label(this.userInfoGroup, SWT.None);
@@ -405,7 +471,7 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		GridLayout jobsLayout = new GridLayout();
 		jobsLayout.numColumns = 1;
-		
+
 		GridLayout helpLayout = new GridLayout();
 		helpLayout.numColumns = 2;
 
@@ -438,27 +504,28 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		// menu bar items
 		applicationMenuItem.setText("Application");
+		applicationMenuItem.setMenu(applicationMenu);
+
 		jobsMenuItem.setText("Jobs");
-		actionsMenuItem.setText("Actions");
+		jobsMenuItem.setMenu(jobsMenu);
+
 		aboutMenuItem.setText("About");
 
 		// application menu objects
-		applicationMenuItem.setMenu(applicationMenu);
 		openSettingsMenuItem.setText("Settings");
 		closeWindowMenuItem.setText("Close");
 		exitApplicationMenuItem.setText("Exit TeamSubb");
 
 		// jobs menu objects
-		jobsMenuItem.setMenu(jobsMenu);
 		createJobMenuItem.setText("Create a new job");
 		refreshJobListMenuItem.setText("Refresh job list");
 
 		// actions menu objects
-		actionsMenuItem.setMenu(actionsMenu);
 		acceptJobMenuItem.setText("Accept job");
 		cancelJobMenuItem.setText("Cancel job");
 		finishJobMenuItem.setText("Finish job");
 		endJobMenuItem.setText("End job");
+		openJobDirectoryMenuItem.setText("Open storage");
 
 		// user information objects
 		userNameLabel
@@ -477,6 +544,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobsList.setFont(defaultFont);
 		jobsList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		jobsList.setBackground(this.getShell().getBackground());
+		jobsList.setMenu(actionsMenu);
 
 		// job information
 		jobTypeLabel
@@ -522,7 +590,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		itemAcceptedColor.setBackground(JobWindow.COLOR_ACCEPTED);
 		itemAcceptedColor.setFont(this.defaultFont);
 		itemAcceptedColor.pack();
-		
+
 		itemAcceptableColor.setText("          ");
 		itemAcceptableColor.setBackground(JobWindow.COLOR_ACCEPTABLE);
 		itemAcceptableColor.setFont(this.defaultFont);
@@ -536,11 +604,11 @@ public class JobWindow extends CustomWindow implements Observer {
 		itemAcceptableLabel.setText("Jobs that can be accepted by you");
 		itemAcceptableLabel.setFont(this.defaultFont);
 		itemAcceptableLabel.pack();
-		
+
 		itemAcceptedLabel.setText("Jobs that have been accepted by you");
 		itemAcceptedLabel.setFont(this.defaultFont);
 		itemAcceptedLabel.pack();
-		
+
 		itemImportantLabel.setText("Jobs that are only for you (important)");
 		itemImportantLabel.setFont(this.defaultFont);
 		itemImportantLabel.pack();
@@ -579,9 +647,12 @@ public class JobWindow extends CustomWindow implements Observer {
 		cancelJobMenuItem.addSelectionListener(controller.cancelJobClicked);
 		finishJobMenuItem.addSelectionListener(controller.finishJobClicked);
 		endJobMenuItem.addSelectionListener(controller.endJobClicked);
+		openJobDirectoryMenuItem
+				.addSelectionListener(controller.openJobDirectoryClicked);
 		aboutMenuItem.addSelectionListener(controller.aboutClicked);
 
 		jobsList.addSelectionListener(controller.jobsListItemSelected);
+		jobsList.addMenuDetectListener(controller.jobsListMenuOpened);
 	}
 
 	/**
@@ -608,6 +679,9 @@ public class JobWindow extends CustomWindow implements Observer {
 		}
 	}
 
+	/**
+	 * Clears the fields that display the information for a selected job in the list
+	 */
 	private void clearJobInformation() {
 		this.jobType.setText("");
 		this.jobPreviousStaff.setText("");

@@ -60,7 +60,7 @@ public class GadgetController {
 		this.initializeController();
 
 		// start the timer in order for it to search for new jobs
-		Display.getCurrent().timerExec(50, timer);
+		Display.getCurrent().timerExec(100, timer);
 	}
 
 	/**
