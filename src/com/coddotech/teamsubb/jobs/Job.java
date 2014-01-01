@@ -41,6 +41,7 @@ public final class Job {
 	private File[] fonts;
 	private String subFileData;
 	private String[] fontsData;
+	private File[] addedFonts;
 
 	/**
 	 * Class constructor
@@ -48,6 +49,8 @@ public final class Job {
 	public Job() {
 		// initialize the next staff member with the default value
 		this.setNextStaffMember(Job.DEFAULT_NEXT_STAFF);
+
+		addedFonts = null;
 	}
 
 	/**
@@ -350,6 +353,27 @@ public final class Job {
 	}
 
 	/**
+	 * Get the list of File instances representing the fonts newly added to the
+	 * job
+	 * 
+	 * @return A collection of File instances
+	 */
+	public File[] getAddedFonts() {
+		return this.addedFonts;
+	}
+
+	/**
+	 * Set the list of File instances representing the fonts newly added to the
+	 * job
+	 * 
+	 * @param fonts
+	 *            The collection of File instances
+	 */
+	public void setAddedFonts(File[] fonts) {
+		this.addedFonts = fonts;
+	}
+
+	/**
 	 * Get the raw data about the sub file and its location on the web, which
 	 * has been extracted from the response string from the server
 	 * 
@@ -512,13 +536,20 @@ public final class Job {
 	 */
 	public void openDirectory() {
 		File dir = new File(this.directoryPath);
-		
+
 		try {
 			Desktop.getDesktop().open(dir);
 		} catch (Exception ex) {
 		}
 	}
 
+	/**
+	 * Reads the job data from the configuration file
+	 * 
+	 * @param jobFolder
+	 *            The folder (File instance) where the job is located
+	 * @throws Exception
+	 */
 	public void readConfigFile(File jobFolder) throws Exception {
 		File config = new File(jobFolder.getAbsolutePath() + File.separator
 				+ Job.CONFIG_FILE_NAME);
@@ -536,11 +567,15 @@ public final class Job {
 		this.setDirectoryPath(reader.readLine());
 		this.setSubFile(new File(reader.readLine()));
 
-		File[] fonts = new File[Integer.parseInt(reader.readLine())];
-		for (int i = 0; i < fonts.length; i++)
-			fonts[i] = new File(reader.readLine());
+		int nr = Integer.parseInt(reader.readLine());
+		if (nr > 0) {
+			File[] fonts = new File[nr];
+			for (int i = 0; i < fonts.length; i++)
+				fonts[i] = new File(reader.readLine());
 
-		this.setFonts(fonts);
+			this.addedFonts = fonts;
+		} else
+			this.addedFonts = null;
 
 		// close the reader
 		reader.close();
@@ -550,8 +585,6 @@ public final class Job {
 	 * Creates a configuration file for a certain job in its own directory and
 	 * fills it with data
 	 * 
-	 * @param job
-	 *            The Job entity for which to create this file
 	 * @throws Exception
 	 */
 	private void generateConfigFile() throws Exception {
@@ -578,10 +611,13 @@ public final class Job {
 		writer.write(this.directoryPath + "\n");
 		writer.write(this.subFile.getAbsolutePath() + "\n");
 
-		writer.write(this.fonts.length + "\n");
-		for (int i = 0; i < this.fonts.length; i++) {
-			writer.write(this.fonts[i].getAbsolutePath() + "\n");
-		}
+		if (addedFonts != null) {
+			writer.write(this.addedFonts.length + "\n");
+			for (int i = 0; i < this.addedFonts.length; i++) {
+				writer.write(this.addedFonts[i].getAbsolutePath() + "\n");
+			}
+		} else
+			writer.write(0 + "\n");
 
 		// close the writer
 		writer.close();

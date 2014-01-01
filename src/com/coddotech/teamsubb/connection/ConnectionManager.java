@@ -229,21 +229,31 @@ public final class ConnectionManager {
 			messages[0] = "canceled";
 
 		// files data
-		String[] fileHeaders = new String[job.getFonts().length + 1];
-		String[] files = new String[fileHeaders.length];
+		String response;
+		if (job.getAddedFonts() != null) {
+			String[] fileHeaders = new String[job.getAddedFonts().length + 1];
+			String[] files = new String[fileHeaders.length];
 
-		fileHeaders[0] = "sub";
-		files[0] = job.getSubFile().getAbsolutePath();
+			fileHeaders[0] = "sub";
+			files[0] = job.getSubFile().getAbsolutePath();
 
-		for (int i = 1; i < files.length; i++) {// create fonts collection
-			fileHeaders[i] = "font" + i;
-			files[i] = job.getFonts()[i - 1].getAbsolutePath();
+			for (int i = 1; i < files.length; i++) {// create fonts collection
+				fileHeaders[i] = "font" + i;
+				files[i] = job.getFonts()[i - 1].getAbsolutePath();
+			}
+
+			// send the request to the server and wait for a response
+			response = ConnectionManager.sendMessage(
+					ConnectionManager.URL_JOBS, messageHeaders, messages,
+					fileHeaders, files);
+		} else {
+			String[] fileHeaders = new String[] { "sub" };
+			String[] files = { job.getSubFile().getAbsolutePath() };
+			
+			response = ConnectionManager.sendMessage(
+					ConnectionManager.URL_JOBS, messageHeaders, messages,
+					fileHeaders, files);
 		}
-
-		// send the request to the server and wait for a response
-		String response = ConnectionManager.sendMessage(
-				ConnectionManager.URL_JOBS, messageHeaders, messages,
-				fileHeaders, files);
 
 		// return the servers response
 		return Boolean.parseBoolean(response);

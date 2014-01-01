@@ -120,6 +120,8 @@ public class JobWindow extends CustomWindow implements Observer {
 	 */
 	public JobWindow(String[] userInfo, String[] userJobs) {
 		super();
+		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL));
+		
 		tempUserInfo = userInfo;
 		tempUserJobs = userJobs;
 
