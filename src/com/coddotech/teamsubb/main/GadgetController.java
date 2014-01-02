@@ -149,11 +149,17 @@ public class GadgetController {
 		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 			if (e.button == 1) {
-				jobsWindow = new JobWindow(gadget.getUserInfo(),
-						gadget.getUserJobs());
+				try {
+					if (jobsWindow.getShell().isDisposed())
+						jobsWindow = new JobWindow(gadget.getUserInfo(),
+								gadget.getUserJobs());
+				} catch (Exception ex) {
+					jobsWindow = new JobWindow(gadget.getUserInfo(),
+							gadget.getUserJobs());
+				}
+
 				jobsWindow.getController().setModel(jobs);
 				jobsWindow.getController().setSettingsModel(settings);
-				jobsWindow.getController().setMainWindow(gadget);
 				jobs.addObserver(jobsWindow);
 
 				jobsWindow.open();

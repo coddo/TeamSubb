@@ -1,6 +1,7 @@
 package com.coddotech.teamsubb.main;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -12,6 +13,7 @@ import com.coddotech.teamsubb.connection.ConnectionManager;
 public abstract class CustomWindow {
 
 	public static final String NOTIFICATION_SEPARATOR = "#@&!#&@!";
+	public static final Font DEFAULT_FONT = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
 
 	private Shell shell;
 

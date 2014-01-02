@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Shell;
 public class ApplicationInformation extends CustomWindow {
 
 	public ApplicationInformation() {
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL));
+		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM));
 		
 		this.initializeComponents();
 	}

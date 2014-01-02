@@ -4,12 +4,13 @@ import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 import com.coddotech.teamsubb.jobs.JobWindow;
 import com.coddotech.teamsubb.main.ApplicationInformation;
-import com.coddotech.teamsubb.main.GadgetWindow;
 import com.coddotech.teamsubb.settings.AppSettings;
 import com.coddotech.teamsubb.settings.AppSettingsWindow;
 
@@ -29,7 +30,6 @@ public class JobController {
 	private JobManager model;
 
 	private AppSettings settings;
-	private GadgetWindow mainWindow;
 
 	/**
 	 * Class constructor
@@ -67,16 +67,6 @@ public class JobController {
 	 */
 	public void setSettingsModel(AppSettings settings) {
 		this.settings = settings;
-	}
-
-	/**
-	 * Set main thread for the application (used for closing the app)
-	 * 
-	 * @param gadget
-	 *            A GadgetWindow class instance
-	 */
-	public void setMainWindow(GadgetWindow gadget) {
-		this.mainWindow = gadget;
 	}
 
 	/**
@@ -127,8 +117,8 @@ public class JobController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			view.close();
-			mainWindow.close();
+			for(Shell shell : Display.getCurrent().getShells())
+				shell.close();
 
 		}
 
@@ -150,6 +140,8 @@ public class JobController {
 			CreateJobWindow creator = new CreateJobWindow(model);
 			model.addObserver(creator);
 			creator.open();
+			
+			model.findJobs();
 		}
 
 		@Override

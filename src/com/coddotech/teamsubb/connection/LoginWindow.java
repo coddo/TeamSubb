@@ -4,9 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
@@ -23,8 +21,6 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * 
  */
 public class LoginWindow extends CustomWindow implements Observer {
-
-	private Font defaultFont;
 
 	private LoginController controller;
 
@@ -70,9 +66,6 @@ public class LoginWindow extends CustomWindow implements Observer {
 
 		loginButton.dispose();
 		loginButton = null;
-
-		defaultFont.dispose();
-		defaultFont = null;
 	}
 
 	/**
@@ -115,8 +108,6 @@ public class LoginWindow extends CustomWindow implements Observer {
 	protected void performInitializations() {
 		controller = new LoginController(this);
 
-		defaultFont = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
-
 		userLabel = new Label(this.getShell(), SWT.None);
 		passLabel = new Label(this.getShell(), SWT.None);
 		userBox = new Text(this.getShell(), SWT.BORDER);
@@ -128,30 +119,30 @@ public class LoginWindow extends CustomWindow implements Observer {
 
 	@Override
 	protected void createObjectProperties() {
-		userLabel.setFont(defaultFont);
+		userLabel.setFont(DEFAULT_FONT);
 		userLabel.setText("User name:");
 		userLabel.setLocation(10, 10);
 		userLabel.pack();
 
-		passLabel.setFont(defaultFont);
+		passLabel.setFont(DEFAULT_FONT);
 		passLabel.setText("Password:");
 		passLabel.setLocation(10, 60);
 		passLabel.pack();
 
-		userBox.setFont(defaultFont);
+		userBox.setFont(DEFAULT_FONT);
 		userBox.setLocation(100, 10);
 		userBox.setSize(175, 23);
 
-		passBox.setFont(defaultFont);
+		passBox.setFont(DEFAULT_FONT);
 		passBox.setLocation(100, 60);
 		passBox.setSize(175, 23);
 
-		loginButton.setFont(defaultFont);
+		loginButton.setFont(DEFAULT_FONT);
 		loginButton.setText("Login");
 		loginButton.setLocation(225, 100);
 		loginButton.setSize(50, 25);
 
-		exitButton.setFont(defaultFont);
+		exitButton.setFont(DEFAULT_FONT);
 		exitButton.setText("Exit");
 		exitButton.setLocation(10, 100);
 		exitButton.setSize(50, 25);

@@ -19,8 +19,8 @@ import com.coddotech.teamsubb.main.CustomWindow;
  */
 public class JobManager extends Observable {
 
-	private static final String SEPARATOR_FIELDS = "#!#";
-	private static final String SEPARATOR_JOBS = "&!&";
+	public static final String SEPARATOR_FIELDS = "#!#";
+	public static final String SEPARATOR_JOBS = "&!&";
 
 	private static final File WORKING_DIRECTORY = new File("Jobs");
 

@@ -418,6 +418,10 @@ public final class Job {
 		if (!this.bookedBy.equals("-"))
 			return false;
 
+		if (!this.intendedTo.equals(Job.DEFAULT_NEXT_STAFF)
+				&& !this.intendedTo.equals(this.currentStaffMember))
+			return false;
+
 		for (String pos : possible) {
 			if (JobWindow.DEFAULT_JOBS_INFO_HEADERS[this.type].equals(pos))
 				return true;

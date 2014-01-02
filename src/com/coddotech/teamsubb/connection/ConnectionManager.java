@@ -138,23 +138,32 @@ public final class ConnectionManager {
 				description, nextStaff };
 
 		// files handling
-		String[] fileHeaders = new String[fonts.length + 1];
-		String[] files = new String[fileHeaders.length];
+		String response;
 
-		fileHeaders[0] = "sub";
-		files[0] = subFile;
+		String[] fileHeaders;
+		String[] files;
 
-		if (fonts.length > 0) {
-			for (int i = 1; i < files.length; i++) {
-				fileHeaders[i] = "font" + i;
-				files[i] = fonts[i - 1];
+		if (fonts != null) {
+			fileHeaders = new String[fonts.length + 1];
+			files = new String[fileHeaders.length];
+
+			fileHeaders[0] = "sub";
+			files[0] = subFile;
+
+			if (fonts.length > 0) {
+				for (int i = 1; i < files.length; i++) {
+					fileHeaders[i] = "font" + i;
+					files[i] = fonts[i - 1];
+				}
 			}
+		} else {
+			fileHeaders = new String[] { "sub" };
+			files = new String[] { subFile };
 		}
 
 		// request sending
-		String response = ConnectionManager.sendMessage(
-				ConnectionManager.URL_JOBS, messageHeaders, messages,
-				fileHeaders, files);
+		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
+				messageHeaders, messages, fileHeaders, files);
 
 		return Boolean.parseBoolean(response);
 	}
@@ -230,9 +239,13 @@ public final class ConnectionManager {
 
 		// files data
 		String response;
+
+		String[] fileHeaders;
+		String[] files;
+
 		if (job.getAddedFonts() != null) {
-			String[] fileHeaders = new String[job.getAddedFonts().length + 1];
-			String[] files = new String[fileHeaders.length];
+			fileHeaders = new String[job.getAddedFonts().length + 1];
+			files = new String[fileHeaders.length];
 
 			fileHeaders[0] = "sub";
 			files[0] = job.getSubFile().getAbsolutePath();
@@ -242,18 +255,14 @@ public final class ConnectionManager {
 				files[i] = job.getFonts()[i - 1].getAbsolutePath();
 			}
 
-			// send the request to the server and wait for a response
-			response = ConnectionManager.sendMessage(
-					ConnectionManager.URL_JOBS, messageHeaders, messages,
-					fileHeaders, files);
 		} else {
-			String[] fileHeaders = new String[] { "sub" };
-			String[] files = { job.getSubFile().getAbsolutePath() };
-			
-			response = ConnectionManager.sendMessage(
-					ConnectionManager.URL_JOBS, messageHeaders, messages,
-					fileHeaders, files);
+			fileHeaders = new String[] { "sub" };
+			files = new String[] { job.getSubFile().getAbsolutePath() };
 		}
+
+		// send the request to the server and wait for a response
+		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
+				messageHeaders, messages, fileHeaders, files);
 
 		// return the servers response
 		return Boolean.parseBoolean(response);

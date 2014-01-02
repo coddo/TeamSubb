@@ -3,6 +3,7 @@ package com.coddotech.teamsubb.main;
 import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.connection.LoginWindow;
+import com.coddotech.teamsubb.jobs.CreateJobWindow;
 import com.coddotech.teamsubb.jobs.Job;
 import com.coddotech.teamsubb.jobs.JobManager;
 import com.coddotech.teamsubb.jobs.JobWindow;
@@ -38,7 +39,11 @@ public class MainClass {
 		// "Settings.xml", new String[] { "Settings.xml", "README.md" });
 		// jobs.dispose();
 		// d.dispose();
-
-		// Display.getCurrent().dispose();
+		
+//		CreateJobWindow c = new CreateJobWindow(new JobManager("Coddo", new String[] {"aaa", "bbbb"}));
+//		c.open();
+		
+		CustomWindow.DEFAULT_FONT.dispose();
+		Display.getCurrent().dispose();
 	}
 }
