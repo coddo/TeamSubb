@@ -5,6 +5,8 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import com.coddotech.teamsubb.main.CustomWindow;
+
 public class LoginController {
 	
 	Login model;
@@ -54,7 +56,7 @@ public class LoginController {
 	
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			if (view.isConnected(true))
+			if (CustomWindow.isConnected(true))
 				model.doLogin(view.getUserName(), view.getPassword());
 		}
 	
@@ -75,7 +77,7 @@ public class LoginController {
 		@Override
 		public void handleEvent(Event e) {
 			if (e.detail == org.eclipse.swt.SWT.TRAVERSE_RETURN)
-				if (view.isConnected(true))
+				if (CustomWindow.isConnected(true))
 				model.doLogin(view.getUserName(), view.getPassword());
 		}
 		

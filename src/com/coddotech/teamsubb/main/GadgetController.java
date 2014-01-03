@@ -111,7 +111,7 @@ public class GadgetController {
 		@Override
 		public void run() {
 			if (!disposed) {
-				if (gadget.isConnected(false))
+				if (CustomWindow.isConnected(false))
 					jobs.findJobs();
 
 				Display.getCurrent().timerExec(searchInterval, this);

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.regex.Pattern;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -38,19 +39,21 @@ public class JobManager extends Observable {
 	public List<Job> getJobs() {
 		return this.jobs;
 	}
-	
+
 	/**
 	 * Get the job from the accepted jobs list, which has the specified ID
-	 * @param jobID The ID of the job to be fetched
+	 * 
+	 * @param jobID
+	 *            The ID of the job to be fetched
 	 * @return A Job instance
 	 */
 	public Job getAcceptedJob(int jobID) {
-		for(Job job : acceptedJobs) {
+		for (Job job : acceptedJobs) {
 			if (job.getID() == jobID) {
 				return job;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -97,6 +100,34 @@ public class JobManager extends Observable {
 	}
 
 	/**
+	 * Fetch the staff list from the server.<br>
+	 * The list contains both the name of the staff member, and his/her
+	 * attributions.<br>
+	 * <br>
+	 * 
+	 * Example: NAME: Job1 | Job2 | Job3....
+	 * 
+	 * @return A String collection
+	 */
+	public static String[] getStaffList() {
+		if (CustomWindow.isConnected(false)) {
+			String[] staffData = ConnectionManager.sendStaffRequest().split(
+					JobManager.SEPARATOR_JOBS);
+
+			for (int i = 0; i < staffData.length; i++) {
+				staffData[i] = staffData[i].replaceAll(
+						JobManager.SEPARATOR_FIELDS, " | ");
+				staffData[i] = staffData[i].replaceFirst(Pattern.quote(" |"),
+						":");
+			}
+
+			return staffData;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Notifies the observers with the details of the job that has the entered
 	 * ID. This sends the following fields: <br>
 	 * -> Type -> The staff which previously worked on it -> The staff to which
@@ -134,14 +165,20 @@ public class JobManager extends Observable {
 		// tell the user that the list needs to be refreshed, otherwise, append
 		// the job information to the message
 		if (job == null) {
-			message += "Error. Refresh job list !" + CustomWindow.NOTIFICATION_SEPARATOR;
-			message += "Error. Refresh job list !" + CustomWindow.NOTIFICATION_SEPARATOR;
-			message += "Error. Refresh job list !" + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += "Error. Refresh job list !"
+					+ CustomWindow.NOTIFICATION_SEPARATOR;
+			message += "Error. Refresh job list !"
+					+ CustomWindow.NOTIFICATION_SEPARATOR;
+			message += "Error. Refresh job list !"
+					+ CustomWindow.NOTIFICATION_SEPARATOR;
 			message += "Error. Refresh job list !";
 		} else {
-			message += Job.DEFAULT_JOB_TYPES[job.getType()] + CustomWindow.NOTIFICATION_SEPARATOR;
-			message += job.getPreviousStaffMember() + CustomWindow.NOTIFICATION_SEPARATOR;
-			message += job.getIntendedTo() + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += Job.DEFAULT_JOB_TYPES[job.getType()]
+					+ CustomWindow.NOTIFICATION_SEPARATOR;
+			message += job.getPreviousStaffMember()
+					+ CustomWindow.NOTIFICATION_SEPARATOR;
+			message += job.getIntendedTo()
+					+ CustomWindow.NOTIFICATION_SEPARATOR;
 			message += job.getBookedBy();
 		}
 
@@ -266,7 +303,7 @@ public class JobManager extends Observable {
 				}
 			}
 		}
-		
+
 		message = "find" + CustomWindow.NOTIFICATION_SEPARATOR + message;
 
 		// send the according notification to the observers
@@ -318,7 +355,6 @@ public class JobManager extends Observable {
 
 			if (job.getID() == jobID) {
 				response = job.cancel();
-				;
 
 				if (response) {
 					acceptedJobs.remove(job);
@@ -342,11 +378,15 @@ public class JobManager extends Observable {
 	 * @param jobID
 	 *            The ID of the job to be sent back to the server
 	 */
-	public void pushJob(int jobID) {
+	public void pushJob(int jobID, String nextStaff, int type) {
 		boolean response = false;
 		for (Job job : acceptedJobs) {
 
 			if (job.getID() == jobID) {
+
+				job.setType(type);
+				job.setNextStaffMember(nextStaff);
+
 				response = job.push();
 
 				if (response) {
@@ -360,13 +400,15 @@ public class JobManager extends Observable {
 		this.setChanged();
 		notifyObservers("push" + CustomWindow.NOTIFICATION_SEPARATOR + response);
 	}
-	
+
 	/**
 	 * Open the directory for a certain job
-	 * @param jobID The ID of the job
+	 * 
+	 * @param jobID
+	 *            The ID of the job
 	 */
 	public void openJobDirectory(int jobID) {
-		for(Job job : acceptedJobs) {
+		for (Job job : acceptedJobs) {
 			if (jobID == job.getID()) {
 				job.openDirectory();
 				break;

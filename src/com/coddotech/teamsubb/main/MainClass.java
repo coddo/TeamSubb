@@ -7,14 +7,15 @@ import com.coddotech.teamsubb.jobs.CreateJobWindow;
 import com.coddotech.teamsubb.jobs.Job;
 import com.coddotech.teamsubb.jobs.JobManager;
 import com.coddotech.teamsubb.jobs.JobWindow;
+import com.coddotech.teamsubb.jobs.PushJobWindow;
 
 public class MainClass {
 
 	public static void main(String[] args) {
 		// display the login window as a dialog
-		LoginWindow login = new LoginWindow();
-		login.open();
-		login = null;
+		 LoginWindow login = new LoginWindow();
+		 login.open();
+		 login = null;
 
 		// AppSettingsWindow settings = new AppSettingsWindow();
 		// settings.open();
@@ -39,10 +40,26 @@ public class MainClass {
 		// "Settings.xml", new String[] { "Settings.xml", "README.md" });
 		// jobs.dispose();
 		// d.dispose();
+
+		// JobManager model = new JobManager("Coddo",
+		// new String[] { "aaa", "bbbb" });
+
+		// CreateJobWindow c = new CreateJobWindow();
+		// c.getController().setModel(model);
+		// model.addObserver(c);
+		// c.open();
+
+		// Job job = new Job();
+		// job.setName("AFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGA");
+		//
+		// PushJobWindow push = new PushJobWindow(job);
+		// push.getController().setModel(model);
+		// model.addObserver(push);
+		// push.open();
 		
-//		CreateJobWindow c = new CreateJobWindow(new JobManager("Coddo", new String[] {"aaa", "bbbb"}));
-//		c.open();
-		
+//		ApplicationInformation info = new ApplicationInformation();
+//		info.open();
+
 		CustomWindow.DEFAULT_FONT.dispose();
 		Display.getCurrent().dispose();
 	}

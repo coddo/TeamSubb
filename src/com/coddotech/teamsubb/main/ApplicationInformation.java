@@ -1,40 +1,106 @@
 package com.coddotech.teamsubb.main;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 public class ApplicationInformation extends CustomWindow {
 
+	private Font font;
+	
+	private Label applicationName;
+	private Label type;
+	private Label server;
+	private Link serverLink;
+	private Label author;
+	private Label copyWright;
+	
 	public ApplicationInformation() {
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM));
+		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM));
 		
 		this.initializeComponents();
 	}
 	
+	public void dispose() {
+		applicationName.dispose();
+		type.dispose();
+		server.dispose();
+		serverLink.dispose();
+		author.dispose();
+		copyWright.dispose();
+		
+		font.dispose();
+	}
+	
 	@Override
 	protected void performInitializations() {
-		// TODO Auto-generated method stub
+		font = new Font(Display.getCurrent(), "Calibri", 15, SWT.BOLD);
+		
+		applicationName = new Label(this.getShell(), SWT.None);
+		type = new Label(this.getShell(), SWT.None);
+		server = new Label(this.getShell(), SWT.None);
+		serverLink = new Link(this.getShell(), SWT.None);
+		author = new Label(this.getShell(), SWT.None);
+		copyWright = new Label(this.getShell(), SWT.None);
 		
 	}
 
 	@Override
 	protected void createObjectProperties() {
-		// TODO Auto-generated method stub
+		applicationName.setFont(font);
+		applicationName.setLocation(100, 10);
+		applicationName.setText("TeamSubb");
+		applicationName.pack();
 		
+		type.setFont(CustomWindow.DEFAULT_FONT);
+		type.setLocation(10, 40);
+		type.setText("Type: Client application");
+		type.pack();
+		
+		server.setFont(CustomWindow.DEFAULT_FONT);
+		server.setLocation(10, 70);
+		server.setText("Server: ");
+		server.pack();
+		
+		serverLink.setFont(CustomWindow.DEFAULT_FONT);
+		serverLink.setLocation(60, 70);
+		serverLink.setText("www.anime4fun.ro");
+		serverLink.pack();
+		
+		author.setFont(CustomWindow.DEFAULT_FONT);
+		author.setLocation(10, 100);
+		author.setText("Author: Coddo");
+		author.pack();
+		
+		copyWright.setFont(CustomWindow.DEFAULT_FONT);
+		copyWright.setLocation(10, 130);
+		copyWright.setText("Copywright: © CoddoTechnologies 2014");
+		copyWright.pack();
 	}
 
 	@Override
 	protected void createShellProperties() {
-		this.getShell().setText("About TeamSubb");
-		this.getShell().setSize(300, 300);
+		this.getShell().setText("About");
+		this.getShell().setSize(300, 200);
 		this.placeToCenter();
 		
 	}
 
 	@Override
 	protected void createListeners() {
-		// TODO Auto-generated method stub
+		this.getShell().addListener(SWT.Close, new Listener() {
+			
+			@Override
+			public void handleEvent(Event arg0) {
+				dispose();
+				
+			}
+		});
 		
 	}
 	

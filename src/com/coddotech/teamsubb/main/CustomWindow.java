@@ -78,7 +78,7 @@ public abstract class CustomWindow {
 	 * server was unsuccessful if the app cannot establish a a connection to the
 	 * server
 	 */
-	public boolean isConnected(boolean displayMessage) {
+	public static boolean isConnected(boolean displayMessage) {
 		boolean connected = ConnectionManager.isConnected();
 		if (!connected && displayMessage) {
 

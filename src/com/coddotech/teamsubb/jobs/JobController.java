@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.coddotech.teamsubb.jobs.JobWindow;
 import com.coddotech.teamsubb.main.ApplicationInformation;
+import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.AppSettings;
 import com.coddotech.teamsubb.settings.AppSettingsWindow;
 
@@ -137,7 +138,8 @@ public class JobController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			CreateJobWindow creator = new CreateJobWindow(model);
+			CreateJobWindow creator = new CreateJobWindow();
+			creator.getController().setModel(model);
 			model.addObserver(creator);
 			creator.open();
 			
@@ -160,7 +162,7 @@ public class JobController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (view.isConnected(true)) {
+			if (CustomWindow.isConnected(true)) {
 				model.findJobs();
 			}
 
@@ -181,7 +183,7 @@ public class JobController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (view.isConnected(true)) {
+			if (CustomWindow.isConnected(true)) {
 				model.acceptJob(view.getSelectedJobID());
 			}
 
@@ -202,7 +204,7 @@ public class JobController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (view.isConnected(true)) {
+			if (CustomWindow.isConnected(true)) {
 				model.cancelJob(view.getSelectedJobID());
 			}
 
@@ -225,7 +227,7 @@ public class JobController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (view.isConnected(true)) {
+			if (CustomWindow.isConnected(true)) {
 				PushJobWindow push = new PushJobWindow(
 						model.getAcceptedJob(view.getSelectedJobID()));
 				push.getController().setModel(model);
@@ -249,7 +251,7 @@ public class JobController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (view.isConnected(true)) {
+			if (CustomWindow.isConnected(true)) {
 				model.endJob(view.getSelectedJobID());
 			}
 

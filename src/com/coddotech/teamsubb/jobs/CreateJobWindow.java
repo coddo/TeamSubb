@@ -1,8 +1,8 @@
 package com.coddotech.teamsubb.jobs;
 
+import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.regex.Pattern;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 public class CreateJobWindow extends CustomWindow implements Observer {
@@ -45,14 +44,18 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 	private Button create;
 	private Button cancel;
 
-	public CreateJobWindow(JobManager model) {
+	/**
+	 * Class constructor
+	 */
+	public CreateJobWindow() {
 		this.setShell(new Shell(Display.getCurrent(), SWT.SHELL_TRIM));
 
 		this.initializeComponents();
-
-		controller.setModel(model);
 	}
 
+	/**
+	 * Clear the memory from this class and its components
+	 */
 	public void dispose() {
 		controller.dispose();
 
@@ -83,40 +86,97 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 		panel.dispose();
 	}
 
+	/**
+	 * Get the controller used by this class
+	 * 
+	 * @return A CreateJobController instance
+	 */
+	public CreateJobController getController() {
+		return this.controller;
+	}
+
+	/**
+	 * Get the job name entered by the user
+	 * 
+	 * @return A String value
+	 */
 	public String getName() {
 		return this.name.getText();
 	}
 
+	/**
+	 * Get the job type entered by the user
+	 * 
+	 * @return An integer value
+	 */
 	public int getType() {
 		return this.type.getSelectionIndex();
 	}
 
+	/**
+	 * Get the job comments/description entered by the user
+	 * 
+	 * @return A String value
+	 */
 	public String getComments() {
 		return this.comments.getText();
 	}
 
+	/**
+	 * Get the next staff member selected by the user
+	 * 
+	 * @return A String value
+	 */
 	public String getNextStaff() {
 		return this.nextStaff.getText().split(":")[0];
 	}
 
+	/**
+	 * Get the sub file selected by the user
+	 * 
+	 * @return A String value representing the absolute path to the file
+	 */
 	public String getSub() {
 		return this.sub.getText();
 	}
 
+	/**
+	 * Set the sub file to be used
+	 * 
+	 * @param sub
+	 *            The absolute path to the file
+	 */
 	public void setSub(String sub) {
 		this.sub.setText(sub);
 	}
 
+	/**
+	 * Get the font files to be used for the job
+	 * 
+	 * @return A String collection containing the absolute paths to the files
+	 */
 	public String[] getFonts() {
 		return this.fonts.getItems();
 	}
 
+	/**
+	 * Set the font files to be used for the job
+	 * 
+	 * @param fonts
+	 *            A String collection with the absolute paths to the files
+	 */
 	public void setFonts(String[] fonts) {
 		this.fonts.removeAll();
 
 		this.fonts.setItems(fonts);
 	}
 
+	/**
+	 * Checks all the fields containing the job data for arguments that are
+	 * invalid or emprty
+	 * 
+	 * @return A logical value indicating if the fields are ok or not
+	 */
 	public boolean verifFields() {
 		MessageBox message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 		message.setText("Empty fields");
@@ -141,12 +201,23 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 
 		if (empty) {
 			message.open();
+
+			return false;
+		} else if (!new File(this.sub.getText()).exists()) {
+
+			message.setText("Invalid sub file");
+			message.setText("The entered sub file doesn't exist or it is corrupted !");
+			message.open();
+
 			return false;
 		}
 
 		return true;
 	}
 
+	/**
+	 * Deletes all the fonts that are selected in the list
+	 */
 	public void deleteSelectedFonts() {
 		this.fonts.remove(this.fonts.getSelectionIndices());
 	}
@@ -163,6 +234,8 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
 				message.setMessage("The job has been successfully created");
+
+				this.close();
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 				message.setText("Error");
@@ -253,7 +326,7 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 		nextStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false,
 				2, 1));
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF);
-		for (String staff : this.getStaffList())
+		for (String staff : JobManager.getStaffList())
 			nextStaff.add(staff);
 
 		subLabel.setFont(CustomWindow.DEFAULT_FONT);
@@ -317,25 +390,7 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 		browseSubButton.addSelectionListener(controller.browseSubButtonClicked);
 		browseFontsButton
 				.addSelectionListener(controller.browseFontsButtonClicked);
-		
+
 		fonts.addKeyListener(controller.fontsKeyListener);
-	}
-
-	private String[] getStaffList() {
-		if (this.isConnected(false)) {
-			String[] staffData = ConnectionManager.sendStaffRequest().split(
-					JobManager.SEPARATOR_JOBS);
-
-			for (int i = 0; i < staffData.length; i++) {
-				staffData[i] = staffData[i].replaceAll(
-						JobManager.SEPARATOR_FIELDS, " | ");
-				staffData[i] = staffData[i].replaceFirst(Pattern.quote(" |"),
-						":");
-			}
-
-			return staffData;
-		}
-
-		return null;
 	}
 }
