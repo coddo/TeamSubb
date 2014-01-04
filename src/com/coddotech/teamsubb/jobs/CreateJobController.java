@@ -95,7 +95,7 @@ public class CreateJobController {
 						+ files[i];
 			}
 
-			view.setFonts(files);
+			view.appendFonts(files);
 
 		}
 

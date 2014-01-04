@@ -160,15 +160,15 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 	}
 
 	/**
-	 * Set the font files to be used for the job
+	 * Append the font files to be used for the job to the list
 	 * 
 	 * @param fonts
 	 *            A String collection with the absolute paths to the files
 	 */
-	public void setFonts(String[] fonts) {
-		this.fonts.removeAll();
-
-		this.fonts.setItems(fonts);
+	public void appendFonts(String[] fonts) {
+		for(String font : fonts) {
+			this.fonts.add(font);
+		}
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 	public boolean verifFields() {
 		MessageBox message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 		message.setText("Empty fields");
-		message.setMessage("There cannot be any empty fields except the font list!");
+		message.setMessage("There cannot be any empty fields except the font list and comments field!");
 
 		boolean empty = false;
 
@@ -188,9 +188,6 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 			empty = true;
 
 		if (type.getText() == null || type.getText().equals(""))
-			empty = true;
-
-		if (comments.getText() == null || comments.getText().equals(""))
 			empty = true;
 
 		if (nextStaff.getText() == null || nextStaff.getText().equals(""))
@@ -231,7 +228,8 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
-				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION | SWT.APPLICATION_MODAL);
+				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION
+						| SWT.APPLICATION_MODAL);
 				message.setText("Success");
 				message.setMessage("The job has been successfully created");
 
@@ -241,7 +239,7 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 				message.setText("Error");
 				message.setMessage("There was a problem while creating this job");
-				
+
 				message.open();
 			}
 
@@ -273,7 +271,7 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 		browseSubButton = new Button(panel, SWT.PUSH);
 
 		fontsLabel = new Label(panel, SWT.None);
-		fonts = new List(panel, SWT.BORDER | SWT.MULTI);
+		fonts = new List(panel, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 
 		browseFontsButton = new Button(panel, SWT.PUSH);
 
@@ -331,6 +329,7 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF);
 		for (String staff : JobManager.getStaffList())
 			nextStaff.add(staff);
+		nextStaff.select(0);
 
 		subLabel.setFont(CustomWindow.DEFAULT_FONT);
 		subLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));

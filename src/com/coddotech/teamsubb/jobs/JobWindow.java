@@ -287,8 +287,7 @@ public class JobWindow extends CustomWindow implements Observer {
 			if (this.jobBookedBy.getText().equals("-")) {
 				acceptJobMenuItem.setEnabled(true);
 				forceCancelJobMenuItem.setEnabled(false);
-			}
-			else {
+			} else {
 				acceptJobMenuItem.setEnabled(false);
 				forceCancelJobMenuItem.setEnabled(true);
 			}
@@ -328,31 +327,28 @@ public class JobWindow extends CustomWindow implements Observer {
 				else if (job.isAcceptable(this.tempUserJobs))
 					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
 			}
-
-//			if (jobsList.getItemCount() > 0)
-//				jobsList.select(0);
 		}
 			break;
 		case "jobinformation": {
-			if (this.jobsList.getItemCount() > 0) {
-				this.jobType.setText(data[1]);
-				this.jobPreviousStaff.setText(data[2]);
-				this.jobIntendedTo.setText(data[3]);
-				this.jobBookedBy.setText(data[4]);
-				this.jobDescription.setText(data[5]);
+			// if (this.jobsList.getItemCount() > 0) {
+			this.jobType.setText(data[1]);
+			this.jobPreviousStaff.setText(data[2]);
+			this.jobIntendedTo.setText(data[3]);
+			this.jobBookedBy.setText(data[4]);
+			this.jobDescription.setText(data[5]);
 
-				this.jobType.pack();
-				this.jobPreviousStaff.pack();
-				this.jobIntendedTo.pack();
-				this.jobBookedBy.pack();
-			}
+			this.jobType.pack();
+			this.jobPreviousStaff.pack();
+			this.jobIntendedTo.pack();
+			this.jobBookedBy.pack();
+			// }
 		}
 			break;
 		case "end": {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
-				((JobManager) obs).findJobs(this.getSelectedJobID());
+				((JobManager) obs).findJobs();
 
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
@@ -368,7 +364,7 @@ public class JobWindow extends CustomWindow implements Observer {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
-				((JobManager) obs).findJobs(this.getSelectedJobID());
+				((JobManager) obs).findJobs();
 
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
@@ -386,7 +382,7 @@ public class JobWindow extends CustomWindow implements Observer {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
-				((JobManager) obs).findJobs(this.getSelectedJobID());
+				((JobManager) obs).findJobs();
 
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
@@ -398,6 +394,17 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		}
 			break;
+		}
+
+		// notify the model about the GUI update in order to receive the job
+		// information for the first job in the list
+		if (this.jobsList.getItemCount() > 0 && !data[0].equals("jobinformation")) {
+			
+			if (this.getSelectedJobID() == -1)
+				controller.notifyModel(Integer.parseInt(this.jobsList
+						.getItem(0).getData().toString()));
+			else
+				controller.notifyModel(this.getSelectedJobID());
 		}
 	}
 

@@ -154,7 +154,7 @@ public class JobController {
 			model.addObserver(creator);
 			creator.open();
 
-			model.findJobs(view.getSelectedJobID());
+			model.findJobs();
 		}
 
 		@Override
@@ -174,7 +174,7 @@ public class JobController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
-				model.findJobs(view.getSelectedJobID());
+				model.findJobs();
 			}
 
 		}
@@ -244,7 +244,7 @@ public class JobController {
 						view.getSelectedJobID(), view.getUserName())) {
 
 					model.removeJob(view.getSelectedJobID());
-					model.findJobs(view.getSelectedJobID());
+					model.findJobs();
 				}
 			}
 
@@ -274,7 +274,7 @@ public class JobController {
 				model.addObserver(push);
 				push.open();
 
-				model.findJobs(view.getSelectedJobID());
+				model.findJobs();
 			}
 
 		}
@@ -297,7 +297,7 @@ public class JobController {
 			if (CustomWindow.isConnected(true)) {
 				model.endJob(view.getSelectedJobID());
 
-				model.findJobs(view.getSelectedJobID());
+				model.findJobs();
 			}
 
 		}
@@ -416,7 +416,7 @@ public class JobController {
 
 		@Override
 		public void handleEvent(Event arg0) {
-			model.findJobs(view.getSelectedJobID());
+			model.findJobs();
 
 		}
 

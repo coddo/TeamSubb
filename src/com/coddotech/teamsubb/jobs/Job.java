@@ -350,13 +350,22 @@ public final class Job {
 
 	/**
 	 * Set the list of File instances representing the fonts newly added to the
-	 * job
+	 * job. This refreshes the config file in order to keep the added fonts in
+	 * place.
 	 * 
 	 * @param fonts
 	 *            The collection of File instances
 	 */
-	public void setAddedFonts(File[] fonts) {
+	public boolean setAddedFonts(File[] fonts) {
 		this.addedFonts = fonts;
+
+		try {
+			this.generateConfigFile();
+
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
 	}
 
 	/**
@@ -460,7 +469,7 @@ public final class Job {
 				}
 				this.setFonts(fonts);
 			}
-			
+
 			// create the configuration file containing the this data
 			// This is for later use (in case of a this pause)
 			this.generateConfigFile();

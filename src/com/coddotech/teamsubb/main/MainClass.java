@@ -4,6 +4,7 @@ import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.connection.LoginWindow;
 import com.coddotech.teamsubb.jobs.CreateJobWindow;
+import com.coddotech.teamsubb.jobs.FontsWindow;
 import com.coddotech.teamsubb.jobs.Job;
 import com.coddotech.teamsubb.jobs.JobManager;
 import com.coddotech.teamsubb.jobs.JobWindow;
@@ -41,16 +42,16 @@ public class MainClass {
 		// jobs.dispose();
 		// d.dispose();
 
-		// JobManager model = new JobManager("Coddo",
-		// new String[] { "aaa", "bbbb" });
+//		 JobManager model = new JobManager("Coddo",
+//		 new String[] { "aaa", "bbbb" });
+//
+//		 CreateJobWindow c = new CreateJobWindow();
+//		 c.getController().setModel(model);
+//		 model.addObserver(c);
+//		 c.open();
 
-		// CreateJobWindow c = new CreateJobWindow();
-		// c.getController().setModel(model);
-		// model.addObserver(c);
-		// c.open();
-
-		// Job job = new Job();
-		// job.setName("AFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGA");
+//		 Job job = new Job();
+//		 job.setName("AFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGA");
 
 		// PushJobWindow push = new PushJobWindow(job);
 		// push.getController().setModel(model);
@@ -59,6 +60,9 @@ public class MainClass {
 
 		// ApplicationInformation info = new ApplicationInformation();
 		// info.open();
+		
+//		FontsWindow fc = new FontsWindow(job);
+//		fc.open();
 
 		CustomWindow.BOLD_FONT.dispose();
 		CustomWindow.DEFAULT_FONT.dispose();

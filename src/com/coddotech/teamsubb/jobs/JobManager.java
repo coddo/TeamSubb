@@ -220,7 +220,7 @@ public class JobManager extends Observable {
 
 		// after the job is created, start a new search in order to update the
 		// job list
-		this.findJobs(-1);
+		this.findJobs();
 	}
 
 	/**
@@ -264,7 +264,7 @@ public class JobManager extends Observable {
 	 * 
 	 * The messages are: "important", "acceptable" or "normal"
 	 */
-	public void findJobs(int jobID) {
+	public void findJobs() {
 
 		String message = "normal";
 
@@ -317,8 +317,6 @@ public class JobManager extends Observable {
 		// send the according notification to the observers
 		this.setChanged();
 		this.notifyObservers(message);
-
-		this.notifyJobInformation(jobID);
 	}
 
 	/**
@@ -342,7 +340,7 @@ public class JobManager extends Observable {
 					acceptedJobs.add(job);
 					job.setBookedBy("Yourself");
 					
-					this.findJobs(-1);
+					this.findJobs();
 				}
 
 			}

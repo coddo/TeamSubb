@@ -240,6 +240,7 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF);
 		for (String staff : JobManager.getStaffList())
 			nextStaff.add(staff);
+		nextStaff.select(0);
 
 		finish.setFont(CustomWindow.DEFAULT_FONT);
 		finish.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, false, false));
