@@ -168,7 +168,7 @@ public class JobManager extends Observable {
 		// tell the user that the list needs to be refreshed, otherwise, append
 		// the job information to the message
 		if (job == null) {
-			String errmsg = "Error. Refresh job list !";
+			String errmsg = "No job selected";
 			message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
 			message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
 			message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
@@ -220,7 +220,7 @@ public class JobManager extends Observable {
 
 		// after the job is created, start a new search in order to update the
 		// job list
-		this.findJobs();
+		this.findJobs(-1);
 	}
 
 	/**
@@ -264,7 +264,7 @@ public class JobManager extends Observable {
 	 * 
 	 * The messages are: "important", "acceptable" or "normal"
 	 */
-	public void findJobs() {
+	public void findJobs(int jobID) {
 
 		String message = "normal";
 
@@ -317,6 +317,8 @@ public class JobManager extends Observable {
 		// send the according notification to the observers
 		this.setChanged();
 		this.notifyObservers(message);
+
+		this.notifyJobInformation(jobID);
 	}
 
 	/**
@@ -339,6 +341,8 @@ public class JobManager extends Observable {
 					jobs.remove(job);
 					acceptedJobs.add(job);
 					job.setBookedBy("Yourself");
+					
+					this.findJobs(-1);
 				}
 
 			}
@@ -412,7 +416,8 @@ public class JobManager extends Observable {
 	 * @param jobID
 	 *            The ID of the job to be sent back to the server
 	 */
-	public boolean pushJob(int jobID, String nextStaff, int type, String comments) {
+	public boolean pushJob(int jobID, String nextStaff, int type,
+			String comments) {
 		boolean response = false;
 
 		for (int i = 0; i < acceptedJobs.size(); i++) {
@@ -437,7 +442,7 @@ public class JobManager extends Observable {
 		// notify all the observers about the change
 		this.setChanged();
 		notifyObservers("push" + CustomWindow.NOTIFICATION_SEPARATOR + response);
-		
+
 		return response;
 	}
 
@@ -500,7 +505,7 @@ public class JobManager extends Observable {
 
 		String name = split[split.length - 1];
 
-		return name + "=" + data;
+		return name + JobManager.SEPARATOR_FIELDS + data;
 	}
 
 	/**
@@ -548,14 +553,22 @@ public class JobManager extends Observable {
 				File jobFolder = new File(
 						JobManager.WORKING_DIRECTORY.getAbsolutePath()
 								+ File.separator + jobDir);
+
 				try {
 
-					// read the data from the file and place it in the entity
-					Job job = new Job();
-					job.readConfigFile(jobFolder);
+					if (jobFolder.isDirectory()) {
+						if (jobFolder.list().length == 0)
+							jobFolder.delete();
+						else {
+							// read the data from the file and place it in the
+							// entity
+							Job job = new Job();
+							job.readConfigFile(jobFolder);
 
-					// add the Job entity to the "accepted list"
-					acceptedJobs.add(job);
+							// add the Job entity to the "accepted list"
+							acceptedJobs.add(job);
+						}
+					}
 
 				} catch (Exception ex) {
 					// TODO - warn the user about loading errors

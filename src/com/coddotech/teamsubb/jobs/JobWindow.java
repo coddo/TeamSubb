@@ -278,17 +278,20 @@ public class JobWindow extends CustomWindow implements Observer {
 			configureFontssMenuItem.setEnabled(true);
 			openJobDirectoryMenuItem.setEnabled(true);
 		} else {
-			acceptJobMenuItem.setEnabled(true);
 			cancelJobMenuItem.setEnabled(false);
 			finishJobMenuItem.setEnabled(false);
 			endJobMenuItem.setEnabled(true);
 			configureFontssMenuItem.setEnabled(false);
 			openJobDirectoryMenuItem.setEnabled(false);
 
-			if (this.jobBookedBy.getText().equals("-"))
+			if (this.jobBookedBy.getText().equals("-")) {
+				acceptJobMenuItem.setEnabled(true);
 				forceCancelJobMenuItem.setEnabled(false);
-			else
+			}
+			else {
+				acceptJobMenuItem.setEnabled(false);
 				forceCancelJobMenuItem.setEnabled(true);
+			}
 		}
 	}
 
@@ -349,7 +352,7 @@ public class JobWindow extends CustomWindow implements Observer {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
-				((JobManager) obs).findJobs();
+				((JobManager) obs).findJobs(this.getSelectedJobID());
 
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
@@ -365,7 +368,7 @@ public class JobWindow extends CustomWindow implements Observer {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
-				((JobManager) obs).findJobs();
+				((JobManager) obs).findJobs(this.getSelectedJobID());
 
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
@@ -383,7 +386,7 @@ public class JobWindow extends CustomWindow implements Observer {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
-				((JobManager) obs).findJobs();
+				((JobManager) obs).findJobs(this.getSelectedJobID());
 
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);

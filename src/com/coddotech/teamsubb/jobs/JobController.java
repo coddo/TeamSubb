@@ -62,6 +62,16 @@ public class JobController {
 	}
 
 	/**
+	 * Tell the model to resend the job information to the views
+	 * 
+	 * @param jobID
+	 *            The ID of the job to be sent
+	 */
+	public void notifyModel(int jobID) {
+		this.model.notifyJobInformation(jobID);
+	}
+
+	/**
 	 * Set the settings model to be used by this controller
 	 * 
 	 * @param settings
@@ -144,7 +154,7 @@ public class JobController {
 			model.addObserver(creator);
 			creator.open();
 
-			model.findJobs();
+			model.findJobs(view.getSelectedJobID());
 		}
 
 		@Override
@@ -164,8 +174,7 @@ public class JobController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
-				model.findJobs();
-				model.notifyJobInformation(view.getSelectedJobID());
+				model.findJobs(view.getSelectedJobID());
 			}
 
 		}
@@ -187,7 +196,6 @@ public class JobController {
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
 				model.acceptJob(view.getSelectedJobID());
-				model.notifyJobInformation(view.getSelectedJobID());
 			}
 
 		}
@@ -236,8 +244,7 @@ public class JobController {
 						view.getSelectedJobID(), view.getUserName())) {
 
 					model.removeJob(view.getSelectedJobID());
-					model.findJobs();
-					model.notifyJobInformation(view.getSelectedJobID());
+					model.findJobs(view.getSelectedJobID());
 				}
 			}
 
@@ -266,9 +273,8 @@ public class JobController {
 				push.getController().setModel(model);
 				model.addObserver(push);
 				push.open();
-				
-				model.findJobs();
-				model.notifyJobInformation(view.getSelectedJobID());
+
+				model.findJobs(view.getSelectedJobID());
 			}
 
 		}
@@ -290,9 +296,8 @@ public class JobController {
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
 				model.endJob(view.getSelectedJobID());
-				
-				model.findJobs();
-				model.notifyJobInformation(view.getSelectedJobID());
+
+				model.findJobs(view.getSelectedJobID());
 			}
 
 		}
@@ -411,8 +416,7 @@ public class JobController {
 
 		@Override
 		public void handleEvent(Event arg0) {
-			model.findJobs();
-			model.notifyJobInformation(view.getSelectedJobID());
+			model.findJobs(view.getSelectedJobID());
 
 		}
 

@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpResponse;
@@ -19,6 +22,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 
 import com.coddotech.teamsubb.jobs.Job;
+import com.coddotech.teamsubb.jobs.JobManager;
 
 /**
  * This class is used for bridging the connection between the server and the
@@ -211,8 +215,10 @@ public final class ConnectionManager {
 	 * Send a request to the server in order to forcibly cancel a job, without
 	 * sending its data back to the server
 	 * 
-	 * @param jobID The ID of the job to be canceled
-	 * @param user The name of the user who cancels the job
+	 * @param jobID
+	 *            The ID of the job to be canceled
+	 * @param user
+	 *            The name of the user who cancels the job
 	 * @return A Logical value telling the user if the request was accepted or
 	 *         not by the server
 	 */
@@ -331,12 +337,17 @@ public final class ConnectionManager {
 	 */
 	public static File downloadFile(String fileData, String dir)
 			throws Exception {
-		String[] nameURLContainer = fileData.split("=");
+		String[] nameURLContainer = fileData.split(Pattern
+				.quote(JobManager.SEPARATOR_FIELDS));
 
 		File file = new File(dir + File.separator + nameURLContainer[0]);
-		URL fileURL = new URL(nameURLContainer[1]);
+		// URL fileURL = new URL(URLEncoder.encode(nameURLContainer[1],
+		// "UTF-8"));
 
-		FileUtils.copyURLToFile(fileURL, file);
+		URI uri = new URI("http", "anime4fun.ro",
+				nameURLContainer[1].split(Pattern.quote("anime4fun.ro"))[1],
+				null);
+		FileUtils.copyURLToFile(uri.toURL(), file);
 
 		return file;
 	}

@@ -4,8 +4,6 @@
 #*.jar
 *.war
 *.ear
+*.db
 bin/
 Jobs/
-resources/attention.png
-resources/idle.png
-resources/loading.gif

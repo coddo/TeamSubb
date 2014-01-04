@@ -112,7 +112,7 @@ public class GadgetController {
 		public void run() {
 			if (!disposed) {
 				if (CustomWindow.isConnected(false))
-					jobs.findJobs();
+					jobs.findJobs(-1);
 
 				Display.getCurrent().timerExec(searchInterval, this);
 			}

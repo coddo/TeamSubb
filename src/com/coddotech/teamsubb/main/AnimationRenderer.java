@@ -1,8 +1,10 @@
 package com.coddotech.teamsubb.main;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.regex.Pattern;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -150,7 +152,7 @@ public class AnimationRenderer extends Observable implements Observer {
 		// update is done only by the job manager in order to know what type of
 		// animation needs to be done
 		if (obj instanceof String) {
-			
+
 			switch (obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR)[1]) {
 			case "normal": {
 				this.setAnimationType(TYPE_IDLE);
@@ -200,22 +202,37 @@ public class AnimationRenderer extends Observable implements Observer {
 		File lowFolder = new File(AnimationRenderer.DIR_LOW);
 		File highFolder = new File(AnimationRenderer.DIR_HIGH);
 
-		idle = new Image[idleFolder.list().length];
-		lowPriority = new Image[lowFolder.list().length];
-		highPriority = new Image[highFolder.list().length];
+		FilenameFilter filter = new FilenameFilter() {
+
+			@Override
+			public boolean accept(File path, String file) {
+
+				if (file.split(Pattern.quote("."))[1].equals("png"))
+					return true;
+				else
+					return false;
+			}
+		};
+
+		idle = new Image[idleFolder.list(filter).length];
+		lowPriority = new Image[lowFolder.list(filter).length];
+		highPriority = new Image[highFolder.list(filter).length];
 
 		// idle image sequence
 		int k = 0;
-		for (String img : idleFolder.list()) {
+		for (String img : idleFolder.list(filter)) {
 
 			idle[k] = resizeImage(new Image(Display.getCurrent(),
 					AnimationRenderer.DIR_IDLE + File.separator + img), 113,
 					113);
+
+			k++;
 		}
 
 		// low priority image sequence
 		k = 0;
-		for (String img : lowFolder.list()) {
+		for (String img : lowFolder.list(filter)) {
+
 			lowPriority[k] = resizeImage(new Image(Display.getCurrent(),
 					AnimationRenderer.DIR_LOW + File.separator + img), 113, 113);
 			k++;
@@ -223,7 +240,8 @@ public class AnimationRenderer extends Observable implements Observer {
 
 		// high priority image sequence
 		k = 0;
-		for (String img : highFolder.list()) {
+		for (String img : highFolder.list(filter)) {
+
 			highPriority[k] = resizeImage(new Image(Display.getCurrent(),
 					AnimationRenderer.DIR_HIGH + File.separator + img), 113,
 					113);
