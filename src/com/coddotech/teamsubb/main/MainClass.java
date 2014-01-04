@@ -60,6 +60,7 @@ public class MainClass {
 		// ApplicationInformation info = new ApplicationInformation();
 		// info.open();
 
+		CustomWindow.BOLD_FONT.dispose();
 		CustomWindow.DEFAULT_FONT.dispose();
 		Display.getCurrent().dispose();
 	}

@@ -4,7 +4,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -19,9 +18,6 @@ import org.eclipse.swt.widgets.Text;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 public class PushJobWindow extends CustomWindow implements Observer {
-
-	private static final Font FONT = new Font(Display.getCurrent(), "Calibri",
-			12, SWT.BOLD);
 
 	private Job job;
 
@@ -78,8 +74,6 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		cancel.dispose();
 
 		panel.dispose();
-
-		FONT.dispose();
 	}
 
 	/**
@@ -165,8 +159,6 @@ public class PushJobWindow extends CustomWindow implements Observer {
 				message.setText("Success");
 				message.setMessage("The job has been successfully sent back to the server !");
 				message.open();
-
-				this.close();
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ERROR);
 				message.setText("Error");
@@ -207,7 +199,7 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		panel.pack();
 
-		nameLabel.setFont(PushJobWindow.FONT);
+		nameLabel.setFont(CustomWindow.BOLD_FONT);
 		nameLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		nameLabel.setText("Job name:");
 		nameLabel.pack();
@@ -216,7 +208,7 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		name.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		name.setText(this.job.getName());
 
-		typeLabel.setFont(PushJobWindow.FONT);
+		typeLabel.setFont(CustomWindow.BOLD_FONT);
 		typeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		typeLabel.setText("Job type:");
 		typeLabel.pack();
@@ -226,7 +218,7 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		for (String jobType : Job.DEFAULT_JOB_TYPES)
 			type.add(jobType);
 
-		commentsLabel.setFont(PushJobWindow.FONT);
+		commentsLabel.setFont(CustomWindow.BOLD_FONT);
 		commentsLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false));
 		commentsLabel.setText("Comments:");
@@ -236,7 +228,7 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		comments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2,
 				1));
 
-		nextStaffLabel.setFont(PushJobWindow.FONT);
+		nextStaffLabel.setFont(CustomWindow.BOLD_FONT);
 		nextStaffLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false));
 		nextStaffLabel.setText("Next staff member:");

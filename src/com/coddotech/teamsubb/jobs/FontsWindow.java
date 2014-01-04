@@ -11,7 +11,7 @@ public class FontsWindow extends CustomWindow{
 	private FontsController controller;
 	
 	public FontsWindow(Job job) {
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL));
+		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM));
 		
 		this.initializeComponents();
 		

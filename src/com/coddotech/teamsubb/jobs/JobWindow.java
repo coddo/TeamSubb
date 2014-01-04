@@ -280,11 +280,15 @@ public class JobWindow extends CustomWindow implements Observer {
 		} else {
 			acceptJobMenuItem.setEnabled(true);
 			cancelJobMenuItem.setEnabled(false);
-			forceCancelJobMenuItem.setEnabled(true);
 			finishJobMenuItem.setEnabled(false);
 			endJobMenuItem.setEnabled(true);
 			configureFontssMenuItem.setEnabled(false);
 			openJobDirectoryMenuItem.setEnabled(false);
+
+			if (this.jobBookedBy.getText().equals("-"))
+				forceCancelJobMenuItem.setEnabled(false);
+			else
+				forceCancelJobMenuItem.setEnabled(true);
 		}
 	}
 
@@ -322,21 +326,23 @@ public class JobWindow extends CustomWindow implements Observer {
 					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
 			}
 
-			if (jobsList.getItemCount() > 0)
-				jobsList.select(0);
+//			if (jobsList.getItemCount() > 0)
+//				jobsList.select(0);
 		}
 			break;
 		case "jobinformation": {
-			this.jobType.setText(data[1]);
-			this.jobPreviousStaff.setText(data[2]);
-			this.jobIntendedTo.setText(data[3]);
-			this.jobBookedBy.setText(data[4]);
-			this.jobDescription.setText(data[5]);
+			if (this.jobsList.getItemCount() > 0) {
+				this.jobType.setText(data[1]);
+				this.jobPreviousStaff.setText(data[2]);
+				this.jobIntendedTo.setText(data[3]);
+				this.jobBookedBy.setText(data[4]);
+				this.jobDescription.setText(data[5]);
 
-			this.jobType.pack();
-			this.jobPreviousStaff.pack();
-			this.jobIntendedTo.pack();
-			this.jobBookedBy.pack();
+				this.jobType.pack();
+				this.jobPreviousStaff.pack();
+				this.jobIntendedTo.pack();
+				this.jobBookedBy.pack();
+			}
 		}
 			break;
 		case "end": {
@@ -345,14 +351,11 @@ public class JobWindow extends CustomWindow implements Observer {
 			if (Boolean.parseBoolean(data[1])) {
 				((JobManager) obs).findJobs();
 
-//				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
-//				message.setText("Success");
-//				message.setMessage("The job has been successfully ended");
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 				message.setText("Error");
 				message.setMessage("There was an error while ending the job");
-				
+
 				message.open();
 			}
 
@@ -382,35 +385,14 @@ public class JobWindow extends CustomWindow implements Observer {
 			if (Boolean.parseBoolean(data[1])) {
 				((JobManager) obs).findJobs();
 
-//				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
-//				message.setText("Success");
-//				message.setMessage("The job has been successfully canceled");
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 				message.setText("Error");
 				message.setMessage("There was an error while cancelling the job");
-				
+
 				message.open();
 			}
 
-		}
-			break;
-		case "push": {
-			MessageBox message;
-
-			if (Boolean.parseBoolean(data[1])) {
-				((JobManager) obs).findJobs();
-
-				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
-				message.setText("Success");
-				message.setMessage("The job has been successfully pushed back to the server");
-			} else {
-				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-				message.setText("Error");
-				message.setMessage("There was an error while pushing the job back to the server");
-			}
-
-			message.open();
 		}
 			break;
 		}
@@ -672,7 +654,8 @@ public class JobWindow extends CustomWindow implements Observer {
 				.addSelectionListener(controller.refreshJobListClicked);
 		acceptJobMenuItem.addSelectionListener(controller.acceptJobClicked);
 		cancelJobMenuItem.addSelectionListener(controller.cancelJobClicked);
-		forceCancelJobMenuItem.addSelectionListener(controller.forceCancelJobCLicked);
+		forceCancelJobMenuItem
+				.addSelectionListener(controller.forceCancelJobCLicked);
 		finishJobMenuItem.addSelectionListener(controller.finishJobClicked);
 		endJobMenuItem.addSelectionListener(controller.endJobClicked);
 		openJobDirectoryMenuItem

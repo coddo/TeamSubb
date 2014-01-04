@@ -14,6 +14,8 @@ public abstract class CustomWindow {
 
 	public static final String NOTIFICATION_SEPARATOR = "#@&!#&@!";
 	public static final Font DEFAULT_FONT = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
+	public static final Font BOLD_FONT = new Font(Display.getCurrent(), "Calibri",
+			12, SWT.BOLD);
 
 	private Shell shell;
 

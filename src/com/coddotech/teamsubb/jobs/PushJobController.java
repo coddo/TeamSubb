@@ -50,9 +50,19 @@ public class PushJobController {
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
 
-				if (view.verifyFields())
-					model.pushJob(view.getID(), view.getNextStaff(),
+				if (view.verifyFields()) {
+					boolean result = model.pushJob(view.getID(), view.getNextStaff(),
 							view.getType(), view.getComments());
+					
+					if(result) {
+						//if the job was marked as "end", then send an end request too
+						if(view.getType() == Job.DEFAULT_JOB_TYPES.length - 1)
+							model.endJob(view.getID());
+						
+						view.close();
+					}
+						
+				}
 			}
 		}
 

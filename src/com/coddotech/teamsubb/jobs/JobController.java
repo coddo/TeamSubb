@@ -165,6 +165,7 @@ public class JobController {
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
 				model.findJobs();
+				model.notifyJobInformation(view.getSelectedJobID());
 			}
 
 		}
@@ -186,6 +187,7 @@ public class JobController {
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
 				model.acceptJob(view.getSelectedJobID());
+				model.notifyJobInformation(view.getSelectedJobID());
 			}
 
 		}
@@ -207,6 +209,7 @@ public class JobController {
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
 				model.cancelJob(view.getSelectedJobID());
+				model.notifyJobInformation(view.getSelectedJobID());
 			}
 
 		}
@@ -234,6 +237,7 @@ public class JobController {
 
 					model.removeJob(view.getSelectedJobID());
 					model.findJobs();
+					model.notifyJobInformation(view.getSelectedJobID());
 				}
 			}
 
@@ -260,7 +264,11 @@ public class JobController {
 				PushJobWindow push = new PushJobWindow(
 						model.getAcceptedJob(view.getSelectedJobID()));
 				push.getController().setModel(model);
+				model.addObserver(push);
 				push.open();
+				
+				model.findJobs();
+				model.notifyJobInformation(view.getSelectedJobID());
 			}
 
 		}
@@ -282,6 +290,9 @@ public class JobController {
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
 				model.endJob(view.getSelectedJobID());
+				
+				model.findJobs();
+				model.notifyJobInformation(view.getSelectedJobID());
 			}
 
 		}
@@ -401,6 +412,7 @@ public class JobController {
 		@Override
 		public void handleEvent(Event arg0) {
 			model.findJobs();
+			model.notifyJobInformation(view.getSelectedJobID());
 
 		}
 

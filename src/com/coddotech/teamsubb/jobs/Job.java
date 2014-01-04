@@ -70,21 +70,6 @@ public final class Job {
 		this.directoryPath = null;
 		this.subFileData = null;
 		this.fontsData = null;
-
-		// delete files
-		try {
-			if (subFile.exists())
-				this.subFile.delete();
-
-			for (File file : this.fonts) {
-				if (file.exists())
-					file.delete();
-			}
-		} catch (Exception ex) {
-		}
-
-		this.subFile = null;
-		this.fonts = null;
 	}
 
 	/**

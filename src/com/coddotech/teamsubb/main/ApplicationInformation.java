@@ -1,7 +1,10 @@
 package com.coddotech.teamsubb.main;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -44,7 +47,7 @@ public class ApplicationInformation extends CustomWindow {
 		applicationName = new Label(this.getShell(), SWT.None);
 		type = new Label(this.getShell(), SWT.None);
 		server = new Label(this.getShell(), SWT.None);
-		serverLink = new Link(this.getShell(), SWT.None);
+		serverLink = new Link(this.getShell(), SWT.Selection);
 		author = new Label(this.getShell(), SWT.None);
 		copyWright = new Label(this.getShell(), SWT.None);
 		
@@ -67,11 +70,6 @@ public class ApplicationInformation extends CustomWindow {
 		server.setText("Server: ");
 		server.pack();
 		
-		serverLink.setFont(CustomWindow.DEFAULT_FONT);
-		serverLink.setLocation(60, 70);
-		serverLink.setText("www.anime4fun.ro");
-		serverLink.pack();
-		
 		author.setFont(CustomWindow.DEFAULT_FONT);
 		author.setLocation(10, 100);
 		author.setText("Author: Coddo");
@@ -81,6 +79,26 @@ public class ApplicationInformation extends CustomWindow {
 		copyWright.setLocation(10, 130);
 		copyWright.setText("Copywright: © CoddoTechnologies 2014");
 		copyWright.pack();
+		
+		serverLink.setFont(CustomWindow.DEFAULT_FONT);
+		serverLink.setLocation(60, 70);
+		serverLink.setText("<a>www.anime4fun.ro</a>");
+		serverLink.pack();
+		
+		serverLink.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				Program.launch("www.anime4fun.ro");
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 
 	@Override

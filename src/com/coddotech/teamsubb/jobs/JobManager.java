@@ -412,7 +412,7 @@ public class JobManager extends Observable {
 	 * @param jobID
 	 *            The ID of the job to be sent back to the server
 	 */
-	public void pushJob(int jobID, String nextStaff, int type, String comments) {
+	public boolean pushJob(int jobID, String nextStaff, int type, String comments) {
 		boolean response = false;
 
 		for (int i = 0; i < acceptedJobs.size(); i++) {
@@ -437,6 +437,8 @@ public class JobManager extends Observable {
 		// notify all the observers about the change
 		this.setChanged();
 		notifyObservers("push" + CustomWindow.NOTIFICATION_SEPARATOR + response);
+		
+		return response;
 	}
 
 	/**
