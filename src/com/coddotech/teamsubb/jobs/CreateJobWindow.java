@@ -231,18 +231,20 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
-				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
+				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION | SWT.APPLICATION_MODAL);
 				message.setText("Success");
 				message.setMessage("The job has been successfully created");
 
+				message.open();
 				this.close();
 			} else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 				message.setText("Error");
 				message.setMessage("There was a problem while creating this job");
+				
+				message.open();
 			}
 
-			message.open();
 		}
 
 	}
@@ -305,11 +307,12 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 		type.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		for (String jobType : Job.DEFAULT_JOB_TYPES)
 			type.add(jobType);
+		type.remove(type.getItemCount() - 1); // remove last item ("end" type)
 
 		commentsLabel.setFont(CustomWindow.DEFAULT_FONT);
 		commentsLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false));
-		commentsLabel.setText("Job description/comments: ");
+		commentsLabel.setText("Comments: ");
 		commentsLabel.pack();
 
 		comments.setFont(CustomWindow.DEFAULT_FONT);

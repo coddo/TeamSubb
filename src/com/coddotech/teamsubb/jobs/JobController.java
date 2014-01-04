@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.jobs.JobWindow;
 import com.coddotech.teamsubb.main.ApplicationInformation;
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -118,7 +119,7 @@ public class JobController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			for(Shell shell : Display.getCurrent().getShells())
+			for (Shell shell : Display.getCurrent().getShells())
 				shell.close();
 
 		}
@@ -142,7 +143,7 @@ public class JobController {
 			creator.getController().setModel(model);
 			model.addObserver(creator);
 			creator.open();
-			
+
 			model.findJobs();
 		}
 
@@ -206,6 +207,34 @@ public class JobController {
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
 				model.cancelJob(view.getSelectedJobID());
+			}
+
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
+	/**
+	 * Listener for when the force cancel job button is clicked from the actions
+	 * menu. This forcibly cancels a job without sending the job data back to
+	 * the server.
+	 */
+	public SelectionListener forceCancelJobCLicked = new SelectionListener() {
+
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			if (CustomWindow.isConnected(true)) {
+
+				if (ConnectionManager.sendJobForceCancelRequest(
+						view.getSelectedJobID(), view.getUserName())) {
+
+					model.removeJob(view.getSelectedJobID());
+					model.findJobs();
+				}
 			}
 
 		}

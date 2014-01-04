@@ -52,7 +52,7 @@ public class PushJobController {
 
 				if (view.verifyFields())
 					model.pushJob(view.getID(), view.getNextStaff(),
-							view.getType());
+							view.getType(), view.getComments());
 			}
 		}
 

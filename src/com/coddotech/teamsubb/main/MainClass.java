@@ -13,9 +13,9 @@ public class MainClass {
 
 	public static void main(String[] args) {
 		// display the login window as a dialog
-		 LoginWindow login = new LoginWindow();
-		 login.open();
-		 login = null;
+		LoginWindow login = new LoginWindow();
+		login.open();
+		login = null;
 
 		// AppSettingsWindow settings = new AppSettingsWindow();
 		// settings.open();
@@ -51,14 +51,14 @@ public class MainClass {
 
 		// Job job = new Job();
 		// job.setName("AFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGAAFUHASGIOHASGA");
-		//
+
 		// PushJobWindow push = new PushJobWindow(job);
 		// push.getController().setModel(model);
 		// model.addObserver(push);
 		// push.open();
-		
-//		ApplicationInformation info = new ApplicationInformation();
-//		info.open();
+
+		// ApplicationInformation info = new ApplicationInformation();
+		// info.open();
 
 		CustomWindow.DEFAULT_FONT.dispose();
 		Display.getCurrent().dispose();

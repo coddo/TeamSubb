@@ -200,14 +200,31 @@ public final class ConnectionManager {
 	 *            The Job entity representing the job to be canceled
 	 * @param user
 	 *            The name of the user that cancels the job
-	 * @param showMessageOnError
-	 *            A logical value telling the method whether to display an error
-	 *            message in case the connection to the server fails
 	 * @return A Logical value telling the user if the request was accepted or
 	 *         not by the server
 	 */
 	public static boolean sendJobCancelRequest(Job job, String user) {
 		return ConnectionManager.sendJobPushRequest(job, user, true);
+	}
+
+	/**
+	 * Send a request to the server in order to forcibly cancel a job, without
+	 * sending its data back to the server
+	 * 
+	 * @param jobID The ID of the job to be canceled
+	 * @param user The name of the user who cancels the job
+	 * @return A Logical value telling the user if the request was accepted or
+	 *         not by the server
+	 */
+	public static boolean sendJobForceCancelRequest(int jobID, String user) {
+		String[] headers = new String[] { "push", "staff", "jobid" };
+		String[] messages = new String[] { "force", user,
+				Integer.toString(jobID) };
+
+		String response = ConnectionManager.sendMessage(
+				ConnectionManager.URL_JOBS, headers, messages);
+
+		return Boolean.parseBoolean(response);
 	}
 
 	/**
@@ -252,7 +269,7 @@ public final class ConnectionManager {
 
 			for (int i = 1; i < files.length; i++) {// create fonts collection
 				fileHeaders[i] = "font" + i;
-				files[i] = job.getFonts()[i - 1].getAbsolutePath();
+				files[i] = job.getAddedFonts()[i - 1].getAbsolutePath();
 			}
 
 		} else {
@@ -316,7 +333,7 @@ public final class ConnectionManager {
 			throws Exception {
 		String[] nameURLContainer = fileData.split("=");
 
-		File file = new File(dir + "\\" + nameURLContainer[0]);
+		File file = new File(dir + File.separator + nameURLContainer[0]);
 		URL fileURL = new URL(nameURLContainer[1]);
 
 		FileUtils.copyURLToFile(fileURL, file);

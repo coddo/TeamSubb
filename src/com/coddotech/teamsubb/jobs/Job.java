@@ -21,10 +21,11 @@ import com.coddotech.teamsubb.connection.ConnectionManager;
 public final class Job {
 
 	public static final String[] DEFAULT_JOB_TYPES = { "Traducere",
-			"Verificare", "Encode", "Typeset" };
+			"Verificare", "Encode", "Typeset", "end" };
 	public static final String DEFAULT_NEXT_STAFF = "anyone";
 
-	private static final String CONFIG_FILE_NAME = "\\config.cfg";
+	private static final String CONFIG_FILE_NAME = File.separator
+			+ "config.cfg";
 
 	private int id;
 	private String name;
@@ -465,14 +466,16 @@ public final class Job {
 					this.directoryPath));
 
 			// font files (download + add to the Job entity)
-			File[] fonts = new File[this.fontsData.length];
+			if (fontsData != null) {
+				File[] fonts = new File[this.fontsData.length];
 
-			for (int i = 0; i < fonts.length; i++) {
-				fonts[i] = ConnectionManager.downloadFile(this.fontsData[i],
-						this.directoryPath);
+				for (int i = 0; i < fonts.length; i++) {
+					fonts[i] = ConnectionManager.downloadFile(
+							this.fontsData[i], this.directoryPath);
+				}
+				this.setFonts(fonts);
 			}
-			this.setFonts(fonts);
-
+			
 			// create the configuration file containing the this data
 			// This is for later use (in case of a this pause)
 			this.generateConfigFile();
@@ -565,8 +568,9 @@ public final class Job {
 		this.setName(reader.readLine());
 		this.setType(Integer.parseInt(reader.readLine()));
 		this.setDescription(reader.readLine());
+		this.setCurrentStaffMember(reader.readLine());
 		this.setPreviousStaffMember(reader.readLine());
-		this.setNextStaffMember(reader.readLine());
+		this.setIntendedTo(reader.readLine());
 		this.setStartDate(reader.readLine());
 		this.setDirectoryPath(reader.readLine());
 		this.setSubFile(new File(reader.readLine()));
@@ -580,6 +584,8 @@ public final class Job {
 			this.addedFonts = fonts;
 		} else
 			this.addedFonts = null;
+
+		this.bookedBy = "Yourself";
 
 		// close the reader
 		reader.close();
@@ -610,7 +616,7 @@ public final class Job {
 		writer.write(this.description + "\n");
 		writer.write(this.currentStaffMember + "\n");
 		writer.write(this.previousStaffMember + "\n");
-		writer.write(this.nextStaffMember + "\n");
+		writer.write(this.intendedTo + "\n");
 		writer.write(this.startDate + "\n");
 		writer.write(this.directoryPath + "\n");
 		writer.write(this.subFile.getAbsolutePath() + "\n");

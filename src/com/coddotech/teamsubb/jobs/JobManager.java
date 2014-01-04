@@ -1,10 +1,13 @@
 package com.coddotech.teamsubb.jobs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.FileUtils;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -151,7 +154,7 @@ public class JobManager extends Observable {
 
 		// if not found, search for it in the accepted jobs list
 		if (job == null) {
-			for (int i = 0; i < jobs.size(); i++) {
+			for (int i = 0; i < acceptedJobs.size(); i++) {
 				if (acceptedJobs.get(i).getID() == jobID) {
 					job = acceptedJobs.get(i);
 					break;
@@ -165,13 +168,12 @@ public class JobManager extends Observable {
 		// tell the user that the list needs to be refreshed, otherwise, append
 		// the job information to the message
 		if (job == null) {
-			message += "Error. Refresh job list !"
-					+ CustomWindow.NOTIFICATION_SEPARATOR;
-			message += "Error. Refresh job list !"
-					+ CustomWindow.NOTIFICATION_SEPARATOR;
-			message += "Error. Refresh job list !"
-					+ CustomWindow.NOTIFICATION_SEPARATOR;
-			message += "Error. Refresh job list !";
+			String errmsg = "Error. Refresh job list !";
+			message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += errmsg;
 		} else {
 			message += Job.DEFAULT_JOB_TYPES[job.getType()]
 					+ CustomWindow.NOTIFICATION_SEPARATOR;
@@ -179,7 +181,8 @@ public class JobManager extends Observable {
 					+ CustomWindow.NOTIFICATION_SEPARATOR;
 			message += job.getIntendedTo()
 					+ CustomWindow.NOTIFICATION_SEPARATOR;
-			message += job.getBookedBy();
+			message += job.getBookedBy() + CustomWindow.NOTIFICATION_SEPARATOR;
+			message += job.getDescription();
 		}
 
 		notifyObservers(message);
@@ -237,10 +240,14 @@ public class JobManager extends Observable {
 				this.userName);
 
 		if (response) {
-			for (Job job : jobs) {
-				if (job.getID() == jobID)
-					jobs.remove(job);
+			for (int i = 0; i < jobs.size(); i++) {
+				if (jobs.get(i).getID() == jobID) {
+					jobs.get(i).dispose();
+					jobs.remove(i);
+				}
 			}
+
+			this.removeJob(jobID);
 		}
 
 		// notify all the observers about the change
@@ -267,7 +274,8 @@ public class JobManager extends Observable {
 		// send the jobs request to the server
 		String response = ConnectionManager.sendJobSearchRequest(this.userName);
 
-		if (!response.equals("error") && !response.equals("false")) {
+		if (!response.equals("error") && !response.equals("false")
+				&& !response.equals("")) {
 			// in case everything is ok, start processing the response that was
 			// received from the server
 			String[] jobFragments = response.split(JobManager.SEPARATOR_JOBS);
@@ -321,7 +329,8 @@ public class JobManager extends Observable {
 	public void acceptJob(int jobID) {
 		boolean response = false;
 
-		for (Job job : jobs) {
+		for (int i = 0; i < jobs.size(); i++) {
+			Job job = jobs.get(i);
 
 			if (job.getID() == jobID) {
 				response = job.accept();
@@ -351,12 +360,15 @@ public class JobManager extends Observable {
 	 */
 	public void cancelJob(int jobID) {
 		boolean response = false;
-		for (Job job : acceptedJobs) {
+
+		for (int i = 0; i < acceptedJobs.size(); i++) {
+			Job job = acceptedJobs.get(i);
 
 			if (job.getID() == jobID) {
 				response = job.cancel();
 
 				if (response) {
+					job.dispose();
 					acceptedJobs.remove(job);
 				}
 
@@ -370,6 +382,28 @@ public class JobManager extends Observable {
 	}
 
 	/**
+	 * Removes the directory and all the files for a job.
+	 * 
+	 * @param jobID
+	 *            The ID of the job (integer value)
+	 */
+	public void removeJob(int jobID) {
+		for (int i = 0; i < acceptedJobs.size(); i++) {
+			if (acceptedJobs.get(i).getID() == jobID) {
+
+				try {
+					FileUtils.deleteDirectory(acceptedJobs.get(i)
+							.getDirectoryInstance());
+				} catch (IOException e) {
+				}
+
+				acceptedJobs.get(i).dispose();
+				acceptedJobs.remove(i);
+			}
+		}
+	}
+
+	/**
 	 * Send all the data that has been worked on for a certains job to the
 	 * server.<br>
 	 * This notifies the observers with the response that has been received from
@@ -378,18 +412,22 @@ public class JobManager extends Observable {
 	 * @param jobID
 	 *            The ID of the job to be sent back to the server
 	 */
-	public void pushJob(int jobID, String nextStaff, int type) {
+	public void pushJob(int jobID, String nextStaff, int type, String comments) {
 		boolean response = false;
-		for (Job job : acceptedJobs) {
+
+		for (int i = 0; i < acceptedJobs.size(); i++) {
+			Job job = acceptedJobs.get(i);
 
 			if (job.getID() == jobID) {
 
 				job.setType(type);
 				job.setNextStaffMember(nextStaff);
+				job.setDescription(comments);
 
 				response = job.push();
 
 				if (response) {
+					job.dispose();
 					acceptedJobs.remove(job);
 				}
 
@@ -441,18 +479,26 @@ public class JobManager extends Observable {
 		job.setCurrentStaffMember(this.userName);
 
 		// sub file
-		job.setSubFileData(data[8]);
+		job.setSubFileData(this.extractNameURL(data[8]));
 
 		// font files
 		String[] fontsData = null;
 		if (data.length - 9 > 0) {
 			fontsData = new String[data.length - 9];
 			for (int i = 9; i < data.length; i++)
-				fontsData[i - 9] = data[i];
+				fontsData[i - 9] = this.extractNameURL(data[i]);
 		}
 		job.setFontsData(fontsData);
 
 		return job;
+	}
+
+	private String extractNameURL(String data) {
+		String[] split = data.split(Pattern.quote("/"));
+
+		String name = split[split.length - 1];
+
+		return name + "=" + data;
 	}
 
 	/**
@@ -497,7 +543,9 @@ public class JobManager extends Observable {
 			// get all the jobs that are accepted by this user and add them to
 			// the "accepted jobs" list
 			for (String jobDir : JobManager.WORKING_DIRECTORY.list()) {
-				File jobFolder = new File(jobDir);
+				File jobFolder = new File(
+						JobManager.WORKING_DIRECTORY.getAbsolutePath()
+								+ File.separator + jobDir);
 				try {
 
 					// read the data from the file and place it in the entity
@@ -511,6 +559,7 @@ public class JobManager extends Observable {
 					// TODO - warn the user about loading errors
 					// find a way to make him save his current work on the job
 					// directory that gave this error
+					ex.printStackTrace();
 				}
 			}
 		}

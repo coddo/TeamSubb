@@ -4,6 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -19,6 +20,9 @@ import com.coddotech.teamsubb.main.CustomWindow;
 
 public class PushJobWindow extends CustomWindow implements Observer {
 
+	private static final Font FONT = new Font(Display.getCurrent(), "Calibri",
+			12, SWT.BOLD);
+
 	private Job job;
 
 	private PushJobController controller;
@@ -29,6 +33,8 @@ public class PushJobWindow extends CustomWindow implements Observer {
 	private Text name;
 	private Label typeLabel;
 	private Combo type;
+	private Label commentsLabel;
+	private Text comments;
 	private Label nextStaffLabel;
 	private Combo nextStaff;
 
@@ -62,6 +68,9 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		typeLabel.dispose();
 		type.dispose();
 
+		commentsLabel.dispose();
+		comments.dispose();
+
 		nextStaffLabel.dispose();
 		nextStaff.dispose();
 
@@ -69,6 +78,8 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		cancel.dispose();
 
 		panel.dispose();
+
+		FONT.dispose();
 	}
 
 	/**
@@ -105,6 +116,15 @@ public class PushJobWindow extends CustomWindow implements Observer {
 	 */
 	public String getNextStaff() {
 		return this.nextStaff.getText().split(":")[0];
+	}
+
+	/**
+	 * Get the comments entered by the user
+	 * 
+	 * @return A String value
+	 */
+	public String getComments() {
+		return this.comments.getText();
 	}
 
 	/**
@@ -168,6 +188,9 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		typeLabel = new Label(panel, SWT.None);
 		type = new Combo(panel, SWT.READ_ONLY);
 
+		commentsLabel = new Label(panel, SWT.None);
+		comments = new Text(panel, SWT.BORDER);
+
 		nextStaffLabel = new Label(panel, SWT.None);
 		nextStaff = new Combo(panel, SWT.READ_ONLY);
 
@@ -184,16 +207,16 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		panel.pack();
 
-		nameLabel.setFont(CustomWindow.DEFAULT_FONT);
+		nameLabel.setFont(PushJobWindow.FONT);
 		nameLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		nameLabel.setText("Job name:");
 		nameLabel.pack();
 
 		name.setFont(CustomWindow.DEFAULT_FONT);
-		name.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		name.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		name.setText(this.job.getName());
 
-		typeLabel.setFont(CustomWindow.DEFAULT_FONT);
+		typeLabel.setFont(PushJobWindow.FONT);
 		typeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		typeLabel.setText("Job type:");
 		typeLabel.pack();
@@ -202,9 +225,18 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		type.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		for (String jobType : Job.DEFAULT_JOB_TYPES)
 			type.add(jobType);
-		type.add("end");
 
-		nextStaffLabel.setFont(CustomWindow.DEFAULT_FONT);
+		commentsLabel.setFont(PushJobWindow.FONT);
+		commentsLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+				false));
+		commentsLabel.setText("Comments:");
+		commentsLabel.pack();
+
+		comments.setFont(CustomWindow.DEFAULT_FONT);
+		comments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2,
+				1));
+
+		nextStaffLabel.setFont(PushJobWindow.FONT);
 		nextStaffLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false));
 		nextStaffLabel.setText("Next staff member:");
@@ -236,7 +268,7 @@ public class PushJobWindow extends CustomWindow implements Observer {
 
 		this.getShell().setLayout(layout);
 		this.getShell().setText("Finish job");
-		this.getShell().setSize(400, 230);
+		this.getShell().setSize(400, 310);
 		this.placeToCenter();
 	}
 
