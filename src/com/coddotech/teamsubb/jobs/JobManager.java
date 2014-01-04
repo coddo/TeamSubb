@@ -34,6 +34,41 @@ public class JobManager extends Observable {
 	private String userName;
 	private String[] userJobs;
 
+	Thread findJobsThread = null;
+
+	/**
+	 * Main class construcotr
+	 * 
+	 * @param userName
+	 *            The name of the user logged in to this app
+	 * @param userJobs
+	 *            The jobs that can be done by this user
+	 */
+	public JobManager(String userName, String[] userJobs) {
+		this.userName = userName;
+		this.userJobs = userJobs;
+
+		jobs = new ArrayList<Job>();
+		acceptedJobs = new ArrayList<Job>();
+
+		initializeWorkingDirectory();
+	}
+
+	/**
+	 * Clear memory from this class and its resources
+	 */
+	public void dispose() {
+		// clear lists
+		this.clearJobList(jobs);
+		this.clearJobList(acceptedJobs);
+		jobs = null;
+		acceptedJobs = null;
+
+		// fields
+		this.userJobs = null;
+		this.userName = null;
+	}
+
 	/**
 	 * Get the list of jobs
 	 * 
@@ -67,39 +102,6 @@ public class JobManager extends Observable {
 	 */
 	public List<Job> getAcceptedJobs() {
 		return this.acceptedJobs;
-	}
-
-	/**
-	 * Main class construcotr
-	 * 
-	 * @param userName
-	 *            The name of the user logged in to this app
-	 * @param userJobs
-	 *            The jobs that can be done by this user
-	 */
-	public JobManager(String userName, String[] userJobs) {
-		this.userName = userName;
-		this.userJobs = userJobs;
-
-		jobs = new ArrayList<Job>();
-		acceptedJobs = new ArrayList<Job>();
-
-		initializeWorkingDirectory();
-	}
-
-	/**
-	 * Clear memory from this class and its resources
-	 */
-	public void dispose() {
-		// clear lists
-		this.clearJobList(jobs);
-		this.clearJobList(acceptedJobs);
-		jobs = null;
-		acceptedJobs = null;
-
-		// fields
-		this.userJobs = null;
-		this.userName = null;
 	}
 
 	/**
@@ -265,18 +267,18 @@ public class JobManager extends Observable {
 	 * The messages are: "important", "acceptable" or "normal"
 	 */
 	public void findJobs() {
-
 		String message = "normal";
 
 		// clear the jobs list
-		this.clearJobList(jobs);
+		clearJobList(jobs);
 
 		// send the jobs request to the server
-		String response = ConnectionManager.sendJobSearchRequest(this.userName);
+		String response = ConnectionManager.sendJobSearchRequest(userName);
 
 		if (!response.equals("error") && !response.equals("false")
 				&& !response.equals("")) {
-			// in case everything is ok, start processing the response that was
+			// in case everything is ok, start processing the response that
+			// was
 			// received from the server
 			String[] jobFragments = response.split(JobManager.SEPARATOR_JOBS);
 
@@ -294,20 +296,21 @@ public class JobManager extends Observable {
 					// create a new Job entity with the data
 					Job job = createJobEntity(data, dirPath);
 
-					// note if the job is suitable or is it actually intended to
+					// note if the job is suitable or is it actually
+					// intended to
 					// this user
 					if (!message.equals("important")) {
 
-						if (job.getIntendedTo().equals(this.userName))
+						if (job.getIntendedTo().equals(userName))
 							message = "important";
-						else if (job.isAcceptable(this.userJobs)) {
+						else if (job.isAcceptable(userJobs)) {
 							message = "acceptable";
 
 						}
 					}
 
 					// add it to the list
-					this.jobs.add(job);
+					jobs.add(job);
 				}
 			}
 		}
@@ -315,9 +318,10 @@ public class JobManager extends Observable {
 		message = "find" + CustomWindow.NOTIFICATION_SEPARATOR + message;
 
 		// send the according notification to the observers
-		this.setChanged();
-		this.notifyObservers(message);
+		setChanged();
+		notifyObservers(message);
 	}
+
 
 	/**
 	 * Accepts a certain job for this user.<br>
@@ -339,7 +343,7 @@ public class JobManager extends Observable {
 					jobs.remove(job);
 					acceptedJobs.add(job);
 					job.setBookedBy("Yourself");
-					
+
 					this.findJobs();
 				}
 

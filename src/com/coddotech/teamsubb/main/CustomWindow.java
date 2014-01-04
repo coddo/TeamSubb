@@ -1,7 +1,10 @@
 package com.coddotech.teamsubb.main;
 
+import java.io.File;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -16,6 +19,8 @@ public abstract class CustomWindow {
 	public static final Font DEFAULT_FONT = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
 	public static final Font BOLD_FONT = new Font(Display.getCurrent(), "Calibri",
 			12, SWT.BOLD);
+	public static final Image APP_ICON = new Image(Display.getCurrent(), System.getProperty("user.dir")
+			+ File.separator + "resources" + File.separator + "radar.png");
 
 	private Shell shell;
 
@@ -128,6 +133,9 @@ public abstract class CustomWindow {
 
 		// listeners
 		this.createListeners();
+		
+		//set the icon for the shell
+		this.getShell().setImage(CustomWindow.APP_ICON);
 	}
 
 	/**
