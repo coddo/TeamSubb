@@ -285,7 +285,11 @@ public class JobWindow extends CustomWindow implements Observer {
 			openJobDirectoryMenuItem.setEnabled(false);
 
 			if (this.jobBookedBy.getText().equals("-")) {
-				acceptJobMenuItem.setEnabled(true);
+				
+				if(jobIntendedTo.getText().equals(tempUserInfo[0]))
+					acceptJobMenuItem.setEnabled(true);
+				else acceptJobMenuItem.setEnabled(false);
+				
 				forceCancelJobMenuItem.setEnabled(false);
 			} else {
 				acceptJobMenuItem.setEnabled(false);
