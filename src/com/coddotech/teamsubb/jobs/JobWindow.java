@@ -285,15 +285,19 @@ public class JobWindow extends CustomWindow implements Observer {
 			openJobDirectoryMenuItem.setEnabled(false);
 
 			if (this.jobBookedBy.getText().equals("-")) {
-			    acceptJobMenuItem.setEnabled(true);
+
+				acceptJobMenuItem.setEnabled(jobIntendedTo.getText().equals(
+						tempUserInfo[0])
+						|| jobIntendedTo.getText().equals(
+								Job.DEFAULT_NEXT_STAFF));
+				acceptJobMenuItem.setEnabled(false);
+
 				forceCancelJobMenuItem.setEnabled(false);
 			} else {
 				acceptJobMenuItem.setEnabled(false);
 				forceCancelJobMenuItem.setEnabled(true);
 			}
-			
-			if(jobIntendedTo.getText().equals(tempUserInfo[0]))
-				acceptJobMenuItem.setEnabled(true);
+
 		}
 	}
 
@@ -401,8 +405,9 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		// notify the model about the GUI update in order to receive the job
 		// information for the first job in the list
-		if (this.jobsList.getItemCount() > 0 && !data[0].equals("jobinformation")) {
-			
+		if (this.jobsList.getItemCount() > 0
+				&& !data[0].equals("jobinformation")) {
+
 			if (this.getSelectedJobID() == -1)
 				controller.notifyModel(Integer.parseInt(this.jobsList
 						.getItem(0).getData().toString()));
