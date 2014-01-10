@@ -72,6 +72,10 @@ public final class ConnectionManager {
 				ConnectionManager.URL_USER_LOGGING, new String[] { "user",
 						"pass" }, new String[] { user, pass });
 
+		// for server debugging purposes
+		System.out.println("\nLogin response:\n");
+		System.out.println(response);
+
 		return response;
 	}
 
@@ -104,6 +108,10 @@ public final class ConnectionManager {
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, new String[] { "jobs", "staff" },
 				new String[] { "search", user });
+
+		// for server debugging purposes
+		System.out.println("\nJob search response:\n");
+		System.out.println(response);
 
 		return response;
 	}
@@ -167,6 +175,10 @@ public final class ConnectionManager {
 		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
 				messageHeaders, messages, fileHeaders, files);
 
+		// for server debugging purposes
+		System.out.println("\nJob create response:\n");
+		System.out.println(response);
+
 		return Boolean.parseBoolean(response);
 	}
 
@@ -190,6 +202,10 @@ public final class ConnectionManager {
 
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, messageHeaders, messages);
+
+		// for server debugging purposes
+		System.out.println("\nJob accept response:\n");
+		System.out.println(response);
 
 		return Boolean.parseBoolean(response);
 	}
@@ -227,6 +243,10 @@ public final class ConnectionManager {
 
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, headers, messages);
+
+		// for server debugging purposes
+		System.out.println("\nJob force cancel response:\n");
+		System.out.println(response);
 
 		return Boolean.parseBoolean(response);
 	}
@@ -285,6 +305,10 @@ public final class ConnectionManager {
 		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
 				messageHeaders, messages, fileHeaders, files);
 
+		// for server debugging purposes
+		System.out.println("\nJob push response:\n");
+		System.out.println(response);
+
 		// return the servers response
 		return Boolean.parseBoolean(response);
 	}
@@ -311,6 +335,10 @@ public final class ConnectionManager {
 		// send the request to the server and wait for a response
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, messageHeaders, messages);
+
+		// for server debugging purposes
+		System.out.println("\nJob end response:\n");
+		System.out.println(response);
 
 		// return the response from the server
 		return Boolean.parseBoolean(response);

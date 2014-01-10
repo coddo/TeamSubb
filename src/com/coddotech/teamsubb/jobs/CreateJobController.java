@@ -29,6 +29,8 @@ public class CreateJobController {
 	 */
 	public CreateJobController(CreateJobWindow view) {
 		this.view = view;
+		model = JobManager.getInstance();
+		model.addObserver(view);
 
 		browseSub = new FileDialog(view.getShell(), SWT.OPEN);
 		browseSub.setText("Select sub file");
@@ -45,16 +47,6 @@ public class CreateJobController {
 
 		browseSub = null;
 		browseFonts = null;
-	}
-
-	/**
-	 * Set the model that should be used by this class
-	 * 
-	 * @param model
-	 *            A JobManager instance
-	 */
-	public void setModel(JobManager model) {
-		this.model = model;
 	}
 
 	/**

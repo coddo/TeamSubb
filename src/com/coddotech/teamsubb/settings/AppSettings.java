@@ -18,7 +18,10 @@ import org.w3c.dom.Element;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
- * Class used for managing the settings for this application
+ * Class used for managing the settings for this application.
+ * 
+ * <br>
+ * This class is a singleton
  * 
  * @author Coddo
  * 
@@ -52,12 +55,21 @@ public final class AppSettings extends Observable {
 	private DocumentBuilderFactory dbFactory;
 	private DocumentBuilder dBuilder;
 	private Document settingsFile;
+	
+	private static AppSettings instance = null;
 
 	/**
 	 * Class constructor
 	 */
-	public AppSettings() {
+	private AppSettings() {
 		createXMLComponents();
+	}
+	
+	public static AppSettings getInstance() {
+		if (instance == null)
+			instance = new AppSettings();
+		
+		return instance;
 	}
 
 	/**
@@ -276,7 +288,8 @@ public final class AppSettings extends Observable {
 		try { // XML builders and documents
 			dbFactory = DocumentBuilderFactory.newInstance();
 			dBuilder = dbFactory.newDocumentBuilder();
-			settingsFile = dBuilder.parse(System.getProperty("user.dir") + File.separator + "Settings.xml");
+			settingsFile = dBuilder.parse(System.getProperty("user.dir")
+					+ File.separator + "Settings.xml");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

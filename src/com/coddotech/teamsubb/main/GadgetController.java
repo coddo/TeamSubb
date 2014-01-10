@@ -38,14 +38,14 @@ public class GadgetController {
 	private AnimationRenderer animations;
 
 	// 1 min = 60000 ms
-	int searchInterval = AppSettings.DEFAULT_SEARCH_INTERVAL * 60000;
+	private int searchInterval = AppSettings.DEFAULT_SEARCH_INTERVAL * 60000;
 
-	boolean disposed = false;
+	private boolean disposed = false;
 
 	// data used for moving the form around
-	boolean move = false;
-	int x;
-	int y;
+	private boolean move = false;
+	private int x;
+	private int y;
 
 	/**
 	 * Class constructor
@@ -68,6 +68,14 @@ public class GadgetController {
 	 */
 	public void dispose() {
 		this.disposed = true;
+		
+		if (jobsWindow != null)
+			if (!jobsWindow.isDisposed())
+				jobsWindow.close();
+
+		settings.deleteObserver(this.gadget);
+		jobs.deleteObserver(this.animations);
+		animations.deleteObserver(this.gadget);
 
 		animations.dispose();
 		animations = null;
@@ -151,23 +159,22 @@ public class GadgetController {
 			if (e.button == 1) {
 				try {
 					if (jobsWindow.getShell().isDisposed())
-						jobsWindow = new JobWindow(gadget.getUserInfo(),
-								gadget.getUserJobs());
+						jobsWindow = new JobWindow(GadgetWindow.getUserInfo(),
+								GadgetWindow.getUserJobs());
 				} catch (Exception ex) {
-					jobsWindow = new JobWindow(gadget.getUserInfo(),
-							gadget.getUserJobs());
+					jobsWindow = new JobWindow(GadgetWindow.getUserInfo(),
+							GadgetWindow.getUserJobs());
 				}
 
-				jobsWindow.getController().setModel(jobs);
-				jobsWindow.getController().setSettingsModel(settings);
-				jobs.addObserver(jobsWindow);
-
-				jobsWindow.open();
+				if (!jobsWindow.getShell().isVisible())
+					jobsWindow.open();
+				else {
+					jobsWindow.getShell().setMinimized(false);
+					jobsWindow.getShell().forceActive();
+				}
 
 			} else if (e.button == 3) {
 				settingsWindow = new AppSettingsWindow();
-				settingsWindow.getController().setModel(settings);
-				settings.addObserver(settingsWindow);
 				settingsWindow.open();
 			}
 
@@ -285,14 +292,13 @@ public class GadgetController {
 	 */
 	private void initializeController() {
 		// create the models
-		jobs = new JobManager(this.gadget.getUserName(),
-				this.gadget.getUserJobs());
-		settings = new AppSettings();
+		jobs = JobManager.getInstance();
+		settings = AppSettings.getInstance();
 		animations = new AnimationRenderer();
 
 		// set the observers for the models
 		settings.addObserver(this.gadget);
-		jobs.addObserver(animations);
+		jobs.addObserver(this.animations);
 		animations.addObserver(this.gadget);
 	}
 

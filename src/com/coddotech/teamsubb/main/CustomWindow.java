@@ -23,12 +23,22 @@ public abstract class CustomWindow {
 			+ File.separator + "resources" + File.separator + "radar.png");
 
 	private Shell shell;
+	private boolean disposed;
 
 	/**
 	 * Class constructor. Initializez all the components for the GUI class
 	 */
 	public CustomWindow() {
 		createShell();
+	}
+	
+	/**
+	 * Get a value indicating whether the shell has been disposed or not
+	 * 
+	 * @return A logical value
+	 */
+	public boolean isDisposed() {
+		return this.disposed;
 	}
 
 	/**
@@ -55,6 +65,7 @@ public abstract class CustomWindow {
 	 * Display the GUI (shell) for this class
 	 */
 	public void open() {
+		this.disposed = false;
 		shell.open();
 		while (!shell.isDisposed()) {
 			if (!Display.getCurrent().readAndDispatch())
@@ -67,6 +78,7 @@ public abstract class CustomWindow {
 	 */
 	public void close() {
 		shell.close();
+		this.disposed = true;
 	}
 
 	/**

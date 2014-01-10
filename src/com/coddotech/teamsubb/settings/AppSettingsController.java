@@ -18,6 +18,8 @@ public class AppSettingsController {
 	 */
 	public AppSettingsController(AppSettingsWindow view) {
 		this.view = view;
+		model = AppSettings.getInstance();
+		model.addObserver(view);
 	}
 
 	/**
@@ -28,17 +30,6 @@ public class AppSettingsController {
 
 		view = null;
 		model = null;
-	}
-
-	/**
-	 * Set the model to be used by the controller
-	 * 
-	 * @param model
-	 *            An AppSettings instance
-	 */
-	public void setModel(AppSettings model) {
-		this.model = model;
-		model.addObserver(this.view);
 	}
 
 	/**

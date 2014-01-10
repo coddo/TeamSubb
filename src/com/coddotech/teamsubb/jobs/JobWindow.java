@@ -78,7 +78,7 @@ public class JobWindow extends CustomWindow implements Observer {
 	private MenuItem forceCancelJobMenuItem;
 	private MenuItem finishJobMenuItem;
 	private MenuItem endJobMenuItem;
-	private MenuItem configureFontssMenuItem;
+	private MenuItem configureFontsMenuItem;
 	private MenuItem openJobDirectoryMenuItem;
 
 	// user information
@@ -165,7 +165,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		finishJobMenuItem.dispose();
 		endJobMenuItem.dispose();
 		actionsMenu.dispose();
-		configureFontssMenuItem.dispose();
+		configureFontsMenuItem.dispose();
 		openJobDirectoryMenuItem.dispose();
 
 		// menu bar objects
@@ -203,7 +203,6 @@ public class JobWindow extends CustomWindow implements Observer {
 		itemAcceptedLabel.dispose();
 		itemImportantColor.dispose();
 		itemImportantLabel.dispose();
-
 	}
 
 	/**
@@ -267,7 +266,7 @@ public class JobWindow extends CustomWindow implements Observer {
 			forceCancelJobMenuItem.setEnabled(false);
 			finishJobMenuItem.setEnabled(false);
 			endJobMenuItem.setEnabled(false);
-			configureFontssMenuItem.setEnabled(false);
+			configureFontsMenuItem.setEnabled(false);
 			openJobDirectoryMenuItem.setEnabled(false);
 		} else if (this.getSelectedJobColor().equals(JobWindow.COLOR_ACCEPTED)) {
 			acceptJobMenuItem.setEnabled(false);
@@ -275,29 +274,16 @@ public class JobWindow extends CustomWindow implements Observer {
 			forceCancelJobMenuItem.setEnabled(true);
 			finishJobMenuItem.setEnabled(true);
 			endJobMenuItem.setEnabled(false);
-			configureFontssMenuItem.setEnabled(true);
+			configureFontsMenuItem.setEnabled(true);
 			openJobDirectoryMenuItem.setEnabled(true);
 		} else {
 			cancelJobMenuItem.setEnabled(false);
 			finishJobMenuItem.setEnabled(false);
 			endJobMenuItem.setEnabled(true);
-			configureFontssMenuItem.setEnabled(false);
+			configureFontsMenuItem.setEnabled(false);
 			openJobDirectoryMenuItem.setEnabled(false);
-
-			if (this.jobBookedBy.getText().equals("-")) {
-
-				acceptJobMenuItem.setEnabled(jobIntendedTo.getText().equals(
-						tempUserInfo[0])
-						|| jobIntendedTo.getText().equals(
-								Job.DEFAULT_NEXT_STAFF));
-				acceptJobMenuItem.setEnabled(false);
-
-				forceCancelJobMenuItem.setEnabled(false);
-			} else {
-				acceptJobMenuItem.setEnabled(false);
-				forceCancelJobMenuItem.setEnabled(true);
-			}
-
+			forceCancelJobMenuItem.setEnabled(!this.jobBookedBy.getText().equals("-"));
+			acceptJobMenuItem.setEnabled(this.jobBookedBy.getText().equals("-"));
 		}
 	}
 
@@ -342,7 +328,9 @@ public class JobWindow extends CustomWindow implements Observer {
 			this.jobPreviousStaff.setText(data[2]);
 			this.jobIntendedTo.setText(data[3]);
 			this.jobBookedBy.setText(data[4]);
-			this.jobDescription.setText(data[5]);
+
+			if (data.length == 6)
+				this.jobDescription.setText(data[5]);
 
 			this.jobType.pack();
 			this.jobPreviousStaff.pack();
@@ -451,7 +439,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		forceCancelJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 		finishJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 		endJobMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
-		configureFontssMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
+		configureFontsMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 		openJobDirectoryMenuItem = new MenuItem(actionsMenu, SWT.PUSH);
 
 		// user information objects
@@ -550,7 +538,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		forceCancelJobMenuItem.setText("Forcibly cancel this job");
 		finishJobMenuItem.setText("Finish job");
 		endJobMenuItem.setText("End job");
-		configureFontssMenuItem.setText("Configure fonts");
+		configureFontsMenuItem.setText("Configure fonts");
 		openJobDirectoryMenuItem.setText("Open storage");
 
 		// user information objects
@@ -678,7 +666,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		endJobMenuItem.addSelectionListener(controller.endJobClicked);
 		openJobDirectoryMenuItem
 				.addSelectionListener(controller.openJobDirectoryClicked);
-		configureFontssMenuItem
+		configureFontsMenuItem
 				.addSelectionListener(controller.configureFontsClicked);
 		aboutMenuItem.addSelectionListener(controller.aboutClicked);
 

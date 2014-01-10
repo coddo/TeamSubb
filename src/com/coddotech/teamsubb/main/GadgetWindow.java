@@ -24,8 +24,8 @@ import com.coddotech.teamsubb.settings.AppSettings;
  */
 public class GadgetWindow extends CustomWindow implements Observer {
 
-	private boolean[] jobs;
-	private String[] userInfo;
+	private static boolean[] jobs;
+	private static String[] userInfo;
 
 	private GadgetController controller;
 
@@ -41,8 +41,8 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	public GadgetWindow(String[] userInfo, boolean[] jobs) {
 		super();
 
-		this.userInfo = userInfo;
-		this.jobs = jobs;
+		GadgetWindow.userInfo = userInfo;
+		GadgetWindow.jobs = jobs;
 
 		this.setShell(new Shell(Display.getCurrent(), SWT.NO_TRIM | SWT.ON_TOP));
 		
@@ -67,8 +67,8 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	 * 
 	 * @return A String value
 	 */
-	public String getUserName() {
-		return this.userInfo[0];
+	public static String getUserName() {
+		return userInfo[0];
 	}
 
 	/**
@@ -76,8 +76,8 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	 * 
 	 * @return A String collection
 	 */
-	public String[] getUserInfo() {
-		return this.userInfo;
+	public static String[] getUserInfo() {
+		return userInfo;
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	 * 
 	 * @return A String collection with job type names
 	 */
-	public String[] getUserJobs() {
+	public static String[] getUserJobs() {
 		int available = 0;
 		for (int i = 0; i < jobs.length; i++) {
 			if (jobs[i])

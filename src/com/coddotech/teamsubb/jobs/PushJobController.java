@@ -21,6 +21,8 @@ public class PushJobController {
 	 */
 	public PushJobController(PushJobWindow view) {
 		this.view = view;
+		this.model = JobManager.getInstance();
+		this.model.addObserver(view);
 	}
 
 	/**
@@ -28,15 +30,6 @@ public class PushJobController {
 	 */
 	public void dispose() {
 		model.deleteObserver(view);
-	}
-
-	/**
-	 * Set the model that should be used by this class
-	 * 
-	 * @param model
-	 */
-	public void setModel(JobManager model) {
-		this.model = model;
 	}
 
 	/**

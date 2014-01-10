@@ -13,7 +13,6 @@ import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.jobs.JobWindow;
 import com.coddotech.teamsubb.main.ApplicationInformation;
 import com.coddotech.teamsubb.main.CustomWindow;
-import com.coddotech.teamsubb.settings.AppSettings;
 import com.coddotech.teamsubb.settings.AppSettingsWindow;
 
 /**
@@ -31,8 +30,6 @@ public class JobController {
 	private JobWindow view;
 	private JobManager model;
 
-	private AppSettings settings;
-
 	/**
 	 * Class constructor
 	 * 
@@ -41,6 +38,8 @@ public class JobController {
 	 */
 	public JobController(JobWindow view) {
 		this.view = view;
+		model = JobManager.getInstance();
+		model.addObserver(view);
 	}
 
 	/**
@@ -48,17 +47,6 @@ public class JobController {
 	 */
 	public void dispose() {
 		model.deleteObserver(this.view);
-	}
-
-	/**
-	 * Set the model to be used by this controller
-	 * 
-	 * @param model
-	 *            A JobManager instance representing the model
-	 */
-	public void setModel(JobManager model) {
-		this.model = model;
-		this.model.addObserver(this.view);
 	}
 
 	/**
@@ -72,16 +60,6 @@ public class JobController {
 	}
 
 	/**
-	 * Set the settings model to be used by this controller
-	 * 
-	 * @param settings
-	 *            An AppSettings class instance
-	 */
-	public void setSettingsModel(AppSettings settings) {
-		this.settings = settings;
-	}
-
-	/**
 	 * Listener for when the open settings button is clicked from the actions
 	 * menu This opens the settings windows.
 	 */
@@ -90,8 +68,6 @@ public class JobController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			AppSettingsWindow set = new AppSettingsWindow();
-			set.getController().setModel(settings);
-			settings.addObserver(set);
 			set.open();
 		}
 
@@ -150,8 +126,6 @@ public class JobController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			CreateJobWindow creator = new CreateJobWindow();
-			creator.getController().setModel(model);
-			model.addObserver(creator);
 			creator.open();
 
 			model.findJobs();
@@ -270,8 +244,6 @@ public class JobController {
 			if (CustomWindow.isConnected(true)) {
 				PushJobWindow push = new PushJobWindow(
 						model.getAcceptedJob(view.getSelectedJobID()));
-				push.getController().setModel(model);
-				model.addObserver(push);
 				push.open();
 
 				model.findJobs();

@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 
 import com.coddotech.teamsubb.connection.ConnectionManager;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.main.GadgetWindow;
 
 /**
  * Class used for realizing the communication between this client and the target
@@ -31,10 +32,9 @@ public class JobManager extends Observable {
 	private List<Job> jobs;
 	private List<Job> acceptedJobs;
 
-	private String userName;
-	private String[] userJobs;
-
 	Thread findJobsThread = null;
+	
+	private static JobManager instance = null;
 
 	/**
 	 * Main class construcotr
@@ -44,14 +44,18 @@ public class JobManager extends Observable {
 	 * @param userJobs
 	 *            The jobs that can be done by this user
 	 */
-	public JobManager(String userName, String[] userJobs) {
-		this.userName = userName;
-		this.userJobs = userJobs;
-
+	private JobManager() {
 		jobs = new ArrayList<Job>();
 		acceptedJobs = new ArrayList<Job>();
 
 		initializeWorkingDirectory();
+	}
+	
+	public static JobManager getInstance() {
+		if (instance == null)
+			instance = new JobManager();
+		
+		return instance;
 	}
 
 	/**
@@ -63,10 +67,6 @@ public class JobManager extends Observable {
 		this.clearJobList(acceptedJobs);
 		jobs = null;
 		acceptedJobs = null;
-
-		// fields
-		this.userJobs = null;
-		this.userName = null;
 	}
 
 	/**
@@ -184,7 +184,9 @@ public class JobManager extends Observable {
 			message += job.getIntendedTo()
 					+ CustomWindow.NOTIFICATION_SEPARATOR;
 			message += job.getBookedBy() + CustomWindow.NOTIFICATION_SEPARATOR;
-			message += job.getDescription();
+			
+			if(job.getDescription() != null)
+				message += job.getDescription();
 		}
 
 		notifyObservers(message);
@@ -213,7 +215,7 @@ public class JobManager extends Observable {
 			String nextStaff, String subFile, String[] fonts) {
 
 		boolean response = ConnectionManager.sendJobCreateRequest(
-				this.userName, name, type, description, nextStaff, subFile,
+				GadgetWindow.getUserName(), name, type, description, nextStaff, subFile,
 				fonts);
 
 		this.setChanged();
@@ -239,7 +241,7 @@ public class JobManager extends Observable {
 	 */
 	public void endJob(int jobID) {
 		boolean response = ConnectionManager.sendJobEndRequest(jobID,
-				this.userName);
+				GadgetWindow.getUserName());
 
 		if (response) {
 			for (int i = 0; i < jobs.size(); i++) {
@@ -273,7 +275,7 @@ public class JobManager extends Observable {
 		clearJobList(jobs);
 
 		// send the jobs request to the server
-		String response = ConnectionManager.sendJobSearchRequest(userName);
+		String response = ConnectionManager.sendJobSearchRequest(GadgetWindow.getUserName());
 
 		if (!response.equals("error") && !response.equals("false")
 				&& !response.equals("")) {
@@ -301,9 +303,9 @@ public class JobManager extends Observable {
 					// this user
 					if (!message.equals("important")) {
 
-						if (job.getIntendedTo().equals(userName))
+						if (job.getIntendedTo().equals(GadgetWindow.getUserName()))
 							message = "important";
-						else if (job.isAcceptable(userJobs)) {
+						else if (job.isAcceptable(GadgetWindow.getUserJobs())) {
 							message = "acceptable";
 
 						}
@@ -485,7 +487,7 @@ public class JobManager extends Observable {
 		job.setIntendedTo(data[6]);
 		job.setStartDate(data[7]);
 		job.setDirectoryPath(dirPath);
-		job.setCurrentStaffMember(this.userName);
+		job.setCurrentStaffMember(GadgetWindow.getUserName());
 
 		// sub file
 		job.setSubFileData(this.extractNameURL(data[8]));
