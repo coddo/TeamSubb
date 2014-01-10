@@ -43,6 +43,7 @@ public class JobWindow extends CustomWindow implements Observer {
 	// auxiliary data
 	private String[] tempUserInfo;
 	private String[] tempUserJobs;
+	private boolean exiting = false;
 
 	// controller used for interpreting user actions
 	private JobController controller;
@@ -126,6 +127,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		tempUserJobs = userJobs;
 
 		this.initializeComponents();
+		this.exiting = false;
 	}
 
 	/**
@@ -134,6 +136,7 @@ public class JobWindow extends CustomWindow implements Observer {
 	public void dispose() {
 		// controller
 		controller.dispose();
+		this.exiting = true;
 
 		// job information
 		jobTypeLabel.dispose();
@@ -205,13 +208,8 @@ public class JobWindow extends CustomWindow implements Observer {
 		itemImportantLabel.dispose();
 	}
 
-	/**
-	 * Retrieve the controller used by this class
-	 * 
-	 * @return A JobController class instance
-	 */
-	public JobController getController() {
-		return this.controller;
+	public boolean isExiting() {
+		return this.exiting;
 	}
 
 	/**

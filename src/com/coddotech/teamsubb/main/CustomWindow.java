@@ -24,7 +24,7 @@ public abstract class CustomWindow {
 
 	private Shell shell;
 	private boolean disposed;
-
+	
 	/**
 	 * Class constructor. Initializez all the components for the GUI class
 	 */

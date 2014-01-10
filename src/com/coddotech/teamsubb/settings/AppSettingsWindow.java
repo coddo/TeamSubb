@@ -70,15 +70,6 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	}
 
 	/**
-	 * Get the controller used by this class
-	 * 
-	 * @return A AppSettingsController class instance
-	 */
-	public AppSettingsController getController() {
-		return this.controller;
-	}
-
-	/**
 	 * Tells the user is the gadget is set to automatically save its own
 	 * location on the screen
 	 * 

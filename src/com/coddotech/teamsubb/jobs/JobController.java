@@ -99,14 +99,17 @@ public class JobController {
 
 	/**
 	 * Listener for when the exit application button is clicked from the
-	 * application menu. This closes the entire application.
+	 * application menu. This closes the entire application. <br>
 	 */
 	public SelectionListener exitApplicationClicked = new SelectionListener() {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			for (Shell shell : Display.getCurrent().getShells())
-				shell.close();
+			// the shells are closed in a reversed order in order to avoid
+			// closing the main shell first
+			Shell[] shells = Display.getCurrent().getShells();
+			for (int i = shells.length - 1; i >= 0; i--)
+				shells[i].close();
 
 		}
 

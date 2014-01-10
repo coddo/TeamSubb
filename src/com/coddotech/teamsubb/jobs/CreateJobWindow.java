@@ -87,15 +87,6 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 	}
 
 	/**
-	 * Get the controller used by this class
-	 * 
-	 * @return A CreateJobController instance
-	 */
-	public CreateJobController getController() {
-		return this.controller;
-	}
-
-	/**
 	 * Get the job name entered by the user
 	 * 
 	 * @return A String value

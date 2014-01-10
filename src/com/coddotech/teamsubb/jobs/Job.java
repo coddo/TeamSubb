@@ -24,9 +24,6 @@ public final class Job {
 			"Verificare", "Encode", "Typeset", "end" };
 	public static final String DEFAULT_NEXT_STAFF = "anyone";
 
-	private static final String CONFIG_FILE_NAME = File.separator
-			+ "config.cfg";
-
 	private int id;
 	private String name;
 	private int type;
@@ -43,6 +40,7 @@ public final class Job {
 	private String subFileData;
 	private String[] fontsData;
 	private File[] addedFonts;
+	private File configFile;
 
 	/**
 	 * Class constructor
@@ -60,6 +58,9 @@ public final class Job {
 	 * folder)
 	 */
 	public void dispose() {
+		if (this.configFile.exists())
+			this.configFile.delete();
+
 		this.name = null;
 		this.description = null;
 		this.currentStaffMember = null;
@@ -101,13 +102,17 @@ public final class Job {
 	}
 
 	/**
-	 * Set the name that this job has
+	 * Set the name that this job has. <br>
+	 * This also initializez the config file, as the name field is needed.
 	 * 
 	 * @param jobName
 	 *            The string containing this job's name
 	 */
 	public void setName(String jobName) {
 		this.name = jobName;
+
+		configFile = new File(JobManager.WORKING_DIRECTORY.getAbsolutePath()
+				+ File.separator + this.name + ".cfg");
 	}
 
 	/**
@@ -552,11 +557,8 @@ public final class Job {
 	 * @throws Exception
 	 */
 	public void readConfigFile(File jobFolder) throws Exception {
-		File config = new File(jobFolder.getAbsolutePath() + File.separator
-				+ Job.CONFIG_FILE_NAME);
-
 		BufferedReader reader = new BufferedReader(new FileReader(
-				config.getAbsoluteFile()));
+				this.configFile.getAbsoluteFile()));
 
 		this.setID(Integer.parseInt(reader.readLine()));
 		this.setName(reader.readLine());
@@ -592,18 +594,16 @@ public final class Job {
 	 * @throws Exception
 	 */
 	private void generateConfigFile() throws Exception {
-		File file = new File(this.directoryPath + Job.CONFIG_FILE_NAME);
-
 		// delete the file if it already exists
-		if (file.exists())
-			file.delete();
+		if (this.configFile.exists())
+			this.configFile.delete();
 
 		// recreate it (void from data)
-		file.createNewFile();
+		this.configFile.createNewFile();
 
 		// fill it with data (exclude raw data about the subfile and font files)
 		BufferedWriter writer = new BufferedWriter(new FileWriter(
-				file.getAbsoluteFile()));
+				this.configFile.getAbsoluteFile()));
 		writer.write(this.id + "\n");
 		writer.write(this.name + "\n");
 		writer.write(this.type + "\n");

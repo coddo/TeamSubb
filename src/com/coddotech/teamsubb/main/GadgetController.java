@@ -70,7 +70,7 @@ public class GadgetController {
 		this.disposed = true;
 		
 		if (jobsWindow != null)
-			if (!jobsWindow.isDisposed())
+			if (!jobsWindow.isDisposed() && !jobsWindow.isExiting())
 				jobsWindow.close();
 
 		settings.deleteObserver(this.gadget);

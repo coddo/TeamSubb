@@ -27,7 +27,7 @@ public class JobManager extends Observable {
 	public static final String SEPARATOR_FIELDS = "#!#";
 	public static final String SEPARATOR_JOBS = "&!&";
 
-	private static final File WORKING_DIRECTORY = new File("Jobs");
+	public static final File WORKING_DIRECTORY = new File("Jobs");
 
 	private List<Job> jobs;
 	private List<Job> acceptedJobs;
