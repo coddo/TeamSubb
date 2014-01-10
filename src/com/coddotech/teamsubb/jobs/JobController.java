@@ -105,12 +105,16 @@ public class JobController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			// the shells are closed in a reversed order in order to avoid
-			// closing the main shell first
-			Shell[] shells = Display.getCurrent().getShells();
-			for (int i = shells.length - 1; i >= 0; i--)
-				shells[i].close();
+			// the main shell is closed last
+			Shell main = null;
+			for (Shell shell : Display.getCurrent().getShells()) {
+				if (shell.getText().equals("Gadget"))
+					main = shell;
+				else
+					shell.close();
+			}
 
+			main.close();
 		}
 
 		@Override

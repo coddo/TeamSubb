@@ -107,8 +107,9 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	@Override
 	public void update(Observable obs, Object obj) {
 		if (!controller.isDisposed()) {
-			if (obs instanceof AnimationRenderer)
+			if (obs instanceof AnimationRenderer) {
 				imageContainer.setBackgroundImage((Image) obj);
+			}
 			else if (obs instanceof AppSettings) {
 
 				String[] data = ((String) obj)
@@ -138,13 +139,13 @@ public class GadgetWindow extends CustomWindow implements Observer {
 
 	@Override
 	protected void createObjectProperties() {
-		imageContainer.setLocation(-12, -11);
+		imageContainer.setLocation(-10, -11);
 		imageContainer.setSize(110, 110);
 	}
 
 	@Override
 	protected void createShellProperties() {
-		this.getShell().setText("TeamSubb");
+		this.getShell().setText("Gadget");
 		this.getShell().setSize(200, 200);
 	}
 

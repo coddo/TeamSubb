@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><settings>
-          <location location_x="246" location_y="191">Stores the preferred location on the screen for this application</location>
+          <location location_x="1817" location_y="221">Stores the preferred location on the screen for this application</location>
           <autosave_location value="true">Specifies whether the application should automatically save its own location on the screen</autosave_location>
           <search_interval value="1">Specifies the time interval (minutes) which is used by the application to search for new jobs which are suitable for the user</search_interval>
  </settings>

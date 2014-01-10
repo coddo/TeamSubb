@@ -253,12 +253,15 @@ public class GadgetController {
 			Region region = new Region();
 
 			// set the circle data to the region
-			region.add(circle(45, 45, 45));
+			region.add(generateCircle(34, 34, 34));
 
 			// define the shape of the shell
 			gadget.getShell().setRegion(region);
 			Rectangle size = region.getBounds();
 			gadget.getShell().setSize(size.width, size.height);
+			
+			//dispose of the region object
+			region.dispose();
 		}
 	};
 
@@ -273,7 +276,7 @@ public class GadgetController {
 	 *            Vertical offset
 	 * @return The polygon ecuation for the circle
 	 */
-	private int[] circle(int r, int offsetX, int offsetY) {
+	private int[] generateCircle(int r, int offsetX, int offsetY) {
 		int[] polygon = new int[8 * r + 4];
 		// x^2 + y^2 = r^2
 		for (int i = 0; i < 2 * r + 1; i++) {
