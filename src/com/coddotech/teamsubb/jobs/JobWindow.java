@@ -58,6 +58,8 @@ public class JobWindow extends CustomWindow implements Observer {
 
 	// menu bar objects
 	private MenuItem applicationMenuItem;
+	private MenuItem separator1;
+	private MenuItem separator2;
 	private MenuItem aboutMenuItem;
 	private MenuItem jobsMenuItem;
 
@@ -100,8 +102,8 @@ public class JobWindow extends CustomWindow implements Observer {
 	private Label jobIntendedTo;
 	private Label jobBookedByLabel;
 	private Label jobBookedBy;
-	private Label jobDescriptionLabel;
-	private Label jobDescription;
+	private Label jobCommentsLabel;
+	private Label jobComments;
 
 	// help chart objects
 	private Label itemAcceptedColor;
@@ -147,8 +149,8 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobIntendedTo.dispose();
 		jobBookedByLabel.dispose();
 		jobBookedBy.dispose();
-		jobDescriptionLabel.dispose();
-		jobDescription.dispose();
+		jobCommentsLabel.dispose();
+		jobComments.dispose();
 
 		// application menu objects
 		openSettingsMenuItem.dispose();
@@ -176,6 +178,8 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobsMenuItem.dispose();
 		aboutMenuItem.dispose();
 		menuBar.dispose();
+		separator1.dispose();
+		separator2.dispose();
 
 		// user information objects
 		userNameLabel.dispose();
@@ -328,7 +332,7 @@ public class JobWindow extends CustomWindow implements Observer {
 			this.jobBookedBy.setText(data[4]);
 
 			if (data.length == 6)
-				this.jobDescription.setText(data[5]);
+				this.jobComments.setText(data[5]);
 
 			this.jobType.pack();
 			this.jobPreviousStaff.pack();
@@ -416,7 +420,9 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		// menu bar objects
 		applicationMenuItem = new MenuItem(menuBar, SWT.CASCADE);
+		separator1 = new MenuItem(menuBar, SWT.NONE);
 		jobsMenuItem = new MenuItem(menuBar, SWT.CASCADE);
+		separator2 = new MenuItem(menuBar, SWT.NONE);
 		aboutMenuItem = new MenuItem(menuBar, SWT.CASCADE);
 
 		// application menu objects
@@ -457,8 +463,8 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobIntendedTo = new Label(this.jobInfoGroup, SWT.None);
 		jobBookedByLabel = new Label(this.jobInfoGroup, SWT.None);
 		jobBookedBy = new Label(this.jobInfoGroup, SWT.None);
-		jobDescriptionLabel = new Label(this.jobInfoGroup, SWT.None);
-		jobDescription = new Label(this.jobInfoGroup, SWT.WRAP);
+		jobCommentsLabel = new Label(this.jobInfoGroup, SWT.None);
+		jobComments = new Label(this.jobInfoGroup, SWT.WRAP);
 
 		// help chart items
 		itemAcceptedColor = new Label(this.helpChartGroup, SWT.None);
@@ -519,7 +525,13 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobsMenuItem.setText("Jobs");
 		jobsMenuItem.setMenu(jobsMenu);
 
-		aboutMenuItem.setText("About");
+		aboutMenuItem.setText("About TeamSubb");
+		
+		separator1.setText("|");
+		separator1.setEnabled(false);
+		
+		separator2.setText("|");
+		separator2.setEnabled(false);
 
 		// application menu objects
 		openSettingsMenuItem.setText("Settings");
@@ -590,13 +602,13 @@ public class JobWindow extends CustomWindow implements Observer {
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		jobBookedBy.setFont(CustomWindow.DEFAULT_FONT);
 
-		jobDescriptionLabel.setFont(CustomWindow.DEFAULT_FONT);
-		jobDescriptionLabel.setText("Comments");
-		jobDescriptionLabel.pack();
+		jobCommentsLabel.setFont(CustomWindow.DEFAULT_FONT);
+		jobCommentsLabel.setText("Comments:");
+		jobCommentsLabel.pack();
 
-		jobDescription.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+		jobComments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true, 1, 5));
-		jobDescription.setFont(CustomWindow.DEFAULT_FONT);
+		jobComments.setFont(CustomWindow.DEFAULT_FONT);
 
 		// help chart item
 		itemAcceptedColor.setText("          ");
@@ -705,6 +717,6 @@ public class JobWindow extends CustomWindow implements Observer {
 		this.jobPreviousStaff.setText("");
 		this.jobIntendedTo.setText("");
 		this.jobBookedBy.setText("");
-		this.jobDescription.setText("");
+		this.jobComments.setText("");
 	}
 }

@@ -18,9 +18,8 @@ public class ApplicationInformation extends CustomWindow {
 	
 	private Label applicationName;
 	private Label type;
-	private Label server;
-	private Link serverLink;
-	private Label author;
+	private Link server;
+	private Link author;
 	private Label copyWright;
 	
 	public ApplicationInformation() {
@@ -33,7 +32,6 @@ public class ApplicationInformation extends CustomWindow {
 		applicationName.dispose();
 		type.dispose();
 		server.dispose();
-		serverLink.dispose();
 		author.dispose();
 		copyWright.dispose();
 		
@@ -46,9 +44,8 @@ public class ApplicationInformation extends CustomWindow {
 		
 		applicationName = new Label(this.getShell(), SWT.None);
 		type = new Label(this.getShell(), SWT.None);
-		server = new Label(this.getShell(), SWT.None);
-		serverLink = new Link(this.getShell(), SWT.Selection);
-		author = new Label(this.getShell(), SWT.None);
+		server = new Link(this.getShell(), SWT.None);
+		author = new Link(this.getShell(), SWT.None);
 		copyWright = new Label(this.getShell(), SWT.None);
 		
 	}
@@ -67,12 +64,12 @@ public class ApplicationInformation extends CustomWindow {
 		
 		server.setFont(CustomWindow.DEFAULT_FONT);
 		server.setLocation(10, 70);
-		server.setText("Server: ");
+		server.setText("Server: <a>http://anime4FUN.ro</a>");
 		server.pack();
 		
 		author.setFont(CustomWindow.DEFAULT_FONT);
 		author.setLocation(10, 100);
-		author.setText("Author: Coddo");
+		author.setText("Author: <a>Coddo</a>");
 		author.pack();
 		
 		copyWright.setFont(CustomWindow.DEFAULT_FONT);
@@ -80,16 +77,26 @@ public class ApplicationInformation extends CustomWindow {
 		copyWright.setText("Copywright: © CoddoTechnologies 2014");
 		copyWright.pack();
 		
-		serverLink.setFont(CustomWindow.DEFAULT_FONT);
-		serverLink.setLocation(60, 70);
-		serverLink.setText("<a>www.anime4fun.ro</a>");
-		serverLink.pack();
-		
-		serverLink.addSelectionListener(new SelectionListener() {
+		server.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				Program.launch("www.anime4fun.ro");
+				Program.launch("http://anime4fun.ro");
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		author.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				Program.launch("http://anime4fun.ro/user/Coddo");
 				
 			}
 			
