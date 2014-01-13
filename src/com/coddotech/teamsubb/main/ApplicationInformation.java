@@ -15,39 +15,40 @@ import org.eclipse.swt.widgets.Shell;
 public class ApplicationInformation extends CustomWindow {
 
 	private Font font;
-	
+
 	private Label applicationName;
 	private Label type;
 	private Link server;
 	private Link author;
 	private Label copyWright;
-	
+
 	public ApplicationInformation() {
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM));
-		
+		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL
+				| SWT.DIALOG_TRIM));
+
 		this.initializeComponents();
 	}
-	
+
 	public void dispose() {
 		applicationName.dispose();
 		type.dispose();
 		server.dispose();
 		author.dispose();
 		copyWright.dispose();
-		
+
 		font.dispose();
 	}
-	
+
 	@Override
 	protected void performInitializations() {
 		font = new Font(Display.getCurrent(), "Calibri", 15, SWT.BOLD);
-		
+
 		applicationName = new Label(this.getShell(), SWT.None);
 		type = new Label(this.getShell(), SWT.None);
 		server = new Link(this.getShell(), SWT.None);
 		author = new Link(this.getShell(), SWT.None);
 		copyWright = new Label(this.getShell(), SWT.None);
-		
+
 	}
 
 	@Override
@@ -56,56 +57,26 @@ public class ApplicationInformation extends CustomWindow {
 		applicationName.setLocation(100, 10);
 		applicationName.setText("TeamSubb");
 		applicationName.pack();
-		
+
 		type.setFont(CustomWindow.DEFAULT_FONT);
 		type.setLocation(10, 40);
 		type.setText("Type: Client application");
 		type.pack();
-		
+
 		server.setFont(CustomWindow.DEFAULT_FONT);
 		server.setLocation(10, 70);
 		server.setText("Server: <a>http://anime4FUN.ro</a>");
 		server.pack();
-		
+
 		author.setFont(CustomWindow.DEFAULT_FONT);
 		author.setLocation(10, 100);
 		author.setText("Author: <a>Coddo</a>");
 		author.pack();
-		
+
 		copyWright.setFont(CustomWindow.DEFAULT_FONT);
 		copyWright.setLocation(10, 130);
 		copyWright.setText("Copywright: © CoddoTechnologies 2014");
 		copyWright.pack();
-		
-		server.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				Program.launch("http://anime4fun.ro");
-				
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		
-		author.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				Program.launch("http://anime4fun.ro/user/Coddo");
-				
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
 	}
 
 	@Override
@@ -113,20 +84,50 @@ public class ApplicationInformation extends CustomWindow {
 		this.getShell().setText("About");
 		this.getShell().setSize(300, 200);
 		this.placeToCenter();
-		
+
 	}
 
 	@Override
 	protected void createListeners() {
 		this.getShell().addListener(SWT.Close, new Listener() {
-			
+
 			@Override
 			public void handleEvent(Event arg0) {
 				dispose();
-				
+
 			}
 		});
-		
+
+		server.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				Program.launch("http://anime4fun.ro");
+
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		author.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				Program.launch("http://anime4fun.ro/user/Coddo");
+
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
 	}
-	
+
 }
