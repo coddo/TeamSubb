@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.logging;
+package com.coddotech.teamsubb.appmanage;
 
 import java.io.File;
 
@@ -24,14 +24,7 @@ public class ActivityLogger {
 	private static ActivityLogger instance = null;
 
 	private ActivityLogger() {
-		File logFolder = new File(ActivityLogger.LOG_FOLDER_PATH);
-
-		try {
-			if (!logFolder.exists())
-				logFolder.mkdir();
-		} catch (Exception ex) {
-		}
-
+		initializeLogDirectory();
 		initializeLogFiles();
 	}
 
@@ -56,6 +49,18 @@ public class ActivityLogger {
 	}
 
 	public void saveLogFile() {
+
+	}
+
+	private void initializeLogDirectory() {
+		File logFolder = new File(ActivityLogger.LOG_FOLDER_PATH);
+
+		try {
+			if (!logFolder.exists())
+				logFolder.mkdir();
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
 
 	}
 

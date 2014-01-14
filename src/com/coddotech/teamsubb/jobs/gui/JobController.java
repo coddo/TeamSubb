@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.jobs;
+package com.coddotech.teamsubb.jobs.gui;
 
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
@@ -9,11 +9,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-import com.coddotech.teamsubb.connection.ConnectionManager;
-import com.coddotech.teamsubb.jobs.JobWindow;
-import com.coddotech.teamsubb.main.ApplicationInformation;
+import com.coddotech.teamsubb.appmanage.ApplicationInformation;
+import com.coddotech.teamsubb.connection.model.ConnectionManager;
+import com.coddotech.teamsubb.jobs.gui.JobWindow;
+import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
-import com.coddotech.teamsubb.settings.AppSettingsWindow;
+import com.coddotech.teamsubb.settings.gui.AppSettingsWindow;
 
 /**
  * Controller class used by the JobWindow in order to complete the job actions

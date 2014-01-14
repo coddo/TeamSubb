@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.jobs;
+package com.coddotech.teamsubb.jobs.gui;
 
 import java.io.File;
 
@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 
+import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 public class CreateJobController {

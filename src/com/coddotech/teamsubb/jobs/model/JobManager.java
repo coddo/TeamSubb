@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.jobs;
+package com.coddotech.teamsubb.jobs.model;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 
-import com.coddotech.teamsubb.connection.ConnectionManager;
+import com.coddotech.teamsubb.connection.model.ConnectionManager;
+import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
 import com.coddotech.teamsubb.main.CustomWindow;
-import com.coddotech.teamsubb.main.GadgetWindow;
 
 /**
  * Class used for realizing the communication between this client and the target

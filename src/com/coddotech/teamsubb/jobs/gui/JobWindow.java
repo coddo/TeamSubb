@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.jobs;
+package com.coddotech.teamsubb.jobs.gui;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -17,7 +17,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import com.coddotech.teamsubb.jobs.JobController;
+import com.coddotech.teamsubb.jobs.gui.JobController;
+import com.coddotech.teamsubb.jobs.model.Job;
+import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 /**

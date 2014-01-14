@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.connection;
+package com.coddotech.teamsubb.connection.model;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,8 +19,8 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 
-import com.coddotech.teamsubb.jobs.Job;
-import com.coddotech.teamsubb.jobs.JobManager;
+import com.coddotech.teamsubb.jobs.model.Job;
+import com.coddotech.teamsubb.jobs.model.JobManager;
 
 /**
  * This class is used for bridging the connection between the server and the

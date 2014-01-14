@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.settings;
+package com.coddotech.teamsubb.settings.model;
 
 import java.io.File;
 import java.util.Observable;

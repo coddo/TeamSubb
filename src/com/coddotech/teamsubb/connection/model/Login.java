@@ -1,9 +1,9 @@
-package com.coddotech.teamsubb.connection;
+package com.coddotech.teamsubb.connection.model;
 
 import java.util.Observable;
 
-import com.coddotech.teamsubb.jobs.JobWindow;
-import com.coddotech.teamsubb.main.GadgetWindow;
+import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
+import com.coddotech.teamsubb.jobs.gui.JobWindow;
 
 public class Login extends Observable {
 

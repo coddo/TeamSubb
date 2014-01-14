@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import com.coddotech.teamsubb.connection.ConnectionManager;
+import com.coddotech.teamsubb.connection.model.ConnectionManager;
 
 public abstract class CustomWindow {
 

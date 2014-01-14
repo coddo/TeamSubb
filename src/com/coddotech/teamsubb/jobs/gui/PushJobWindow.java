@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.jobs;
+package com.coddotech.teamsubb.jobs.gui;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -15,6 +15,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.coddotech.teamsubb.jobs.model.Job;
+import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 public class PushJobWindow extends CustomWindow implements Observer {

@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.connection;
+package com.coddotech.teamsubb.connection.gui;
 
 import java.util.Observable;
 import java.util.Observer;

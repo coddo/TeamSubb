@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.jobs;
+package com.coddotech.teamsubb.jobs.model;
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
@@ -9,7 +9,8 @@ import java.io.FileWriter;
 
 import org.apache.commons.io.FileUtils;
 
-import com.coddotech.teamsubb.connection.ConnectionManager;
+import com.coddotech.teamsubb.connection.model.ConnectionManager;
+import com.coddotech.teamsubb.jobs.gui.JobWindow;
 
 /**
  * Entity used by the JobManager class. This class stores information about a

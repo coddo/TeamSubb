@@ -1,6 +1,6 @@
 package com.coddotech.teamsubb.main;
 
-import com.coddotech.teamsubb.logging.AppManager;
+import com.coddotech.teamsubb.appmanage.AppManager;
 
 public class MainClass {
 

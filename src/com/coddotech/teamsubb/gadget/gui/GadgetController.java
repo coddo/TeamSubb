@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.main;
+package com.coddotech.teamsubb.gadget.gui;
 
 import java.awt.MouseInfo;
 
@@ -13,10 +13,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import com.coddotech.teamsubb.jobs.JobManager;
-import com.coddotech.teamsubb.jobs.JobWindow;
-import com.coddotech.teamsubb.settings.AppSettings;
-import com.coddotech.teamsubb.settings.AppSettingsWindow;
+import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
+import com.coddotech.teamsubb.jobs.gui.JobWindow;
+import com.coddotech.teamsubb.jobs.model.JobManager;
+import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.settings.gui.AppSettingsWindow;
+import com.coddotech.teamsubb.settings.model.AppSettings;
 
 /**
  * Controller class for the GadgetWindow.<br>

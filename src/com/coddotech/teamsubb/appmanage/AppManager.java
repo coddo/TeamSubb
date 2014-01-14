@@ -1,8 +1,8 @@
-package com.coddotech.teamsubb.logging;
+package com.coddotech.teamsubb.appmanage;
 
 import org.eclipse.swt.widgets.Display;
 
-import com.coddotech.teamsubb.connection.LoginWindow;
+import com.coddotech.teamsubb.connection.gui.LoginWindow;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 public class AppManager {
@@ -12,10 +12,11 @@ public class AppManager {
 		logger.logActivity("Main", "App initialization");
 
 		try {
-			// display the login window
 			if (AppManager.isAutoLogin()) {
+				// login automatically
 
 			} else {
+				// display the login window
 				LoginWindow login = new LoginWindow();
 				login.open();
 				login = null;

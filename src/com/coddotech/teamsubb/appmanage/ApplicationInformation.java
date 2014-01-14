@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.main;
+package com.coddotech.teamsubb.appmanage;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -11,6 +11,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+
+import com.coddotech.teamsubb.main.CustomWindow;
 
 public class ApplicationInformation extends CustomWindow {
 

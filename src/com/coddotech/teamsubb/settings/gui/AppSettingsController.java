@@ -1,9 +1,11 @@
-package com.coddotech.teamsubb.settings;
+package com.coddotech.teamsubb.settings.gui;
 
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
+import com.coddotech.teamsubb.settings.model.AppSettings;
 
 public class AppSettingsController {
 

@@ -1,10 +1,11 @@
-package com.coddotech.teamsubb.connection;
+package com.coddotech.teamsubb.connection.gui;
 
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import com.coddotech.teamsubb.connection.model.Login;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 public class LoginController {

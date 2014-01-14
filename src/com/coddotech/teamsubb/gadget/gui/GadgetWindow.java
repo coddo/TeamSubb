@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.main;
+package com.coddotech.teamsubb.gadget.gui;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -9,8 +9,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import com.coddotech.teamsubb.jobs.JobWindow;
-import com.coddotech.teamsubb.settings.AppSettings;
+import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
+import com.coddotech.teamsubb.jobs.gui.JobWindow;
+import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.settings.model.AppSettings;
 
 /**
  * A window similar to a gadget that stays stationary on the workspace of the

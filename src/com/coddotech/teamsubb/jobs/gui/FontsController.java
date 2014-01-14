@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.jobs;
+package com.coddotech.teamsubb.jobs.gui;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
+
+import com.coddotech.teamsubb.jobs.model.Job;
 
 public class FontsController {
 

@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.settings;
+package com.coddotech.teamsubb.settings.gui;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.settings.model.AppSettings;
 
 /**
  * This class represents the GUI wrapped around the Settings class and is solely

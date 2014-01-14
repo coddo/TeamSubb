@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.main;
+package com.coddotech.teamsubb.gadget.model;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -10,6 +10,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+
+import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
  * Class which has the purpose to guide the gadget's animation. It also observes
