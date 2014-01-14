@@ -102,9 +102,9 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 		try {
 			interval = Integer.parseInt(this.searchInterval.getText());
 
-			if (interval < 0 || interval > 60) {
+			if (interval < 1 || interval > 60) {
 				message.setText("Number error");
-				message.setMessage("The entered number is out of bounds. The search interval must be a number between 0 and 60");
+				message.setMessage("The entered number is out of bounds. The search interval must be an integer between 1 and 60");
 				message.open();
 
 				return false;
@@ -113,7 +113,7 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 			return true;
 		} catch (Exception ex) {
 			message.setText("Format error");
-			message.setMessage("The search interval must be a NUMBER between 0 and 60");
+			message.setMessage("The search interval must be an INTEGER between 1 and 60");
 			message.open();
 
 			return false;
