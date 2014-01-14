@@ -8,8 +8,9 @@ import com.coddotech.teamsubb.main.CustomWindow;
 public class AppManager {
 
 	public static void startApp() {
-		ActivityLogger logger = ActivityLogger.getInstance();
-		logger.logActivity("Main", "App initialization");
+		ActivityLogger.performInitializations();
+		
+		ActivityLogger.logActivity("Main", "App initialization");
 
 		try {
 			if (AppManager.isAutoLogin()) {
@@ -23,13 +24,13 @@ public class AppManager {
 			}
 
 		} catch (Exception ex) {
-			logger.logError("Main", "App runtime", "FATAL ERROR",
-					ex.getMessage());
-			logger.createDump(ex);
+			ActivityLogger.logError("Main", "App runtime", ex);
+			
+			ActivityLogger.createDump(ex);
 		}
 
 		// close the dump files
-		logger.saveLogFile();
+		ActivityLogger.releaseFiles();
 
 		// dispose of global resources
 		AppManager.disposeGlobalResources();

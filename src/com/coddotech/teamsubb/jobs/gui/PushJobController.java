@@ -5,7 +5,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
 
@@ -46,17 +45,13 @@ public class PushJobController {
 			if (CustomWindow.isConnected(true)) {
 
 				if (view.verifyFields()) {
-					boolean result = model.pushJob(view.getID(), view.getNextStaff(),
-							view.getType(), view.getComments());
-					
-					if(result) {
-						//if the job was marked as "end", then send an end request too
-						if(view.getType() == Job.DEFAULT_JOB_TYPES.length - 1)
-							model.endJob(view.getID());
-						
+					boolean result = model.pushJob(view.getID(),
+							view.getNextStaff(), view.getType(),
+							view.getComments());
+
+					if (result)
 						view.close();
-					}
-						
+
 				}
 			}
 		}
