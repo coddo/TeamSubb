@@ -32,10 +32,10 @@ public class ActivityLogger {
 	private static BufferedWriter logWriter;
 	private static BufferedWriter dumpWriter;
 
-	public static void logActivity(String className, String activity) {
+	public static void logActivity(String className, String activity, String msg) {
 		if (!initializationFailed) {
 
-			String message = "(" + className + ") -> " + activity + " -> OK!";
+			String message = "(" + className + ") -> " + activity + " -> " + msg;
 
 			try {
 				logWriter.write(ActivityLogger.getCurrentTime() + message
@@ -47,11 +47,14 @@ public class ActivityLogger {
 
 		}
 	}
+	
+	public static void logActivity(String className, String activity) {
+		ActivityLogger.logActivity(className, activity, "OK!");
+	}
+	
+	public static void logException(String className, String activity, Exception ex) {
 
-	public static void logError(String className, String activity, Exception ex) {
-
-		String message = "(" + className + ") -> " + activity + " -> ("
-				+ ex.getCause().toString() + ") " + ex.getMessage();
+		String message = "(" + className + ") -> " + activity + " -> " + ex.getMessage();
 
 		try {
 			logWriter.write(ActivityLogger.getCurrentTime() + message + "\n");
@@ -65,13 +68,17 @@ public class ActivityLogger {
 	public static void createDump(Exception ex) {
 		if (!initializationFailed) {
 			
-			String message = "CAUSE: " + ex.getCause().toString() + "\n\n";
-			message += ex.getMessage() + "\n\n";
-			message += ex.getStackTrace() + "\n\n";
-			message += ex.getSuppressed() + "\n\n";
+			String message; 
+			message = ex.getClass().toString() + "\n\n";
+			
+			for(StackTraceElement element : ex.getStackTrace()) {
+				message += "( " + element.getClassName() + " ) ";
+				message += "{ " + element.getMethodName() + " } -> ";
+				message += element.toString() + "\n";
+			}
 			
 			try {
-				logWriter.write(message);
+				dumpWriter.write(message);
 
 			} catch (IOException e) {
 				e.printStackTrace();

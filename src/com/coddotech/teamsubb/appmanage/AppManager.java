@@ -1,6 +1,9 @@
 package com.coddotech.teamsubb.appmanage;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 
 import com.coddotech.teamsubb.connection.gui.LoginWindow;
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -24,9 +27,12 @@ public class AppManager {
 			}
 
 		} catch (Exception ex) {
-			ActivityLogger.logError("Main", "App runtime", ex);
+			ActivityLogger.logActivity("Main", "App runtime", "FATAL ERROR !!!");
 			
 			ActivityLogger.createDump(ex);
+			
+			AppManager.displayFatalErrorMessage();
+			
 		}
 
 		// close the dump files
@@ -41,6 +47,17 @@ public class AppManager {
 		CustomWindow.BOLD_FONT.dispose();
 		CustomWindow.DEFAULT_FONT.dispose();
 		Display.getCurrent().dispose();
+	}
+	
+	private static void displayFatalErrorMessage() {
+		Shell shell = new Shell(Display.getCurrent(), SWT.None);
+		
+		MessageBox message = new MessageBox(shell, SWT.ICON_ERROR);
+		message.setMessage("A FATAL ERROR has occured and the app has stopped working !");
+		message.setText("TeamSubb");
+		message.open();
+		
+		shell.dispose();
 	}
 
 	/**
