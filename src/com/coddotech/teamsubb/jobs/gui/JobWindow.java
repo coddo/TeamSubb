@@ -46,6 +46,7 @@ public class JobWindow extends CustomWindow implements Observer {
 	private String[] tempUserInfo;
 	private String[] tempUserJobs;
 	private boolean exiting = false;
+	private boolean isTestUser = true;
 
 	// controller used for interpreting user actions
 	private JobController controller;
@@ -129,6 +130,7 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		tempUserInfo = userInfo;
 		tempUserJobs = userJobs;
+		this.isTestUser = tempUserInfo[0].equals("testcoddo");
 
 		this.initializeComponents();
 		this.exiting = false;
@@ -280,14 +282,26 @@ public class JobWindow extends CustomWindow implements Observer {
 			endJobMenuItem.setEnabled(false);
 			configureFontsMenuItem.setEnabled(true);
 			openJobDirectoryMenuItem.setEnabled(true);
+		} else if (this.isTestUser) {
+			// if the user is a test user with view-only privileges, then he/she
+			// cannot interact with the jobs
+			acceptJobMenuItem.setEnabled(false);
+			cancelJobMenuItem.setEnabled(false);
+			forceCancelJobMenuItem.setEnabled(false);
+			finishJobMenuItem.setEnabled(false);
+			endJobMenuItem.setEnabled(false);
+			configureFontsMenuItem.setEnabled(false);
+			openJobDirectoryMenuItem.setEnabled(false);
 		} else {
 			cancelJobMenuItem.setEnabled(false);
 			finishJobMenuItem.setEnabled(false);
 			endJobMenuItem.setEnabled(true);
 			configureFontsMenuItem.setEnabled(false);
 			openJobDirectoryMenuItem.setEnabled(false);
-			forceCancelJobMenuItem.setEnabled(!this.jobBookedBy.getText().equals("-"));
-			acceptJobMenuItem.setEnabled(this.jobBookedBy.getText().equals("-"));
+			forceCancelJobMenuItem.setEnabled(!this.jobBookedBy.getText()
+					.equals("-"));
+			acceptJobMenuItem
+					.setEnabled(this.jobBookedBy.getText().equals("-"));
 		}
 	}
 
@@ -528,10 +542,10 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobsMenuItem.setMenu(jobsMenu);
 
 		aboutMenuItem.setText("About TeamSubb");
-		
+
 		separator1.setText("|");
 		separator1.setEnabled(false);
-		
+
 		separator2.setText("|");
 		separator2.setEnabled(false);
 
@@ -542,6 +556,8 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		// jobs menu objects
 		createJobMenuItem.setText("Create a new job");
+		createJobMenuItem.setEnabled(!this.isTestUser);
+		
 		refreshJobListMenuItem.setText("Refresh job list");
 
 		// actions menu objects
@@ -608,8 +624,8 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobCommentsLabel.setText("Comments:");
 		jobCommentsLabel.pack();
 
-		jobComments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 1, 5));
+		jobComments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
+				1, 5));
 		jobComments.setFont(CustomWindow.DEFAULT_FONT);
 
 		// help chart item

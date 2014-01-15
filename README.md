@@ -12,7 +12,7 @@ Message structures and types + other details can be found at: https://docs.googl
 This is and Eclipse project (Kepler version used here).
 
 
-For testing purposes, there is a user prepaired on the server <br>
+For those who are not part of the staff but want to preview the app, there is a user prepaired on the server: <br>
 	-> user: testcoddo<br>
 	-> pass: codoban
 	
