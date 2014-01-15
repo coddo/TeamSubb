@@ -36,7 +36,7 @@ public class AppManager {
 		}
 
 		// close the dump files
-		ActivityLogger.releaseFiles();
+		ActivityLogger.closeLogFile();
 
 		// dispose of global resources
 		AppManager.disposeGlobalResources();
