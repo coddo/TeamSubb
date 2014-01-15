@@ -209,10 +209,7 @@ public class AnimationRenderer extends Observable implements Observer {
 			@Override
 			public boolean accept(File path, String file) {
 
-				if (file.split(Pattern.quote("."))[1].equals("png"))
-					return true;
-				else
-					return false;
+				return file.split(Pattern.quote("."))[1].equals("png");
 			}
 		};
 

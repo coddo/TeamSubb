@@ -3,12 +3,14 @@ package com.coddotech.teamsubb.appmanage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
-
-import org.apache.commons.io.FileUtils;
+import java.util.regex.Pattern;
 
 /**
  * Class used to log the entire activity of the application during runtime. <br>
@@ -171,22 +173,34 @@ public class ActivityLogger {
 	}
 
 	/**
-	 * When there are more than 50 files in the directory, it gets cleaned by
-	 * deleting all of them
+	 * When there are more than 5 files of each type (log or dump) in the
+	 * directory, it gets cleaned by deleting the oldest one.
 	 * 
 	 * @param dumpDirectory
 	 *            A File instance
 	 */
 	private static void cleanDumpDirectory(File dumpDirectory) {
-		if (dumpDirectory.list().length >= 50) {
+		File[] logFiles = dumpDirectory.listFiles(ActivityLogger
+				.getFileTypeFilter("log"));
 
-			try {
-				FileUtils.cleanDirectory(dumpDirectory);
+		File[] dumpFiles = dumpDirectory.listFiles(ActivityLogger
+				.getFileTypeFilter("dmp"));
 
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+		// log files cleaning
+		if (logFiles.length >= 5) {
+			// sort the files by "date modified"
+			Arrays.sort(logFiles, new FileDateCompare());
 
+			// delete the oldest files
+			logFiles[0].delete();
+
+		}
+
+		// dump files cleaning
+		if (dumpFiles.length >= 5) {
+			Arrays.sort(dumpFiles, new FileDateCompare());
+
+			dumpFiles[0].delete();
 		}
 	}
 
@@ -225,5 +239,39 @@ public class ActivityLogger {
 		String format = "[" + dateFormat.format(new Date()) + "] ";
 
 		return format;
+	}
+
+	private static FilenameFilter getFileTypeFilter(final String type) {
+		FilenameFilter filter = new FilenameFilter() {
+
+			@Override
+			public boolean accept(File path, String file) {
+
+				return file.split(Pattern.quote("."))[1].equals(type);
+			}
+		};
+
+		return filter;
+	}
+
+	/**
+	 * Class the implements Comparator<T> and compares the dates in which 2
+	 * files were modified.
+	 */
+	private static class FileDateCompare implements Comparator<File> {
+
+		public FileDateCompare() {
+
+		}
+
+		@Override
+		public int compare(File f1, File f2) {
+			return this.compareDates(f1.lastModified(), f2.lastModified());
+		}
+
+		private int compareDates(long date1, long date2) {
+			return (date1 <= date2) ? -1 : 1;
+		}
+
 	}
 }
