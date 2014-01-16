@@ -96,7 +96,7 @@ public class ActivityLogger {
 			e.printStackTrace();
 
 		} finally {
-			ActivityLogger.logActivity(className, activity, ex.getMessage());
+			ActivityLogger.logActivity(className, activity, ex.toString());
 
 		}
 
@@ -112,7 +112,7 @@ public class ActivityLogger {
 		if (!initializationFailed) {
 
 			String message;
-			message = ex.getClass().toString() + "\n\n";
+			message = ex.toString() + "\n\n";
 
 			for (StackTraceElement element : ex.getStackTrace()) {
 				message += "( " + element.getClassName() + " ) ";

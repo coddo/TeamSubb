@@ -173,7 +173,7 @@ public class JobManager extends Observable {
 
 			message += job.getBookedBy() + CustomWindow.NOTIFICATION_SEPARATOR;
 
-			message += (message == null) ? "" : job.getDescription();
+			message += (message == null) ? " " : job.getDescription() + " ";
 		}
 
 		this.setChanged();
