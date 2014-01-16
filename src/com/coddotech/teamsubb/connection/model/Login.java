@@ -2,6 +2,7 @@ package com.coddotech.teamsubb.connection.model;
 
 import java.util.Observable;
 
+import com.coddotech.teamsubb.appmanage.ActivityLogger;
 import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 
@@ -15,21 +16,32 @@ public class Login extends Observable {
 	 */
 	public void doLogin(String user, String pass) {
 
-		String response = ConnectionManager.sendLoginRequest(user, pass);
+		try {
+			String response = ConnectionManager.sendLoginRequest(user, pass);
 
-		String[] result = response.split("&");
+			String[] result = response.split("&");
 
-		// notify the views about the success or failure of the login
-		// process that took place
-		this.setChanged();
-		notifyObservers(Boolean.parseBoolean(result[0]));
+			// notify the views about the success or failure of the login
+			// process that took place
+			this.setChanged();
+			notifyObservers(Boolean.parseBoolean(result[0]));
 
-		if (Boolean.parseBoolean(result[0])) {
-			// if the login process is successful continue with starting the
-			// application's main functionalities and close the login window
-			GadgetWindow gadget = new GadgetWindow(this.getUserInfo(result), this.getJobsInfo(result));
+			ActivityLogger.logActivity(this.getClass().getName(),
+					"User login");
 
-			gadget.open();
+			if (Boolean.parseBoolean(result[0])) {
+				// if the login process is successful continue with starting the
+				// application's main functionalities and close the login window
+				GadgetWindow gadget = new GadgetWindow(
+						this.getUserInfo(result), this.getJobsInfo(result));
+
+				gadget.open();
+			}
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"User login", ex);
+			
 		}
 	}
 

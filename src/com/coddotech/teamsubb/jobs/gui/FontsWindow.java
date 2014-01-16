@@ -39,19 +39,27 @@ public class FontsWindow extends CustomWindow {
 	}
 
 	public void dispose() {
-		controller.dispose();
+		try {
+			controller.dispose();
 
-		nameLabel.dispose();
-		name.dispose();
+			nameLabel.dispose();
+			name.dispose();
 
-		fontsLabel.dispose();
-		fonts.dispose();
+			fontsLabel.dispose();
+			fonts.dispose();
 
-		done.dispose();
-		browse.dispose();
-		cancel.dispose();
+			done.dispose();
+			browse.dispose();
+			cancel.dispose();
 
-		panel.dispose();
+			panel.dispose();
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
+		}
 	}
 
 	/**
@@ -62,7 +70,7 @@ public class FontsWindow extends CustomWindow {
 	public String[] getFonts() {
 		return this.fonts.getItems();
 	}
-	
+
 	public String[] getSelectedFonts() {
 		return this.fonts.getSelection();
 	}
@@ -95,23 +103,23 @@ public class FontsWindow extends CustomWindow {
 	public void deleteSelectedFonts() {
 		this.fonts.remove(this.fonts.getSelectionIndices());
 	}
-	
+
 	public void notifyUser(boolean jobCompletion) {
 		MessageBox message;
-		
+
 		if (jobCompletion) {
 			message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 			message.setText("Success");
 			message.setMessage("The fonts have been added to the job !");
-			
+
 			message.open();
-			
+
 			this.close();
-		}else {
+		} else {
 			message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 			message.setText("Error");
 			message.setMessage("An error has occured while adding the fonts to the job");
-			
+
 			message.open();
 		}
 	}

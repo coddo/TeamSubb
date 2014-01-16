@@ -11,27 +11,30 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+import com.coddotech.teamsubb.appmanage.ActivityLogger;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 
 public abstract class CustomWindow {
 
 	public static final String NOTIFICATION_SEPARATOR = "#@&!#&@!";
-	public static final Font DEFAULT_FONT = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
-	public static final Font BOLD_FONT = new Font(Display.getCurrent(), "Calibri",
-			12, SWT.BOLD);
-	public static final Image APP_ICON = new Image(Display.getCurrent(), System.getProperty("user.dir")
-			+ File.separator + "resources" + File.separator + "radar.png");
+	public static final Font DEFAULT_FONT = new Font(Display.getCurrent(),
+			"Calibri", 12, SWT.NORMAL);
+	public static final Font BOLD_FONT = new Font(Display.getCurrent(),
+			"Calibri", 12, SWT.BOLD);
+	public static final Image APP_ICON = new Image(Display.getCurrent(),
+			System.getProperty("user.dir") + File.separator + "resources"
+					+ File.separator + "radar.png");
 
 	private Shell shell;
 	private boolean disposed;
-	
+
 	/**
 	 * Class constructor. Initializez all the components for the GUI class
 	 */
 	public CustomWindow() {
 		createShell();
 	}
-	
+
 	/**
 	 * Get a value indicating whether the shell has been disposed or not
 	 * 
@@ -66,7 +69,9 @@ public abstract class CustomWindow {
 	 */
 	public void open() {
 		this.disposed = false;
+
 		shell.open();
+
 		while (!shell.isDisposed()) {
 			if (!Display.getCurrent().readAndDispatch())
 				Display.getCurrent().sleep();
@@ -99,6 +104,7 @@ public abstract class CustomWindow {
 	 */
 	public static boolean isConnected(boolean displayMessage) {
 		boolean connected = ConnectionManager.isConnected();
+		
 		if (!connected && displayMessage) {
 
 			MessageBox message = new MessageBox(Display.getCurrent()
@@ -126,8 +132,19 @@ public abstract class CustomWindow {
 			@Override
 			public void handleEvent(Event e) {
 				shell.dispose();
+				disposed = true;
 			}
 		});
+	}
+
+	protected void logDispose() {
+		ActivityLogger.logActivity(this.getClass().getName(), "GUI dispose");
+
+	}
+
+	protected void logDiposeFail(Exception ex) {
+		ActivityLogger.logException(this.getClass().getName(), "GUI dispose",
+				ex);
 	}
 
 	/**
@@ -135,19 +152,64 @@ public abstract class CustomWindow {
 	 */
 	protected void initializeComponents() {
 		// initializations
-		this.performInitializations();
+		try {
+			this.performInitializations();
+
+			ActivityLogger.logActivity(this.getClass().getName(),
+					"GUI Initialization");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "GUI Initialization", ex);
+
+		}
 
 		// object properties
-		this.createObjectProperties();
+		try {
+			this.createObjectProperties();
+
+			ActivityLogger.logActivity(this.getClass().getName(),
+					"Create object properties");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Create object properties", ex);
+
+		}
 
 		// shell properties
-		this.createShellProperties();
+		try {
+			this.createShellProperties();
+
+			ActivityLogger.logActivity(this.getClass().getName(),
+					"Create shell properties");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Create shell properties", ex);
+
+		}
 
 		// listeners
-		this.createListeners();
-		
-		//set the icon for the shell
-		this.getShell().setImage(CustomWindow.APP_ICON);
+		try {
+			this.createListeners();
+
+			ActivityLogger.logActivity(this.getClass().getName(),
+					"Create listeners");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Create listeners", ex);
+
+		}
+
+		// set the icon for the shell
+		try {
+			this.getShell().setImage(CustomWindow.APP_ICON);
+
+			ActivityLogger.logActivity(this.getClass().getName(),
+					"Set shell type (super class)");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Set shell type (super class)", ex);
+
+		}
 	}
 
 	/**

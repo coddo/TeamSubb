@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.coddotech.teamsubb.appmanage.ActivityLogger;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.model.AppSettings;
 
@@ -49,25 +50,33 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		// user classes
-		controller.dispose();
-		controller = null;
+		try {
+			// user classes
+			controller.dispose();
+			controller = null;
 
-		// GUI objects
-		apply.dispose();
-		apply = null;
+			// GUI objects
+			apply.dispose();
+			apply = null;
 
-		cancel.dispose();
-		cancel = null;
+			cancel.dispose();
+			cancel = null;
 
-		autosaveLocation.dispose();
-		autosaveLocation = null;
+			autosaveLocation.dispose();
+			autosaveLocation = null;
 
-		searchIntervalLabel.dispose();
-		searchIntervalLabel = null;
+			searchIntervalLabel.dispose();
+			searchIntervalLabel = null;
 
-		searchInterval.dispose();
-		searchInterval = null;
+			searchInterval.dispose();
+			searchInterval = null;
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
+		}
 	}
 
 	/**
@@ -125,35 +134,43 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	 */
 	@Override
 	public void update(Observable obs, Object obj) {
-		String[] data = ((String) obj)
-				.split(CustomWindow.NOTIFICATION_SEPARATOR);
+		try {
+			String[] data = ((String) obj)
+					.split(CustomWindow.NOTIFICATION_SEPARATOR);
 
-		switch (data[0]) {
+			switch (data[0]) {
 
-		case AppSettings.MESSAGE_AUTOSAVE_LOCATION: {
-			this.autosaveLocation.setSelection(Boolean.parseBoolean(data[1]));
-		}
-			break;
-		case AppSettings.MESSAGE_SEARCH_INTERVAL: {
-			this.searchInterval.setText(data[1]);
-		}
-			break;
-		case AppSettings.MESSAGE_SAVE: {
-			MessageBox message;
-
-			if (Boolean.parseBoolean(data[1])) {
-				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
-				message.setText("Success");
-				message.setMessage("The settings have been successfully applied !");
-			} else {
-				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-				message.setText("Error");
-				message.setMessage("An error has been encountered while saving the changes !");
+			case AppSettings.MESSAGE_AUTOSAVE_LOCATION: {
+				this.autosaveLocation.setSelection(Boolean
+						.parseBoolean(data[1]));
 			}
+				break;
+			case AppSettings.MESSAGE_SEARCH_INTERVAL: {
+				this.searchInterval.setText(data[1]);
+			}
+				break;
+			case AppSettings.MESSAGE_SAVE: {
+				MessageBox message;
 
-			message.open();
-		}
-			break;
+				if (Boolean.parseBoolean(data[1])) {
+					message = new MessageBox(this.getShell(),
+							SWT.ICON_INFORMATION);
+					message.setText("Success");
+					message.setMessage("The settings have been successfully applied !");
+				} else {
+					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+					message.setText("Error");
+					message.setMessage("An error has been encountered while saving the changes !");
+				}
+
+				message.open();
+			}
+				break;
+
+			}
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"GUI Update", ex);
 
 		}
 	}

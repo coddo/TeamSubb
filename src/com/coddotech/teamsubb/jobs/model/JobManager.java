@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 
+import com.coddotech.teamsubb.appmanage.ActivityLogger;
+import com.coddotech.teamsubb.appmanage.AppManager;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -33,7 +35,7 @@ public class JobManager extends Observable {
 	private List<Job> acceptedJobs;
 
 	Thread findJobsThread = null;
-	
+
 	private static JobManager instance = null;
 
 	/**
@@ -50,11 +52,11 @@ public class JobManager extends Observable {
 
 		initializeWorkingDirectory();
 	}
-	
+
 	public static JobManager getInstance() {
 		if (instance == null)
 			instance = new JobManager();
-		
+
 		return instance;
 	}
 
@@ -62,11 +64,22 @@ public class JobManager extends Observable {
 	 * Clear memory from this class and its resources
 	 */
 	public void dispose() {
-		// clear lists
-		this.clearJobList(jobs);
-		this.clearJobList(acceptedJobs);
-		jobs = null;
-		acceptedJobs = null;
+		try {
+
+			// clear lists
+			this.clearJobList(jobs);
+			this.clearJobList(acceptedJobs);
+
+			jobs = null;
+			acceptedJobs = null;
+
+			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Dispose",
+					ex);
+
+		}
 	}
 
 	/**
@@ -142,7 +155,6 @@ public class JobManager extends Observable {
 	 *            The ID of the job for which to send the information
 	 */
 	public void notifyJobInformation(int jobID) {
-		this.setChanged();
 
 		Job job = null;
 
@@ -184,11 +196,12 @@ public class JobManager extends Observable {
 			message += job.getIntendedTo()
 					+ CustomWindow.NOTIFICATION_SEPARATOR;
 			message += job.getBookedBy() + CustomWindow.NOTIFICATION_SEPARATOR;
-			
-			if(job.getDescription() != null)
+
+			if (job.getDescription() != null)
 				message += job.getDescription();
 		}
 
+		this.setChanged();
 		notifyObservers(message);
 	}
 
@@ -214,17 +227,28 @@ public class JobManager extends Observable {
 	public void createJob(String name, int type, String description,
 			String nextStaff, String subFile, String[] fonts) {
 
-		boolean response = ConnectionManager.sendJobCreateRequest(
-				GadgetWindow.getUserName(), name, type, description, nextStaff, subFile,
-				fonts);
+		try {
 
-		this.setChanged();
-		notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR
-				+ response);
+			boolean response = ConnectionManager.sendJobCreateRequest(
+					GadgetWindow.getUserName(), name, type, description,
+					nextStaff, subFile, fonts);
 
-		// after the job is created, start a new search in order to update the
-		// job list
-		this.findJobs();
+			this.setChanged();
+			notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR
+					+ response);
+
+			// after the job is created, start a new search in order to update
+			// the
+			// job list
+			this.findJobs();
+
+			ActivityLogger.logActivity(this.getClass().getName(), "Create job");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"Create job", ex);
+
+		}
 	}
 
 	/**
@@ -240,23 +264,33 @@ public class JobManager extends Observable {
 	 * @return A logical value indicating if the job was ended successfully
 	 */
 	public void endJob(int jobID) {
-		boolean response = ConnectionManager.sendJobEndRequest(jobID,
-				GadgetWindow.getUserName());
+		try {
+			boolean response = ConnectionManager.sendJobEndRequest(jobID,
+					GadgetWindow.getUserName());
 
-		if (response) {
-			for (int i = 0; i < jobs.size(); i++) {
-				if (jobs.get(i).getID() == jobID) {
-					jobs.get(i).dispose();
-					jobs.remove(i);
+			if (response) {
+				for (int i = 0; i < jobs.size(); i++) {
+					if (jobs.get(i).getID() == jobID) {
+						jobs.get(i).dispose();
+						jobs.remove(i);
+					}
 				}
+
+				this.removeJob(jobID);
 			}
 
-			this.removeJob(jobID);
-		}
+			// notify all the observers about the change
+			this.setChanged();
+			notifyObservers("end" + CustomWindow.NOTIFICATION_SEPARATOR
+					+ response);
 
-		// notify all the observers about the change
-		this.setChanged();
-		notifyObservers("end" + CustomWindow.NOTIFICATION_SEPARATOR + response);
+			ActivityLogger.logActivity(this.getClass().getName(), "End job");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "End job",
+					ex);
+
+		}
 	}
 
 	/**
@@ -269,61 +303,73 @@ public class JobManager extends Observable {
 	 * The messages are: "important", "acceptable" or "normal"
 	 */
 	public void findJobs() {
-		String message = "normal";
+		try {
+			String message = "normal";
 
-		// clear the jobs list
-		clearJobList(jobs);
+			// clear the jobs list
+			clearJobList(jobs);
 
-		// send the jobs request to the server
-		String response = ConnectionManager.sendJobSearchRequest(GadgetWindow.getUserName());
+			// send the jobs request to the server
+			String response = ConnectionManager
+					.sendJobSearchRequest(GadgetWindow.getUserName());
 
-		if (!response.equals("error") && !response.equals("false")
-				&& !response.equals("")) {
-			// in case everything is ok, start processing the response that
-			// was
-			// received from the server
-			String[] jobFragments = response.split(JobManager.SEPARATOR_JOBS);
+			if (!response.equals("error") && !response.equals("false")
+					&& !response.equals("")) {
+				// in case everything is ok, start processing the response that
+				// was
+				// received from the server
+				String[] jobFragments = response
+						.split(JobManager.SEPARATOR_JOBS);
 
-			// take each job and wrap it in a Job entity
-			for (String fragment : jobFragments) {
-				// split the String into bits representing specific job data
-				String[] data = fragment.split(JobManager.SEPARATOR_FIELDS);
+				// take each job and wrap it in a Job entity
+				for (String fragment : jobFragments) {
+					// split the String into bits representing specific job data
+					String[] data = fragment.split(JobManager.SEPARATOR_FIELDS);
 
-				// ignore this job if it already in the accepted list
-				if (!isAccepted(Integer.parseInt(data[0]))) {
-					// create variables representing this job's folder
-					String dirPath = JobManager.WORKING_DIRECTORY
-							.getAbsolutePath() + File.separator + data[1];
+					// ignore this job if it already in the accepted list
+					if (!isAccepted(Integer.parseInt(data[0]))) {
+						// create variables representing this job's folder
+						String dirPath = JobManager.WORKING_DIRECTORY
+								.getAbsolutePath() + File.separator + data[1];
 
-					// create a new Job entity with the data
-					Job job = createJobEntity(data, dirPath);
+						// create a new Job entity with the data
+						Job job = createJobEntity(data, dirPath);
 
-					// note if the job is suitable or is it actually
-					// intended to
-					// this user
-					if (!message.equals("important")) {
+						// note if the job is suitable or is it actually
+						// intended to
+						// this user
+						if (!message.equals("important")) {
 
-						if (job.getIntendedTo().equals(GadgetWindow.getUserName()))
-							message = "important";
-						else if (job.isAcceptable(GadgetWindow.getUserJobs())) {
-							message = "acceptable";
+							if (job.getIntendedTo().equals(
+									GadgetWindow.getUserName()))
+								message = "important";
+							else if (job.isAcceptable(GadgetWindow
+									.getUserJobs())) {
+								message = "acceptable";
 
+							}
 						}
-					}
 
-					// add it to the list
-					jobs.add(job);
+						// add it to the list
+						jobs.add(job);
+					}
 				}
 			}
+
+			message = "find" + CustomWindow.NOTIFICATION_SEPARATOR + message;
+
+			// send the according notification to the observers
+			setChanged();
+			notifyObservers(message);
+
+			ActivityLogger.logActivity(this.getClass().getName(), "Find jobs");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Find jobs",
+					ex);
+
 		}
-
-		message = "find" + CustomWindow.NOTIFICATION_SEPARATOR + message;
-
-		// send the according notification to the observers
-		setChanged();
-		notifyObservers(message);
 	}
-
 
 	/**
 	 * Accepts a certain job for this user.<br>
@@ -333,29 +379,38 @@ public class JobManager extends Observable {
 	 * @param jobID
 	 */
 	public void acceptJob(int jobID) {
-		boolean response = false;
+		try {
+			boolean response = false;
 
-		for (int i = 0; i < jobs.size(); i++) {
-			Job job = jobs.get(i);
+			for (int i = 0; i < jobs.size(); i++) {
+				Job job = jobs.get(i);
 
-			if (job.getID() == jobID) {
-				response = job.accept();
+				if (job.getID() == jobID) {
+					response = job.accept();
 
-				if (response) {
-					jobs.remove(job);
-					acceptedJobs.add(job);
-					job.setBookedBy("Yourself");
+					if (response) {
+						jobs.remove(job);
+						acceptedJobs.add(job);
+						job.setBookedBy("Yourself");
 
-					this.findJobs();
+						this.findJobs();
+					}
+
 				}
-
 			}
-		}
 
-		// notify all the observers about the change
-		this.setChanged();
-		notifyObservers("accept" + CustomWindow.NOTIFICATION_SEPARATOR
-				+ response);
+			// notify all the observers about the change
+			this.setChanged();
+			notifyObservers("accept" + CustomWindow.NOTIFICATION_SEPARATOR
+					+ response);
+
+			ActivityLogger.logActivity(this.getClass().getName(), "Accept job");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"Accept job", ex);
+
+		}
 	}
 
 	/**
@@ -367,26 +422,35 @@ public class JobManager extends Observable {
 	 *            The ID of the job to be canceled
 	 */
 	public void cancelJob(int jobID) {
-		boolean response = false;
+		try {
+			boolean response = false;
 
-		for (int i = 0; i < acceptedJobs.size(); i++) {
-			Job job = acceptedJobs.get(i);
+			for (int i = 0; i < acceptedJobs.size(); i++) {
+				Job job = acceptedJobs.get(i);
 
-			if (job.getID() == jobID) {
-				response = job.cancel();
+				if (job.getID() == jobID) {
+					response = job.cancel();
 
-				if (response) {
-					job.dispose();
-					acceptedJobs.remove(job);
+					if (response) {
+						job.dispose();
+						acceptedJobs.remove(job);
+					}
+
 				}
-
 			}
-		}
 
-		// notify all the observers about the change
-		this.setChanged();
-		notifyObservers("cancel" + CustomWindow.NOTIFICATION_SEPARATOR
-				+ response);
+			// notify all the observers about the change
+			this.setChanged();
+			notifyObservers("cancel" + CustomWindow.NOTIFICATION_SEPARATOR
+					+ response);
+
+			ActivityLogger.logActivity(this.getClass().getName(), "Cancel job");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"Cancel job", ex);
+
+		}
 	}
 
 	/**
@@ -396,18 +460,27 @@ public class JobManager extends Observable {
 	 *            The ID of the job (integer value)
 	 */
 	public void removeJob(int jobID) {
-		for (int i = 0; i < acceptedJobs.size(); i++) {
-			if (acceptedJobs.get(i).getID() == jobID) {
+		try {
+			for (int i = 0; i < acceptedJobs.size(); i++) {
+				if (acceptedJobs.get(i).getID() == jobID) {
 
-				try {
-					FileUtils.deleteDirectory(acceptedJobs.get(i)
-							.getDirectoryInstance());
-				} catch (IOException e) {
+					try {
+						FileUtils.deleteDirectory(acceptedJobs.get(i)
+								.getDirectoryInstance());
+					} catch (IOException e) {
+					}
+
+					acceptedJobs.get(i).dispose();
+					acceptedJobs.remove(i);
 				}
-
-				acceptedJobs.get(i).dispose();
-				acceptedJobs.remove(i);
 			}
+
+			ActivityLogger.logActivity(this.getClass().getName(), "Remove job");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"Remove job", ex);
+
 		}
 	}
 
@@ -422,32 +495,44 @@ public class JobManager extends Observable {
 	 */
 	public boolean pushJob(int jobID, String nextStaff, int type,
 			String comments) {
-		boolean response = false;
 
-		for (int i = 0; i < acceptedJobs.size(); i++) {
-			Job job = acceptedJobs.get(i);
+		try {
+			boolean response = false;
 
-			if (job.getID() == jobID) {
+			for (int i = 0; i < acceptedJobs.size(); i++) {
+				Job job = acceptedJobs.get(i);
 
-				job.setType(type);
-				job.setNextStaffMember(nextStaff);
-				job.setDescription(comments);
+				if (job.getID() == jobID) {
 
-				response = job.push();
+					job.setType(type);
+					job.setNextStaffMember(nextStaff);
+					job.setDescription(comments);
 
-				if (response) {
-					job.dispose();
-					acceptedJobs.remove(job);
+					response = job.push();
+
+					if (response) {
+						job.dispose();
+						acceptedJobs.remove(job);
+					}
+
 				}
-
 			}
+
+			// notify all the observers about the change
+			this.setChanged();
+			notifyObservers("push" + CustomWindow.NOTIFICATION_SEPARATOR
+					+ response);
+
+			ActivityLogger.logActivity(this.getClass().getName(), "Push job");
+
+			return response;
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Push job",
+					ex);
+
+			return false;
 		}
-
-		// notify all the observers about the change
-		this.setChanged();
-		notifyObservers("push" + CustomWindow.NOTIFICATION_SEPARATOR + response);
-
-		return response;
 	}
 
 	/**
@@ -546,6 +631,8 @@ public class JobManager extends Observable {
 	 * 
 	 * If it exists, then it tries to reload all the jobs that are still present
 	 * in it (accepted jobs)
+	 * 
+	 * @throws Exception
 	 */
 	private void initializeWorkingDirectory() {
 		if (!JobManager.WORKING_DIRECTORY.exists())
@@ -574,11 +661,18 @@ public class JobManager extends Observable {
 						}
 					}
 
+					ActivityLogger.logActivity(this.getClass().getName(),
+							"Initialize working directory");
+
 				} catch (Exception ex) {
-					// TODO - warn the user about loading errors
-					// find a way to make him save his current work on the job
-					// directory that gave this error
-					ex.printStackTrace();
+					ActivityLogger.logException(this.getClass().getName(),
+							"Initialize working directory", ex);
+
+					// also create a dump file for this situation
+					ActivityLogger.dumpAppErrorStack(ex);
+
+					// Force the app to exit
+					AppManager.exitApp();
 				}
 			}
 		}

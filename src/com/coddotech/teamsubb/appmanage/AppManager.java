@@ -12,7 +12,7 @@ public class AppManager {
 
 	public static void startApp() {
 		ActivityLogger.performInitializations();
-		
+
 		ActivityLogger.logActivity("Main", "App initialization");
 
 		try {
@@ -27,12 +27,13 @@ public class AppManager {
 			}
 
 		} catch (Exception ex) {
-			ActivityLogger.logActivity("Main", "App runtime", "FATAL ERROR !!!");
-			
-			ActivityLogger.createDump(ex);
-			
+			ActivityLogger
+					.logActivity("Main", "App runtime", "FATAL ERROR !!!");
+
+			ActivityLogger.dumpAppErrorStack(ex);
+
 			AppManager.displayFatalErrorMessage();
-			
+
 		}
 
 		// close the dump files
@@ -42,21 +43,34 @@ public class AppManager {
 		AppManager.disposeGlobalResources();
 	}
 
+	public static void exitApp() {
+		// the main shell is closed last
+		Shell main = null;
+		for (Shell shell : Display.getCurrent().getShells()) {
+			if (shell.getText().equals("Gadget"))
+				main = shell;
+			else
+				shell.close();
+		}
+
+		main.close();
+	}
+
 	private static void disposeGlobalResources() {
 		CustomWindow.APP_ICON.dispose();
 		CustomWindow.BOLD_FONT.dispose();
 		CustomWindow.DEFAULT_FONT.dispose();
 		Display.getCurrent().dispose();
 	}
-	
+
 	private static void displayFatalErrorMessage() {
 		Shell shell = new Shell(Display.getCurrent(), SWT.None);
-		
+
 		MessageBox message = new MessageBox(shell, SWT.ICON_ERROR);
 		message.setMessage("A FATAL ERROR has occured and the app has stopped working !");
 		message.setText("TeamSubb");
 		message.open();
-		
+
 		shell.dispose();
 	}
 

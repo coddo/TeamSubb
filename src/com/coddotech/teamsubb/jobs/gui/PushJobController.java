@@ -6,9 +6,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.jobs.model.JobManager;
+import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.main.CustomWindow;
 
-public class PushJobController {
+public class PushJobController extends CustomController {
 
 	private PushJobWindow view;
 
@@ -30,7 +31,15 @@ public class PushJobController {
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		model.deleteObserver(view);
+		try {
+			model.deleteObserver(view);
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
+		}
 	}
 
 	/**

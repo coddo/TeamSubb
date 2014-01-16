@@ -19,6 +19,7 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 
+import com.coddotech.teamsubb.appmanage.ActivityLogger;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 
@@ -49,6 +50,7 @@ public final class ConnectionManager {
 		if (ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
 				new String[] { "" }, new String[] { "" }).equals("error"))
 			return false;
+		
 		else
 			return true;
 	}
@@ -68,6 +70,9 @@ public final class ConnectionManager {
 	 *         "error" if a connection problem is encountered
 	 */
 	public static String sendLoginRequest(String user, String pass) {
+		
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Login request", "SEND");
+		
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_USER_LOGGING, new String[] { "user",
 						"pass" }, new String[] { user, pass });
@@ -87,6 +92,9 @@ public final class ConnectionManager {
 	 *            server
 	 */
 	public static void sendLogoutRequest(String user) {
+		
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Logout request", "SEND");
+		
 		ConnectionManager.sendMessage(ConnectionManager.URL_USER_LOGGING,
 				new String[] { "logout" }, new String[] { user });
 	}
@@ -105,6 +113,9 @@ public final class ConnectionManager {
 	 *         problem is encountered
 	 */
 	public static String sendJobSearchRequest(String user) {
+		
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Job search request", "SEND");
+		
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, new String[] { "jobs", "staff" },
 				new String[] { "search", user });
@@ -141,6 +152,9 @@ public final class ConnectionManager {
 	public static boolean sendJobCreateRequest(String user, String name,
 			int type, String description, String nextStaff, String subFile,
 			String[] fonts) {
+		
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Job create request", "SEND");
+		
 		// user info handling
 		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype",
 				"comments", "nextstaff" };
@@ -197,6 +211,9 @@ public final class ConnectionManager {
 	 *         not by the server
 	 */
 	public static boolean sendJobAcceptRequest(int jobID, String user) {
+		
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Job accept request", "SEND");
+		
 		String[] messageHeaders = { "acceptjob", "staff" };
 		String[] messages = { Integer.toString(jobID), user };
 
@@ -222,6 +239,8 @@ public final class ConnectionManager {
 	 *         not by the server
 	 */
 	public static boolean sendJobCancelRequest(Job job, String user) {
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Job cancel request", "SEND");
+		
 		return ConnectionManager.sendJobPushRequest(job, user, true);
 	}
 
@@ -240,6 +259,9 @@ public final class ConnectionManager {
 		String[] headers = new String[] { "push", "staff", "jobid" };
 		String[] messages = new String[] { "force", user,
 				Integer.toString(jobID) };
+
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Job force cancel request", "SEND");
 
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, headers, messages);
@@ -268,6 +290,10 @@ public final class ConnectionManager {
 	 */
 	public static boolean sendJobPushRequest(Job job, String user,
 			boolean canceled) {
+
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Job push request", "SEND");
+
 		// Text messages data
 		String[] messageHeaders = { "push", "staff", "jobid", "jobtype",
 				"comments", "nextstaff" };
@@ -328,6 +354,9 @@ public final class ConnectionManager {
 	 *         not by the server
 	 */
 	public static boolean sendJobEndRequest(int jobID, String user) {
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Job end request", "SEND");
+
 		// message data
 		String[] messageHeaders = { "push", "staff", "jobid" };
 		String[] messages = { "end", user, Integer.toString(jobID) };
@@ -431,6 +460,9 @@ public final class ConnectionManager {
 		httpPost = null;
 		data = null;
 
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Server response", result);
+
 		// return the server's result
 		return result;
 	}
@@ -466,6 +498,9 @@ public final class ConnectionManager {
 			return ConnectionManager.sendMessage(url, data);
 
 		} catch (Exception ex) {
+			ActivityLogger.logException(ConnectionManager.class.getName(),
+					"Server request", ex);
+
 			return "false";
 		}
 	}
@@ -511,6 +546,9 @@ public final class ConnectionManager {
 			return ConnectionManager.sendMessage(url, data);
 
 		} catch (Exception ex) {
+			ActivityLogger.logException(ConnectionManager.class.getName(),
+					"Server request", ex);
+
 			return "false";
 		}
 	}

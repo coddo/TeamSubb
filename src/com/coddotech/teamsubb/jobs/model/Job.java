@@ -9,6 +9,7 @@ import java.io.FileWriter;
 
 import org.apache.commons.io.FileUtils;
 
+import com.coddotech.teamsubb.appmanage.ActivityLogger;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 
@@ -59,19 +60,28 @@ public final class Job {
 	 * folder)
 	 */
 	public void dispose() {
-		if (this.configFile.exists())
-			this.configFile.delete();
+		try {
+			if (this.configFile.exists())
+				this.configFile.delete();
 
-		this.name = null;
-		this.description = null;
-		this.currentStaffMember = null;
-		this.previousStaffMember = null;
-		this.nextStaffMember = null;
-		this.intendedTo = null;
-		this.startDate = null;
-		this.directoryPath = null;
-		this.subFileData = null;
-		this.fontsData = null;
+			this.name = null;
+			this.description = null;
+			this.currentStaffMember = null;
+			this.previousStaffMember = null;
+			this.nextStaffMember = null;
+			this.intendedTo = null;
+			this.startDate = null;
+			this.directoryPath = null;
+			this.subFileData = null;
+			this.fontsData = null;
+
+			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Dispose",
+					ex);
+
+		}
 	}
 
 	/**
@@ -480,9 +490,14 @@ public final class Job {
 			// This is for later use (in case of a this pause)
 			this.generateConfigFile();
 
+			ActivityLogger.logActivity(this.getClass().getName(), "Accept job");
+
 			return true;
 
-		} catch (Exception ex) { // diplay error message
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"Accept job", ex);
+
 			return false;
 		}
 	}
@@ -503,9 +518,14 @@ public final class Job {
 		try {
 			FileUtils.deleteDirectory(this.getDirectoryInstance());
 
+			ActivityLogger.logActivity(this.getClass().getName(), "Cancel job");
+
 			return true;
 
 		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"Cancel job", ex);
+
 			return false;
 		}
 
@@ -530,9 +550,14 @@ public final class Job {
 		try {
 			FileUtils.deleteDirectory(this.getDirectoryInstance());
 
+			ActivityLogger.logActivity(this.getClass().getName(), "Push job");
+
 			return true;
 
 		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Push job",
+					ex);
+
 			return false;
 		}
 	}
@@ -546,6 +571,7 @@ public final class Job {
 
 		try {
 			Desktop.getDesktop().open(dir);
+			
 		} catch (Exception ex) {
 		}
 	}

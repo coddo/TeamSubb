@@ -36,36 +36,45 @@ public class LoginWindow extends CustomWindow implements Observer {
 	 */
 	public LoginWindow() {
 		super();
-		
+
 		this.initializeComponents();
+
 	}
 
 	/**
 	 * Clear the memory from this class and its resources
 	 */
 	void dispose() {
-		//user classes
-		controller.dispose();
-		controller = null;
-		
-		// GUI objects
-		userLabel.dispose();
-		userLabel = null;
+		try {
+			// user classes
+			controller.dispose();
+			controller = null;
 
-		passLabel.dispose();
-		passLabel = null;
+			// GUI objects
+			userLabel.dispose();
+			userLabel = null;
 
-		userBox.dispose();
-		userBox = null;
+			passLabel.dispose();
+			passLabel = null;
 
-		passBox.dispose();
-		passBox = null;
+			userBox.dispose();
+			userBox = null;
 
-		exitButton.dispose();
-		exitButton = null;
+			passBox.dispose();
+			passBox = null;
 
-		loginButton.dispose();
-		loginButton = null;
+			exitButton.dispose();
+			exitButton = null;
+
+			loginButton.dispose();
+			loginButton = null;
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
+		}
 	}
 
 	/**

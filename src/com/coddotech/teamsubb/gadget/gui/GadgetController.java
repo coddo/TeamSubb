@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Listener;
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
+import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.gui.AppSettingsWindow;
 import com.coddotech.teamsubb.settings.model.AppSettings;
@@ -27,7 +28,7 @@ import com.coddotech.teamsubb.settings.model.AppSettings;
  * @author Coddo
  * 
  */
-public class GadgetController {
+public class GadgetController extends CustomController {
 
 	private GadgetWindow gadget;
 
@@ -69,29 +70,37 @@ public class GadgetController {
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		this.disposed = true;
-		
-		if (jobsWindow != null)
-			if (!jobsWindow.isDisposed() && !jobsWindow.isExiting())
-				jobsWindow.close();
+		try {
+			this.disposed = true;
 
-		settings.deleteObserver(this.gadget);
-		jobs.deleteObserver(this.animations);
-		animations.deleteObserver(this.gadget);
+			if (jobsWindow != null)
+				if (!jobsWindow.isDisposed() && !jobsWindow.isExiting())
+					jobsWindow.close();
 
-		animations.dispose();
-		animations = null;
+			settings.deleteObserver(this.gadget);
+			jobs.deleteObserver(this.animations);
+			animations.deleteObserver(this.gadget);
 
-		timer = null;
-		gadget = null;
+			animations.dispose();
+			animations = null;
 
-		jobsWindow = null;
-		jobs.dispose();
-		jobs = null;
+			timer = null;
+			gadget = null;
 
-		settingsWindow = null;
-		settings.dispose();
-		settings = null;
+			jobsWindow = null;
+			jobs.dispose();
+			jobs = null;
+
+			settingsWindow = null;
+			settings.dispose();
+			settings = null;
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
+		}
 	}
 
 	/**
@@ -261,8 +270,8 @@ public class GadgetController {
 			gadget.getShell().setRegion(region);
 			Rectangle size = region.getBounds();
 			gadget.getShell().setSize(size.width, size.height);
-			
-			//dispose of the region object
+
+			// dispose of the region object
 			region.dispose();
 		}
 	};

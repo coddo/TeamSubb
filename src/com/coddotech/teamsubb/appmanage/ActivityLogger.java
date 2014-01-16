@@ -89,7 +89,16 @@ public class ActivityLogger {
 	public static void logException(String className, String activity,
 			Exception ex) {
 
-		ActivityLogger.logActivity(className, activity, ex.getMessage());
+		try {
+			logWriter.write("[!] ");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			ActivityLogger.logActivity(className, activity, ex.getMessage());
+
+		}
 
 	}
 
@@ -99,7 +108,7 @@ public class ActivityLogger {
 	 * @param ex
 	 *            The exception received at app crash
 	 */
-	public static void createDump(Exception ex) {
+	public static void dumpAppErrorStack(Exception ex) {
 		if (!initializationFailed) {
 
 			String message;

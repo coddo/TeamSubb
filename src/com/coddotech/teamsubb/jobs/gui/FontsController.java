@@ -15,8 +15,9 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.jobs.model.Job;
+import com.coddotech.teamsubb.main.CustomController;
 
-public class FontsController {
+public class FontsController extends CustomController {
 
 	private Job job;
 
@@ -39,17 +40,28 @@ public class FontsController {
 	public void dispose() {
 		// delete all the marked files from the job's directory if the settings
 		// have been applied
-		if (applied) {
-			for (int i = 0; i < deleted.size(); i++) {
-				if (deleted.get(i).exists())
-					deleted.get(i).delete();
+		try {
+
+			if (applied) {
+
+				for (int i = 0; i < deleted.size(); i++) {
+					if (deleted.get(i).exists())
+						deleted.get(i).delete();
+				}
+
 			}
+
+			deleted.clear();
+			deleted = null;
+
+			browseFonts = null;
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
 		}
-
-		deleted.clear();
-		deleted = null;
-
-		browseFonts = null;
 	}
 
 	public void setJob(Job job) {

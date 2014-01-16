@@ -12,9 +12,10 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.jobs.model.JobManager;
+import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.main.CustomWindow;
 
-public class CreateJobController {
+public class CreateJobController extends CustomController {
 
 	private CreateJobWindow view;
 	private JobManager model;
@@ -44,10 +45,18 @@ public class CreateJobController {
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		model.deleteObserver(this.view);
+		try {
+			model.deleteObserver(this.view);
 
-		browseSub = null;
-		browseFonts = null;
+			browseSub = null;
+			browseFonts = null;
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
+		}
 	}
 
 	/**

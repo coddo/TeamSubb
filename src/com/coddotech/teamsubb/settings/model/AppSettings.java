@@ -15,6 +15,7 @@ import org.eclipse.swt.graphics.Point;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.coddotech.teamsubb.appmanage.ActivityLogger;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
@@ -55,7 +56,7 @@ public final class AppSettings extends Observable {
 	private DocumentBuilderFactory dbFactory;
 	private DocumentBuilder dBuilder;
 	private Document settingsFile;
-	
+
 	private static AppSettings instance = null;
 
 	/**
@@ -64,11 +65,11 @@ public final class AppSettings extends Observable {
 	private AppSettings() {
 		createXMLComponents();
 	}
-	
+
 	public static AppSettings getInstance() {
 		if (instance == null)
 			instance = new AppSettings();
-		
+
 		return instance;
 	}
 
@@ -76,11 +77,20 @@ public final class AppSettings extends Observable {
 	 * Clear memory from this class and its resources
 	 */
 	public void dispose() {
-		// clear flieds
-		dbFactory = null;
-		dBuilder = null;
-		settingsFile = null;
-		gadgetLocation = null;
+		try {
+			// clear flieds
+			dbFactory = null;
+			dBuilder = null;
+			settingsFile = null;
+			gadgetLocation = null;
+
+			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Dispose",
+					ex);
+
+		}
 	}
 
 	public Point getGadgetLocation() {
@@ -147,10 +157,16 @@ public final class AppSettings extends Observable {
 			notifyObservers(AppSettings.MESSAGE_SAVE
 					+ CustomWindow.NOTIFICATION_SEPARATOR + true);
 
+			ActivityLogger.logActivity(this.getClass().getName(),
+					"Commit changes to file");
+
 		} catch (Exception ex) {
 			this.setChanged();
 			notifyObservers(AppSettings.MESSAGE_SAVE
 					+ CustomWindow.NOTIFICATION_SEPARATOR + false);
+
+			ActivityLogger.logException(this.getClass().getName(),
+					"Commit changes to file", ex);
 		}
 	}
 
@@ -158,11 +174,20 @@ public final class AppSettings extends Observable {
 	 * Reads all the settings from the XML file and stores them in the HEAP
 	 */
 	public void readSettings() {
-		readGadgetLocation();
-		readGadgetAutosaveLocation();
-		readSearchInterval();
+		try {
+			readGadgetLocation();
+			readGadgetAutosaveLocation();
+			readSearchInterval();
 
-		notifyCompleteSettings();
+			notifyCompleteSettings();
+			ActivityLogger.logActivity(this.getClass().getName(),
+					"Read settings");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"Read settings", ex);
+
+		}
 	}
 
 	/**
@@ -286,12 +311,19 @@ public final class AppSettings extends Observable {
 	 */
 	private void createXMLComponents() {
 		try { // XML builders and documents
+
 			dbFactory = DocumentBuilderFactory.newInstance();
 			dBuilder = dbFactory.newDocumentBuilder();
 			settingsFile = dBuilder.parse(System.getProperty("user.dir")
 					+ File.separator + "Settings.xml");
-		} catch (Exception e) {
-			e.printStackTrace();
+
+			ActivityLogger.logActivity(this.getClass().getName(),
+					"XML components creation");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"XML components creation", ex);
+
 		}
 	}
 }

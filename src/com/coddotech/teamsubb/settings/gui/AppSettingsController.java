@@ -5,9 +5,10 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.settings.model.AppSettings;
 
-public class AppSettingsController {
+public class AppSettingsController extends CustomController {
 
 	private AppSettingsWindow view;
 	private AppSettings model;
@@ -28,10 +29,18 @@ public class AppSettingsController {
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		model.deleteObserver(view);
+		try {
+			model.deleteObserver(view);
 
-		view = null;
-		model = null;
+			view = null;
+			model = null;
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
+		}
 	}
 
 	/**

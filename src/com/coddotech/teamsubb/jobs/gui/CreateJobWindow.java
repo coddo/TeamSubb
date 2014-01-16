@@ -59,33 +59,41 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		controller.dispose();
+		try {
+			controller.dispose();
 
-		nameLabel.dispose();
-		name.dispose();
+			nameLabel.dispose();
+			name.dispose();
 
-		typeLabel.dispose();
-		type.dispose();
+			typeLabel.dispose();
+			type.dispose();
 
-		commentsLabel.dispose();
-		comments.dispose();
+			commentsLabel.dispose();
+			comments.dispose();
 
-		nextStaffLabel.dispose();
-		nextStaff.dispose();
+			nextStaffLabel.dispose();
+			nextStaff.dispose();
 
-		subLabel.dispose();
-		sub.dispose();
+			subLabel.dispose();
+			sub.dispose();
 
-		fontsLabel.dispose();
-		fonts.dispose();
+			fontsLabel.dispose();
+			fonts.dispose();
 
-		browseSubButton.dispose();
-		browseFontsButton.dispose();
+			browseSubButton.dispose();
+			browseFontsButton.dispose();
 
-		create.dispose();
-		cancel.dispose();
+			create.dispose();
+			cancel.dispose();
 
-		panel.dispose();
+			panel.dispose();
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
+		}
 	}
 
 	/**
@@ -159,7 +167,7 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 	 *            A String collection with the absolute paths to the files
 	 */
 	public void appendFonts(String[] fonts) {
-		for(String font : fonts) {
+		for (String font : fonts) {
 			this.fonts.add(font);
 		}
 	}
@@ -264,7 +272,8 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 		browseSubButton = new Button(panel, SWT.PUSH);
 
 		fontsLabel = new Label(panel, SWT.None);
-		fonts = new List(panel, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		fonts = new List(panel, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
+				| SWT.H_SCROLL);
 
 		browseFontsButton = new Button(panel, SWT.PUSH);
 

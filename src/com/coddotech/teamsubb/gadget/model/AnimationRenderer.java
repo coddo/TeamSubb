@@ -11,6 +11,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
+import com.coddotech.teamsubb.appmanage.ActivityLogger;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
@@ -68,20 +69,29 @@ public class AnimationRenderer extends Observable implements Observer {
 	 * Clears the memory from this class and its resources
 	 */
 	public void dispose() {
-		this.disposed = true;
+		try {
+			this.disposed = true;
 
-		for (int i = 0; i < idle.length; i++)
-			idle[i].dispose();
+			for (int i = 0; i < idle.length; i++)
+				idle[i].dispose();
 
-		for (int i = 0; i < lowPriority.length; i++)
-			lowPriority[i].dispose();
+			for (int i = 0; i < lowPriority.length; i++)
+				lowPriority[i].dispose();
 
-		for (int i = 0; i < highPriority.length; i++)
-			highPriority[i].dispose();
+			for (int i = 0; i < highPriority.length; i++)
+				highPriority[i].dispose();
 
-		idle = null;
-		lowPriority = null;
-		highPriority = null;
+			idle = null;
+			lowPriority = null;
+			highPriority = null;
+
+			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Dispose",
+					ex);
+
+		}
 	}
 
 	/**
@@ -200,58 +210,70 @@ public class AnimationRenderer extends Observable implements Observer {
 	 * app for faster use
 	 */
 	private void initializeAnimationData() {
-		File idleFolder = new File(AnimationRenderer.DIR_IDLE);
-		File lowFolder = new File(AnimationRenderer.DIR_LOW);
-		File highFolder = new File(AnimationRenderer.DIR_HIGH);
+		try {
 
-		FilenameFilter filter = new FilenameFilter() {
+			File idleFolder = new File(AnimationRenderer.DIR_IDLE);
+			File lowFolder = new File(AnimationRenderer.DIR_LOW);
+			File highFolder = new File(AnimationRenderer.DIR_HIGH);
 
-			@Override
-			public boolean accept(File path, String file) {
+			FilenameFilter filter = new FilenameFilter() {
 
-				return file.split(Pattern.quote("."))[1].equals("png");
+				@Override
+				public boolean accept(File path, String file) {
+
+					return file.split(Pattern.quote("."))[1].equals("png");
+				}
+			};
+
+			idle = new Image[idleFolder.list(filter).length];
+			lowPriority = new Image[lowFolder.list(filter).length];
+			highPriority = new Image[highFolder.list(filter).length];
+
+			int size = 88;
+
+			// idle image sequence
+			int k = 0;
+			for (String img : idleFolder.list(filter)) {
+
+				idle[k] = resizeImage(new Image(Display.getCurrent(),
+						AnimationRenderer.DIR_IDLE + File.separator + img),
+						size, size);
+
+				k++;
 			}
-		};
 
-		idle = new Image[idleFolder.list(filter).length];
-		lowPriority = new Image[lowFolder.list(filter).length];
-		highPriority = new Image[highFolder.list(filter).length];
+			// low priority image sequence
+			k = 0;
+			for (String img : lowFolder.list(filter)) {
 
-		int size = 88;
-		
-		// idle image sequence
-		int k = 0;
-		for (String img : idleFolder.list(filter)) {
+				lowPriority[k] = resizeImage(new Image(Display.getCurrent(),
+						AnimationRenderer.DIR_LOW + File.separator + img),
+						size, size);
+				k++;
+			}
 
-			idle[k] = resizeImage(new Image(Display.getCurrent(),
-					AnimationRenderer.DIR_IDLE + File.separator + img), size,
-					size);
+			// high priority image sequence
+			k = 0;
+			for (String img : highFolder.list(filter)) {
 
-			k++;
+				highPriority[k] = resizeImage(new Image(Display.getCurrent(),
+						AnimationRenderer.DIR_HIGH + File.separator + img),
+						size, size);
+				k++;
+			}
+
+			idleFolder = null;
+			lowFolder = null;
+			highFolder = null;
+
+			ActivityLogger.logActivity(this.getClass().getName(),
+					"Initialize animation data");
+
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"Initialize animation data", ex);
+
 		}
-
-		// low priority image sequence
-		k = 0;
-		for (String img : lowFolder.list(filter)) {
-
-			lowPriority[k] = resizeImage(new Image(Display.getCurrent(),
-					AnimationRenderer.DIR_LOW + File.separator + img), size, size);
-			k++;
-		}
-
-		// high priority image sequence
-		k = 0;
-		for (String img : highFolder.list(filter)) {
-
-			highPriority[k] = resizeImage(new Image(Display.getCurrent(),
-					AnimationRenderer.DIR_HIGH + File.separator + img), size,
-					size);
-			k++;
-		}
-
-		idleFolder = null;
-		lowFolder = null;
-		highFolder = null;
 	}
 
 }

@@ -47,7 +47,7 @@ public class GadgetWindow extends CustomWindow implements Observer {
 		GadgetWindow.jobs = jobs;
 
 		this.setShell(new Shell(Display.getCurrent(), SWT.NO_TRIM | SWT.ON_TOP));
-		
+
 		this.initializeComponents();
 	}
 
@@ -55,13 +55,22 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		// user classes
-		controller.dispose();
-		controller = null;
+		try {
 
-		// fields
-		jobs = null;
-		userInfo = null;
+			// user classes
+			controller.dispose();
+			controller = null;
+
+			// fields
+			jobs = null;
+			userInfo = null;
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
+		}
 	}
 
 	/**
@@ -109,9 +118,11 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	@Override
 	public void update(Observable obs, Object obj) {
 		if (!controller.isDisposed()) {
+
 			if (obs instanceof AnimationRenderer) {
 				imageContainer.setBackgroundImage((Image) obj);
 			}
+
 			else if (obs instanceof AppSettings) {
 
 				String[] data = ((String) obj)
@@ -124,7 +135,9 @@ public class GadgetWindow extends CustomWindow implements Observer {
 					this.getShell().setLocation(x, y);
 					first = false;
 
-				} else if (data[0].equals(AppSettings.MESSAGE_SEARCH_INTERVAL)) {
+				}
+
+				else if (data[0].equals(AppSettings.MESSAGE_SEARCH_INTERVAL)) {
 
 					controller.setSearchInterval(Integer.parseInt(data[1]));
 				}

@@ -58,24 +58,32 @@ public class PushJobWindow extends CustomWindow implements Observer {
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		controller.dispose();
+		try {
+			controller.dispose();
 
-		nameLabel.dispose();
-		name.dispose();
+			nameLabel.dispose();
+			name.dispose();
 
-		typeLabel.dispose();
-		type.dispose();
+			typeLabel.dispose();
+			type.dispose();
 
-		commentsLabel.dispose();
-		comments.dispose();
+			commentsLabel.dispose();
+			comments.dispose();
 
-		nextStaffLabel.dispose();
-		nextStaff.dispose();
+			nextStaffLabel.dispose();
+			nextStaff.dispose();
 
-		finish.dispose();
-		cancel.dispose();
+			finish.dispose();
+			cancel.dispose();
 
-		panel.dispose();
+			panel.dispose();
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
+		}
 	}
 
 	/**

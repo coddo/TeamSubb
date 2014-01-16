@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import com.coddotech.teamsubb.appmanage.ActivityLogger;
 import com.coddotech.teamsubb.jobs.gui.JobController;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.jobs.model.JobManager;
@@ -140,80 +141,88 @@ public class JobWindow extends CustomWindow implements Observer {
 	 * Clear the memory from this class and its components
 	 */
 	public void dispose() {
-		// controller
-		controller.dispose();
-		this.exiting = true;
+		try {
+			// controller
+			controller.dispose();
+			this.exiting = true;
 
-		// job information
-		jobTypeLabel.dispose();
-		jobType.dispose();
-		jobPreviousStaffLabel.dispose();
-		jobPreviousStaff.dispose();
-		jobIntendedToLabel.dispose();
-		jobIntendedTo.dispose();
-		jobBookedByLabel.dispose();
-		jobBookedBy.dispose();
-		jobCommentsLabel.dispose();
-		jobComments.dispose();
+			// job information
+			jobTypeLabel.dispose();
+			jobType.dispose();
+			jobPreviousStaffLabel.dispose();
+			jobPreviousStaff.dispose();
+			jobIntendedToLabel.dispose();
+			jobIntendedTo.dispose();
+			jobBookedByLabel.dispose();
+			jobBookedBy.dispose();
+			jobCommentsLabel.dispose();
+			jobComments.dispose();
 
-		// application menu objects
-		openSettingsMenuItem.dispose();
-		closeWindowMenuItem.dispose();
-		exitApplicationMenuItem.dispose();
-		applicationMenu.dispose();
+			// application menu objects
+			openSettingsMenuItem.dispose();
+			closeWindowMenuItem.dispose();
+			exitApplicationMenuItem.dispose();
+			applicationMenu.dispose();
 
-		// jobs menu objects
-		createJobMenuItem.dispose();
-		refreshJobListMenuItem.dispose();
-		jobsMenu.dispose();
+			// jobs menu objects
+			createJobMenuItem.dispose();
+			refreshJobListMenuItem.dispose();
+			jobsMenu.dispose();
 
-		// actions menu objects
-		acceptJobMenuItem.dispose();
-		cancelJobMenuItem.dispose();
-		forceCancelJobMenuItem.dispose();
-		finishJobMenuItem.dispose();
-		endJobMenuItem.dispose();
-		actionsMenu.dispose();
-		configureFontsMenuItem.dispose();
-		openJobDirectoryMenuItem.dispose();
+			// actions menu objects
+			acceptJobMenuItem.dispose();
+			cancelJobMenuItem.dispose();
+			forceCancelJobMenuItem.dispose();
+			finishJobMenuItem.dispose();
+			endJobMenuItem.dispose();
+			actionsMenu.dispose();
+			configureFontsMenuItem.dispose();
+			openJobDirectoryMenuItem.dispose();
 
-		// menu bar objects
-		applicationMenuItem.dispose();
-		jobsMenuItem.dispose();
-		aboutMenuItem.dispose();
-		menuBar.dispose();
-		separator1.dispose();
-		separator2.dispose();
+			// menu bar objects
+			applicationMenuItem.dispose();
+			jobsMenuItem.dispose();
+			aboutMenuItem.dispose();
+			menuBar.dispose();
+			separator1.dispose();
+			separator2.dispose();
 
-		// user information objects
-		userNameLabel.dispose();
-		userEmailLabel.dispose();
-		userRankLabel.dispose();
+			// user information objects
+			userNameLabel.dispose();
+			userEmailLabel.dispose();
+			userRankLabel.dispose();
 
-		// jobs list
-		if (jobsList.getItemCount() > 0) {
-			jobsList.clearAll();
-			jobsList.removeAll();
+			// jobs list
+			if (jobsList.getItemCount() > 0) {
+				jobsList.clearAll();
+				jobsList.removeAll();
+			}
+			jobsList.dispose();
+
+			for (int i = 0; i < userJobsLabels.length; i++)
+				userJobsLabels[i].dispose();
+
+			// window objects
+			userInfoGroup.dispose();
+			userJobsGroup.dispose();
+			jobsGroup.dispose();
+			jobInfoGroup.dispose();
+			helpChartGroup.dispose();
+
+			// help chart
+			itemAcceptableColor.dispose();
+			itemAcceptableLabel.dispose();
+			itemAcceptedColor.dispose();
+			itemAcceptedLabel.dispose();
+			itemImportantColor.dispose();
+			itemImportantLabel.dispose();
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
 		}
-		jobsList.dispose();
-
-		for (int i = 0; i < userJobsLabels.length; i++)
-			userJobsLabels[i].dispose();
-
-		// window objects
-		userInfoGroup.dispose();
-		userJobsGroup.dispose();
-		jobsGroup.dispose();
-		jobInfoGroup.dispose();
-		helpChartGroup.dispose();
-
-		// help chart
-		itemAcceptableColor.dispose();
-		itemAcceptableLabel.dispose();
-		itemAcceptedColor.dispose();
-		itemAcceptedLabel.dispose();
-		itemImportantColor.dispose();
-		itemImportantLabel.dispose();
 	}
 
 	public boolean isExiting() {
@@ -266,42 +275,50 @@ public class JobWindow extends CustomWindow implements Observer {
 	 * depending on the booked status, end it.
 	 */
 	public void morphActionsMenu() {
-		if (this.getSelectedJobID() == -1) {
-			acceptJobMenuItem.setEnabled(false);
-			cancelJobMenuItem.setEnabled(false);
-			forceCancelJobMenuItem.setEnabled(false);
-			finishJobMenuItem.setEnabled(false);
-			endJobMenuItem.setEnabled(false);
-			configureFontsMenuItem.setEnabled(false);
-			openJobDirectoryMenuItem.setEnabled(false);
-		} else if (this.getSelectedJobColor().equals(JobWindow.COLOR_ACCEPTED)) {
-			acceptJobMenuItem.setEnabled(false);
-			cancelJobMenuItem.setEnabled(true);
-			forceCancelJobMenuItem.setEnabled(true);
-			finishJobMenuItem.setEnabled(true);
-			endJobMenuItem.setEnabled(false);
-			configureFontsMenuItem.setEnabled(true);
-			openJobDirectoryMenuItem.setEnabled(true);
-		} else if (this.isTestUser) {
-			// if the user is a test user with view-only privileges, then he/she
-			// cannot interact with the jobs
-			acceptJobMenuItem.setEnabled(false);
-			cancelJobMenuItem.setEnabled(false);
-			forceCancelJobMenuItem.setEnabled(false);
-			finishJobMenuItem.setEnabled(false);
-			endJobMenuItem.setEnabled(false);
-			configureFontsMenuItem.setEnabled(false);
-			openJobDirectoryMenuItem.setEnabled(false);
-		} else {
-			cancelJobMenuItem.setEnabled(false);
-			finishJobMenuItem.setEnabled(false);
-			endJobMenuItem.setEnabled(true);
-			configureFontsMenuItem.setEnabled(false);
-			openJobDirectoryMenuItem.setEnabled(false);
-			forceCancelJobMenuItem.setEnabled(!this.jobBookedBy.getText()
-					.equals("-"));
-			acceptJobMenuItem
-					.setEnabled(this.jobBookedBy.getText().equals("-"));
+		try {
+			if (this.getSelectedJobID() == -1) {
+				acceptJobMenuItem.setEnabled(false);
+				cancelJobMenuItem.setEnabled(false);
+				forceCancelJobMenuItem.setEnabled(false);
+				finishJobMenuItem.setEnabled(false);
+				endJobMenuItem.setEnabled(false);
+				configureFontsMenuItem.setEnabled(false);
+				openJobDirectoryMenuItem.setEnabled(false);
+			} else if (this.getSelectedJobColor().equals(
+					JobWindow.COLOR_ACCEPTED)) {
+				acceptJobMenuItem.setEnabled(false);
+				cancelJobMenuItem.setEnabled(true);
+				forceCancelJobMenuItem.setEnabled(true);
+				finishJobMenuItem.setEnabled(true);
+				endJobMenuItem.setEnabled(false);
+				configureFontsMenuItem.setEnabled(true);
+				openJobDirectoryMenuItem.setEnabled(true);
+			} else if (this.isTestUser) {
+				// if the user is a test user with view-only privileges, then
+				// he/she
+				// cannot interact with the jobs
+				acceptJobMenuItem.setEnabled(false);
+				cancelJobMenuItem.setEnabled(false);
+				forceCancelJobMenuItem.setEnabled(false);
+				finishJobMenuItem.setEnabled(false);
+				endJobMenuItem.setEnabled(false);
+				configureFontsMenuItem.setEnabled(false);
+				openJobDirectoryMenuItem.setEnabled(false);
+			} else {
+				cancelJobMenuItem.setEnabled(false);
+				finishJobMenuItem.setEnabled(false);
+				endJobMenuItem.setEnabled(true);
+				configureFontsMenuItem.setEnabled(false);
+				openJobDirectoryMenuItem.setEnabled(false);
+				forceCancelJobMenuItem.setEnabled(!this.jobBookedBy.getText()
+						.equals("-"));
+				acceptJobMenuItem.setEnabled(this.jobBookedBy.getText().equals(
+						"-"));
+			}
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"Morph actions menu", ex);
+
 		}
 	}
 
@@ -309,117 +326,112 @@ public class JobWindow extends CustomWindow implements Observer {
 	public void update(Observable obs, Object obj) {
 		// the only observable that this class has is the JobManager class
 
-		String[] data = obj.toString().split(
-				CustomWindow.NOTIFICATION_SEPARATOR);
+		try {
+			String[] data = obj.toString().split(
+					CustomWindow.NOTIFICATION_SEPARATOR);
 
-		switch (data[0]) {
-		case "find": {
-			this.jobsList.clearAll();
-			this.jobsList.removeAll();
-			this.clearJobInformation();
+			switch (data[0]) {
+			case "find": {
+				this.jobsList.clearAll();
+				this.jobsList.removeAll();
+				// this.clearJobInformation();
 
-			for (Job job : ((JobManager) obs).getAcceptedJobs()) {
-				TableItem item = new TableItem(this.jobsList, SWT.None);
+				for (Job job : ((JobManager) obs).getAcceptedJobs()) {
+					TableItem item = new TableItem(this.jobsList, SWT.None);
 
-				item.setText(job.getName());
-				item.setData(job.getID());
+					item.setText(job.getName());
+					item.setData(job.getID());
 
-				item.setBackground(JobWindow.COLOR_ACCEPTED);
+					item.setBackground(JobWindow.COLOR_ACCEPTED);
+				}
+
+				for (Job job : ((JobManager) obs).getJobs()) {
+					TableItem item = new TableItem(this.jobsList, SWT.None);
+
+					item.setText(job.getName());
+					item.setData(job.getID());
+
+					if (job.getIntendedTo().equals(this.tempUserInfo[0]))
+						item.setBackground(JobWindow.COLOR_IMPORTANT);
+
+					else if (job.isAcceptable(this.tempUserJobs))
+						item.setBackground(JobWindow.COLOR_ACCEPTABLE);
+				}
 			}
+				break;
+			case "jobinformation": {
+				this.jobType.setText(data[1]);
+				this.jobPreviousStaff.setText(data[2]);
+				this.jobIntendedTo.setText(data[3]);
+				this.jobBookedBy.setText(data[4]);
 
-			for (Job job : ((JobManager) obs).getJobs()) {
-				TableItem item = new TableItem(this.jobsList, SWT.None);
+				if (data.length == 6)
+					this.jobComments.setText(data[5]);
 
-				item.setText(job.getName());
-				item.setData(job.getID());
-
-				if (job.getIntendedTo().equals(this.tempUserInfo[0]))
-					item.setBackground(JobWindow.COLOR_IMPORTANT);
-				else if (job.isAcceptable(this.tempUserJobs))
-					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
+				this.jobType.pack();
+				this.jobPreviousStaff.pack();
+				this.jobIntendedTo.pack();
+				this.jobBookedBy.pack();
 			}
-		}
-			break;
-		case "jobinformation": {
-			// if (this.jobsList.getItemCount() > 0) {
-			this.jobType.setText(data[1]);
-			this.jobPreviousStaff.setText(data[2]);
-			this.jobIntendedTo.setText(data[3]);
-			this.jobBookedBy.setText(data[4]);
+				break;
+			case "end": {
+				MessageBox message;
 
-			if (data.length == 6)
-				this.jobComments.setText(data[5]);
+				if (Boolean.parseBoolean(data[1])) {
+					((JobManager) obs).findJobs();
 
-			this.jobType.pack();
-			this.jobPreviousStaff.pack();
-			this.jobIntendedTo.pack();
-			this.jobBookedBy.pack();
-			// }
-		}
-			break;
-		case "end": {
-			MessageBox message;
+				} else {
+					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+					message.setText("Error");
+					message.setMessage("There was an error while ending the job");
 
-			if (Boolean.parseBoolean(data[1])) {
-				((JobManager) obs).findJobs();
+					message.open();
+				}
 
-			} else {
-				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-				message.setText("Error");
-				message.setMessage("There was an error while ending the job");
+			}
+				break;
+			case "accept": {
+				MessageBox message;
+
+				if (Boolean.parseBoolean(data[1])) {
+					((JobManager) obs).findJobs();
+
+					message = new MessageBox(this.getShell(),
+							SWT.ICON_INFORMATION);
+					message.setText("Success");
+					message.setMessage("The job has been successfully accepted");
+				} else {
+					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+					message.setText("Error");
+					message.setMessage("There was an error while accepting the job");
+				}
 
 				message.open();
 			}
+				break;
+			case "cancel": {
+				MessageBox message;
 
-		}
-			break;
-		case "accept": {
-			MessageBox message;
+				if (Boolean.parseBoolean(data[1])) {
+					((JobManager) obs).findJobs();
 
-			if (Boolean.parseBoolean(data[1])) {
-				((JobManager) obs).findJobs();
+				} else {
+					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+					message.setText("Error");
+					message.setMessage("There was an error while cancelling the job");
 
-				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
-				message.setText("Success");
-				message.setMessage("The job has been successfully accepted");
-			} else {
-				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-				message.setText("Error");
-				message.setMessage("There was an error while accepting the job");
+					message.open();
+				}
+
 			}
-
-			message.open();
-		}
-			break;
-		case "cancel": {
-			MessageBox message;
-
-			if (Boolean.parseBoolean(data[1])) {
-				((JobManager) obs).findJobs();
-
-			} else {
-				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-				message.setText("Error");
-				message.setMessage("There was an error while cancelling the job");
-
-				message.open();
+				break;
 			}
+		} catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(),
+					"GUI update", ex);
 
 		}
-			break;
-		}
 
-		// notify the model about the GUI update in order to receive the job
-		// information for the first job in the list
-		if (this.jobsList.getItemCount() > 0
-				&& !data[0].equals("jobinformation")) {
-
-			if (this.getSelectedJobID() == -1)
-				controller.notifyModel(Integer.parseInt(this.jobsList
-						.getItem(0).getData().toString()));
-			else
-				controller.notifyModel(this.getSelectedJobID());
-		}
 	}
 
 	@Override
@@ -557,7 +569,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		// jobs menu objects
 		createJobMenuItem.setText("Create a new job");
 		createJobMenuItem.setEnabled(!this.isTestUser);
-		
+
 		refreshJobListMenuItem.setText("Refresh job list");
 
 		// actions menu objects
@@ -730,6 +742,7 @@ public class JobWindow extends CustomWindow implements Observer {
 	 * Clears the fields that display the information for a selected job in the
 	 * list
 	 */
+	@SuppressWarnings("unused")
 	private void clearJobInformation() {
 		this.jobType.setText("");
 		this.jobPreviousStaff.setText("");

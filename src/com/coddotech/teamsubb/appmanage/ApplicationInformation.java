@@ -32,13 +32,21 @@ public class ApplicationInformation extends CustomWindow {
 	}
 
 	public void dispose() {
-		applicationName.dispose();
-		type.dispose();
-		server.dispose();
-		author.dispose();
-		copyWright.dispose();
+		try {
+			applicationName.dispose();
+			type.dispose();
+			server.dispose();
+			author.dispose();
+			copyWright.dispose();
 
-		font.dispose();
+			font.dispose();
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+			
+		}
 	}
 
 	@Override

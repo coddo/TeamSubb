@@ -4,15 +4,15 @@ import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 
+import com.coddotech.teamsubb.appmanage.AppManager;
 import com.coddotech.teamsubb.appmanage.ApplicationInformation;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
+import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.gui.AppSettingsWindow;
 
@@ -26,7 +26,7 @@ import com.coddotech.teamsubb.settings.gui.AppSettingsWindow;
  * @author Coddo
  * 
  */
-public class JobController {
+public class JobController extends CustomController {
 
 	private JobWindow view;
 	private JobManager model;
@@ -47,7 +47,15 @@ public class JobController {
 	 * Clear the memory from this class and its conponents
 	 */
 	public void dispose() {
-		model.deleteObserver(this.view);
+		try {
+			model.deleteObserver(this.view);
+
+			this.logDispose();
+
+		} catch (Exception ex) {
+			this.logDiposeFail(ex);
+
+		}
 	}
 
 	/**
@@ -106,16 +114,7 @@ public class JobController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			// the main shell is closed last
-			Shell main = null;
-			for (Shell shell : Display.getCurrent().getShells()) {
-				if (shell.getText().equals("Gadget"))
-					main = shell;
-				else
-					shell.close();
-			}
-
-			main.close();
+			AppManager.exitApp();
 		}
 
 		@Override
@@ -199,7 +198,6 @@ public class JobController {
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
 				model.cancelJob(view.getSelectedJobID());
-				model.notifyJobInformation(view.getSelectedJobID());
 			}
 
 		}
