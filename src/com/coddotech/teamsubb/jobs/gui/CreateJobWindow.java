@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.coddotech.teamsubb.chat.model.StaffManager;
 import com.coddotech.teamsubb.jobs.model.Job;
-import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 public class CreateJobWindow extends CustomWindow implements Observer {
@@ -329,9 +329,10 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 		nextStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false,
 				2, 1));
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF);
-		for (String staff : JobManager.getStaffList())
-			nextStaff.add(staff);
+		nextStaff.setItems(StaffManager.getStaffList());
+		nextStaff.add(Job.DEFAULT_NEXT_STAFF, 0);
 		nextStaff.select(0);
+		
 
 		subLabel.setFont(CustomWindow.DEFAULT_FONT);
 		subLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));

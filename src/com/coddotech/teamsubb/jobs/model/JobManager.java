@@ -118,34 +118,6 @@ public class JobManager extends Observable {
 	}
 
 	/**
-	 * Fetch the staff list from the server.<br>
-	 * The list contains both the name of the staff member, and his/her
-	 * attributions.<br>
-	 * <br>
-	 * 
-	 * Example: NAME: Job1 | Job2 | Job3....
-	 * 
-	 * @return A String collection
-	 */
-	public static String[] getStaffList() {
-		if (CustomWindow.isConnected(false)) {
-			String[] staffData = ConnectionManager.sendStaffRequest().split(
-					JobManager.SEPARATOR_JOBS);
-
-			for (int i = 0; i < staffData.length; i++) {
-				staffData[i] = staffData[i].replaceAll(
-						JobManager.SEPARATOR_FIELDS, " | ");
-				staffData[i] = staffData[i].replaceFirst(Pattern.quote(" |"),
-						":");
-			}
-
-			return staffData;
-		}
-
-		return null;
-	}
-
-	/**
 	 * Notifies the observers with the details of the job that has the entered
 	 * ID. This sends the following fields: <br>
 	 * -> Type -> The staff which previously worked on it -> The staff to which

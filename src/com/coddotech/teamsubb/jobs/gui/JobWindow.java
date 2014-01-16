@@ -295,8 +295,7 @@ public class JobWindow extends CustomWindow implements Observer {
 				openJobDirectoryMenuItem.setEnabled(true);
 			} else if (this.isTestUser) {
 				// if the user is a test user with view-only privileges, then
-				// he/she
-				// cannot interact with the jobs
+				// he/she cannot interact with the jobs
 				acceptJobMenuItem.setEnabled(false);
 				cancelJobMenuItem.setEnabled(false);
 				forceCancelJobMenuItem.setEnabled(false);

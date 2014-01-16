@@ -38,8 +38,8 @@ public final class ConnectionManager {
 
 	private static final String URL_USER_LOGGING = "http://anime4fun.ro/wlogin.php";
 	private static final String URL_JOBS = "http://anime4fun.ro/jobs.php";
+	private static final String URL_CHAT = "http://anime4fun.ro/chat.php";
 
-	// private static final String URL_CHAT = "http://anime4fun.ro/chat.php";
 
 	/**
 	 * Check whether there is any connection to the internet or not
@@ -374,7 +374,7 @@ public final class ConnectionManager {
 	}
 
 	public static String sendStaffRequest() {
-		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
+		return ConnectionManager.sendMessage(ConnectionManager.URL_CHAT,
 				new String[] { "liststaff" }, new String[] { "1" });
 	}
 
