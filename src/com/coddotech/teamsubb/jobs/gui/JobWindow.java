@@ -100,6 +100,8 @@ public class JobWindow extends CustomWindow implements Observer {
 	// job information
 	private Label jobTypeLabel;
 	private Label jobType;
+	private Label jobStartDateLabel;
+	private Label jobStartDate;
 	private Label jobPreviousStaffLabel;
 	private Label jobPreviousStaff;
 	private Label jobIntendedToLabel;
@@ -149,6 +151,8 @@ public class JobWindow extends CustomWindow implements Observer {
 			// job information
 			jobTypeLabel.dispose();
 			jobType.dispose();
+			jobStartDateLabel.dispose();
+			jobStartDate.dispose();
 			jobPreviousStaffLabel.dispose();
 			jobPreviousStaff.dispose();
 			jobIntendedToLabel.dispose();
@@ -360,14 +364,14 @@ public class JobWindow extends CustomWindow implements Observer {
 				break;
 			case "jobinformation": {
 				this.jobType.setText(data[1]);
-				this.jobPreviousStaff.setText(data[2]);
-				this.jobIntendedTo.setText(data[3]);
-				this.jobBookedBy.setText(data[4]);
-
-				if (data.length == 6)
-					this.jobComments.setText(data[5]);
+				this.jobStartDate.setText(data[2]);
+				this.jobPreviousStaff.setText(data[3]);
+				this.jobIntendedTo.setText(data[4]);
+				this.jobBookedBy.setText(data[5]);
+				this.jobComments.setText(data[6]);
 
 				this.jobType.pack();
+				this.jobStartDate.pack();
 				this.jobPreviousStaff.pack();
 				this.jobIntendedTo.pack();
 				this.jobBookedBy.pack();
@@ -484,6 +488,8 @@ public class JobWindow extends CustomWindow implements Observer {
 		// job information
 		jobTypeLabel = new Label(this.jobInfoGroup, SWT.None);
 		jobType = new Label(this.jobInfoGroup, SWT.None);
+		jobStartDateLabel = new Label(this.jobInfoGroup, SWT.None);
+		jobStartDate = new Label(this.jobInfoGroup, SWT.None);
 		jobPreviousStaffLabel = new Label(this.jobInfoGroup, SWT.None);
 		jobPreviousStaff = new Label(this.jobInfoGroup, SWT.None);
 		jobIntendedToLabel = new Label(this.jobInfoGroup, SWT.None);
@@ -606,6 +612,13 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		jobType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		jobType.setFont(CustomWindow.DEFAULT_FONT);
+		
+		jobStartDateLabel.setFont(CustomWindow.DEFAULT_FONT);
+		jobStartDateLabel.setText("Start date:");
+		jobStartDateLabel.pack();
+		
+		jobStartDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		jobStartDate.setFont(CustomWindow.DEFAULT_FONT);
 
 		jobPreviousStaffLabel.setFont(CustomWindow.DEFAULT_FONT);
 		jobPreviousStaffLabel.setText("Worked on by:");

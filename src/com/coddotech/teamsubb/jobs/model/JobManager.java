@@ -155,22 +155,25 @@ public class JobManager extends Observable {
 		// the job information to the message
 		if (job == null) {
 			String errmsg = "No job selected";
-			message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
-			message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
-			message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
-			message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
-			message += errmsg;
+
+			for (int i = 0; i < 6; i++)
+				message += errmsg + CustomWindow.NOTIFICATION_SEPARATOR;
+
 		} else {
 			message += Job.DEFAULT_JOB_TYPES[job.getType()]
 					+ CustomWindow.NOTIFICATION_SEPARATOR;
+
+			message += job.getStartDate() + CustomWindow.NOTIFICATION_SEPARATOR;
+
 			message += job.getPreviousStaffMember()
 					+ CustomWindow.NOTIFICATION_SEPARATOR;
+
 			message += job.getIntendedTo()
 					+ CustomWindow.NOTIFICATION_SEPARATOR;
+
 			message += job.getBookedBy() + CustomWindow.NOTIFICATION_SEPARATOR;
 
-			if (job.getDescription() != null)
-				message += job.getDescription();
+			message += (message == null) ? "" : job.getDescription();
 		}
 
 		this.setChanged();
