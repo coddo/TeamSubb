@@ -54,6 +54,8 @@ public class AppManager {
 		}
 
 		main.close();
+		
+		ActivityLogger.logActivity(AppManager.class.getName(), "App exit");
 	}
 
 	private static void disposeGlobalResources() {

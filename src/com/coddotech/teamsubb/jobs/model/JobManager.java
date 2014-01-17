@@ -213,8 +213,7 @@ public class JobManager extends Observable {
 					+ response);
 
 			// after the job is created, start a new search in order to update
-			// the
-			// job list
+			// the job list
 			this.findJobs();
 
 			ActivityLogger.logActivity(this.getClass().getName(), "Create job");

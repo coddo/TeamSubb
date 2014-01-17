@@ -2,17 +2,22 @@ package com.coddotech.teamsubb.gadget.gui;
 
 import java.awt.MouseInfo;
 
+import org.eclipse.swt.events.MenuDetectEvent;
+import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import com.coddotech.teamsubb.appmanage.AppManager;
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
@@ -138,6 +143,60 @@ public class GadgetController extends CustomController {
 		}
 
 	};
+	
+	public SelectionListener trayClicked = new SelectionListener() {
+		
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			gadget.getShell().forceActive();
+			
+		}
+		
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
+	public MenuDetectListener trayMenuDetected = new MenuDetectListener() {
+		
+		@Override
+		public void menuDetected(MenuDetectEvent arg0) {
+			gadget.showMenu();
+			
+		}
+	};
+	
+	public SelectionListener exitAppClicked = new SelectionListener() {
+		
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			AppManager.exitApp();
+			
+		}
+		
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
+	public SelectionListener openJobsClicked = new SelectionListener() {
+		
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			openJobsWindow();
+			
+		}
+		
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
 
 	/**
 	 * Listener for when the gadget is clicked. <br>
@@ -168,21 +227,7 @@ public class GadgetController extends CustomController {
 		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 			if (e.button == 1) {
-				try {
-					if (jobsWindow.getShell().isDisposed())
-						jobsWindow = new JobWindow(GadgetWindow.getUserInfo(),
-								GadgetWindow.getUserJobs());
-				} catch (Exception ex) {
-					jobsWindow = new JobWindow(GadgetWindow.getUserInfo(),
-							GadgetWindow.getUserJobs());
-				}
-
-				if (!jobsWindow.getShell().isVisible())
-					jobsWindow.open();
-				else {
-					jobsWindow.getShell().setMinimized(false);
-					jobsWindow.getShell().forceActive();
-				}
+				openJobsWindow();
 
 			} else if (e.button == 3) {
 				settingsWindow = new AppSettingsWindow();
@@ -275,6 +320,24 @@ public class GadgetController extends CustomController {
 			region.dispose();
 		}
 	};
+
+	private void openJobsWindow() {
+		try {
+			if (jobsWindow.getShell().isDisposed())
+				jobsWindow = new JobWindow(GadgetWindow.getUserInfo(),
+						GadgetWindow.getUserJobs());
+		} catch (Exception ex) {
+			jobsWindow = new JobWindow(GadgetWindow.getUserInfo(),
+					GadgetWindow.getUserJobs());
+		}
+	
+		if (!jobsWindow.getShell().isVisible())
+			jobsWindow.open();
+		else {
+			jobsWindow.getShell().setMinimized(false);
+			jobsWindow.getShell().forceActive();
+		}
+	}
 
 	/**
 	 * Get the ecuation defining a circle with the set radius
