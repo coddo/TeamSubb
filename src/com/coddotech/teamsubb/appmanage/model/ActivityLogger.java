@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.appmanage;
+package com.coddotech.teamsubb.appmanage.model;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 /**
@@ -33,8 +34,7 @@ public class ActivityLogger {
 
 	private static boolean initializationFailed = false;
 
-	private static BufferedWriter logWriter;
-	private static BufferedWriter dumpWriter;
+	private static Stack<String> logStack = new Stack<String>();
 
 	/**
 	 * * Log an activity issued by the user
@@ -52,13 +52,7 @@ public class ActivityLogger {
 			String message = "(" + className + ") -> " + activity + " -> "
 					+ msg;
 
-			try {
-				logWriter.write(ActivityLogger.getCurrentTime() + message
-						+ "\n");
-
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
+			logStack.add(ActivityLogger.getCurrentTime() + message + "\n");
 
 		}
 	}
@@ -89,16 +83,10 @@ public class ActivityLogger {
 	public static void logException(String className, String activity,
 			Exception ex) {
 
-		try {
-			logWriter.write("[!] ");
+		String message = "(" + className + ") -> " + activity + " -> "
+				+ ex.toString();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		} finally {
-			ActivityLogger.logActivity(className, activity, ex.toString());
-
-		}
+		logStack.add("[!] " + ActivityLogger.getCurrentTime() + message + "\n");
 
 	}
 
@@ -123,7 +111,7 @@ public class ActivityLogger {
 			try {
 				dumpFile.createNewFile();
 
-				dumpWriter = new BufferedWriter(new FileWriter(
+				BufferedWriter dumpWriter = new BufferedWriter(new FileWriter(
 						dumpFile.getAbsoluteFile()));
 
 				dumpWriter.write(message);
@@ -140,10 +128,16 @@ public class ActivityLogger {
 	/**
 	 * Closes the stream for the log file and unlocks it
 	 */
-	public static void closeLogFile() {
+	public static void createLogFile() {
 		if (!initializationFailed) {
 
 			try {
+				BufferedWriter logWriter = new BufferedWriter(new FileWriter(
+						logFile.getAbsoluteFile()));
+
+				for (String line : logStack)
+					logWriter.write(line);
+
 				logWriter.close();
 
 			} catch (IOException e) {
@@ -227,9 +221,6 @@ public class ActivityLogger {
 
 		try {
 			logFile.createNewFile();
-
-			logWriter = new BufferedWriter(new FileWriter(
-					logFile.getAbsoluteFile()));
 
 		} catch (IOException ex) {
 			ex.printStackTrace();

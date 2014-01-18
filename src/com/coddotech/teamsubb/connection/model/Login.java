@@ -2,15 +2,17 @@ package com.coddotech.teamsubb.connection.model;
 
 import java.util.Observable;
 
-import com.coddotech.teamsubb.appmanage.ActivityLogger;
-import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
+import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
+import com.coddotech.teamsubb.settings.model.AppSettings;
 
 public class Login extends Observable {
 
 	private static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator",
 			"Administrator", "Fondator" };
 
+	private static boolean loginSuccess = false;
+	
 	/**
 	 * Start the login procedure
 	 */
@@ -29,13 +31,12 @@ public class Login extends Observable {
 			ActivityLogger.logActivity(this.getClass().getName(),
 					"User login");
 
-			if (Boolean.parseBoolean(result[0])) {
-				// if the login process is successful continue with starting the
-				// application's main functionalities and close the login window
-				GadgetWindow gadget = new GadgetWindow(
-						this.getUserInfo(result), this.getJobsInfo(result));
-
-				gadget.open();
+			if (Login.loginSuccess = Boolean.parseBoolean(result[0])) {
+				AppSettings set = AppSettings.getInstance();
+				
+				set.setUserInfo(Login.getUserInfo(result));
+				
+				set.setUserJobs(Login.getJobsInfo(result));
 			}
 
 		} catch (Exception ex) {
@@ -44,7 +45,11 @@ public class Login extends Observable {
 			
 		}
 	}
-
+	
+	public static boolean isLoggedIn() {
+		return Login.loginSuccess;
+	}
+	
 	/**
 	 * Extract the jobs data into a boolean array indicating the jobs types that
 	 * this user can work on <br>
@@ -58,7 +63,7 @@ public class Login extends Observable {
 	 *            A String collection containing the server's response
 	 * @return A boolean array containing the possible jobs for this user
 	 */
-	private boolean[] getJobsInfo(String[] data) {
+	private static boolean[] getJobsInfo(String[] data) {
 		boolean[] jobsData = { false, false, false, false, false, false, false };
 
 		for (int i = 3; i < data.length; i++) {
@@ -88,7 +93,7 @@ public class Login extends Observable {
 	 *            A String collection containing the server's response
 	 * @return A String array containing the user's information
 	 */
-	private String[] getUserInfo(String[] data) {
+	private static String[] getUserInfo(String[] data) {
 		String[] info = new String[3];
 
 		info[0] = data[1];

@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import com.coddotech.teamsubb.appmanage.ActivityLogger;
+import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 
 public abstract class CustomWindow {
@@ -60,8 +60,13 @@ public abstract class CustomWindow {
 	 *            The new desired shell
 	 */
 	public void setShell(Shell shell) {
+		this.shell.removeListener(SWT.Close, this.disposeListener);
+
 		this.shell.dispose();
+
 		this.shell = shell;
+
+		this.shell.addListener(SWT.Close, this.disposeListener);
 	}
 
 	/**
@@ -104,7 +109,7 @@ public abstract class CustomWindow {
 	 */
 	public static boolean isConnected(boolean displayMessage) {
 		boolean connected = ConnectionManager.isConnected();
-		
+
 		if (!connected && displayMessage) {
 
 			MessageBox message = new MessageBox(Display.getCurrent()
@@ -122,20 +127,25 @@ public abstract class CustomWindow {
 	 */
 	private void createShell() {
 		// Prevent the window from being resized
-		shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM ^ SWT.RESIZE
-				^ SWT.DIALOG_TRIM);
+		this.shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM
+				^ SWT.RESIZE ^ SWT.DIALOG_TRIM);
 
-		shell.setSize(300, 300);
-		this.placeToCenter();
-
-		shell.addListener(SWT.Close, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				shell.dispose();
-				disposed = true;
-			}
-		});
+		this.shell.addListener(SWT.Close, this.disposeListener);
 	}
+
+	private Listener disposeListener = new Listener() {
+
+		@Override
+		public void handleEvent(Event e) {
+
+			disposed = true;
+
+			if (!shell.isDisposed() && !disposed)
+				shell.dispose();
+
+		}
+
+	};
 
 	protected void logDispose() {
 		ActivityLogger.logActivity(this.getClass().getName(), "GUI dispose");
@@ -159,7 +169,8 @@ public abstract class CustomWindow {
 					"GUI Initialization");
 
 		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "GUI Initialization", ex);
+			ActivityLogger.logException(this.getClass().getName(),
+					"GUI Initialization", ex);
 
 		}
 
@@ -171,7 +182,8 @@ public abstract class CustomWindow {
 					"Create object properties");
 
 		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Create object properties", ex);
+			ActivityLogger.logException(this.getClass().getName(),
+					"Create object properties", ex);
 
 		}
 
@@ -183,7 +195,8 @@ public abstract class CustomWindow {
 					"Create shell properties");
 
 		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Create shell properties", ex);
+			ActivityLogger.logException(this.getClass().getName(),
+					"Create shell properties", ex);
 
 		}
 
@@ -195,7 +208,8 @@ public abstract class CustomWindow {
 					"Create listeners");
 
 		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Create listeners", ex);
+			ActivityLogger.logException(this.getClass().getName(),
+					"Create listeners", ex);
 
 		}
 
@@ -207,10 +221,16 @@ public abstract class CustomWindow {
 					"Set shell type (super class)");
 
 		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Set shell type (super class)", ex);
+			ActivityLogger.logException(this.getClass().getName(),
+					"Set shell type (super class)", ex);
 
 		}
 	}
+
+	/**
+	 * Dispose all the components for this class
+	 */
+	public abstract void dispose();
 
 	/**
 	 * Object initializations and instance creation

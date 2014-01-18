@@ -9,7 +9,7 @@ import java.io.FileWriter;
 
 import org.apache.commons.io.FileUtils;
 
-import com.coddotech.teamsubb.appmanage.ActivityLogger;
+import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 

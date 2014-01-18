@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import com.coddotech.teamsubb.appmanage.AppManager;
+import com.coddotech.teamsubb.appmanage.model.AppManager;
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;

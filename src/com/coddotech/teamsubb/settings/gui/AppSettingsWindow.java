@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import com.coddotech.teamsubb.appmanage.ActivityLogger;
+import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.model.AppSettings;
 
@@ -46,9 +46,7 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 		this.initializeComponents();
 	}
 
-	/**
-	 * Clear the memory from this class and its components
-	 */
+	@Override
 	public void dispose() {
 		try {
 			// user classes

@@ -19,7 +19,7 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 
-import com.coddotech.teamsubb.appmanage.ActivityLogger;
+import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 
@@ -40,7 +40,6 @@ public final class ConnectionManager {
 	private static final String URL_JOBS = "http://anime4fun.ro/jobs.php";
 	private static final String URL_CHAT = "http://anime4fun.ro/chat.php";
 
-
 	/**
 	 * Check whether there is any connection to the internet or not
 	 * 
@@ -50,7 +49,7 @@ public final class ConnectionManager {
 		if (ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
 				new String[] { "" }, new String[] { "" }).equals("error"))
 			return false;
-		
+
 		else
 			return true;
 	}
@@ -70,16 +69,13 @@ public final class ConnectionManager {
 	 *         "error" if a connection problem is encountered
 	 */
 	public static String sendLoginRequest(String user, String pass) {
-		
-		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Login request", "SEND");
-		
+
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Login request", "SEND");
+
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_USER_LOGGING, new String[] { "user",
 						"pass" }, new String[] { user, pass });
-
-		// for server debugging purposes
-		System.out.println("\nLogin response:\n");
-		System.out.println(response);
 
 		return response;
 	}
@@ -92,9 +88,10 @@ public final class ConnectionManager {
 	 *            server
 	 */
 	public static void sendLogoutRequest(String user) {
-		
-		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Logout request", "SEND");
-		
+
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Logout request", "SEND");
+
 		ConnectionManager.sendMessage(ConnectionManager.URL_USER_LOGGING,
 				new String[] { "logout" }, new String[] { user });
 	}
@@ -113,16 +110,13 @@ public final class ConnectionManager {
 	 *         problem is encountered
 	 */
 	public static String sendJobSearchRequest(String user) {
-		
-		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Job search request", "SEND");
-		
+
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Job search request", "SEND");
+
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, new String[] { "jobs", "staff" },
 				new String[] { "search", user });
-
-		// for server debugging purposes
-		System.out.println("\nJob search response:\n");
-		System.out.println(response);
 
 		return response;
 	}
@@ -152,9 +146,10 @@ public final class ConnectionManager {
 	public static boolean sendJobCreateRequest(String user, String name,
 			int type, String description, String nextStaff, String subFile,
 			String[] fonts) {
-		
-		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Job create request", "SEND");
-		
+
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Job create request", "SEND");
+
 		// user info handling
 		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype",
 				"comments", "nextstaff" };
@@ -189,10 +184,6 @@ public final class ConnectionManager {
 		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
 				messageHeaders, messages, fileHeaders, files);
 
-		// for server debugging purposes
-		System.out.println("\nJob create response:\n");
-		System.out.println(response);
-
 		return Boolean.parseBoolean(response);
 	}
 
@@ -211,18 +202,15 @@ public final class ConnectionManager {
 	 *         not by the server
 	 */
 	public static boolean sendJobAcceptRequest(int jobID, String user) {
-		
-		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Job accept request", "SEND");
-		
+
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Job accept request", "SEND");
+
 		String[] messageHeaders = { "acceptjob", "staff" };
 		String[] messages = { Integer.toString(jobID), user };
 
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, messageHeaders, messages);
-
-		// for server debugging purposes
-		System.out.println("\nJob accept response:\n");
-		System.out.println(response);
 
 		return Boolean.parseBoolean(response);
 	}
@@ -239,8 +227,9 @@ public final class ConnectionManager {
 	 *         not by the server
 	 */
 	public static boolean sendJobCancelRequest(Job job, String user) {
-		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Job cancel request", "SEND");
-		
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Job cancel request", "SEND");
+
 		return ConnectionManager.sendJobPushRequest(job, user, true);
 	}
 
@@ -265,10 +254,6 @@ public final class ConnectionManager {
 
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, headers, messages);
-
-		// for server debugging purposes
-		System.out.println("\nJob force cancel response:\n");
-		System.out.println(response);
 
 		return Boolean.parseBoolean(response);
 	}
@@ -331,10 +316,6 @@ public final class ConnectionManager {
 		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
 				messageHeaders, messages, fileHeaders, files);
 
-		// for server debugging purposes
-		System.out.println("\nJob push response:\n");
-		System.out.println(response);
-
 		// return the servers response
 		return Boolean.parseBoolean(response);
 	}
@@ -365,10 +346,6 @@ public final class ConnectionManager {
 		String response = ConnectionManager.sendMessage(
 				ConnectionManager.URL_JOBS, messageHeaders, messages);
 
-		// for server debugging purposes
-		System.out.println("\nJob end response:\n");
-		System.out.println(response);
-
 		// return the response from the server
 		return Boolean.parseBoolean(response);
 	}
@@ -379,6 +356,8 @@ public final class ConnectionManager {
 	}
 
 	/**
+	 * !!! WILL BE FORKED INTO THE FileDownloader CLASS LATER ON !!!<br>
+	 * 
 	 * Download a certain file from the web
 	 * 
 	 * @param fileData
@@ -396,8 +375,6 @@ public final class ConnectionManager {
 				.quote(JobManager.SEPARATOR_FIELDS));
 
 		File file = new File(dir + File.separator + nameURLContainer[0]);
-		// URL fileURL = new URL(URLEncoder.encode(nameURLContainer[1],
-		// "UTF-8"));
 
 		URI uri = new URI("http", "anime4fun.ro",
 				nameURLContainer[1].split(Pattern.quote("anime4fun.ro"))[1],

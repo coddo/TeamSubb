@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import com.coddotech.teamsubb.appmanage.ActivityLogger;
+import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.jobs.gui.JobController;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.jobs.model.JobManager;
@@ -139,9 +139,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		this.exiting = false;
 	}
 
-	/**
-	 * Clear the memory from this class and its components
-	 */
+	@Override
 	public void dispose() {
 		try {
 			// controller

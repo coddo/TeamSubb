@@ -60,9 +60,7 @@ public class GadgetWindow extends CustomWindow implements Observer {
 		this.initializeComponents();
 	}
 
-	/**
-	 * Clear the memory from this class and its components
-	 */
+	@Override
 	public void dispose() {
 		try {
 

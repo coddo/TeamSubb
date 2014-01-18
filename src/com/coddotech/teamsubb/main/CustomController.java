@@ -1,6 +1,6 @@
 package com.coddotech.teamsubb.main;
 
-import com.coddotech.teamsubb.appmanage.ActivityLogger;
+import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 
 public class CustomController {
 	

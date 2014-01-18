@@ -7,8 +7,8 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import com.coddotech.teamsubb.appmanage.AppManager;
-import com.coddotech.teamsubb.appmanage.ApplicationInformation;
+import com.coddotech.teamsubb.appmanage.gui.ApplicationInformation;
+import com.coddotech.teamsubb.appmanage.model.AppManager;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;

@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.appmanage;
+package com.coddotech.teamsubb.appmanage.gui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,6 +31,7 @@ public class ApplicationInformation extends CustomWindow {
 		this.initializeComponents();
 	}
 
+	@Override
 	public void dispose() {
 		try {
 			applicationName.dispose();

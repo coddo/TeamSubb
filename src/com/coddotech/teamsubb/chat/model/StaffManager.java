@@ -6,6 +6,13 @@ import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
 
+/**
+ * Class for managing the lists with the staff (and their details) employed by
+ * the fansub.
+ * 
+ * @author Coddo
+ * 
+ */
 public class StaffManager {
 
 	/**
@@ -23,7 +30,7 @@ public class StaffManager {
 	 */
 	public static String[] getStaffList() {
 		if (CustomWindow.isConnected(false)) {
-			
+
 			String[] staffData = ConnectionManager.sendStaffRequest().split(
 					JobManager.SEPARATOR_JOBS);
 
@@ -38,7 +45,8 @@ public class StaffManager {
 		return null;
 	}
 
-	public static String[] getStaffDetails() throws UnsupportedOperationException {
+	public static String[] getStaffDetails()
+			throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 

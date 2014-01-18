@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.appmanage;
+package com.coddotech.teamsubb.appmanage.model;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -6,7 +6,11 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import com.coddotech.teamsubb.connection.gui.LoginWindow;
+import com.coddotech.teamsubb.connection.model.Login;
+import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
+import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.settings.model.AppSettings;
 
 public class AppManager {
 
@@ -15,15 +19,28 @@ public class AppManager {
 
 		ActivityLogger.logActivity("Main", "App initialization");
 
+		AppSettings settings = AppSettings.getInstance();
+
 		try {
 			if (AppManager.isAutoLogin()) {
 				// login automatically
 
 			} else {
 				// display the login window
-				LoginWindow login = new LoginWindow();
-				login.open();
-				login = null;
+				LoginWindow loginWindow = new LoginWindow();
+				loginWindow.open();
+				loginWindow = null;
+			}
+
+			// if the login process is successful continue with starting the
+			// application's main functionalities and close the login window
+			if (Login.isLoggedIn()) {
+
+				GadgetWindow gadget = new GadgetWindow(settings.getUserInfo(),
+						settings.getUserJobs());
+
+				gadget.open();
+
 			}
 
 		} catch (Exception ex) {
@@ -37,7 +54,7 @@ public class AppManager {
 		}
 
 		// close the dump files
-		ActivityLogger.closeLogFile();
+		ActivityLogger.createLogFile();
 
 		// dispose of global resources
 		AppManager.disposeGlobalResources();
@@ -54,11 +71,16 @@ public class AppManager {
 		}
 
 		main.close();
-		
+
 		ActivityLogger.logActivity(AppManager.class.getName(), "App exit");
 	}
 
 	private static void disposeGlobalResources() {
+		// user classes (singletons)
+		JobManager.getInstance().dispose();
+		AppSettings.getInstance().dispose();
+
+		// resources
 		CustomWindow.APP_ICON.dispose();
 		CustomWindow.BOLD_FONT.dispose();
 		CustomWindow.DEFAULT_FONT.dispose();

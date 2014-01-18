@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Point;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.coddotech.teamsubb.appmanage.ActivityLogger;
+import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
@@ -35,6 +35,8 @@ public final class AppSettings extends Observable {
 	public static final Point DEFAULT_LOCATION = new Point(200, 200);
 	public static final boolean DEFAULT_AUTOSAVE_LOCATION = true;
 	public static final int DEFAULT_SEARCH_INTERVAL = 1; // one minute
+	public static final boolean[] DEFAULT_USER_JOBS = { false, false, false, false, false, false, false };
+	public static final String[] DEFAULT_USER_INFO = {"NONE", "NONE", "NONE"};
 
 	/*
 	 * Constants representing the settings headers from the XML file and other
@@ -52,6 +54,8 @@ public final class AppSettings extends Observable {
 	private Point gadgetLocation;
 	private boolean gadgetAutosaveLocation;
 	private int searchInterval;
+	private String[] userInfo;
+	private boolean[] userJobs;
 
 	private DocumentBuilderFactory dbFactory;
 	private DocumentBuilder dBuilder;
@@ -116,6 +120,22 @@ public final class AppSettings extends Observable {
 	public void setSearchInterval(int searchInterval) {
 		this.searchInterval = searchInterval;
 	}
+	
+	public boolean[] getUserJobs() {
+		return this.userJobs;
+	}
+	
+	public void setUserJobs(boolean[] userJobs) {
+		this.userJobs = userJobs;
+	}
+	
+	public String[] getUserInfo() {
+		return this.userInfo;
+	}
+	
+	public void setUserInfo(String[] userInfo) {
+		this.userInfo = userInfo;
+	}
 
 	/**
 	 * Restore all the settings to their default values
@@ -129,6 +149,12 @@ public final class AppSettings extends Observable {
 
 		// job search interval
 		this.searchInterval = AppSettings.DEFAULT_SEARCH_INTERVAL;
+		
+		//user jobs
+		this.userJobs = AppSettings.DEFAULT_USER_JOBS;
+		
+		//user info
+		this.userInfo = AppSettings.DEFAULT_USER_INFO;
 
 		// notify the observers about this
 		notifyCompleteSettings();

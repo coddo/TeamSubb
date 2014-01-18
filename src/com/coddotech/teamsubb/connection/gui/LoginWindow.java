@@ -41,10 +41,8 @@ public class LoginWindow extends CustomWindow implements Observer {
 
 	}
 
-	/**
-	 * Clear the memory from this class and its resources
-	 */
-	void dispose() {
+	@Override
+	public void dispose() {
 		try {
 			// user classes
 			controller.dispose();

@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 
-import com.coddotech.teamsubb.appmanage.ActivityLogger;
-import com.coddotech.teamsubb.appmanage.AppManager;
+import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
+import com.coddotech.teamsubb.appmanage.model.AppManager;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
 import com.coddotech.teamsubb.main.CustomWindow;

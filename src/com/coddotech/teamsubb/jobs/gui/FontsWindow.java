@@ -38,6 +38,7 @@ public class FontsWindow extends CustomWindow {
 		controller.setJob(job);
 	}
 
+	@Override
 	public void dispose() {
 		try {
 			controller.dispose();
