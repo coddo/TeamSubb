@@ -35,12 +35,13 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	private GadgetController controller;
 
 	private Label imageContainer;
-	
+
 	private TrayItem tray;
-	
+
 	private Menu trayMenu;
-	private MenuItem exitApp;
 	private MenuItem openJobs;
+	private MenuItem openSettings;
+	private MenuItem exitApp;
 
 	// this lets the app be repositioned with the value stored in the settings
 	// file only once
@@ -71,14 +72,15 @@ public class GadgetWindow extends CustomWindow implements Observer {
 			// fields
 			imageContainer.dispose();
 			imageContainer = null;
-			
-			exitApp.dispose();
+
 			openJobs.dispose();
+			openSettings.dispose();
+			exitApp.dispose();
 			trayMenu.dispose();
-			
+
 			tray.dispose();
 			tray = null;
-			
+
 			jobs = null;
 			userInfo = null;
 
@@ -131,7 +133,7 @@ public class GadgetWindow extends CustomWindow implements Observer {
 
 		return userJobs;
 	}
-	
+
 	public void showMenu() {
 		trayMenu.setVisible(true);
 	}
@@ -170,13 +172,14 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	@Override
 	protected void performInitializations() {
 		controller = new GadgetController(this);
-		
+
 		imageContainer = new Label(getShell(), SWT.NO_TRIM);
-		
+
 		tray = new TrayItem(Display.getCurrent().getSystemTray(), SWT.NONE);
-		
+
 		trayMenu = new Menu(this.getShell(), SWT.POP_UP);
 		openJobs = new MenuItem(trayMenu, SWT.PUSH);
+		openSettings = new MenuItem(trayMenu, SWT.PUSH);
 		exitApp = new MenuItem(trayMenu, SWT.PUSH);
 	}
 
@@ -184,13 +187,14 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	protected void createObjectProperties() {
 		imageContainer.setLocation(-10, -11);
 		imageContainer.setSize(110, 110);
-		
+
 		tray.setText("TeamSubb");
 		tray.setToolTipText("TeamSubb");
 		tray.setImage(CustomWindow.APP_ICON);
-		
+
 		exitApp.setText("Exit TeamSubb");
 		openJobs.setText("Open jobs window");
+		openSettings.setText("Open settings window");
 	}
 
 	@Override
@@ -205,14 +209,15 @@ public class GadgetWindow extends CustomWindow implements Observer {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 		this.getShell().addPaintListener(controller.shellPaint);
-		
+
 		this.imageContainer.addMouseMoveListener(controller.shellMoved);
 		this.imageContainer.addMouseListener(controller.shellClicked);
-		
+
 		this.tray.addSelectionListener(controller.trayClicked);
 		this.tray.addMenuDetectListener(controller.trayMenuDetected);
-		
-		exitApp.addSelectionListener(controller.exitAppClicked);
-		openJobs.addSelectionListener(controller.openJobsClicked);
+
+		this.openJobs.addSelectionListener(controller.openJobsClicked);
+		this.openSettings.addSelectionListener(controller.openSettingsClicked);
+		this.exitApp.addSelectionListener(controller.exitAppClicked);
 	}
 }

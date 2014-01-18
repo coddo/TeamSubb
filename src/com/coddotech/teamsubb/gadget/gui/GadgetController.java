@@ -143,58 +143,73 @@ public class GadgetController extends CustomController {
 		}
 
 	};
-	
+
 	public SelectionListener trayClicked = new SelectionListener() {
-		
+
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			gadget.getShell().forceActive();
-			
+
 		}
-		
+
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	};
-	
+
 	public MenuDetectListener trayMenuDetected = new MenuDetectListener() {
-		
+
 		@Override
 		public void menuDetected(MenuDetectEvent arg0) {
 			gadget.showMenu();
-			
+
 		}
 	};
-	
-	public SelectionListener exitAppClicked = new SelectionListener() {
-		
-		@Override
-		public void widgetSelected(SelectionEvent arg0) {
-			AppManager.exitApp();
-			
-		}
-		
-		@Override
-		public void widgetDefaultSelected(SelectionEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-	};
-	
+
 	public SelectionListener openJobsClicked = new SelectionListener() {
-		
+
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			openJobsWindow();
-			
+
 		}
-		
+
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
+		}
+	};
+
+	public SelectionListener openSettingsClicked = new SelectionListener() {
+
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			openSettingsWindow();
+
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
+	public SelectionListener exitAppClicked = new SelectionListener() {
+
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			AppManager.exitApp();
+
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+
 		}
 	};
 
@@ -230,8 +245,7 @@ public class GadgetController extends CustomController {
 				openJobsWindow();
 
 			} else if (e.button == 3) {
-				settingsWindow = new AppSettingsWindow();
-				settingsWindow.open();
+				openSettingsWindow();
 			}
 
 			// don't let the window be moved because it was a double-click
@@ -330,13 +344,19 @@ public class GadgetController extends CustomController {
 			jobsWindow = new JobWindow(GadgetWindow.getUserInfo(),
 					GadgetWindow.getUserJobs());
 		}
-	
+
 		if (!jobsWindow.getShell().isVisible())
 			jobsWindow.open();
 		else {
 			jobsWindow.getShell().setMinimized(false);
 			jobsWindow.getShell().forceActive();
 		}
+	}
+
+	private void openSettingsWindow() {
+		settingsWindow = new AppSettingsWindow();
+		settingsWindow.open();
+
 	}
 
 	/**
