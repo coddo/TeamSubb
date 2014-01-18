@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
+import com.coddotech.teamsubb.connection.model.FileDownloader;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 
 /**
@@ -468,21 +469,24 @@ public final class Job {
 
 			// create a directory for this this
 			File dir = new File(this.directoryPath);
+
 			if (!dir.exists())
 				dir.mkdir();
 
 			// sub file (download + add to the Job entity)
-			this.setSubFile(ConnectionManager.downloadFile(this.subFileData,
+			this.setSubFile(FileDownloader.downloadFile(this.subFileData,
 					this.directoryPath));
 
 			// font files (download + add to the Job entity)
 			if (fontsData != null) {
+
 				File[] fonts = new File[this.fontsData.length];
 
 				for (int i = 0; i < fonts.length; i++) {
-					fonts[i] = ConnectionManager.downloadFile(
-							this.fontsData[i], this.directoryPath);
+					fonts[i] = FileDownloader.downloadFile(this.fontsData[i],
+							this.directoryPath);
 				}
+
 				this.setFonts(fonts);
 			}
 
@@ -571,7 +575,7 @@ public final class Job {
 
 		try {
 			Desktop.getDesktop().open(dir);
-			
+
 		} catch (Exception ex) {
 		}
 	}

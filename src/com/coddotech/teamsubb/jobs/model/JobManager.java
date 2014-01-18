@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 
@@ -207,8 +206,8 @@ public class JobManager extends Observable {
 		try {
 
 			boolean response = ConnectionManager.sendJobCreateRequest(
-					settings.getUserName(), name, type, description,
-					nextStaff, subFile, fonts);
+					settings.getUserName(), name, type, description, nextStaff,
+					subFile, fonts);
 
 			this.setChanged();
 			notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR
@@ -502,32 +501,31 @@ public class JobManager extends Observable {
 	private String wrapJob(String message, String fragment) {
 		// split the String into bits representing specific job data
 		String[] data = fragment.split(JobManager.SEPARATOR_FIELDS);
-	
+
 		// ignore this job if it already in the accepted list
 		if (!isAccepted(Integer.parseInt(data[0]))) {
-	
+
 			// create variables representing this job's folder
-			String dirPath = JobManager.WORKING_DIRECTORY
-					.getAbsolutePath() + File.separator + data[1];
-	
+			String dirPath = JobManager.WORKING_DIRECTORY.getAbsolutePath()
+					+ File.separator + data[1];
+
 			// create a new Job entity with the data
 			Job job = createJobEntity(data, dirPath);
-	
+
 			// note if the job is suitable or is it actually
 			// intended to this user
 			if (!message.equals("important")) {
-	
-				if (job.getIntendedTo().equals(
-						settings.getUserName()))
-					
+
+				if (job.getIntendedTo().equals(settings.getUserName()))
+
 					message = "important";
-				
+
 				else if (job.isAcceptable(settings.getUserJobs())) {
 					message = "acceptable";
-	
+
 				}
 			}
-	
+
 			// add it to the list
 			jobs.add(job);
 		}
@@ -559,26 +557,21 @@ public class JobManager extends Observable {
 		job.setCurrentStaffMember(settings.getUserName());
 
 		// sub file
-		job.setSubFileData(this.extractNameURL(data[8]));
+		job.setSubFileData(LinkParser.parseFileLink(data[8]));
 
 		// font files
 		String[] fontsData = null;
+
 		if (data.length - 9 > 0) {
 			fontsData = new String[data.length - 9];
+
 			for (int i = 9; i < data.length; i++)
-				fontsData[i - 9] = this.extractNameURL(data[i]);
+				fontsData[i - 9] = data[i];
+
+			fontsData = LinkParser.parseFileLinks(fontsData);
 		}
-		job.setFontsData(fontsData);
 
 		return job;
-	}
-
-	private String extractNameURL(String data) {
-		String[] split = data.split(Pattern.quote("/"));
-
-		String name = split[split.length - 1];
-
-		return name + JobManager.SEPARATOR_FIELDS + data;
 	}
 
 	/**

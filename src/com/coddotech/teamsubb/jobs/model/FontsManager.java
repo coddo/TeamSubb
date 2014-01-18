@@ -56,6 +56,7 @@ public class FontsManager {
 
 	}
 
+	
 	private static String[] excludeFonts(String[] fonts, List<String> toExclude) {
 
 		List<String> fontList = new ArrayList<String>();
