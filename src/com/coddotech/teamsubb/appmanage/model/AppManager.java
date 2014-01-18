@@ -19,8 +19,6 @@ public class AppManager {
 
 		ActivityLogger.logActivity("Main", "App initialization");
 
-		AppSettings settings = AppSettings.getInstance();
-
 		try {
 			if (AppManager.isAutoLogin()) {
 				// login automatically
@@ -36,8 +34,7 @@ public class AppManager {
 			// application's main functionalities and close the login window
 			if (Login.isLoggedIn()) {
 
-				GadgetWindow gadget = new GadgetWindow(settings.getUserInfo(),
-						settings.getUserJobs());
+				GadgetWindow gadget = new GadgetWindow();
 
 				gadget.open();
 

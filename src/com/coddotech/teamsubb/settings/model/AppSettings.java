@@ -16,6 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
+import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
@@ -121,8 +122,35 @@ public final class AppSettings extends Observable {
 		this.searchInterval = searchInterval;
 	}
 	
-	public boolean[] getUserJobs() {
+	public boolean[] getUserJobsRawData() {
 		return this.userJobs;
+	}
+	
+	public String[] getUserJobs() {
+		int available = 0;
+
+		for (int i = 0; i < this.userJobs.length; i++) {
+
+			if (this.userJobs[i])
+				available++;
+
+		}
+
+		int counter = 0;
+		String[] userJobs = new String[available];
+
+		for (int i = 0; i < this.userJobs.length; i++) {
+
+			if (this.userJobs[i]) {
+				userJobs[counter] = JobWindow.DEFAULT_JOBS_INFO_HEADERS[i];
+				counter++;
+
+			}
+
+		}
+
+		return userJobs;
+
 	}
 	
 	public void setUserJobs(boolean[] userJobs) {
@@ -131,6 +159,11 @@ public final class AppSettings extends Observable {
 	
 	public String[] getUserInfo() {
 		return this.userInfo;
+	}
+
+	public String getUserName() {
+		return AppSettings.getInstance().getUserInfo()[0];
+
 	}
 	
 	public void setUserInfo(String[] userInfo) {

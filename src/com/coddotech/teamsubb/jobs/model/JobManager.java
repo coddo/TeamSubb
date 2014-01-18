@@ -12,8 +12,8 @@ import org.apache.commons.io.FileUtils;
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.appmanage.model.AppManager;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
-import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.settings.model.AppSettings;
 
 /**
  * Class used for realizing the communication between this client and the target
@@ -34,7 +34,7 @@ public class JobManager extends Observable {
 	private List<Job> jobs;
 	private List<Job> acceptedJobs;
 
-	Thread findJobsThread = null;
+	private AppSettings settings;
 
 	private static JobManager instance = null;
 
@@ -49,6 +49,8 @@ public class JobManager extends Observable {
 	private JobManager() {
 		jobs = new ArrayList<Job>();
 		acceptedJobs = new ArrayList<Job>();
+
+		settings = AppSettings.getInstance();
 
 		initializeWorkingDirectory();
 	}
@@ -205,7 +207,7 @@ public class JobManager extends Observable {
 		try {
 
 			boolean response = ConnectionManager.sendJobCreateRequest(
-					GadgetWindow.getUserName(), name, type, description,
+					settings.getUserName(), name, type, description,
 					nextStaff, subFile, fonts);
 
 			this.setChanged();
@@ -240,7 +242,7 @@ public class JobManager extends Observable {
 	public void endJob(int jobID) {
 		try {
 			boolean response = ConnectionManager.sendJobEndRequest(jobID,
-					GadgetWindow.getUserName());
+					settings.getUserName());
 
 			if (response) {
 				for (int i = 0; i < jobs.size(); i++) {
@@ -278,55 +280,28 @@ public class JobManager extends Observable {
 	 */
 	public void findJobs() {
 		try {
+
 			String message = "normal";
 
 			// clear the jobs list
 			clearJobList(jobs);
 
 			// send the jobs request to the server
-			String response = ConnectionManager
-					.sendJobSearchRequest(GadgetWindow.getUserName());
+			String response = ConnectionManager.sendJobSearchRequest(settings
+					.getUserName());
 
+			// in case everything is ok, start processing the response that
+			// was received from the server
 			if (!response.equals("error") && !response.equals("false")
 					&& !response.equals("")) {
-				// in case everything is ok, start processing the response that
-				// was
-				// received from the server
+
 				String[] jobFragments = response
 						.split(JobManager.SEPARATOR_JOBS);
 
 				// take each job and wrap it in a Job entity
 				for (String fragment : jobFragments) {
-					// split the String into bits representing specific job data
-					String[] data = fragment.split(JobManager.SEPARATOR_FIELDS);
 
-					// ignore this job if it already in the accepted list
-					if (!isAccepted(Integer.parseInt(data[0]))) {
-						// create variables representing this job's folder
-						String dirPath = JobManager.WORKING_DIRECTORY
-								.getAbsolutePath() + File.separator + data[1];
-
-						// create a new Job entity with the data
-						Job job = createJobEntity(data, dirPath);
-
-						// note if the job is suitable or is it actually
-						// intended to
-						// this user
-						if (!message.equals("important")) {
-
-							if (job.getIntendedTo().equals(
-									GadgetWindow.getUserName()))
-								message = "important";
-							else if (job.isAcceptable(GadgetWindow
-									.getUserJobs())) {
-								message = "acceptable";
-
-							}
-						}
-
-						// add it to the list
-						jobs.add(job);
-					}
+					message = wrapJob(message, fragment);
 				}
 			}
 
@@ -524,6 +499,41 @@ public class JobManager extends Observable {
 		}
 	}
 
+	private String wrapJob(String message, String fragment) {
+		// split the String into bits representing specific job data
+		String[] data = fragment.split(JobManager.SEPARATOR_FIELDS);
+	
+		// ignore this job if it already in the accepted list
+		if (!isAccepted(Integer.parseInt(data[0]))) {
+	
+			// create variables representing this job's folder
+			String dirPath = JobManager.WORKING_DIRECTORY
+					.getAbsolutePath() + File.separator + data[1];
+	
+			// create a new Job entity with the data
+			Job job = createJobEntity(data, dirPath);
+	
+			// note if the job is suitable or is it actually
+			// intended to this user
+			if (!message.equals("important")) {
+	
+				if (job.getIntendedTo().equals(
+						settings.getUserName()))
+					
+					message = "important";
+				
+				else if (job.isAcceptable(settings.getUserJobs())) {
+					message = "acceptable";
+	
+				}
+			}
+	
+			// add it to the list
+			jobs.add(job);
+		}
+		return message;
+	}
+
 	/**
 	 * Create and get a new Job entity that contains the entered data
 	 * 
@@ -546,7 +556,7 @@ public class JobManager extends Observable {
 		job.setIntendedTo(data[6]);
 		job.setStartDate(data[7]);
 		job.setDirectoryPath(dirPath);
-		job.setCurrentStaffMember(GadgetWindow.getUserName());
+		job.setCurrentStaffMember(settings.getUserName());
 
 		// sub file
 		job.setSubFileData(this.extractNameURL(data[8]));

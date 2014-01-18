@@ -336,20 +336,30 @@ public class GadgetController extends CustomController {
 	};
 
 	private void openJobsWindow() {
+		AppSettings set = AppSettings.getInstance();
+		
 		try {
+			
 			if (jobsWindow.getShell().isDisposed())
-				jobsWindow = new JobWindow(GadgetWindow.getUserInfo(),
-						GadgetWindow.getUserJobs());
+
+				jobsWindow = new JobWindow(set
+						.getUserInfo(), set.getUserJobs());
+
 		} catch (Exception ex) {
-			jobsWindow = new JobWindow(GadgetWindow.getUserInfo(),
-					GadgetWindow.getUserJobs());
+
+			jobsWindow = new JobWindow(set.getUserInfo(),
+					set.getUserJobs());
+
 		}
 
 		if (!jobsWindow.getShell().isVisible())
 			jobsWindow.open();
+
 		else {
 			jobsWindow.getShell().setMinimized(false);
+			
 			jobsWindow.getShell().forceActive();
+
 		}
 	}
 

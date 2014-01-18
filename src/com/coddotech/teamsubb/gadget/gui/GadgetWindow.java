@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TrayItem;
 
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
-import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.model.AppSettings;
 
@@ -28,9 +27,6 @@ import com.coddotech.teamsubb.settings.model.AppSettings;
  * 
  */
 public class GadgetWindow extends CustomWindow implements Observer {
-
-	private static boolean[] jobs;
-	private static String[] userInfo;
 
 	private GadgetController controller;
 
@@ -50,11 +46,8 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	/**
 	 * Class constructor
 	 */
-	public GadgetWindow(String[] userInfo, boolean[] jobs) {
+	public GadgetWindow() {
 		super();
-
-		GadgetWindow.userInfo = userInfo;
-		GadgetWindow.jobs = jobs;
 
 		this.setShell(new Shell(Display.getCurrent(), SWT.NO_TRIM | SWT.ON_TOP));
 
@@ -81,57 +74,12 @@ public class GadgetWindow extends CustomWindow implements Observer {
 			tray.dispose();
 			tray = null;
 
-			jobs = null;
-			userInfo = null;
-
 			this.logDispose();
 
 		} catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
-	}
-
-	/**
-	 * Retrieve the user name for the currently logged in staff
-	 * 
-	 * @return A String value
-	 */
-	public static String getUserName() {
-		return userInfo[0];
-	}
-
-	/**
-	 * Get the user information for the currently logged in staff
-	 * 
-	 * @return A String collection
-	 */
-	public static String[] getUserInfo() {
-		return userInfo;
-	}
-
-	/**
-	 * Retrieve the jobs that the user currently can do
-	 * 
-	 * @return A String collection with job type names
-	 */
-	public static String[] getUserJobs() {
-		int available = 0;
-		for (int i = 0; i < jobs.length; i++) {
-			if (jobs[i])
-				available++;
-		}
-
-		int counter = 0;
-		String[] userJobs = new String[available];
-		for (int i = 0; i < jobs.length; i++) {
-			if (jobs[i]) {
-				userJobs[counter] = JobWindow.DEFAULT_JOBS_INFO_HEADERS[i];
-				counter++;
-			}
-		}
-
-		return userJobs;
 	}
 
 	public void showMenu() {
