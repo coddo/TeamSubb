@@ -7,11 +7,10 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 /**
@@ -35,7 +34,7 @@ public class ActivityLogger {
 
 	private static boolean initializationFailed = false;
 
-	private static List<String> logStack = new ArrayList<String>();
+	private static Stack<String> logStack = new Stack<String>();
 
 	/**
 	 * * Log an activity issued by the user
@@ -87,7 +86,8 @@ public class ActivityLogger {
 		String message = "(" + className + ") -> " + activity + " -> "
 				+ ex.toString();
 
-		logStack.add("[!] " + ActivityLogger.getCurrentTime() + message + "\n");
+		logStack.add("[!] " + ActivityLogger.getCurrentTime() + message
+				+ "\n");
 
 	}
 
@@ -119,9 +119,11 @@ public class ActivityLogger {
 
 				dumpWriter.close();
 
+				ActivityLogger.logStack.clear();
+
 			} catch (IOException e) {
 				e.printStackTrace();
-			} finally {
+
 			}
 		}
 	}
@@ -136,10 +138,13 @@ public class ActivityLogger {
 				BufferedWriter logWriter = new BufferedWriter(new FileWriter(
 						logFile.getAbsoluteFile()));
 
-				for (String line : logStack)
-					logWriter.write(line);
+				while (ActivityLogger.logStack.size() > 0)
+					logWriter.write(ActivityLogger.logStack.remove(0));
 
 				logWriter.close();
+
+				// empty the stack
+				ActivityLogger.logStack.clear();
 
 			} catch (IOException e) {
 				e.printStackTrace();

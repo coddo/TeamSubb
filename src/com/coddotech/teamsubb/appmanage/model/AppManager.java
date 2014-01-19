@@ -24,6 +24,7 @@ public class AppManager {
 				// login automatically
 
 			} else {
+				
 				// display the login window
 				LoginWindow loginWindow = new LoginWindow();
 				loginWindow.open();
