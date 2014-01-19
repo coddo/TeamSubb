@@ -17,13 +17,16 @@ import com.coddotech.teamsubb.connection.model.ConnectionManager;
 public abstract class CustomWindow {
 
 	public static final String NOTIFICATION_SEPARATOR = "#@&!#&@!";
+	
 	public static final Font DEFAULT_FONT = new Font(Display.getCurrent(),
 			"Calibri", 12, SWT.NORMAL);
+	
 	public static final Font BOLD_FONT = new Font(Display.getCurrent(),
 			"Calibri", 12, SWT.BOLD);
+	
 	public static final Image APP_ICON = new Image(Display.getCurrent(),
 			System.getProperty("user.dir") + File.separator + "resources"
-					+ File.separator + "radar.png");
+					+ File.separator + "icon.png");
 
 	private Shell shell;
 	private boolean disposed;
