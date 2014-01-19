@@ -39,6 +39,9 @@ public class FontsManager {
 	 */
 	public static String[] excludeSystemFonts(String[] fontLinks) {
 
+		if (fontLinks == null)
+			return null;
+		
 		List<String> systemFonts = Arrays.asList(FontsManager.getSystemFonts());
 
 		List<String> created = new ArrayList<String>();
@@ -68,6 +71,9 @@ public class FontsManager {
 	 */
 	public static File[] excludeServerFontsAsFiles(File[] fontFiles) {
 
+		if (fontFiles == null || fontFiles.length == 0)
+			return null;
+		
 		List<String> excludable = FontsManager.getServerFonts();
 
 		List<File> created = new ArrayList<File>();
@@ -83,6 +89,9 @@ public class FontsManager {
 	}
 
 	public static String[] excludeServerFontsAsStrings(String[] fonts) {
+		
+		if (fonts == null || fonts.length == 0)
+			return null;
 		
 		List<String> excludable = FontsManager.getServerFonts();
 

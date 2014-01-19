@@ -165,7 +165,11 @@ public class AnimationRenderer extends Observable implements Observer {
 		// animation needs to be done
 		if (obj instanceof String) {
 
-			switch (obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR)[1]) {
+			String[] fragments = obj.toString().split(
+					CustomWindow.NOTIFICATION_SEPARATOR);
+
+			switch (fragments[fragments.length - 1]) {
+
 			case "normal": {
 				this.setAnimationType(TYPE_IDLE);
 			}
@@ -178,6 +182,7 @@ public class AnimationRenderer extends Observable implements Observer {
 				this.setAnimationType(AnimationRenderer.TYPE_HIGH_PRIORITY);
 			}
 				break;
+
 			}
 		}
 	}

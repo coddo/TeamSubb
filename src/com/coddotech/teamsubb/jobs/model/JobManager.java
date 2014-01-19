@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Observable;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.appmanage.model.AppManager;
@@ -34,6 +35,8 @@ public class JobManager extends Observable {
 	private List<Job> acceptedJobs;
 
 	private AppSettings settings;
+	
+	private Thread jobFinderThread;
 
 	private static JobManager instance = null;
 
@@ -52,6 +55,8 @@ public class JobManager extends Observable {
 		settings = AppSettings.getInstance();
 
 		initializeWorkingDirectory();
+		
+		jobFinderThread = new Thread(jobFinder);
 	}
 
 	public static JobManager getInstance() {
@@ -278,45 +283,83 @@ public class JobManager extends Observable {
 	 * The messages are: "important", "acceptable" or "normal"
 	 */
 	public void findJobs() {
-		try {
 
-			String message = "normal";
-
-			// clear the jobs list
-			clearJobList(jobs);
-
-			// send the jobs request to the server
-			String response = ConnectionManager.sendJobSearchRequest(settings
-					.getUserName());
-
-			// in case everything is ok, start processing the response that
-			// was received from the server
-			if (!response.equals("false") && !response.equals("")) {
-
-				String[] jobFragments = response
-						.split(JobManager.SEPARATOR_JOBS);
-
-				// take each job and wrap it in a Job entity
-				for (String fragment : jobFragments) {
-
-					message = wrapJob(message, fragment);
-				}
-			}
-
-			message = "find" + CustomWindow.NOTIFICATION_SEPARATOR + message;
-
-			// send the according notification to the observers
-			setChanged();
-			notifyObservers(message);
-
-			ActivityLogger.logActivity(this.getClass().getName(), "Find jobs");
-
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Find jobs",
-					ex);
-
+		if (!jobFinderThread.isAlive()) {
+		
+			jobFinderThread = new Thread(jobFinder);
+			
+			jobFinderThread.start();
 		}
 	}
+
+	public Runnable jobFinder = new Runnable() {
+
+		String message = null;
+
+		@Override
+		public void run() {
+
+			if (search())
+				Display.getDefault().syncExec(notifier);
+
+		}
+
+		private boolean search() {
+			try {
+
+				// clear the jobs list and reinstantiate the message
+				clearJobList(jobs);
+				message = "normal";
+
+				// send the jobs request to the server
+				String response = ConnectionManager
+						.sendJobSearchRequest(settings.getUserName());
+
+				// in case everything is ok, start processing the response that
+				// was received from the server
+				if (!response.equals("false") && !response.equals("")) {
+
+					String[] jobFragments = response
+							.split(JobManager.SEPARATOR_JOBS);
+
+					// take each job and wrap it in a Job entity
+					for (String fragment : jobFragments) {
+
+						message = wrapJob(message, fragment);
+					}
+				}
+
+				message = "find" + CustomWindow.NOTIFICATION_SEPARATOR
+						+ message;
+
+				ActivityLogger.logActivity(this.getClass().getName(),
+						"Find jobs");
+
+				return true;
+
+			} catch (Exception ex) {
+				ActivityLogger.logException(this.getClass().getName(),
+						"Find jobs", ex);
+
+				return false;
+			}
+		}
+
+		// send the according notification to the observers
+		private Runnable notifier = new Runnable() {
+
+			@Override
+			public void run() {
+
+				setChanged();
+
+				notifyObservers(message);
+
+			}
+
+		};
+
+	};
 
 	/**
 	 * Accepts a certain job for this user.<br>
@@ -511,18 +554,13 @@ public class JobManager extends Observable {
 			// create a new Job entity with the data
 			Job job = createJobEntity(data, dirPath);
 
-			// note if the job is suitable or is it actually
-			// intended to this user
-			if (!message.equals("important")) {
+			if (job.getIntendedTo().equals(settings.getUserName()))
+				message = "important";
 
-				if (job.getIntendedTo().equals(settings.getUserName()))
+			else if (job.isAcceptable(settings.getUserJobs())) {
 
-					message = "important";
+				message = "acceptable";
 
-				else if (job.isAcceptable(settings.getUserJobs())) {
-					message = "acceptable";
-
-				}
 			}
 
 			// add it to the list
