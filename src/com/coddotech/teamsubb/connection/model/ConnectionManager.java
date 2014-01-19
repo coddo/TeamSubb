@@ -274,6 +274,8 @@ public final class ConnectionManager {
 
 		ActivityLogger.logActivity(ConnectionManager.class.getName(),
 				"Job push request", "SEND");
+		
+		job.enhanceAddedFonts();
 
 		// Text messages data
 		String[] messageHeaders = { "push", "staff", "jobid", "jobtype",
@@ -298,14 +300,19 @@ public final class ConnectionManager {
 			fileHeaders[0] = "sub";
 			files[0] = job.getSubFile().getAbsolutePath();
 
-			for (int i = 1; i < files.length; i++) {// create fonts collection
+			// create fonts collection
+			for (int i = 1; i < files.length; i++) {
+				
 				fileHeaders[i] = "font" + i;
 				files[i] = job.getAddedFonts()[i - 1].getAbsolutePath();
+				
 			}
 
 		} else {
+			
 			fileHeaders = new String[] { "sub" };
 			files = new String[] { job.getSubFile().getAbsolutePath() };
+			
 		}
 
 		// send the request to the server and wait for a response
@@ -346,9 +353,32 @@ public final class ConnectionManager {
 		return Boolean.parseBoolean(response);
 	}
 
+	/**
+	 * Send a request to the server in order to receive a list of all the
+	 * registered staff and their attributes
+	 * 
+	 * @return A String value
+	 */
 	public static String sendStaffRequest() {
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Fonts request", "SEND");
+
 		return ConnectionManager.sendMessage(ConnectionManager.URL_CHAT,
 				new String[] { "liststaff" }, new String[] { "1" });
+	}
+
+	/**
+	 * Send a request to the server in order to receive a list of all the fonts
+	 * existent on the server
+	 * 
+	 * @return A String value
+	 */
+	public static String sendFontsRequest() {
+		ActivityLogger.logActivity(ConnectionManager.class.getName(),
+				"Fonts request", "SEND");
+
+		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
+				new String[] { "listfonts" }, new String[] { "1" });
 	}
 
 	/**

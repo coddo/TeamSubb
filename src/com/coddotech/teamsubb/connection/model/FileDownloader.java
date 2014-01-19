@@ -6,8 +6,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 
-import com.coddotech.teamsubb.jobs.model.LinkParser;
-
 /**
  * Module for downloading files
  * 
@@ -17,6 +15,7 @@ import com.coddotech.teamsubb.jobs.model.LinkParser;
 public class FileDownloader {
 
 	/**
+	 * Download a file from the web.
 	 * 
 	 * @param fileName
 	 *            The name of the file to be created
@@ -41,10 +40,28 @@ public class FileDownloader {
 	}
 
 	/**
+	 * Download a file from the web.
 	 * 
-	 * @param fileName
-	 *            The names of the files to be created
 	 * @param link
+	 *            The link from where the file has to be fetched
+	 * @param dir
+	 *            The directory path where to save the file
+	 * @return A File entity representing the downloaded file
+	 * @throws Exception
+	 */
+	public static File downloadFile(String link, String dir) throws Exception {
+	
+		String fileName = FileDownloader.extractFileName(link);
+	
+		return FileDownloader.downloadFile(fileName, link, dir);
+	}
+
+	/**
+	 * Download multiple files from the web.
+	 * 
+	 * @param fileNames
+	 *            The names of the files to be created
+	 * @param links
 	 *            The links from where the files have to be fetched
 	 * @param dir
 	 *            The directory path where to save the file
@@ -63,52 +80,38 @@ public class FileDownloader {
 	}
 
 	/**
-	 * Download a certain file from the web
+	 * Download multiple files from the web.
 	 * 
-	 * @param fileData
-	 *            A String containing the name of the file to be downloaded and
-	 *            the url from where it can be fetched.<b> The format is:
-	 *            file_name=file_URL.
-	 * 
+	 * @param links
+	 *            The links from where the files have to be fetched
 	 * @param dir
 	 *            The directory path where to save the file
-	 * 
-	 * @return A File entity representing the downloaded file
-	 * 
+	 * @return A collection of File entities representing the downloaded files
 	 * @throws Exception
 	 */
-	public static File downloadFile(String fileData, String dir)
+	public static File[] downloadFiles(String[] links, String dir)
 			throws Exception {
 
-		String[] data = LinkParser.splitFileData(fileData);
+		String[] fileNames = new String[links.length];
 
-		return FileDownloader.downloadFile(data[0], data[1], dir);
+		for (int i = 0; i < links.length; i++)
+			fileNames[i] = FileDownloader.extractFileName(links[i]);
 
+		return FileDownloader.downloadFiles(fileNames, links, dir);
 	}
 
 	/**
-	 * Download multiple files from the web
+	 * Extract the file name from a link.
 	 * 
-	 * @param filesData
-	 *            A collection of Strings each containing the name of the file
-	 *            to be downloaded and the url from where it can be fetched.<b>
-	 *            The format is: file_name=file_URL
-	 * @param dir
-	 *            The directory path where to save the files
+	 * @param link
+	 *            The link containing the file name
 	 * 
-	 * @return A collection of File entities representing the downloaded file
-	 * 
-	 * @throws Exception
+	 * @return A String value
 	 */
-	public static File[] downloadFiles(String[] filesData, String dir)
-			throws Exception {
+	public static String extractFileName(String link) {
+		String[] data = link.split(Pattern.quote("/"));
 
-		File[] files = new File[filesData.length];
-
-		for (int i = 0; i < filesData.length; i++)
-			files[i] = FileDownloader.downloadFile(filesData[i], dir);
-
-		return files;
-
+		return data[data.length - 1];
 	}
+
 }

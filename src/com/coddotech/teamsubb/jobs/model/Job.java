@@ -40,8 +40,8 @@ public final class Job {
 	private String directoryPath;
 	private File subFile;
 	private File[] fonts;
-	private String subFileData;
-	private String[] fontsData;
+	private String subFileLink;
+	private String[] fontLinks;
 	private File[] addedFonts;
 	private File configFile;
 
@@ -62,6 +62,7 @@ public final class Job {
 	 */
 	public void dispose() {
 		try {
+
 			if (this.configFile.exists())
 				this.configFile.delete();
 
@@ -73,8 +74,8 @@ public final class Job {
 			this.intendedTo = null;
 			this.startDate = null;
 			this.directoryPath = null;
-			this.subFileData = null;
-			this.fontsData = null;
+			this.subFileLink = null;
+			this.fontLinks = null;
 
 			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
 
@@ -391,8 +392,8 @@ public final class Job {
 	 * 
 	 * @return A String containing the raw data about the file
 	 */
-	public String getSubFileData() {
-		return subFileData;
+	public String getSubFileLink() {
+		return subFileLink;
 	}
 
 	/**
@@ -402,8 +403,8 @@ public final class Job {
 	 * @param subFileData
 	 *            A String containing the raw data about the file
 	 */
-	public void setSubFileData(String subFileData) {
-		this.subFileData = subFileData;
+	public void setSubFileLink(String subFileData) {
+		this.subFileLink = subFileData;
 	}
 
 	/**
@@ -412,8 +413,19 @@ public final class Job {
 	 * 
 	 * @return A String collection containing the raw data about the fonts
 	 */
-	public String[] getFontsData() {
-		return fontsData;
+	public String[] getFontLinks() {
+		return fontLinks;
+	}
+
+	/**
+	 * Set the raw data about the font files and their location on the web, data
+	 * that has been extracted from the response string from the server
+	 * 
+	 * @param fontsData
+	 *            A String collection containing the raw data about the fonts
+	 */
+	public void setFontLinks(String[] fontsData) {
+		this.fontLinks = fontsData;
 	}
 
 	/**
@@ -443,22 +455,12 @@ public final class Job {
 	}
 
 	/**
-	 * Set the raw data about the font files and their location on the web, data
-	 * that has been extracted from the response string from the server
-	 * 
-	 * @param fontsData
-	 *            A String collection containing the raw data about the fonts
-	 */
-	public void setFontsData(String[] fontsData) {
-		this.fontsData = fontsData;
-	}
-
-	/**
 	 * Accept a certain job.<br>
 	 * This method displays a popup message in case of an error
 	 */
 	public boolean accept() {
 		try {
+
 			// send the accept message request to the server
 			boolean response = ConnectionManager.sendJobAcceptRequest(this.id,
 					this.currentStaffMember);
@@ -474,17 +476,19 @@ public final class Job {
 				dir.mkdir();
 
 			// sub file (download + add to the Job entity)
-			this.setSubFile(FileDownloader.downloadFile(this.subFileData,
+			this.setSubFile(FileDownloader.downloadFile(this.subFileLink,
 					this.directoryPath));
 
 			// font files (download + add to the Job entity)
-			if (fontsData != null) {
+			if (fontLinks != null) {
 
-				File[] fonts = new File[this.fontsData.length];
+				File[] fonts = new File[this.fontLinks.length];
 
 				for (int i = 0; i < fonts.length; i++) {
-					fonts[i] = FileDownloader.downloadFile(this.fontsData[i],
+
+					fonts[i] = FileDownloader.downloadFile(this.fontLinks[i],
 							this.directoryPath);
+
 				}
 
 				this.setFonts(fonts);
@@ -511,6 +515,7 @@ public final class Job {
 	 * This method displays a popup message in case of an error
 	 */
 	public boolean cancel() {
+
 		// send the cancel message request to the server
 		boolean response = ConnectionManager.sendJobCancelRequest(this,
 				this.currentStaffMember);
@@ -542,6 +547,7 @@ public final class Job {
 	 * @return A logical value indicating if the server accepted the data
 	 */
 	public boolean push() {
+
 		// send the request and wait for the servers response
 		boolean response = ConnectionManager.sendJobPushRequest(this,
 				this.currentStaffMember, false);
@@ -578,6 +584,15 @@ public final class Job {
 
 		} catch (Exception ex) {
 		}
+	}
+
+	/**
+	 * Remove all fonts that already are on the server, from the added font list
+	 */
+	public void enhanceAddedFonts() {
+
+		this.addedFonts = FontsManager
+				.excludeServerFontsAsFiles(this.addedFonts);
 	}
 
 	/**
@@ -658,4 +673,5 @@ public final class Job {
 		writer.close();
 
 	}
+
 }

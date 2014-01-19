@@ -291,8 +291,7 @@ public class JobManager extends Observable {
 
 			// in case everything is ok, start processing the response that
 			// was received from the server
-			if (!response.equals("error") && !response.equals("false")
-					&& !response.equals("")) {
+			if (!response.equals("false") && !response.equals("")) {
 
 				String[] jobFragments = response
 						.split(JobManager.SEPARATOR_JOBS);
@@ -543,6 +542,7 @@ public class JobManager extends Observable {
 	 * @return The new Job entity that is created with the entered data
 	 */
 	private Job createJobEntity(String[] data, String dirPath) {
+
 		// basic job information
 		Job job = new Job();
 		job.setID(Integer.parseInt(data[0]));
@@ -557,19 +557,22 @@ public class JobManager extends Observable {
 		job.setCurrentStaffMember(settings.getUserName());
 
 		// sub file
-		job.setSubFileData(LinkParser.parseFileLink(data[8]));
+		job.setSubFileLink(data[8]);
 
 		// font files
-		String[] fontsData = null;
+		String[] fontLinks = null;
 
 		if (data.length - 9 > 0) {
-			fontsData = new String[data.length - 9];
+			fontLinks = new String[data.length - 9];
 
 			for (int i = 9; i < data.length; i++)
-				fontsData[i - 9] = data[i];
+				fontLinks[i - 9] = data[i];
 
-			fontsData = LinkParser.parseFileLinks(fontsData);
 		}
+
+		fontLinks = FontsManager.excludeSystemFonts(fontLinks);
+
+		job.setFontLinks(fontLinks);
 
 		return job;
 	}

@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 
+import com.coddotech.teamsubb.jobs.model.FontsManager;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -157,11 +158,15 @@ public class CreateJobController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
-				if (view.verifFields())
+				if (view.verifFields()) {
+
+					String[] fonts = FontsManager
+							.excludeServerFontsAsStrings(view.getFonts());
 
 					model.createJob(view.getName(), view.getType(),
 							view.getComments(), view.getNextStaff(),
-							view.getSub(), view.getFonts());
+							view.getSub(), fonts);
+				}
 			}
 
 		}

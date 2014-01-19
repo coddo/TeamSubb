@@ -7,10 +7,11 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Stack;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -34,7 +35,7 @@ public class ActivityLogger {
 
 	private static boolean initializationFailed = false;
 
-	private static Stack<String> logStack = new Stack<String>();
+	private static List<String> logStack = new ArrayList<String>();
 
 	/**
 	 * * Log an activity issued by the user
