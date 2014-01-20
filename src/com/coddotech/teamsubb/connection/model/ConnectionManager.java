@@ -42,6 +42,7 @@ public final class ConnectionManager {
 	 * @return A logical value representing the connection state
 	 */
 	public static boolean isConnected() {
+
 		if (ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
 				new String[] { "" }, new String[] { "" }).equals("error"))
 			return false;
@@ -274,7 +275,7 @@ public final class ConnectionManager {
 
 		ActivityLogger.logActivity(ConnectionManager.class.getName(),
 				"Job push request", "SEND");
-		
+
 		job.enhanceAddedFonts();
 
 		// Text messages data
@@ -302,17 +303,17 @@ public final class ConnectionManager {
 
 			// create fonts collection
 			for (int i = 1; i < files.length; i++) {
-				
+
 				fileHeaders[i] = "font" + i;
 				files[i] = job.getAddedFonts()[i - 1].getAbsolutePath();
-				
+
 			}
 
 		} else {
-			
+
 			fileHeaders = new String[] { "sub" };
 			files = new String[] { job.getSubFile().getAbsolutePath() };
-			
+
 		}
 
 		// send the request to the server and wait for a response

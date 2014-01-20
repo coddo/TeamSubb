@@ -35,7 +35,7 @@ public class JobManager extends Observable {
 	private List<Job> acceptedJobs;
 
 	private AppSettings settings;
-	
+
 	private Thread jobFinderThread;
 
 	private static JobManager instance = null;
@@ -55,7 +55,7 @@ public class JobManager extends Observable {
 		settings = AppSettings.getInstance();
 
 		initializeWorkingDirectory();
-		
+
 		jobFinderThread = new Thread(jobFinder);
 	}
 
@@ -251,7 +251,7 @@ public class JobManager extends Observable {
 			if (response) {
 				for (int i = 0; i < jobs.size(); i++) {
 					if (jobs.get(i).getID() == jobID) {
-						jobs.get(i).dispose();
+						jobs.get(i).dispose(true);
 						jobs.remove(i);
 					}
 				}
@@ -285,9 +285,9 @@ public class JobManager extends Observable {
 	public void findJobs() {
 
 		if (!jobFinderThread.isAlive()) {
-		
+
 			jobFinderThread = new Thread(jobFinder);
-			
+
 			jobFinderThread.start();
 		}
 	}
@@ -422,7 +422,7 @@ public class JobManager extends Observable {
 					response = job.cancel();
 
 					if (response) {
-						job.dispose();
+						job.dispose(true);
 						acceptedJobs.remove(job);
 					}
 
@@ -460,7 +460,7 @@ public class JobManager extends Observable {
 					} catch (IOException e) {
 					}
 
-					acceptedJobs.get(i).dispose();
+					acceptedJobs.get(i).dispose(true);
 					acceptedJobs.remove(i);
 				}
 			}
@@ -501,7 +501,7 @@ public class JobManager extends Observable {
 					response = job.push();
 
 					if (response) {
-						job.dispose();
+						job.dispose(true);
 						acceptedJobs.remove(job);
 					}
 
@@ -639,7 +639,7 @@ public class JobManager extends Observable {
 	 */
 	private void clearJobList(List<Job> list) {
 		for (Job job : list) {
-			job.dispose();
+			job.dispose(false);
 		}
 		list.clear();
 	}
@@ -655,6 +655,7 @@ public class JobManager extends Observable {
 	private void initializeWorkingDirectory() {
 		if (!JobManager.WORKING_DIRECTORY.exists())
 			JobManager.WORKING_DIRECTORY.mkdir();
+
 		else {
 			// get all the jobs that are accepted by this user and add them to
 			// the "accepted jobs" list
@@ -666,13 +667,18 @@ public class JobManager extends Observable {
 				try {
 
 					if (jobFolder.isDirectory()) {
+
 						if (jobFolder.list().length == 0)
 							jobFolder.delete();
+
 						else {
 							// read the data from the file and place it in the
-							// entity
+							// Job entity
+							File cfgFile = new File(
+									jobFolder.getAbsolutePath() + ".cfg");
+
 							Job job = new Job();
-							job.readConfigFile(jobFolder);
+							job.readConfigFile(cfgFile);
 
 							// add the Job entity to the "accepted list"
 							acceptedJobs.add(job);

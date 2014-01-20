@@ -60,10 +60,10 @@ public final class Job {
 	 * files that are asociated with this job entity (including its specific
 	 * folder)
 	 */
-	public void dispose() {
+	public void dispose(boolean deleteConfig) {
 		try {
 
-			if (this.configFile.exists())
+			if (this.configFile.exists() && deleteConfig)
 				this.configFile.delete();
 
 			this.name = null;
@@ -480,7 +480,7 @@ public final class Job {
 					this.directoryPath));
 
 			// font files (download + add to the Job entity)
-			if (fontLinks != null) {
+			if (fontLinks != null && fontLinks.length > 0) {
 
 				File[] fonts = new File[this.fontLinks.length];
 
@@ -602,9 +602,9 @@ public final class Job {
 	 *            The folder (File instance) where the job is located
 	 * @throws Exception
 	 */
-	public void readConfigFile(File jobFolder) throws Exception {
+	public void readConfigFile(File configFile) throws Exception {
 		BufferedReader reader = new BufferedReader(new FileReader(
-				this.configFile.getAbsoluteFile()));
+				configFile.getAbsoluteFile()));
 
 		this.setID(Integer.parseInt(reader.readLine()));
 		this.setName(reader.readLine());
