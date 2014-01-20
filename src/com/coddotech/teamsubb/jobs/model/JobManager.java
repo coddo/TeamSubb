@@ -36,7 +36,7 @@ public class JobManager extends Observable {
 
 	private AppSettings settings;
 
-	private Thread jobFinderThread;
+	private Thread jobFinderThread = null;
 
 	private static JobManager instance = null;
 
@@ -56,7 +56,6 @@ public class JobManager extends Observable {
 
 		initializeWorkingDirectory();
 
-		jobFinderThread = new Thread(jobFinder);
 	}
 
 	public static JobManager getInstance() {
@@ -284,82 +283,85 @@ public class JobManager extends Observable {
 	 */
 	public void findJobs() {
 
-		if (!jobFinderThread.isAlive()) {
+		Runnable jobFinder = new Runnable() {
 
-			jobFinderThread = new Thread(jobFinder);
-
-			jobFinderThread.start();
-		}
-	}
-
-	public Runnable jobFinder = new Runnable() {
-
-		String message = null;
-
-		@Override
-		public void run() {
-
-			if (search())
-				Display.getDefault().syncExec(notifier);
-
-		}
-
-		private boolean search() {
-			try {
-
-				// clear the jobs list and reinstantiate the message
-				clearJobList(jobs);
-				message = "normal";
-
-				// send the jobs request to the server
-				String response = ConnectionManager
-						.sendJobSearchRequest(settings.getUserName());
-
-				// in case everything is ok, start processing the response that
-				// was received from the server
-				if (!response.equals("false") && !response.equals("")) {
-
-					String[] jobFragments = response
-							.split(JobManager.SEPARATOR_JOBS);
-
-					// take each job and wrap it in a Job entity
-					for (String fragment : jobFragments) {
-
-						message = wrapJob(message, fragment);
-					}
-				}
-
-				message = "find" + CustomWindow.NOTIFICATION_SEPARATOR
-						+ message;
-
-				ActivityLogger.logActivity(this.getClass().getName(),
-						"Find jobs");
-
-				return true;
-
-			} catch (Exception ex) {
-				ActivityLogger.logException(this.getClass().getName(),
-						"Find jobs", ex);
-
-				return false;
-			}
-		}
-
-		// send the according notification to the observers
-		private Runnable notifier = new Runnable() {
+			String message = null;
 
 			@Override
 			public void run() {
 
-				setChanged();
-
-				notifyObservers(message);
+				if (search())
+					Display.getDefault().syncExec(notifier);
 
 			}
 
+			private boolean search() {
+				try {
+
+					// clear the jobs list and reinstantiate the message
+					clearJobList(jobs);
+					message = "normal";
+
+					// send the jobs request to the server
+					String response = ConnectionManager
+							.sendJobSearchRequest(settings.getUserName());
+
+					// in case everything is ok, start processing the response
+					// that
+					// was received from the server
+					if (!response.equals("false") && !response.equals("")) {
+
+						String[] jobFragments = response
+								.split(JobManager.SEPARATOR_JOBS);
+
+						// take each job and wrap it in a Job entity
+						for (String fragment : jobFragments) {
+
+							message = wrapJob(message, fragment);
+						}
+					}
+
+					message = "find" + CustomWindow.NOTIFICATION_SEPARATOR
+							+ message;
+
+					ActivityLogger.logActivity(this.getClass().getName(),
+							"Find jobs");
+
+					return true;
+
+				} catch (Exception ex) {
+					ActivityLogger.logException(this.getClass().getName(),
+							"Find jobs", ex);
+
+					return false;
+				}
+			}
+
+			// send the according notification to the observers
+			private Runnable notifier = new Runnable() {
+
+				@Override
+				public void run() {
+
+					setChanged();
+
+					notifyObservers(message);
+
+				}
+
+			};
+
 		};
 
-	};
+		if (jobFinderThread == null)
+			jobFinderThread = new Thread(jobFinder);
+
+		if (!jobFinderThread.isAlive()) {
+			jobFinderThread.start();
+
+			jobFinderThread = new Thread(jobFinder);
+		}
+	}
 
 	/**
 	 * Accepts a certain job for this user.<br>
@@ -674,8 +676,8 @@ public class JobManager extends Observable {
 						else {
 							// read the data from the file and place it in the
 							// Job entity
-							File cfgFile = new File(
-									jobFolder.getAbsolutePath() + ".cfg");
+							File cfgFile = new File(jobFolder.getAbsolutePath()
+									+ ".cfg");
 
 							Job job = new Job();
 							job.readConfigFile(cfgFile);
@@ -701,4 +703,5 @@ public class JobManager extends Observable {
 			}
 		}
 	}
+
 }

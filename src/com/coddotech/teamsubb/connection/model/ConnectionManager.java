@@ -44,7 +44,7 @@ public final class ConnectionManager {
 	public static boolean isConnected() {
 
 		if (ConnectionManager.sendMessage(ConnectionManager.URL_JOBS,
-				new String[] { "" }, new String[] { "" }).equals("error"))
+				new String[] { "" }, new String[] { "" }).equals("false"))
 			return false;
 
 		else

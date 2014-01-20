@@ -610,12 +610,13 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		jobType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		jobType.setFont(CustomWindow.DEFAULT_FONT);
-		
+
 		jobStartDateLabel.setFont(CustomWindow.DEFAULT_FONT);
 		jobStartDateLabel.setText("Start date:");
 		jobStartDateLabel.pack();
-		
-		jobStartDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+
+		jobStartDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+				false));
 		jobStartDate.setFont(CustomWindow.DEFAULT_FONT);
 
 		jobPreviousStaffLabel.setFont(CustomWindow.DEFAULT_FONT);
@@ -702,26 +703,37 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		openSettingsMenuItem
 				.addSelectionListener(controller.openSettingsClicked);
+
 		closeWindowMenuItem.addSelectionListener(controller.closeWindowClicked);
+
 		exitApplicationMenuItem
 				.addSelectionListener(controller.exitApplicationClicked);
+
 		createJobMenuItem.addSelectionListener(controller.createJobClicked);
+
 		refreshJobListMenuItem
 				.addSelectionListener(controller.refreshJobListClicked);
+
 		acceptJobMenuItem.addSelectionListener(controller.acceptJobClicked);
 		cancelJobMenuItem.addSelectionListener(controller.cancelJobClicked);
+
 		forceCancelJobMenuItem
 				.addSelectionListener(controller.forceCancelJobCLicked);
+
 		finishJobMenuItem.addSelectionListener(controller.finishJobClicked);
 		endJobMenuItem.addSelectionListener(controller.endJobClicked);
+
 		openJobDirectoryMenuItem
 				.addSelectionListener(controller.openJobDirectoryClicked);
+
 		configureFontsMenuItem
 				.addSelectionListener(controller.configureFontsClicked);
+
 		aboutMenuItem.addSelectionListener(controller.aboutClicked);
 
 		jobsList.addSelectionListener(controller.jobsListItemSelected);
 		jobsList.addMenuDetectListener(controller.jobsListMenuOpened);
+		jobsList.addListener(SWT.KeyDown, controller.jobListButtonPress);
 	}
 
 	/**

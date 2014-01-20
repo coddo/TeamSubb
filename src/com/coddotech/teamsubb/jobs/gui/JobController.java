@@ -1,5 +1,6 @@
 package com.coddotech.teamsubb.jobs.gui;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -383,6 +384,20 @@ public class JobController extends CustomController {
 			// TODO Auto-generated method stub
 
 		}
+	};
+
+	/**
+	 * Listener for when the F5 button is pressed in order for faster refresh
+	 * actions
+	 */
+	public Listener jobListButtonPress = new Listener() {
+
+		@Override
+		public void handleEvent(Event e) {
+			if (e.keyCode == SWT.F5)
+				model.findJobs();
+		}
+
 	};
 
 	/**
