@@ -63,6 +63,10 @@ public class AnimationRenderer extends Observable implements Observer {
 	 */
 	public AnimationRenderer() {
 		initializeAnimationData();
+		
+		//initially set the idle image
+		this.setChanged();
+		this.notifyObservers(idle[0]);
 	}
 
 	/**

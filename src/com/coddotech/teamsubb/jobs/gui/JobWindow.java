@@ -332,6 +332,7 @@ public class JobWindow extends CustomWindow implements Observer {
 					CustomWindow.NOTIFICATION_SEPARATOR);
 
 			switch (data[0]) {
+			
 			case "find": {
 				this.jobsList.clearAll();
 				this.jobsList.removeAll();

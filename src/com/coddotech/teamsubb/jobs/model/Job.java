@@ -516,6 +516,8 @@ public final class Job {
 	 */
 	public boolean cancel() {
 
+		this.description = "";
+		
 		// send the cancel message request to the server
 		boolean response = ConnectionManager.sendJobCancelRequest(this,
 				this.currentStaffMember);

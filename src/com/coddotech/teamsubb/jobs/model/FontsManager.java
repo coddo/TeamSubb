@@ -1,7 +1,5 @@
 package com.coddotech.teamsubb.jobs.model;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,13 +17,16 @@ public class FontsManager {
 	 * @return A String collection
 	 */
 	public static String[] getSystemFonts() {
-		Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment()
-				.getAllFonts();
+		String[] fontNames;
+		File fontsDir = null;
 
-		String[] fontNames = new String[fonts.length];
+		String osName = System.getProperty("os.name").split(" ")[0];
 
-		for (int i = 0; i < fonts.length; i++)
-			fontNames[i] = fonts[i].getName();
+		if (osName.equals("Windows"))
+			fontsDir = new File("C:" + File.separator + "Windows"
+					+ File.separator + "Fonts");
+
+		fontNames = fontsDir.list();
 
 		return fontNames;
 	}
@@ -41,7 +42,7 @@ public class FontsManager {
 
 		if (fontLinks == null)
 			return null;
-		
+
 		List<String> systemFonts = Arrays.asList(FontsManager.getSystemFonts());
 
 		List<String> created = new ArrayList<String>();
@@ -73,7 +74,7 @@ public class FontsManager {
 
 		if (fontFiles == null || fontFiles.length == 0)
 			return null;
-		
+
 		List<String> excludable = FontsManager.getServerFonts();
 
 		List<File> created = new ArrayList<File>();
@@ -89,10 +90,10 @@ public class FontsManager {
 	}
 
 	public static String[] excludeServerFontsAsStrings(String[] fonts) {
-		
+
 		if (fonts == null || fonts.length == 0)
 			return null;
-		
+
 		List<String> excludable = FontsManager.getServerFonts();
 
 		List<String> created = new ArrayList<String>();
@@ -100,7 +101,7 @@ public class FontsManager {
 		for (String font : fonts) {
 
 			String name = new File(font).getName();
-			
+
 			if (!excludable.contains(name))
 				created.add(font);
 

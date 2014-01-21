@@ -285,7 +285,7 @@ public class JobManager extends Observable {
 
 		Runnable jobFinder = new Runnable() {
 
-			String message = null;
+			String message = "normal";
 
 			@Override
 			public void run() {
@@ -300,7 +300,6 @@ public class JobManager extends Observable {
 
 					// clear the jobs list and reinstantiate the message
 					clearJobList(jobs);
-					message = "normal";
 
 					// send the jobs request to the server
 					String response = ConnectionManager
@@ -543,6 +542,7 @@ public class JobManager extends Observable {
 	}
 
 	private String wrapJob(String message, String fragment) {
+
 		// split the String into bits representing specific job data
 		String[] data = fragment.split(JobManager.SEPARATOR_FIELDS);
 
@@ -556,13 +556,16 @@ public class JobManager extends Observable {
 			// create a new Job entity with the data
 			Job job = createJobEntity(data, dirPath);
 
-			if (job.getIntendedTo().equals(settings.getUserName()))
-				message = "important";
+			if (!message.equals("important")) {
 
-			else if (job.isAcceptable(settings.getUserJobs())) {
+				if (job.getIntendedTo().equals(settings.getUserName()))
+					message = "important";
 
-				message = "acceptable";
+				else if (job.isAcceptable(settings.getUserJobs())) {
 
+					message = "acceptable";
+
+				}
 			}
 
 			// add it to the list
