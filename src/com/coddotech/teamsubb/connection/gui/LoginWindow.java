@@ -18,7 +18,6 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * based on his/her qualifications
  * 
  * @author Coddo
- * 
  */
 public class LoginWindow extends CustomWindow implements Observer {
 
@@ -69,7 +68,8 @@ public class LoginWindow extends CustomWindow implements Observer {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
@@ -94,18 +94,20 @@ public class LoginWindow extends CustomWindow implements Observer {
 	}
 
 	/**
-	 * Update the GUI based on the modifications that took place in the
-	 * registered models
+	 * Update the GUI based on the modifications that took place in the registered models
 	 */
 	@Override
 	public void update(Observable obs, Object obj) {
 		if (!(boolean) obj) {
+
 			// On failed login, show the "wrong credentials" message
 			MessageBox message = new MessageBox(getShell(), SWT.ICON_ERROR);
 			message.setMessage("The entered username or password is incorrect");
 			message.setText("Wrong credentials");
 			message.open();
-		} else {
+		}
+		else {
+
 			// On successful login, close this windows
 			this.close();
 		}
@@ -118,8 +120,7 @@ public class LoginWindow extends CustomWindow implements Observer {
 		userLabel = new Label(this.getShell(), SWT.None);
 		passLabel = new Label(this.getShell(), SWT.None);
 		userBox = new Text(this.getShell(), SWT.BORDER);
-		passBox = new Text(this.getShell(), SWT.PASSWORD | SWT.BORDER
-				| SWT.SINGLE);
+		passBox = new Text(this.getShell(), SWT.PASSWORD | SWT.BORDER | SWT.SINGLE);
 		exitButton = new Button(this.getShell(), SWT.PUSH);
 		loginButton = new Button(this.getShell(), SWT.PUSH);
 	}
@@ -165,6 +166,7 @@ public class LoginWindow extends CustomWindow implements Observer {
 	@Override
 	protected void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
+
 		userBox.addListener(SWT.Traverse, controller.keyPressed);
 		passBox.addListener(SWT.Traverse, controller.keyPressed);
 		exitButton.addSelectionListener(controller.exitButtonPressed);

@@ -54,23 +54,24 @@ public class CreateJobController extends CustomController {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
 	}
 
 	/**
-	 * Listener for when the browse sub button is clicked. This opens the file
-	 * dialog for selecting a file which is going to be used.
+	 * Listener for when the browse sub button is clicked. This opens the file dialog for selecting
+	 * a file which is going to be used.
 	 */
 	public SelectionListener browseSubButtonClicked = new SelectionListener() {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			browseSub.open();
-			view.setSub(browseSub.getFilterPath() + File.separator
-					+ browseSub.getFileName());
+			
+			view.setSub(browseSub.getFilterPath() + File.separator + browseSub.getFileName());
 
 		}
 
@@ -82,8 +83,8 @@ public class CreateJobController extends CustomController {
 	};
 
 	/**
-	 * Listener for when the browse fonts button is clicked. This opens the file
-	 * dialog for selecting the files that are going to be used
+	 * Listener for when the browse fonts button is clicked. This opens the file dialog for
+	 * selecting the files that are going to be used
 	 */
 	public SelectionListener browseFontsButtonClicked = new SelectionListener() {
 
@@ -94,8 +95,7 @@ public class CreateJobController extends CustomController {
 			String[] files = browseFonts.getFileNames();
 
 			for (int i = 0; i < files.length; i++) {
-				files[i] = browseFonts.getFilterPath() + File.separator
-						+ files[i];
+				files[i] = browseFonts.getFilterPath() + File.separator + files[i];
 			}
 
 			view.appendFonts(files);
@@ -110,21 +110,22 @@ public class CreateJobController extends CustomController {
 	};
 
 	/**
-	 * Listener for when keys are pressed in the fonts list. If the delete key
-	 * is pressed, then remove all the selected items from that list
+	 * Listener for when keys are pressed in the fonts list. If the delete key is pressed, then
+	 * remove all the selected items from that list
 	 */
 	public KeyListener fontsKeyListener = new KeyListener() {
 
 		@Override
-		public void keyReleased(KeyEvent arg0) {
-			// TODO Auto-generated method stub
+		public void keyPressed(KeyEvent e) {
+			
+			if (e.keyCode == SWT.DEL)
+				view.deleteSelectedFonts();
 
 		}
 
 		@Override
-		public void keyPressed(KeyEvent e) {
-			if (e.keyCode == SWT.DEL)
-				view.deleteSelectedFonts();
+		public void keyReleased(KeyEvent arg0) {
+			// TODO Auto-generated method stub
 
 		}
 	};
@@ -148,24 +149,22 @@ public class CreateJobController extends CustomController {
 	};
 
 	/**
-	 * Listener for when the create button is clicked. This checks for an
-	 * internet connection, then it verifies the entered fields for invalid
-	 * settings. If everything is ok, then it proceeds with creating the job and
-	 * sending it to the server.
+	 * Listener for when the create button is clicked. This checks for an internet connection, then
+	 * it verifies the entered fields for invalid settings. <br>
+	 * 
+	 * If everything is ok, then it proceeds with creating the job and sending it to the server.
 	 */
 	public SelectionListener createClicked = new SelectionListener() {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
+				
 				if (view.verifFields()) {
 
-					String[] fonts = FontsManager
-							.excludeServerFontsAsStrings(view.getFonts());
+					String[] fonts = FontsManager.excludeServerFontsAsStrings(view.getFonts());
 
-					model.createJob(view.getName(), view.getType(),
-							view.getComments(), view.getNextStaff(),
-							view.getSub(), fonts);
+					model.createJob(view.getName(), view.getType(), view.getComments(), view.getNextStaff(), view.getSub(), fonts);
 				}
 			}
 

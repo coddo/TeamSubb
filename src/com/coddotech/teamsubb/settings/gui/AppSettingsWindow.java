@@ -40,8 +40,7 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 		super();
 
 		// make the window a modal one
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL
-				| SWT.DIALOG_TRIM));
+		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM));
 
 		this.initializeComponents();
 	}
@@ -49,6 +48,7 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	@Override
 	public void dispose() {
 		try {
+
 			// user classes
 			controller.dispose();
 			controller = null;
@@ -71,15 +71,15 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
 	}
 
 	/**
-	 * Tells the user is the gadget is set to automatically save its own
-	 * location on the screen
+	 * Tells the user is the gadget is set to automatically save its own location on the screen
 	 * 
 	 * @return A logical value indicating the result
 	 */
@@ -112,15 +112,18 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 			if (interval < 1 || interval > 60) {
 				message.setText("Number error");
 				message.setMessage("The entered number is out of bounds. The search interval must be an integer between 1 and 60");
+
 				message.open();
 
 				return false;
 			}
 
 			return true;
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			message.setText("Format error");
 			message.setMessage("The search interval must be an INTEGER between 1 and 60");
+
 			message.open();
 
 			return false;
@@ -133,42 +136,46 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 	@Override
 	public void update(Observable obs, Object obj) {
 		try {
-			String[] data = ((String) obj)
-					.split(CustomWindow.NOTIFICATION_SEPARATOR);
+			String[] data = ((String) obj).split(CustomWindow.NOTIFICATION_SEPARATOR);
 
 			switch (data[0]) {
 
 			case AppSettings.MESSAGE_AUTOSAVE_LOCATION: {
-				this.autosaveLocation.setSelection(Boolean
-						.parseBoolean(data[1]));
+				this.autosaveLocation.setSelection(Boolean.parseBoolean(data[1]));
+
 			}
 				break;
+
 			case AppSettings.MESSAGE_SEARCH_INTERVAL: {
 				this.searchInterval.setText(data[1]);
+
 			}
 				break;
+
 			case AppSettings.MESSAGE_SAVE: {
 				MessageBox message;
 
 				if (Boolean.parseBoolean(data[1])) {
-					message = new MessageBox(this.getShell(),
-							SWT.ICON_INFORMATION);
+					message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 					message.setText("Success");
 					message.setMessage("The settings have been successfully applied !");
-				} else {
+				}
+
+				else {
 					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 					message.setText("Error");
 					message.setMessage("An error has been encountered while saving the changes !");
 				}
 
 				message.open();
+
 			}
 				break;
 
 			}
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"GUI Update", ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "GUI Update", ex);
 
 		}
 	}

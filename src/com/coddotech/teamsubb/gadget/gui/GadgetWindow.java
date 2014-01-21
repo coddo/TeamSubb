@@ -76,7 +76,8 @@ public class GadgetWindow extends CustomWindow implements Observer {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
@@ -96,8 +97,7 @@ public class GadgetWindow extends CustomWindow implements Observer {
 
 			else if (obs instanceof AppSettings) {
 
-				String[] data = ((String) obj)
-						.split(CustomWindow.NOTIFICATION_SEPARATOR);
+				String[] data = ((String) obj).split(CustomWindow.NOTIFICATION_SEPARATOR);
 
 				if (data[0].equals(AppSettings.MESSAGE_LOCATION) && first) {
 					int x = Integer.parseInt(data[1].split(",")[0]);

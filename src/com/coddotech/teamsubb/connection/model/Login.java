@@ -8,11 +8,10 @@ import com.coddotech.teamsubb.settings.model.AppSettings;
 
 public class Login extends Observable {
 
-	private static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator",
-			"Administrator", "Fondator" };
+	private static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator", "Administrator", "Fondator" };
 
 	private static boolean loginSuccess = false;
-	
+
 	/**
 	 * Start the login procedure
 	 */
@@ -28,32 +27,32 @@ public class Login extends Observable {
 			this.setChanged();
 			notifyObservers(Boolean.parseBoolean(result[0]));
 
-			ActivityLogger.logActivity(this.getClass().getName(),
-					"User login");
+			ActivityLogger.logActivity(this.getClass().getName(), "User login");
 
 			if (Login.loginSuccess = Boolean.parseBoolean(result[0])) {
 				AppSettings set = AppSettings.getInstance();
-				
+
 				set.setUserInfo(Login.getUserInfo(result));
-				
+
 				set.setUserJobs(Login.getJobsInfo(result));
 			}
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"User login", ex);
-			
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "User login", ex);
+
 		}
 	}
-	
+
 	public static boolean isLoggedIn() {
 		return Login.loginSuccess;
 	}
-	
+
 	/**
 	 * Extract the jobs data into a boolean array indicating the jobs types that
 	 * this user can work on <br>
 	 * <br>
+	 * 
 	 * data[0] -> true/false <br>
 	 * data[1] -> email <br>
 	 * data[2] -> rank <br>
@@ -61,6 +60,7 @@ public class Login extends Observable {
 	 * 
 	 * @param data
 	 *            A String collection containing the server's response
+	 * 
 	 * @return A boolean array containing the possible jobs for this user
 	 */
 	private static boolean[] getJobsInfo(String[] data) {
@@ -84,6 +84,7 @@ public class Login extends Observable {
 	 * Extract the user information into a String array. Information contains:
 	 * user name, email and rank <br>
 	 * <br>
+	 * 
 	 * data[0] -> true/false <br>
 	 * data[1] -> email <br>
 	 * data[2] -> rank (integer)<br>
@@ -91,6 +92,7 @@ public class Login extends Observable {
 	 * 
 	 * @param data
 	 *            A String collection containing the server's response
+	 * 
 	 * @return A String array containing the user's information
 	 */
 	private static String[] getUserInfo(String[] data) {

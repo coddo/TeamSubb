@@ -23,8 +23,9 @@ public class AppManager {
 			if (AppManager.isAutoLogin()) {
 				// login automatically
 
-			} else {
-				
+			}
+			else {
+
 				// display the login window
 				LoginWindow loginWindow = new LoginWindow();
 				loginWindow.open();
@@ -41,9 +42,9 @@ public class AppManager {
 
 			}
 
-		} catch (Exception ex) {
-			ActivityLogger
-					.logActivity("Main", "App runtime", "FATAL ERROR !!!");
+		}
+		catch (Exception ex) {
+			ActivityLogger.logActivity("Main", "App runtime", "FATAL ERROR !!!");
 
 			ActivityLogger.dumpAppErrorStack(ex);
 
@@ -62,8 +63,7 @@ public class AppManager {
 		// the main shell is closed last
 		Shell main = null;
 		for (Shell shell : Display.getCurrent().getShells()) {
-			if (shell.getText().equals("Gadget"))
-				main = shell;
+			if (shell.getText().equals("Gadget")) main = shell;
 			else
 				shell.close();
 		}
@@ -74,6 +74,7 @@ public class AppManager {
 	}
 
 	private static void disposeGlobalResources() {
+
 		// user classes (singletons)
 		JobManager.getInstance().dispose();
 		AppSettings.getInstance().dispose();
@@ -97,9 +98,7 @@ public class AppManager {
 	}
 
 	/**
-	 * METHOD CREATED IN PREPARATION FOR ADDING NEW FEATURES TO THE SETTINGS
-	 * 
-	 * NOT IMPLEMENTED YET !
+	 * METHOD CREATED IN PREPARATION FOR ADDING NEW FEATURES TO THE SETTINGS NOT IMPLEMENTED YET !
 	 * 
 	 * @return Always false
 	 */

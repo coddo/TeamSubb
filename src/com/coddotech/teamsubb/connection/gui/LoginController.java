@@ -15,6 +15,7 @@ public class LoginController extends CustomController {
 	LoginWindow view;
 
 	public LoginController(LoginWindow view) {
+
 		// set the view and the model for this controller
 		model = new Login();
 		this.view = view;
@@ -28,6 +29,7 @@ public class LoginController extends CustomController {
 	 */
 	public void dispose() {
 		try {
+
 			model.deleteObserver(view);
 
 			model = null;
@@ -35,7 +37,8 @@ public class LoginController extends CustomController {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
@@ -57,28 +60,29 @@ public class LoginController extends CustomController {
 		}
 
 	};
+
 	/**
-	 * Listener for the login button. When pressed, it sends a login request to
-	 * the server and waits for a response. The response is then processed and
-	 * the appropriate actions are taken
+	 * Listener for the login button. When pressed, it sends a login request to the server and waits
+	 * for a response. The response is then processed and the appropriate actions are taken
 	 */
 	public SelectionListener loginButtonPressed = new SelectionListener() {
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			if (CustomWindow.isConnected(true))
-				model.doLogin(view.getUserName(), view.getPassword());
+			if (CustomWindow.isConnected(true)) model.doLogin(view.getUserName(), view.getPassword());
+
 		}
 
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
+
 		}
 
 	};
+
 	/**
-	 * Listener for the text boxes in this window. Listens for when the "Enter"
-	 * key is pressed in either of them and attempts to do a login with the
-	 * entered data
+	 * Listener for the text boxes in this window. Listens for when the "Enter" key is pressed in
+	 * either of them and attempts to do a login with the entered data.
 	 * 
 	 * Helps the user login faster by avoiding the login button push
 	 */
@@ -86,15 +90,16 @@ public class LoginController extends CustomController {
 
 		@Override
 		public void handleEvent(Event e) {
-			if (e.detail == org.eclipse.swt.SWT.TRAVERSE_RETURN)
-				if (CustomWindow.isConnected(true))
-					model.doLogin(view.getUserName(), view.getPassword());
+
+			if (e.detail == org.eclipse.swt.SWT.TRAVERSE_RETURN) if (CustomWindow.isConnected(true)) model.doLogin(
+					view.getUserName(), view.getPassword());
+
 		}
 
 	};
+
 	/**
-	 * Listens for when the shell (GUI) closes and clears memory from this class
-	 * and its resources
+	 * Listens for when the shell (GUI) closes and clears memory from this class and its resources
 	 */
 	public Listener shellClosingListener = new Listener() {
 

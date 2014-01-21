@@ -17,16 +17,12 @@ import com.coddotech.teamsubb.connection.model.ConnectionManager;
 public abstract class CustomWindow {
 
 	public static final String NOTIFICATION_SEPARATOR = "#@&!#&@!";
-	
-	public static final Font DEFAULT_FONT = new Font(Display.getCurrent(),
-			"Calibri", 12, SWT.NORMAL);
-	
-	public static final Font BOLD_FONT = new Font(Display.getCurrent(),
-			"Calibri", 12, SWT.BOLD);
-	
-	public static final Image APP_ICON = new Image(Display.getCurrent(),
-			System.getProperty("user.dir") + File.separator + "resources"
-					+ File.separator + "icon.png");
+
+	public static final Font DEFAULT_FONT = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
+	public static final Font BOLD_FONT = new Font(Display.getCurrent(), "Calibri", 12, SWT.BOLD);
+
+	public static final Image APP_ICON = new Image(Display.getCurrent(), System.getProperty("user.dir") + File.separator + "resources"
+			+ File.separator + "icon.png");
 
 	private Shell shell;
 	private boolean disposed;
@@ -81,8 +77,10 @@ public abstract class CustomWindow {
 		shell.open();
 
 		while (!shell.isDisposed()) {
+
 			if (!Display.getCurrent().readAndDispatch())
 				Display.getCurrent().sleep();
+
 		}
 	}
 
@@ -91,6 +89,7 @@ public abstract class CustomWindow {
 	 */
 	public void close() {
 		shell.close();
+
 		this.disposed = true;
 	}
 
@@ -101,22 +100,19 @@ public abstract class CustomWindow {
 		int x = Display.getCurrent().getMonitors()[0].getClientArea().width / 2;
 		int y = Display.getCurrent().getMonitors()[0].getClientArea().height / 2;
 
-		shell.setLocation(x - getShell().getSize().x / 2, y
-				- getShell().getSize().y / 2);
+		shell.setLocation(x - getShell().getSize().x / 2, y - getShell().getSize().y / 2);
 	}
 
 	/**
-	 * Displays an error message telling the user that the connection to the
-	 * server was unsuccessful if the app cannot establish a a connection to the
-	 * server
+	 * Displays an error message telling the user that the connection to the server was unsuccessful
+	 * if the app cannot establish a a connection to the server.
 	 */
 	public static boolean isConnected(boolean displayMessage) {
 		boolean connected = ConnectionManager.isConnected();
 
 		if (!connected && displayMessage) {
 
-			MessageBox message = new MessageBox(Display.getCurrent()
-					.getShells()[0], SWT.ICON_ERROR);
+			MessageBox message = new MessageBox(Display.getCurrent().getShells()[0], SWT.ICON_ERROR);
 			message.setMessage("A connection error has occured.\nPlease try again later...");
 			message.setText("Connection failed");
 			message.open();
@@ -126,12 +122,12 @@ public abstract class CustomWindow {
 	}
 
 	/*
-	 * creates the contents for this shell instance
+	 * Create the contents for this shell instance
 	 */
 	private void createShell() {
+
 		// Prevent the window from being resized
-		this.shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM
-				^ SWT.RESIZE ^ SWT.DIALOG_TRIM);
+		this.shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM ^ SWT.RESIZE ^ SWT.DIALOG_TRIM);
 
 		this.shell.addListener(SWT.Close, this.disposeListener);
 	}
@@ -156,24 +152,23 @@ public abstract class CustomWindow {
 	}
 
 	protected void logDiposeFail(Exception ex) {
-		ActivityLogger.logException(this.getClass().getName(), "GUI dispose",
-				ex);
+		ActivityLogger.logException(this.getClass().getName(), "GUI dispose", ex);
 	}
 
 	/**
 	 * Initializez all the components that are used in this GUI
 	 */
 	protected void initializeComponents() {
+
 		// initializations
 		try {
 			this.performInitializations();
 
-			ActivityLogger.logActivity(this.getClass().getName(),
-					"GUI Initialization");
+			ActivityLogger.logActivity(this.getClass().getName(), "GUI Initialization");
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"GUI Initialization", ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "GUI Initialization", ex);
 
 		}
 
@@ -181,12 +176,11 @@ public abstract class CustomWindow {
 		try {
 			this.createObjectProperties();
 
-			ActivityLogger.logActivity(this.getClass().getName(),
-					"Create object properties");
+			ActivityLogger.logActivity(this.getClass().getName(), "Create object properties");
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"Create object properties", ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Create object properties", ex);
 
 		}
 
@@ -194,12 +188,11 @@ public abstract class CustomWindow {
 		try {
 			this.createShellProperties();
 
-			ActivityLogger.logActivity(this.getClass().getName(),
-					"Create shell properties");
+			ActivityLogger.logActivity(this.getClass().getName(), "Create shell properties");
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"Create shell properties", ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Create shell properties", ex);
 
 		}
 
@@ -207,12 +200,11 @@ public abstract class CustomWindow {
 		try {
 			this.createListeners();
 
-			ActivityLogger.logActivity(this.getClass().getName(),
-					"Create listeners");
+			ActivityLogger.logActivity(this.getClass().getName(), "Create listeners");
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"Create listeners", ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Create listeners", ex);
 
 		}
 
@@ -220,12 +212,11 @@ public abstract class CustomWindow {
 		try {
 			this.getShell().setImage(CustomWindow.APP_ICON);
 
-			ActivityLogger.logActivity(this.getClass().getName(),
-					"Set shell type (super class)");
+			ActivityLogger.logActivity(this.getClass().getName(), "Set shell type (super class)");
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"Set shell type (super class)", ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Set shell type (super class)", ex);
 
 		}
 	}

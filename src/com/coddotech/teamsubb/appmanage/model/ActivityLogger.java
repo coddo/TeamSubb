@@ -15,19 +15,15 @@ import java.util.regex.Pattern;
 
 /**
  * Class used to log the entire activity of the application during runtime. <br>
- * 
  * If any fata errors or major bugs are found, this class is responsible for
  * creating the dump file containing the error details.
- * 
  * This class is a singleton.
  * 
  * @author Coddo
- * 
  */
 public class ActivityLogger {
 
-	private static String dumpPath = System.getProperty("user.dir")
-			+ File.separator + "DUMP" + File.separator;
+	private static String dumpPath = System.getProperty("user.dir") + File.separator + "DUMP" + File.separator;
 
 	private static File logFile;
 	private static File dumpFile;
@@ -41,16 +37,17 @@ public class ActivityLogger {
 	 * 
 	 * @param className
 	 *            The name of the class that started the activity
+	 * 
 	 * @param activity
 	 *            The activity which is invoked
+	 * 
 	 * @param msg
 	 *            The message received from the completion of the activity
 	 */
 	public static void logActivity(String className, String activity, String msg) {
 		if (!initializationFailed) {
 
-			String message = "(" + className + ") -> " + activity + " -> "
-					+ msg;
+			String message = "(" + className + ") -> " + activity + " -> " + msg;
 
 			logStack.add(ActivityLogger.getCurrentTime() + message + "\n");
 
@@ -62,10 +59,12 @@ public class ActivityLogger {
 	 * 
 	 * @param className
 	 *            The name of the class that started the activity
+	 * 
 	 * @param activity
 	 *            The activity which is invoked
 	 */
 	public static void logActivity(String className, String activity) {
+
 		ActivityLogger.logActivity(className, activity, "OK!");
 	}
 
@@ -74,20 +73,18 @@ public class ActivityLogger {
 	 * 
 	 * @param className
 	 *            The name of the class that caused the exception
+	 * 
 	 * @param activity
-	 *            The activity which was active at the time when the exception
-	 *            is caught
+	 *            The activity which was active at the time when the exception is caught
+	 * 
 	 * @param ex
 	 *            The exception that was handled
 	 */
-	public static void logException(String className, String activity,
-			Exception ex) {
+	public static void logException(String className, String activity, Exception ex) {
 
-		String message = "(" + className + ") -> " + activity + " -> "
-				+ ex.toString();
+		String message = "(" + className + ") -> " + activity + " -> " + ex.toString();
 
-		logStack.add("[!] " + ActivityLogger.getCurrentTime() + message
-				+ "\n");
+		logStack.add("[!] " + ActivityLogger.getCurrentTime() + message + "\n");
 
 	}
 
@@ -105,15 +102,16 @@ public class ActivityLogger {
 
 			for (StackTraceElement element : ex.getStackTrace()) {
 				message += "( " + element.getClassName() + " ) ";
+
 				message += "{ " + element.getMethodName() + " } -> ";
+
 				message += element.toString() + "\n";
 			}
 
 			try {
 				dumpFile.createNewFile();
 
-				BufferedWriter dumpWriter = new BufferedWriter(new FileWriter(
-						dumpFile.getAbsoluteFile()));
+				BufferedWriter dumpWriter = new BufferedWriter(new FileWriter(dumpFile.getAbsoluteFile()));
 
 				dumpWriter.write(message);
 
@@ -121,7 +119,8 @@ public class ActivityLogger {
 
 				ActivityLogger.logStack.clear();
 
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 
 			}
@@ -135,8 +134,7 @@ public class ActivityLogger {
 		if (!initializationFailed) {
 
 			try {
-				BufferedWriter logWriter = new BufferedWriter(new FileWriter(
-						logFile.getAbsoluteFile()));
+				BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFile.getAbsoluteFile()));
 
 				while (ActivityLogger.logStack.size() > 0)
 					logWriter.write(ActivityLogger.logStack.remove(0));
@@ -146,7 +144,8 @@ public class ActivityLogger {
 				// empty the stack
 				ActivityLogger.logStack.clear();
 
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 
 			}
@@ -158,6 +157,7 @@ public class ActivityLogger {
 	 */
 	public static void performInitializations() {
 		initializeLogDirectory();
+
 		initializeFiles();
 	}
 
@@ -169,12 +169,13 @@ public class ActivityLogger {
 
 		try {
 
-			if (!dumpDirectory.exists())
-				dumpDirectory.mkdir();
+			if (!dumpDirectory.exists()) dumpDirectory.mkdir();
+
 			else
 				cleanDumpDirectory(dumpDirectory);
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			System.out.println(ex.getMessage());
 
 		}
@@ -182,21 +183,20 @@ public class ActivityLogger {
 	}
 
 	/**
-	 * When there are more than 5 files of each type (log or dump) in the
-	 * directory, it gets cleaned by deleting the oldest one.
+	 * When there are more than 5 files of each type (log or dump) in the directory, it gets cleaned
+	 * by deleting the oldest one.
 	 * 
 	 * @param dumpDirectory
 	 *            A File instance
 	 */
 	private static void cleanDumpDirectory(File dumpDirectory) {
-		File[] logFiles = dumpDirectory.listFiles(ActivityLogger
-				.getFileTypeFilter("log"));
+		File[] logFiles = dumpDirectory.listFiles(ActivityLogger.getFileTypeFilter("log"));
 
-		File[] dumpFiles = dumpDirectory.listFiles(ActivityLogger
-				.getFileTypeFilter("dmp"));
+		File[] dumpFiles = dumpDirectory.listFiles(ActivityLogger.getFileTypeFilter("dmp"));
 
 		// log files cleaning
 		if (logFiles.length >= 5) {
+
 			// sort the files by "date modified"
 			Arrays.sort(logFiles, new FileDateCompare());
 
@@ -214,8 +214,7 @@ public class ActivityLogger {
 	}
 
 	/**
-	 * Initializes the files in which to dump the app's activity and error
-	 * messages.
+	 * Initializes the files in which to dump the app's activity and error messages.
 	 */
 	private static void initializeFiles() {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
@@ -223,13 +222,16 @@ public class ActivityLogger {
 		String date = dateFormat.format(new Date());
 
 		logFile = new File(dumpPath + "LOG - " + date + ".log");
+
 		dumpFile = new File(dumpPath + "DUMP - " + date + ".dmp");
 
 		try {
 			logFile.createNewFile();
 
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
+
 			initializationFailed = true;
 		}
 	}
@@ -261,8 +263,7 @@ public class ActivityLogger {
 	}
 
 	/**
-	 * Class the implements Comparator<T> and compares the dates in which 2
-	 * files were modified.
+	 * Class the implements Comparator<T> and compares the dates in which 2 files were modified.
 	 */
 	private static class FileDateCompare implements Comparator<File> {
 

@@ -102,7 +102,8 @@ public class GadgetController extends CustomController {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
@@ -127,8 +128,8 @@ public class GadgetController extends CustomController {
 	}
 
 	/**
-	 * Timer used to search for new jobs. This method checks if there is an
-	 * internet connection available before sending the request
+	 * Timer used to search for new jobs. This method checks if there is an internet connection
+	 * available before sending the request
 	 */
 	Runnable timer = new Runnable() {
 
@@ -215,9 +216,8 @@ public class GadgetController extends CustomController {
 
 	/**
 	 * Listener for when the gadget is clicked. <br>
-	 * Left double-click opens the JobsWindow while left double-click opens the
-	 * ApplicationSettings. The left click is used for moving the window on the
-	 * screen
+	 * Left double-click opens the JobsWindow while left double-click opens the ApplicationSettings.
+	 * The left click is used for moving the window on the screen
 	 */
 	public MouseListener shellClicked = new MouseListener() {
 
@@ -244,7 +244,8 @@ public class GadgetController extends CustomController {
 			if (e.button == 1) {
 				openJobsWindow();
 
-			} else if (e.button == 3) {
+			}
+			else if (e.button == 3) {
 				openSettingsWindow();
 			}
 
@@ -261,7 +262,9 @@ public class GadgetController extends CustomController {
 
 		@Override
 		public void mouseMove(MouseEvent arg0) {
+
 			if (move) {
+
 				int difx = MouseInfo.getPointerInfo().getLocation().x - x;
 				int dify = MouseInfo.getPointerInfo().getLocation().y - y;
 
@@ -284,6 +287,7 @@ public class GadgetController extends CustomController {
 
 		@Override
 		public void handleEvent(Event e) {
+
 			// read the app settings to get the position for the gadget
 			settings.readSettings();
 
@@ -295,17 +299,19 @@ public class GadgetController extends CustomController {
 
 	/**
 	 * Listener for when the window is closed. <br>
-	 * Saves the current position for the app and disposes of all the window's
-	 * components
+	 * Saves the current position for the app and disposes of all the window's components
 	 */
 	public Listener shellClosingListener = new Listener() {
 
 		@Override
 		public void handleEvent(Event e) {
+
 			// save the position of the gadget is necessary
 			if (settings.isGadgetAutosaveLocation()) {
+
 				settings.setGadgetLocation(gadget.getShell().getLocation());
 				settings.commitChangesToFile();
+
 			}
 
 			gadget.dispose();
@@ -319,6 +325,7 @@ public class GadgetController extends CustomController {
 
 		@Override
 		public void paintControl(PaintEvent arg0) {
+
 			// create the region defining the gadget
 			Region region = new Region();
 
@@ -327,6 +334,7 @@ public class GadgetController extends CustomController {
 
 			// define the shape of the shell
 			gadget.getShell().setRegion(region);
+
 			Rectangle size = region.getBounds();
 			gadget.getShell().setSize(size.width, size.height);
 
@@ -337,18 +345,16 @@ public class GadgetController extends CustomController {
 
 	private void openJobsWindow() {
 		AppSettings set = AppSettings.getInstance();
-		
+
 		try {
-			
+
 			if (jobsWindow.getShell().isDisposed())
+				jobsWindow = new JobWindow(set.getUserInfo(), set.getUserJobs());
 
-				jobsWindow = new JobWindow(set
-						.getUserInfo(), set.getUserJobs());
+		}
+		catch (Exception ex) {
 
-		} catch (Exception ex) {
-
-			jobsWindow = new JobWindow(set.getUserInfo(),
-					set.getUserJobs());
+			jobsWindow = new JobWindow(set.getUserInfo(), set.getUserJobs());
 
 		}
 
@@ -357,7 +363,7 @@ public class GadgetController extends CustomController {
 
 		else {
 			jobsWindow.getShell().setMinimized(false);
-			
+
 			jobsWindow.getShell().forceActive();
 
 		}
@@ -365,6 +371,7 @@ public class GadgetController extends CustomController {
 
 	private void openSettingsWindow() {
 		settingsWindow = new AppSettingsWindow();
+
 		settingsWindow.open();
 
 	}
@@ -382,15 +389,20 @@ public class GadgetController extends CustomController {
 	 */
 	private int[] generateCircle(int r, int offsetX, int offsetY) {
 		int[] polygon = new int[8 * r + 4];
+
 		// x^2 + y^2 = r^2
 		for (int i = 0; i < 2 * r + 1; i++) {
 			int x = i - r;
+
 			int y = (int) Math.sqrt(r * r - x * x);
+
 			polygon[2 * i] = offsetX + x;
 			polygon[2 * i + 1] = offsetY + y;
 			polygon[8 * r - 2 * i - 2] = offsetX + x;
 			polygon[8 * r - 2 * i - 1] = offsetY - y;
+
 		}
+
 		return polygon;
 	}
 

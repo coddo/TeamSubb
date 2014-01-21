@@ -58,6 +58,7 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 	@Override
 	public void dispose() {
 		try {
+
 			controller.dispose();
 
 			nameLabel.dispose();
@@ -88,7 +89,8 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
@@ -171,8 +173,7 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 	}
 
 	/**
-	 * Checks all the fields containing the job data for arguments that are
-	 * invalid or emprty
+	 * Checks all the fields containing the job data for arguments that are invalid or emprty
 	 * 
 	 * @return A logical value indicating if the fields are ok or not
 	 */
@@ -199,7 +200,8 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 			message.open();
 
 			return false;
-		} else if (!new File(this.sub.getText()).exists()) {
+		}
+		else if (!new File(this.sub.getText()).exists()) {
 
 			message.setText("Invalid sub file");
 			message.setText("The entered sub file doesn't exist or it is corrupted !");
@@ -220,21 +222,21 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 
 	@Override
 	public void update(Observable obs, Object obj) {
-		String[] data = obj.toString().split(
-				CustomWindow.NOTIFICATION_SEPARATOR);
+		String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
 
 		if (data[0].equals("create")) {
 			MessageBox message;
 
 			if (Boolean.parseBoolean(data[1])) {
-				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION
-						| SWT.APPLICATION_MODAL);
+				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION | SWT.APPLICATION_MODAL);
 				message.setText("Success");
 				message.setMessage("The job has been successfully created");
 
 				message.open();
+
 				this.close();
-			} else {
+			}
+			else {
 				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 				message.setText("Error");
 				message.setMessage("There was a problem while creating this job");
@@ -270,8 +272,7 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 		browseSubButton = new Button(panel, SWT.PUSH);
 
 		fontsLabel = new Label(panel, SWT.None);
-		fonts = new List(panel, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
-				| SWT.H_SCROLL);
+		fonts = new List(panel, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 
 		browseFontsButton = new Button(panel, SWT.PUSH);
 
@@ -303,34 +304,30 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 
 		type.setFont(CustomWindow.DEFAULT_FONT);
 		type.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+
 		for (String jobType : Job.DEFAULT_JOB_TYPES)
 			type.add(jobType);
 		type.remove(type.getItemCount() - 1); // remove last item ("end" type)
 
 		commentsLabel.setFont(CustomWindow.DEFAULT_FONT);
-		commentsLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				false));
+		commentsLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		commentsLabel.setText("Comments: ");
 		commentsLabel.pack();
 
 		comments.setFont(CustomWindow.DEFAULT_FONT);
-		comments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2,
-				1));
+		comments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
 		nextStaffLabel.setFont(CustomWindow.DEFAULT_FONT);
-		nextStaffLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				false));
+		nextStaffLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		nextStaffLabel.setText("Next staff member:");
 		nextStaffLabel.pack();
 
 		nextStaff.setFont(CustomWindow.DEFAULT_FONT);
-		nextStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false,
-				2, 1));
+		nextStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF);
 		nextStaff.setItems(StaffManager.getStaffList());
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF, 0);
 		nextStaff.select(0);
-		
 
 		subLabel.setFont(CustomWindow.DEFAULT_FONT);
 		subLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
@@ -340,22 +337,19 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 		sub.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		sub.setFont(CustomWindow.DEFAULT_FONT);
 
-		browseSubButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false,
-				false, 1, 1));
+		browseSubButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1));
 		browseSubButton.setText("...");
 		browseSubButton.pack();
 
 		fontsLabel.setFont(CustomWindow.DEFAULT_FONT);
-		fontsLabel
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		fontsLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		fontsLabel.setText("Font files:");
 		fontsLabel.pack();
 
 		fonts.setFont(CustomWindow.DEFAULT_FONT);
 		fonts.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-		browseFontsButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false,
-				false, 1, 1));
+		browseFontsButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1));
 		browseFontsButton.setText("...");
 		browseFontsButton.pack();
 
@@ -391,8 +385,7 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 		create.addSelectionListener(controller.createClicked);
 
 		browseSubButton.addSelectionListener(controller.browseSubButtonClicked);
-		browseFontsButton
-				.addSelectionListener(controller.browseFontsButtonClicked);
+		browseFontsButton.addSelectionListener(controller.browseFontsButtonClicked);
 
 		fonts.addKeyListener(controller.fontsKeyListener);
 	}

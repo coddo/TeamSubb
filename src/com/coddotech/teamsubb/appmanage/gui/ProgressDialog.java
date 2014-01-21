@@ -7,51 +7,49 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * of a long action
  * 
  * @author Coddo
- * 
  */
-public class ProgressDialog extends CustomWindow{
+public class ProgressDialog extends CustomWindow {
 
 	public ProgressDialog(String message) {
 		this.initializeComponents();
-		
-		
+
 	}
-	
+
 	@Override
 	public void dispose() {
-		
+
 	}
-	
+
 	public void setNumberOfSteps(int steps) {
-		
+
 	}
-	
+
 	public void performStep() {
-		
+
 	}
-	
+
 	@Override
 	protected void performInitializations() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void createObjectProperties() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void createShellProperties() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void createListeners() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

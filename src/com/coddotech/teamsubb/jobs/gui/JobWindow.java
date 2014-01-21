@@ -32,16 +32,12 @@ import com.coddotech.teamsubb.main.CustomWindow;
  */
 public class JobWindow extends CustomWindow implements Observer {
 
-	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator",
-			"Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
+	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator", "Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
 			"Postator" };
 
-	private static final Color COLOR_ACCEPTED = Display.getCurrent()
-			.getSystemColor(SWT.COLOR_GREEN);
-	private static final Color COLOR_ACCEPTABLE = Display.getCurrent()
-			.getSystemColor(SWT.COLOR_YELLOW);
-	private static final Color COLOR_IMPORTANT = Display.getCurrent()
-			.getSystemColor(SWT.COLOR_MAGENTA);
+	private static final Color COLOR_ACCEPTED = Display.getCurrent().getSystemColor(SWT.COLOR_GREEN);
+	private static final Color COLOR_ACCEPTABLE = Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW);
+	private static final Color COLOR_IMPORTANT = Display.getCurrent().getSystemColor(SWT.COLOR_MAGENTA);
 
 	// auxiliary data
 	private String[] tempUserInfo;
@@ -124,6 +120,7 @@ public class JobWindow extends CustomWindow implements Observer {
 	 * 
 	 * @param userInfo
 	 *            Information about the user: name, rank, email
+	 * 
 	 * @param userJobs
 	 *            Information about the jobs that the user can take
 	 */
@@ -142,6 +139,7 @@ public class JobWindow extends CustomWindow implements Observer {
 	@Override
 	public void dispose() {
 		try {
+
 			// controller
 			controller.dispose();
 			this.exiting = true;
@@ -221,7 +219,8 @@ public class JobWindow extends CustomWindow implements Observer {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
@@ -243,13 +242,14 @@ public class JobWindow extends CustomWindow implements Observer {
 	/**
 	 * Get the ID of the selected job in the list
 	 * 
-	 * @return An integer representing the ID of the selected job, or the value
-	 *         -1 if there are no jobs in the list
+	 * @return An integer representing the ID of the selected job, or the value (-1) if there are no
+	 *         jobs in the list
 	 */
 	public int getSelectedJobID() {
 		try {
 			return (int) this.jobsList.getSelection()[0].getData();
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			return -1;
 		}
 	}
@@ -270,14 +270,17 @@ public class JobWindow extends CustomWindow implements Observer {
 	 * 
 	 * All items are disabled if there are no jobs in the list<br>
 	 * <br>
+	 * 
 	 * If the job is an accepted job, then the user can do most of the actions,
 	 * except ending the job.<br>
 	 * <br>
+	 * 
 	 * If the job is of normal status, then the user can only accept it, or
 	 * depending on the booked status, end it.
 	 */
 	public void morphActionsMenu() {
 		try {
+
 			if (this.getSelectedJobID() == -1) {
 				acceptJobMenuItem.setEnabled(false);
 				cancelJobMenuItem.setEnabled(false);
@@ -286,8 +289,9 @@ public class JobWindow extends CustomWindow implements Observer {
 				endJobMenuItem.setEnabled(false);
 				configureFontsMenuItem.setEnabled(false);
 				openJobDirectoryMenuItem.setEnabled(false);
-			} else if (this.getSelectedJobColor().equals(
-					JobWindow.COLOR_ACCEPTED)) {
+			}
+
+			else if (this.getSelectedJobColor().equals(JobWindow.COLOR_ACCEPTED)) {
 				acceptJobMenuItem.setEnabled(false);
 				cancelJobMenuItem.setEnabled(true);
 				forceCancelJobMenuItem.setEnabled(true);
@@ -295,9 +299,11 @@ public class JobWindow extends CustomWindow implements Observer {
 				endJobMenuItem.setEnabled(false);
 				configureFontsMenuItem.setEnabled(true);
 				openJobDirectoryMenuItem.setEnabled(true);
-			} else if (this.isTestUser) {
-				// if the user is a test user with view-only privileges, then
-				// he/she cannot interact with the jobs
+			}
+
+			// if the user is a test user with view-only privileges, then
+			// he/she cannot interact with the jobs
+			else if (this.isTestUser) {
 				acceptJobMenuItem.setEnabled(false);
 				cancelJobMenuItem.setEnabled(false);
 				forceCancelJobMenuItem.setEnabled(false);
@@ -305,20 +311,20 @@ public class JobWindow extends CustomWindow implements Observer {
 				endJobMenuItem.setEnabled(false);
 				configureFontsMenuItem.setEnabled(false);
 				openJobDirectoryMenuItem.setEnabled(false);
-			} else {
+			}
+
+			else {
 				cancelJobMenuItem.setEnabled(false);
 				finishJobMenuItem.setEnabled(false);
 				endJobMenuItem.setEnabled(true);
 				configureFontsMenuItem.setEnabled(false);
 				openJobDirectoryMenuItem.setEnabled(false);
-				forceCancelJobMenuItem.setEnabled(!this.jobBookedBy.getText()
-						.equals("-"));
-				acceptJobMenuItem.setEnabled(this.jobBookedBy.getText().equals(
-						"-"));
+				forceCancelJobMenuItem.setEnabled(!this.jobBookedBy.getText().equals("-"));
+				acceptJobMenuItem.setEnabled(this.jobBookedBy.getText().equals("-"));
 			}
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"Morph actions menu", ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Morph actions menu", ex);
 
 		}
 	}
@@ -328,15 +334,14 @@ public class JobWindow extends CustomWindow implements Observer {
 		// the only observable that this class has is the JobManager class
 
 		try {
-			String[] data = obj.toString().split(
-					CustomWindow.NOTIFICATION_SEPARATOR);
+			String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
 
 			switch (data[0]) {
-			
+
 			case "find": {
+
 				this.jobsList.clearAll();
 				this.jobsList.removeAll();
-				// this.clearJobInformation();
 
 				for (Job job : ((JobManager) obs).getAcceptedJobs()) {
 					TableItem item = new TableItem(this.jobsList, SWT.None);
@@ -361,6 +366,7 @@ public class JobWindow extends CustomWindow implements Observer {
 				}
 			}
 				break;
+
 			case "jobinformation": {
 				this.jobType.setText(data[1]);
 				this.jobStartDate.setText(data[2]);
@@ -376,13 +382,15 @@ public class JobWindow extends CustomWindow implements Observer {
 				this.jobBookedBy.pack();
 			}
 				break;
+
 			case "end": {
 				MessageBox message;
 
 				if (Boolean.parseBoolean(data[1])) {
 					((JobManager) obs).findJobs();
 
-				} else {
+				}
+				else {
 					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 					message.setText("Error");
 					message.setMessage("There was an error while ending the job");
@@ -392,17 +400,19 @@ public class JobWindow extends CustomWindow implements Observer {
 
 			}
 				break;
+
 			case "accept": {
 				MessageBox message;
 
 				if (Boolean.parseBoolean(data[1])) {
 					((JobManager) obs).findJobs();
 
-					message = new MessageBox(this.getShell(),
-							SWT.ICON_INFORMATION);
+					message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 					message.setText("Success");
 					message.setMessage("The job has been successfully accepted");
-				} else {
+				}
+
+				else {
 					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 					message.setText("Error");
 					message.setMessage("There was an error while accepting the job");
@@ -411,13 +421,16 @@ public class JobWindow extends CustomWindow implements Observer {
 				message.open();
 			}
 				break;
+
 			case "cancel": {
 				MessageBox message;
 
 				if (Boolean.parseBoolean(data[1])) {
 					((JobManager) obs).findJobs();
 
-				} else {
+				}
+
+				else {
 					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 					message.setText("Error");
 					message.setMessage("There was an error while cancelling the job");
@@ -427,10 +440,11 @@ public class JobWindow extends CustomWindow implements Observer {
 
 			}
 				break;
+
 			}
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"GUI update", ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "GUI update", ex);
 
 		}
 
@@ -526,28 +540,23 @@ public class JobWindow extends CustomWindow implements Observer {
 
 		// groups
 		userInfoGroup.setLayout(userInfoLayout);
-		userInfoGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false, 1, 1));
+		userInfoGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		userInfoGroup.setText("User information");
 
 		userJobsGroup.setLayout(userJobsLayout);
-		userJobsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false, 1, 1));
+		userJobsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		userJobsGroup.setText("User abilities");
 
 		jobsGroup.setLayout(jobsLayout);
-		jobsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,
-				1));
+		jobsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		jobsGroup.setText("Job lists");
 
 		jobInfoGroup.setLayout(helpLayout);
-		jobInfoGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
-				1, 1));
+		jobInfoGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		jobInfoGroup.setText("Job information");
 
 		helpChartGroup.setLayout(helpLayout);
-		helpChartGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true));
+		helpChartGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		helpChartGroup.setText("Help chart");
 
 		// menu bar items
@@ -586,16 +595,13 @@ public class JobWindow extends CustomWindow implements Observer {
 		openJobDirectoryMenuItem.setText("Open storage");
 
 		// user information objects
-		userNameLabel
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		userNameLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		userNameLabel.setFont(CustomWindow.DEFAULT_FONT);
 
-		userRankLabel
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		userRankLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		userRankLabel.setFont(CustomWindow.DEFAULT_FONT);
 
-		userEmailLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 2, 1));
+		userEmailLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		userEmailLabel.setFont(CustomWindow.DEFAULT_FONT);
 
 		// jobs list
@@ -616,40 +622,35 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobStartDateLabel.setText("Start date:");
 		jobStartDateLabel.pack();
 
-		jobStartDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				false));
+		jobStartDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		jobStartDate.setFont(CustomWindow.DEFAULT_FONT);
 
 		jobPreviousStaffLabel.setFont(CustomWindow.DEFAULT_FONT);
 		jobPreviousStaffLabel.setText("Worked on by:");
 		jobPreviousStaffLabel.pack();
 
-		jobPreviousStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				false));
+		jobPreviousStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		jobPreviousStaff.setFont(CustomWindow.DEFAULT_FONT);
 
 		jobIntendedToLabel.setFont(CustomWindow.DEFAULT_FONT);
 		jobIntendedToLabel.setText("Intended to:");
 		jobIntendedToLabel.pack();
 
-		jobIntendedTo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				false));
+		jobIntendedTo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		jobIntendedTo.setFont(CustomWindow.DEFAULT_FONT);
 
 		jobBookedByLabel.setFont(CustomWindow.DEFAULT_FONT);
 		jobBookedByLabel.setText("Taken by:");
 		jobBookedByLabel.pack();
 
-		jobBookedBy
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		jobBookedBy.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		jobBookedBy.setFont(CustomWindow.DEFAULT_FONT);
 
 		jobCommentsLabel.setFont(CustomWindow.DEFAULT_FONT);
 		jobCommentsLabel.setText("Comments:");
 		jobCommentsLabel.pack();
 
-		jobComments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
-				1, 5));
+		jobComments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 5));
 		jobComments.setFont(CustomWindow.DEFAULT_FONT);
 
 		// help chart item
@@ -702,33 +703,27 @@ public class JobWindow extends CustomWindow implements Observer {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 
-		openSettingsMenuItem
-				.addSelectionListener(controller.openSettingsClicked);
+		openSettingsMenuItem.addSelectionListener(controller.openSettingsClicked);
 
 		closeWindowMenuItem.addSelectionListener(controller.closeWindowClicked);
 
-		exitApplicationMenuItem
-				.addSelectionListener(controller.exitApplicationClicked);
+		exitApplicationMenuItem.addSelectionListener(controller.exitApplicationClicked);
 
 		createJobMenuItem.addSelectionListener(controller.createJobClicked);
 
-		refreshJobListMenuItem
-				.addSelectionListener(controller.refreshJobListClicked);
+		refreshJobListMenuItem.addSelectionListener(controller.refreshJobListClicked);
 
 		acceptJobMenuItem.addSelectionListener(controller.acceptJobClicked);
 		cancelJobMenuItem.addSelectionListener(controller.cancelJobClicked);
 
-		forceCancelJobMenuItem
-				.addSelectionListener(controller.forceCancelJobCLicked);
+		forceCancelJobMenuItem.addSelectionListener(controller.forceCancelJobCLicked);
 
 		finishJobMenuItem.addSelectionListener(controller.finishJobClicked);
 		endJobMenuItem.addSelectionListener(controller.endJobClicked);
 
-		openJobDirectoryMenuItem
-				.addSelectionListener(controller.openJobDirectoryClicked);
+		openJobDirectoryMenuItem.addSelectionListener(controller.openJobDirectoryClicked);
 
-		configureFontsMenuItem
-				.addSelectionListener(controller.configureFontsClicked);
+		configureFontsMenuItem.addSelectionListener(controller.configureFontsClicked);
 
 		aboutMenuItem.addSelectionListener(controller.aboutClicked);
 
@@ -738,8 +733,7 @@ public class JobWindow extends CustomWindow implements Observer {
 	}
 
 	/**
-	 * Generate the user information objects and display the on the GUI for the
-	 * user to see
+	 * Generate the user information objects and display the on the GUI for the user to see
 	 */
 	private void generateUserInfo() {
 		userNameLabel.setText(tempUserInfo[0]);
@@ -753,8 +747,7 @@ public class JobWindow extends CustomWindow implements Observer {
 		userJobsLabels = new Label[tempUserJobs.length];
 		for (int i = 0; i < tempUserJobs.length; i++) {
 			userJobsLabels[i] = new Label(this.userJobsGroup, SWT.None);
-			userJobsLabels[i].setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-					true, true));
+			userJobsLabels[i].setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			userJobsLabels[i].setText(tempUserJobs[i]);
 			userJobsLabels[i].setFont(CustomWindow.DEFAULT_FONT);
 			userJobsLabels[i].pack();
@@ -762,12 +755,12 @@ public class JobWindow extends CustomWindow implements Observer {
 	}
 
 	/**
-	 * Clears the fields that display the information for a selected job in the
-	 * list
+	 * Clears the fields that display the information for a selected job in the list
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	private void clearJobInformation() {
 		this.jobType.setText("");
+		this.jobStartDate.setText("");
 		this.jobPreviousStaff.setText("");
 		this.jobIntendedTo.setText("");
 		this.jobBookedBy.setText("");

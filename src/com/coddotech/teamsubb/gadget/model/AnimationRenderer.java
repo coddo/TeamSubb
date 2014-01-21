@@ -20,13 +20,18 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * animation and alerts to use
  * 
  * There are 3 types of animation:<br>
- * -> IDLE: animation which looks like a radar scanning something => this is
- * used for when the app doesn't have anything important to report to the user. <br>
- * -> LOW_PRIORITY: animation used to grab the attention of the user because
- * there are certain jobs available for him.<br>
- * -> HIGH_PRIORITY: this is a more aggressive animation used to alert the user
- * that there are some jobs which are intended strictly for him. These types of
- * jobs are considered to be urgent ones.
+ * <br>
+ * 
+ * -> IDLE: animation which looks like a radar scanning something => this is used for when the app
+ * doesn't have anything important to report to the user. <br>
+ * <br>
+ * 
+ * -> LOW_PRIORITY: animation used to grab the attention of the user because there are certain jobs
+ * available for him.<br>
+ * <br>
+ * 
+ * -> HIGH_PRIORITY: this is a more aggressive animation used to alert the user that there are some
+ * jobs which are intended strictly for him. These types of jobs are considered to be urgent ones.
  * 
  * @author Coddo
  * 
@@ -39,12 +44,9 @@ public class AnimationRenderer extends Observable implements Observer {
 	public static final int TYPE_HIGH_PRIORITY = 0x003;
 
 	// paths where the files necessary for the gadget's animation are stored
-	private static final String DIR_IDLE = System.getProperty("user.dir")
-			+ File.separator + "resources" + File.separator + "idle";
-	private static final String DIR_LOW = System.getProperty("user.dir")
-			+ File.separator + "resources" + File.separator + "low";
-	private static final String DIR_HIGH = System.getProperty("user.dir")
-			+ File.separator + "resources" + File.separator + "high";
+	private static final String DIR_IDLE = System.getProperty("user.dir") + File.separator + "resources" + File.separator + "idle";
+	private static final String DIR_LOW = System.getProperty("user.dir") + File.separator + "resources" + File.separator + "low";
+	private static final String DIR_HIGH = System.getProperty("user.dir") + File.separator + "resources" + File.separator + "high";
 
 	// interval used to
 	private int imageInterval = 300;
@@ -63,8 +65,8 @@ public class AnimationRenderer extends Observable implements Observer {
 	 */
 	public AnimationRenderer() {
 		initializeAnimationData();
-		
-		//initially set the idle image
+
+		// initially set the idle image
 		this.setChanged();
 		this.notifyObservers(idle[0]);
 	}
@@ -91,16 +93,16 @@ public class AnimationRenderer extends Observable implements Observer {
 
 			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Dispose",
-					ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Dispose", ex);
 
 		}
 	}
 
 	/**
-	 * Set the type of animation that should be done by the gadget. These types
-	 * are stored in the static fields TYPE_XXXX of this class
+	 * Set the type of animation that should be done by the gadget. These types are stored in the
+	 * static fields TYPE_XXXX of this class
 	 * 
 	 * @param type
 	 *            The animation type that should be set
@@ -118,20 +120,23 @@ public class AnimationRenderer extends Observable implements Observer {
 	}
 
 	/**
-	 * Timer used for changing the resources between them at set intervals in
-	 * order to perform the animation for the gadget
+	 * Timer used for changing the resources between them at set intervals in order to perform the
+	 * animation for the gadget
 	 */
 	private Runnable animationTimer = new Runnable() {
 
 		@Override
 		public void run() {
+
 			if (!disposed) {
+
 				// mark this model as being changed
 				setChanged();
 
 				// send the animation data to the gadget based on the animation
 				// type currently selected
 				switch (type) {
+
 				case AnimationRenderer.TYPE_IDLE: {
 					if (counter == idle.length)
 						counter = 0;
@@ -139,6 +144,7 @@ public class AnimationRenderer extends Observable implements Observer {
 					notifyObservers(idle[counter]);
 				}
 					break;
+
 				case AnimationRenderer.TYPE_LOW_PRIORITY: {
 					if (counter == lowPriority.length)
 						counter = 0;
@@ -146,6 +152,7 @@ public class AnimationRenderer extends Observable implements Observer {
 					notifyObservers(lowPriority[counter]);
 				}
 					break;
+
 				case AnimationRenderer.TYPE_HIGH_PRIORITY: {
 					if (counter == highPriority.length)
 						counter = 0;
@@ -165,12 +172,12 @@ public class AnimationRenderer extends Observable implements Observer {
 
 	@Override
 	public void update(Observable obs, Object obj) {
-		// update is done only by the job manager in order to know what type of
-		// animation needs to be done
+
+		// update is done only by the job manager in order to know what type of animation needs to
+		// be done
 		if (obj instanceof String) {
 
-			String[] fragments = obj.toString().split(
-					CustomWindow.NOTIFICATION_SEPARATOR);
+			String[] fragments = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
 
 			switch (fragments[fragments.length - 1]) {
 
@@ -178,10 +185,12 @@ public class AnimationRenderer extends Observable implements Observer {
 				this.setAnimationType(TYPE_IDLE);
 			}
 				break;
+
 			case "acceptable": {
 				this.setAnimationType(TYPE_LOW_PRIORITY);
 			}
 				break;
+
 			case "important": {
 				this.setAnimationType(AnimationRenderer.TYPE_HIGH_PRIORITY);
 			}
@@ -196,21 +205,28 @@ public class AnimationRenderer extends Observable implements Observer {
 	 * 
 	 * @param image
 	 *            The image to be resized
+	 * 
 	 * @param width
 	 *            The width to be set
+	 * 
 	 * @param height
 	 *            The height to be set
+	 * 
 	 * @return An Image entity representing the resized image
 	 */
 	private Image resizeImage(Image image, int width, int height) {
 		Image scaled = new Image(Display.getDefault(), width, height);
+
 		GC gc = new GC(scaled);
+
 		gc.setAntialias(SWT.ON);
 		gc.setInterpolation(SWT.HIGH);
-		gc.drawImage(image, 0, 0, image.getBounds().width,
-				image.getBounds().height, 0, 0, width, height);
+
+		gc.drawImage(image, 0, 0, image.getBounds().width, image.getBounds().height, 0, 0, width, height);
+
 		gc.dispose();
 		image.dispose();
+
 		return scaled;
 	}
 
@@ -244,9 +260,7 @@ public class AnimationRenderer extends Observable implements Observer {
 			int k = 0;
 			for (String img : idleFolder.list(filter)) {
 
-				idle[k] = resizeImage(new Image(Display.getCurrent(),
-						AnimationRenderer.DIR_IDLE + File.separator + img),
-						size, size);
+				idle[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_IDLE + File.separator + img), size, size);
 
 				k++;
 			}
@@ -255,9 +269,7 @@ public class AnimationRenderer extends Observable implements Observer {
 			k = 0;
 			for (String img : lowFolder.list(filter)) {
 
-				lowPriority[k] = resizeImage(new Image(Display.getCurrent(),
-						AnimationRenderer.DIR_LOW + File.separator + img),
-						size, size);
+				lowPriority[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_LOW + File.separator + img), size, size);
 				k++;
 			}
 
@@ -265,9 +277,8 @@ public class AnimationRenderer extends Observable implements Observer {
 			k = 0;
 			for (String img : highFolder.list(filter)) {
 
-				highPriority[k] = resizeImage(new Image(Display.getCurrent(),
-						AnimationRenderer.DIR_HIGH + File.separator + img),
-						size, size);
+				highPriority[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_HIGH + File.separator + img), size,
+						size);
 				k++;
 			}
 
@@ -275,12 +286,11 @@ public class AnimationRenderer extends Observable implements Observer {
 			lowFolder = null;
 			highFolder = null;
 
-			ActivityLogger.logActivity(this.getClass().getName(),
-					"Initialize animation data");
+			ActivityLogger.logActivity(this.getClass().getName(), "Initialize animation data");
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"Initialize animation data", ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Initialize animation data", ex);
 
 		}
 	}

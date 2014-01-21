@@ -25,8 +25,7 @@ public class ApplicationInformation extends CustomWindow {
 	private Label copyWright;
 
 	public ApplicationInformation() {
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL
-				| SWT.DIALOG_TRIM));
+		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM));
 
 		this.initializeComponents();
 	}
@@ -44,9 +43,10 @@ public class ApplicationInformation extends CustomWindow {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
-			
+
 		}
 	}
 

@@ -17,6 +17,12 @@ import org.eclipse.swt.widgets.Listener;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.main.CustomController;
 
+/**
+ * Class for managing font files
+ * 
+ * @author Coddo
+ *
+ */
 public class FontsController extends CustomController {
 
 	private Job job;
@@ -38,15 +44,17 @@ public class FontsController extends CustomController {
 	}
 
 	public void dispose() {
-		// delete all the marked files from the job's directory if the settings
-		// have been applied
+		
+		// delete all the marked files from the job's directory if the settings have been applied
 		try {
 
 			if (applied) {
 
 				for (int i = 0; i < deleted.size(); i++) {
+
 					if (deleted.get(i).exists())
 						deleted.get(i).delete();
+
 				}
 
 			}
@@ -58,7 +66,8 @@ public class FontsController extends CustomController {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
@@ -81,8 +90,7 @@ public class FontsController extends CustomController {
 			String[] files = browseFonts.getFileNames();
 
 			for (int i = 0; i < files.length; i++) {
-				files[i] = browseFonts.getFilterPath() + File.separator
-						+ files[i];
+				files[i] = browseFonts.getFilterPath() + File.separator + files[i];
 			}
 
 			view.appendFonts(files);
@@ -100,6 +108,7 @@ public class FontsController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
+			
 			// copy the fonts to the location of the job
 			String[] fonts = view.getFonts();
 
@@ -111,15 +120,16 @@ public class FontsController extends CustomController {
 			boolean ok = true;
 
 			for (int i = 0; i < fonts.length; i++) {
+				
 				File source = new File(fonts[i]);
-				fontFiles[i] = new File(job.getDirectoryPath() + File.separator
-						+ source.getName());
+				fontFiles[i] = new File(job.getDirectoryPath() + File.separator + source.getName());
 
 				try {
 					if (!fontFiles[i].exists())
 						FileUtils.copyFile(source, fontFiles[i]);
 
-				} catch (Exception ex) {
+				}
+				catch (Exception ex) {
 					ok = false;
 				}
 			}

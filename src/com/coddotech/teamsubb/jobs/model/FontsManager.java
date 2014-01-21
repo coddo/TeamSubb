@@ -18,13 +18,13 @@ public class FontsManager {
 	 */
 	public static String[] getSystemFonts() {
 		String[] fontNames;
+
 		File fontsDir = null;
 
 		String osName = System.getProperty("os.name").split(" ")[0];
 
 		if (osName.equals("Windows"))
-			fontsDir = new File("C:" + File.separator + "Windows"
-					+ File.separator + "Fonts");
+			fontsDir = new File("C:" + File.separator + "Windows" + File.separator + "Fonts");
 
 		fontNames = fontsDir.list();
 
@@ -36,6 +36,7 @@ public class FontsManager {
 	 * 
 	 * @param fontLinks
 	 *            The collection of font links to be trimmed.
+	 * 
 	 * @return A String collection
 	 */
 	public static String[] excludeSystemFonts(String[] fontLinks) {
@@ -61,14 +62,12 @@ public class FontsManager {
 	}
 
 	/**
-	 * Remove all the occurences of the items in the second collection from the
-	 * first collection
+	 * Exclude all the fonts that are found on the server.
 	 * 
 	 * @param fontFiles
 	 *            The collection of font files to be trimmed.
-	 * @param toExclude
-	 *            The collection of items to be removed from the first String[]
-	 * @return A String[] collection
+	 * 
+	 * @return A File[] collection
 	 */
 	public static File[] excludeServerFontsAsFiles(File[] fontFiles) {
 
@@ -89,6 +88,14 @@ public class FontsManager {
 
 	}
 
+	/**
+	 * Exclude all the fonts that are found on the server.
+	 * 
+	 * @param fonts
+	 *            The fonts to be trimmed
+	 * 
+	 * @return A String collection
+	 */
 	public static String[] excludeServerFontsAsStrings(String[] fonts) {
 
 		if (fonts == null || fonts.length == 0)
@@ -113,8 +120,7 @@ public class FontsManager {
 	private static List<String> getServerFonts() {
 		String response = ConnectionManager.sendFontsRequest();
 
-		return Arrays.asList(response.split(Pattern
-				.quote(JobManager.SEPARATOR_FIELDS)));
+		return Arrays.asList(response.split(Pattern.quote(JobManager.SEPARATOR_FIELDS)));
 	}
 
 }

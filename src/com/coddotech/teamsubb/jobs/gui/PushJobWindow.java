@@ -78,7 +78,8 @@ public class PushJobWindow extends CustomWindow implements Observer {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
@@ -136,6 +137,7 @@ public class PushJobWindow extends CustomWindow implements Observer {
 	 */
 	public boolean verifyFields() {
 		MessageBox message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+
 		message.setText("Empty fields");
 		message.setMessage("There cannot be any empty fields !");
 
@@ -156,8 +158,7 @@ public class PushJobWindow extends CustomWindow implements Observer {
 
 	@Override
 	public void update(Observable obs, Object obj) {
-		String[] data = obj.toString().split(
-				CustomWindow.NOTIFICATION_SEPARATOR);
+		String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
 
 		if (data[0].equals("push")) {
 			MessageBox message;
@@ -166,13 +167,15 @@ public class PushJobWindow extends CustomWindow implements Observer {
 				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
 				message.setText("Success");
 				message.setMessage("The job has been successfully sent back to the server !");
-				message.open();
-			} else {
+			}
+
+			else {
 				message = new MessageBox(this.getShell(), SWT.ERROR);
 				message.setText("Error");
 				message.setMessage("The job could not be finished !\n The server may have refused your request...");
-				message.open();
 			}
+
+			message.open();
 		}
 	}
 
@@ -223,28 +226,25 @@ public class PushJobWindow extends CustomWindow implements Observer {
 
 		type.setFont(CustomWindow.DEFAULT_FONT);
 		type.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+
 		for (String jobType : Job.DEFAULT_JOB_TYPES)
 			type.add(jobType);
 
 		commentsLabel.setFont(CustomWindow.BOLD_FONT);
-		commentsLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				false));
+		commentsLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		commentsLabel.setText("Comments:");
 		commentsLabel.pack();
 
 		comments.setFont(CustomWindow.DEFAULT_FONT);
-		comments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2,
-				1));
+		comments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
 		nextStaffLabel.setFont(CustomWindow.BOLD_FONT);
-		nextStaffLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				false));
+		nextStaffLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		nextStaffLabel.setText("Next staff member:");
 		nextStaffLabel.pack();
 
 		nextStaff.setFont(CustomWindow.DEFAULT_FONT);
-		nextStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false,
-				2, 1));
+		nextStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF);
 		nextStaff.setItems(StaffManager.getStaffList());
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF, 0);
@@ -270,6 +270,7 @@ public class PushJobWindow extends CustomWindow implements Observer {
 		this.getShell().setLayout(layout);
 		this.getShell().setText("Finish job");
 		this.getShell().setSize(400, 310);
+
 		this.placeToCenter();
 	}
 

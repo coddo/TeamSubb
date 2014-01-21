@@ -19,20 +19,22 @@ public class FileDownloader {
 	 * 
 	 * @param fileName
 	 *            The name of the file to be created
+	 * 
 	 * @param link
 	 *            The link from where the file has to be fetched
+	 * 
 	 * @param dir
 	 *            The directory path where to save the file
+	 * 
 	 * @return A File entity representing the downloaded file
+	 * 
 	 * @throws Exception
 	 */
-	public static File downloadFile(String fileName, String link, String dir)
-			throws Exception {
+	public static File downloadFile(String fileName, String link, String dir) throws Exception {
 
 		File file = new File(dir + File.separator + fileName);
 
-		URI uri = new URI("http", "anime4fun.ro", link.split(Pattern
-				.quote("anime4fun.ro"))[1], null);
+		URI uri = new URI("http", "anime4fun.ro", link.split(Pattern.quote("anime4fun.ro"))[1], null);
 
 		FileUtils.copyURLToFile(uri.toURL(), file);
 
@@ -44,15 +46,18 @@ public class FileDownloader {
 	 * 
 	 * @param link
 	 *            The link from where the file has to be fetched
+	 * 
 	 * @param dir
 	 *            The directory path where to save the file
+	 * 
 	 * @return A File entity representing the downloaded file
+	 * 
 	 * @throws Exception
 	 */
 	public static File downloadFile(String link, String dir) throws Exception {
-	
+
 		String fileName = FileDownloader.extractFileName(link);
-	
+
 		return FileDownloader.downloadFile(fileName, link, dir);
 	}
 
@@ -61,15 +66,17 @@ public class FileDownloader {
 	 * 
 	 * @param fileNames
 	 *            The names of the files to be created
+	 * 
 	 * @param links
 	 *            The links from where the files have to be fetched
+	 * 
 	 * @param dir
 	 *            The directory path where to save the file
 	 * @return A collection of File entities representing the downloaded files
+	 * 
 	 * @throws Exception
 	 */
-	public static File[] downloadFiles(String[] fileNames, String[] links,
-			String dir) throws Exception {
+	public static File[] downloadFiles(String[] fileNames, String[] links, String dir) throws Exception {
 
 		File[] files = new File[links.length];
 
@@ -84,13 +91,15 @@ public class FileDownloader {
 	 * 
 	 * @param links
 	 *            The links from where the files have to be fetched
+	 * 
 	 * @param dir
 	 *            The directory path where to save the file
+	 * 
 	 * @return A collection of File entities representing the downloaded files
+	 * 
 	 * @throws Exception
 	 */
-	public static File[] downloadFiles(String[] links, String dir)
-			throws Exception {
+	public static File[] downloadFiles(String[] links, String dir) throws Exception {
 
 		String[] fileNames = new String[links.length];
 

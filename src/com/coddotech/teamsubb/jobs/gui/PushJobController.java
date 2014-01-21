@@ -36,16 +36,17 @@ public class PushJobController extends CustomController {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
 	}
 
 	/**
-	 * Listener for when the finish button is clicked. This verifies for an
-	 * internet connection, checks if the fields are not empty and proceeds with
-	 * pushing the job files to the server if everything is ok.
+	 * Listener for when the finish button is clicked. This verifies for an internet connection,
+	 * checks if the fields are not empty and proceeds with pushing the job files to the server if
+	 * everything is ok.
 	 */
 	public SelectionListener finishButtonClicked = new SelectionListener() {
 
@@ -54,9 +55,7 @@ public class PushJobController extends CustomController {
 			if (CustomWindow.isConnected(true)) {
 
 				if (view.verifyFields()) {
-					boolean result = model.pushJob(view.getID(),
-							view.getNextStaff(), view.getType(),
-							view.getComments());
+					boolean result = model.pushJob(view.getID(), view.getNextStaff(), view.getType(), view.getComments());
 
 					if (result)
 						view.close();

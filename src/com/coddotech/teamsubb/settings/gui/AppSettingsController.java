@@ -37,7 +37,8 @@ public class AppSettingsController extends CustomController {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
@@ -52,6 +53,7 @@ public class AppSettingsController extends CustomController {
 		public void widgetSelected(SelectionEvent arg0) {
 			if (view.verifySettings()) {
 				model.setGadgetAutosaveLocation(view.isGadgetAutosaveLocation());
+
 				model.setSearchInterval(view.getSearchInterval());
 
 				model.commitChangesToFile();
@@ -82,8 +84,8 @@ public class AppSettingsController extends CustomController {
 	};
 
 	/**
-	 * Listener for when the shell is shown -> reads all the settings from the
-	 * XML settings file <br>
+	 * Listener for when the shell is shown -> reads all the settings from the XML settings file.<br>
+	 * 
 	 * This forces the view to update its interface based on the read settings.
 	 */
 	public Listener shellShownListener = new Listener() {

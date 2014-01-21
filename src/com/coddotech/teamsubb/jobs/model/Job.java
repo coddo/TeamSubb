@@ -23,8 +23,8 @@ import com.coddotech.teamsubb.jobs.gui.JobWindow;
  */
 public final class Job {
 
-	public static final String[] DEFAULT_JOB_TYPES = { "Traducere",
-			"Verificare", "Encode", "Typeset", "end" };
+	public static final String[] DEFAULT_JOB_TYPES = { "Traducere", "Verificare", "Encode", "Typeset", "end" };
+
 	public static final String DEFAULT_NEXT_STAFF = "anyone";
 
 	private int id;
@@ -56,9 +56,8 @@ public final class Job {
 	}
 
 	/**
-	 * Clear the memory from this class and its components This also deletes any
-	 * files that are asociated with this job entity (including its specific
-	 * folder)
+	 * Clear the memory from this class and its components This also deletes any files that are
+	 * asociated with this job entity (including its specific folder)
 	 */
 	public void dispose(boolean deleteConfig) {
 		try {
@@ -79,9 +78,9 @@ public final class Job {
 
 			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Dispose",
-					ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Dispose", ex);
 
 		}
 	}
@@ -124,8 +123,7 @@ public final class Job {
 	public void setName(String jobName) {
 		this.name = jobName;
 
-		configFile = new File(JobManager.WORKING_DIRECTORY.getAbsolutePath()
-				+ File.separator + this.name + ".cfg");
+		configFile = new File(JobManager.WORKING_DIRECTORY.getAbsolutePath() + File.separator + this.name + ".cfg");
 	}
 
 	/**
@@ -151,8 +149,7 @@ public final class Job {
 	/**
 	 * Get the description and comments that come along with this job
 	 * 
-	 * @return A String containing the entire description that comes along with
-	 *         the job
+	 * @return A String containing the entire description that comes along with the job
 	 */
 	public String getDescription() {
 		return description;
@@ -162,8 +159,7 @@ public final class Job {
 	 * Set the description/comments for this job instance
 	 * 
 	 * @param jobDescription
-	 *            A String containing the description and comments that the job
-	 *            will have
+	 *            A String containing the description and comments that the job will have
 	 */
 	public void setDescription(String jobDescription) {
 		this.description = jobDescription;
@@ -191,8 +187,7 @@ public final class Job {
 	/**
 	 * Get the start date of the job in the Date format
 	 * 
-	 * @return A Date type variable telling the date in which the job was first
-	 *         created
+	 * @return A Date type variable telling the date in which the job was first created
 	 */
 	public String getStartDate() {
 		return startDate;
@@ -202,8 +197,7 @@ public final class Job {
 	 * Set the start date for this job
 	 * 
 	 * @param jobDate
-	 *            A Date type variable representing the start date that this job
-	 *            has
+	 *            A Date type variable representing the start date that this job has
 	 */
 	public void setStartDate(String jobDate) {
 		this.startDate = jobDate;
@@ -229,8 +223,7 @@ public final class Job {
 	}
 
 	/**
-	 * Get the name of the staff member that worked on this job before the
-	 * current one
+	 * Get the name of the staff member that worked on this job before the current one
 	 * 
 	 * @return A String containing the name of the person
 	 */
@@ -239,8 +232,7 @@ public final class Job {
 	}
 
 	/**
-	 * Set the name of the staff member that worked on this job before the
-	 * current one
+	 * Set the name of the staff member that worked on this job before the current one
 	 * 
 	 * @param previousStaffMember
 	 *            A String value containing the name of the person
@@ -349,16 +341,14 @@ public final class Job {
 	 * Set the font collection needed to finish this job
 	 * 
 	 * @param jobFontArchive
-	 *            A collection (File[]) representing the File entities for the
-	 *            fonts
+	 *            A collection (File[]) representing the File entities for the fonts
 	 */
 	public void setFonts(File[] jobFontArchive) {
 		this.fonts = jobFontArchive;
 	}
 
 	/**
-	 * Get the list of File instances representing the fonts newly added to the
-	 * job
+	 * Get the list of File instances representing the fonts newly added to the job
 	 * 
 	 * @return A collection of File instances
 	 */
@@ -367,9 +357,8 @@ public final class Job {
 	}
 
 	/**
-	 * Set the list of File instances representing the fonts newly added to the
-	 * job. This refreshes the config file in order to keep the added fonts in
-	 * place.
+	 * Set the list of File instances representing the fonts newly added to the job. This refreshes
+	 * the config file in order to keep the added fonts in place.
 	 * 
 	 * @param fonts
 	 *            The collection of File instances
@@ -381,14 +370,15 @@ public final class Job {
 			this.generateConfigFile();
 
 			return true;
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			return false;
 		}
 	}
 
 	/**
-	 * Get the raw data about the sub file and its location on the web, which
-	 * has been extracted from the response string from the server
+	 * Get the raw data about the sub file and its location on the web, which has been extracted
+	 * from the response string from the server
 	 * 
 	 * @return A String containing the raw data about the file
 	 */
@@ -397,8 +387,8 @@ public final class Job {
 	}
 
 	/**
-	 * Set the raw data about the sub file and its location on the web, which
-	 * has been extracted from the response string from the server
+	 * Set the raw data about the sub file and its location on the web, which has been extracted
+	 * from the response string from the server
 	 * 
 	 * @param subFileData
 	 *            A String containing the raw data about the file
@@ -408,8 +398,8 @@ public final class Job {
 	}
 
 	/**
-	 * Get the raw data about the font files and their location on the web, data
-	 * that has been extracted from the response string from the server
+	 * Get the raw data about the font files and their location on the web, data that has been
+	 * extracted from the response string from the server
 	 * 
 	 * @return A String collection containing the raw data about the fonts
 	 */
@@ -418,8 +408,8 @@ public final class Job {
 	}
 
 	/**
-	 * Set the raw data about the font files and their location on the web, data
-	 * that has been extracted from the response string from the server
+	 * Set the raw data about the font files and their location on the web, data that has been
+	 * extracted from the response string from the server
 	 * 
 	 * @param fontsData
 	 *            A String collection containing the raw data about the fonts
@@ -429,21 +419,20 @@ public final class Job {
 	}
 
 	/**
-	 * Verifiy in the job type that this job needs is within the skill list that
-	 * the user has and determines if this job is acceptable by this user or not
+	 * Verifiy in the job type that this job needs is within the skill list that the user has and
+	 * determines if this job is acceptable by this user or not
 	 * 
 	 * @param possible
 	 *            A collection of jobs that can be done by the user
-	 * @return A logical value indicating whether this job can be accepted by
-	 *         the user of not
+	 * 
+	 * @return A logical value indicating whether this job can be accepted by the user of not
 	 */
 	public boolean isAcceptable(String[] possible) {
 
 		if (!this.bookedBy.equals("-"))
 			return false;
 
-		if (!this.intendedTo.equals(Job.DEFAULT_NEXT_STAFF)
-				&& !this.intendedTo.equals(this.currentStaffMember))
+		if (!this.intendedTo.equals(Job.DEFAULT_NEXT_STAFF) && !this.intendedTo.equals(this.currentStaffMember))
 			return false;
 
 		for (String pos : possible) {
@@ -456,14 +445,14 @@ public final class Job {
 
 	/**
 	 * Accept a certain job.<br>
+	 * 
 	 * This method displays a popup message in case of an error
 	 */
 	public boolean accept() {
 		try {
 
 			// send the accept message request to the server
-			boolean response = ConnectionManager.sendJobAcceptRequest(this.id,
-					this.currentStaffMember);
+			boolean response = ConnectionManager.sendJobAcceptRequest(this.id, this.currentStaffMember);
 
 			// continue only if the server accepted the request
 			if (!response)
@@ -476,8 +465,7 @@ public final class Job {
 				dir.mkdir();
 
 			// sub file (download + add to the Job entity)
-			this.setSubFile(FileDownloader.downloadFile(this.subFileLink,
-					this.directoryPath));
+			this.setSubFile(FileDownloader.downloadFile(this.subFileLink, this.directoryPath));
 
 			// font files (download + add to the Job entity)
 			if (fontLinks != null && fontLinks.length > 0) {
@@ -486,8 +474,7 @@ public final class Job {
 
 				for (int i = 0; i < fonts.length; i++) {
 
-					fonts[i] = FileDownloader.downloadFile(this.fontLinks[i],
-							this.directoryPath);
+					fonts[i] = FileDownloader.downloadFile(this.fontLinks[i], this.directoryPath);
 
 				}
 
@@ -502,9 +489,9 @@ public final class Job {
 
 			return true;
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"Accept job", ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Accept job", ex);
 
 			return false;
 		}
@@ -512,15 +499,15 @@ public final class Job {
 
 	/**
 	 * Cancel/Abort a certain job on which the user is currently working.<br>
+	 * 
 	 * This method displays a popup message in case of an error
 	 */
 	public boolean cancel() {
 
 		this.description = "";
-		
+
 		// send the cancel message request to the server
-		boolean response = ConnectionManager.sendJobCancelRequest(this,
-				this.currentStaffMember);
+		boolean response = ConnectionManager.sendJobCancelRequest(this, this.currentStaffMember);
 
 		// continue only if the server has accepted the request
 		if (!response)
@@ -533,9 +520,9 @@ public final class Job {
 
 			return true;
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(),
-					"Cancel job", ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Cancel job", ex);
 
 			return false;
 		}
@@ -543,16 +530,14 @@ public final class Job {
 	}
 
 	/**
-	 * Send all the user's work for a job back to the server and remove its data
-	 * from the disk
+	 * Send all the user's work for a job back to the server and remove its data from the disk
 	 * 
 	 * @return A logical value indicating if the server accepted the data
 	 */
 	public boolean push() {
 
 		// send the request and wait for the servers response
-		boolean response = ConnectionManager.sendJobPushRequest(this,
-				this.currentStaffMember, false);
+		boolean response = ConnectionManager.sendJobPushRequest(this, this.currentStaffMember, false);
 
 		// continue only if the server has accepted the request
 		if (!response)
@@ -566,17 +551,17 @@ public final class Job {
 
 			return true;
 
-		} catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Push job",
-					ex);
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Push job", ex);
 
 			return false;
 		}
 	}
 
 	/**
-	 * Open the directory where all this job's files are stored, using the OS's
-	 * default file explorer
+	 * Open the directory where all this job's files are stored, using the OS's default file
+	 * explorer
 	 */
 	public void openDirectory() {
 		File dir = new File(this.directoryPath);
@@ -584,7 +569,8 @@ public final class Job {
 		try {
 			Desktop.getDesktop().open(dir);
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 		}
 	}
 
@@ -593,8 +579,7 @@ public final class Job {
 	 */
 	public void enhanceAddedFonts() {
 
-		this.addedFonts = FontsManager
-				.excludeServerFontsAsFiles(this.addedFonts);
+		this.addedFonts = FontsManager.excludeServerFontsAsFiles(this.addedFonts);
 	}
 
 	/**
@@ -602,11 +587,11 @@ public final class Job {
 	 * 
 	 * @param jobFolder
 	 *            The folder (File instance) where the job is located
+	 * 
 	 * @throws Exception
 	 */
 	public void readConfigFile(File configFile) throws Exception {
-		BufferedReader reader = new BufferedReader(new FileReader(
-				configFile.getAbsoluteFile()));
+		BufferedReader reader = new BufferedReader(new FileReader(configFile.getAbsoluteFile()));
 
 		this.setID(Integer.parseInt(reader.readLine()));
 		this.setName(reader.readLine());
@@ -620,13 +605,18 @@ public final class Job {
 		this.setSubFile(new File(reader.readLine()));
 
 		int nr = Integer.parseInt(reader.readLine());
+
 		if (nr > 0) {
+
 			File[] fonts = new File[nr];
 			for (int i = 0; i < fonts.length; i++)
 				fonts[i] = new File(reader.readLine());
 
 			this.addedFonts = fonts;
-		} else
+
+		}
+
+		else
 			this.addedFonts = null;
 
 		this.bookedBy = "Yourself";
@@ -636,12 +626,12 @@ public final class Job {
 	}
 
 	/**
-	 * Creates a configuration file for a certain job in its own directory and
-	 * fills it with data
+	 * Creates a configuration file for a certain job in its own directory and fills it with data
 	 * 
 	 * @throws Exception
 	 */
 	private void generateConfigFile() throws Exception {
+
 		// delete the file if it already exists
 		if (this.configFile.exists())
 			this.configFile.delete();
@@ -650,8 +640,7 @@ public final class Job {
 		this.configFile.createNewFile();
 
 		// fill it with data (exclude raw data about the subfile and font files)
-		BufferedWriter writer = new BufferedWriter(new FileWriter(
-				this.configFile.getAbsoluteFile()));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(this.configFile.getAbsoluteFile()));
 		writer.write(this.id + "\n");
 		writer.write(this.name + "\n");
 		writer.write(this.type + "\n");
@@ -664,11 +653,15 @@ public final class Job {
 		writer.write(this.subFile.getAbsolutePath() + "\n");
 
 		if (addedFonts != null) {
+
 			writer.write(this.addedFonts.length + "\n");
+
 			for (int i = 0; i < this.addedFonts.length; i++) {
 				writer.write(this.addedFonts[i].getAbsolutePath() + "\n");
 			}
-		} else
+
+		}
+		else
 			writer.write(0 + "\n");
 
 		// close the writer

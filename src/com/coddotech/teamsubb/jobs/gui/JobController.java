@@ -53,7 +53,8 @@ public class JobController extends CustomController {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
@@ -109,7 +110,7 @@ public class JobController extends CustomController {
 
 	/**
 	 * Listener for when the exit application button is clicked from the
-	 * application menu. This closes the entire application. <br>
+	 * application menu. This closes the entire application.
 	 */
 	public SelectionListener exitApplicationClicked = new SelectionListener() {
 
@@ -147,9 +148,8 @@ public class JobController extends CustomController {
 	};
 
 	/**
-	 * Listener for when the refresh job list button is clicked from the jobs
-	 * menu menu. This refreshes the list of jobs by reloading all the data from
-	 * the server.
+	 * Listener for when the refresh job list button is clicked from the jobs menu menu.
+	 * This refreshes the list of jobs by reloading all the data from the server.
 	 */
 	public SelectionListener refreshJobListClicked = new SelectionListener() {
 
@@ -211,9 +211,8 @@ public class JobController extends CustomController {
 	};
 
 	/**
-	 * Listener for when the force cancel job button is clicked from the actions
-	 * menu. This forcibly cancels a job without sending the job data back to
-	 * the server.
+	 * Listener for when the force cancel job button is clicked from the actions menu.
+	 * This forcibly cancels a job without sending the job data back to the server.
 	 */
 	public SelectionListener forceCancelJobCLicked = new SelectionListener() {
 
@@ -221,8 +220,7 @@ public class JobController extends CustomController {
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
 
-				if (ConnectionManager.sendJobForceCancelRequest(
-						view.getSelectedJobID(), view.getUserName())) {
+				if (ConnectionManager.sendJobForceCancelRequest(view.getSelectedJobID(), view.getUserName())) {
 
 					model.removeJob(view.getSelectedJobID());
 					model.findJobs();
@@ -240,6 +238,7 @@ public class JobController extends CustomController {
 
 	/**
 	 * Listener for when the finish job button is clicked from the actions menu.
+	 * 
 	 * This finishes a job previously accepted by the user, by sending the data
 	 * back to the server and marking it for the next job. This is done through
 	 * another window which has the task of finishing a job.
@@ -249,8 +248,7 @@ public class JobController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
-				PushJobWindow push = new PushJobWindow(
-						model.getAcceptedJob(view.getSelectedJobID()));
+				PushJobWindow push = new PushJobWindow(model.getAcceptedJob(view.getSelectedJobID()));
 				push.open();
 
 				model.findJobs();
@@ -289,16 +287,16 @@ public class JobController extends CustomController {
 	};
 
 	/**
-	 * Listener for when the configure fonts button is clicked from the actions
-	 * menu. This opens a new window for configuring the fonts for the selected
-	 * job, other than those which came at first with the job
+	 * Listener for when the configure fonts button is clicked from the actions menu. This opens a
+	 * new window for configuring the fonts for the selected job, other than those which came at
+	 * first with the job
 	 */
 	public SelectionListener configureFontsClicked = new SelectionListener() {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			FontsWindow fonts = new FontsWindow(model.getAcceptedJob(view
-					.getSelectedJobID()));
+			FontsWindow fonts = new FontsWindow(model.getAcceptedJob(view.getSelectedJobID()));
+
 			fonts.open();
 
 		}
@@ -311,9 +309,9 @@ public class JobController extends CustomController {
 	};
 
 	/**
-	 * Listener for when the open job directory button is clicked from the
-	 * actions menu. This opens the directory where the selected job's files are
-	 * stored, using the default file explorer in the operating system.
+	 * Listener for when the open job directory button is clicked from the actions menu. This opens
+	 * the directory where the selected job's files are stored, using the default file explorer in
+	 * the operating system.
 	 */
 	public SelectionListener openJobDirectoryClicked = new SelectionListener() {
 
@@ -331,8 +329,8 @@ public class JobController extends CustomController {
 	};
 
 	/**
-	 * Listener for when the about button is clicked from the menu bar. This
-	 * opens a new window containing information about the application.
+	 * Listener for when the about button is clicked from the menu bar. This opens a new window
+	 * containing information about the application.
 	 */
 	public SelectionListener aboutClicked = new SelectionListener() {
 
@@ -351,9 +349,8 @@ public class JobController extends CustomController {
 	};
 
 	/**
-	 * Listener for when the actions menu is opened on the jobs list. This
-	 * changes the availability of the menu items in order no to let the user
-	 * perform illegal actions on different jobs.
+	 * Listener for when the actions menu is opened on the jobs list. This changes the availability
+	 * of the menu items in order no to let the user perform illegal actions on different jobs.
 	 */
 	public MenuDetectListener jobsListMenuOpened = new MenuDetectListener() {
 
@@ -365,8 +362,8 @@ public class JobController extends CustomController {
 	};
 
 	/**
-	 * Listener for when an item is selected in the jobs list. This updates the
-	 * view with relevant information about the selected job in the list.
+	 * Listener for when an item is selected in the jobs list. This updates the view with relevant
+	 * information about the selected job in the list.
 	 */
 	public SelectionListener jobsListItemSelected = new SelectionListener() {
 
@@ -394,8 +391,10 @@ public class JobController extends CustomController {
 
 		@Override
 		public void handleEvent(Event e) {
+
 			if (e.keyCode == SWT.F5)
 				model.findJobs();
+
 		}
 
 	};

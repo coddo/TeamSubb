@@ -30,8 +30,7 @@ public class FontsWindow extends CustomWindow {
 	private Button cancel;
 
 	public FontsWindow(Job job) {
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL
-				| SWT.SHELL_TRIM));
+		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM));
 
 		this.initializeComponents();
 
@@ -57,7 +56,8 @@ public class FontsWindow extends CustomWindow {
 
 			this.logDispose();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
 		}
@@ -72,6 +72,11 @@ public class FontsWindow extends CustomWindow {
 		return this.fonts.getItems();
 	}
 
+	/**
+	 * Get the selected fonts in the list
+	 * 
+	 * @return A String array
+	 */
 	public String[] getSelectedFonts() {
 		return this.fonts.getSelection();
 	}
@@ -105,6 +110,12 @@ public class FontsWindow extends CustomWindow {
 		this.fonts.remove(this.fonts.getSelectionIndices());
 	}
 
+	/**
+	 * Notify the user with the status of the job (completed or not)
+	 * 
+	 * @param jobCompletion
+	 *            A logical value representing the job state
+	 */
 	public void notifyUser(boolean jobCompletion) {
 		MessageBox message;
 
@@ -116,7 +127,8 @@ public class FontsWindow extends CustomWindow {
 			message.open();
 
 			this.close();
-		} else {
+		}
+		else {
 			message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 			message.setText("Error");
 			message.setMessage("An error has occured while adding the fonts to the job");
@@ -135,8 +147,7 @@ public class FontsWindow extends CustomWindow {
 		name = new Text(this.panel, SWT.READ_ONLY);
 
 		fontsLabel = new Label(panel, SWT.None);
-		fonts = new List(panel, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
-				| SWT.H_SCROLL);
+		fonts = new List(panel, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 
 		browse = new Button(panel, SWT.PUSH);
 
@@ -162,8 +173,7 @@ public class FontsWindow extends CustomWindow {
 		name.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
 		fontsLabel.setFont(CustomWindow.DEFAULT_FONT);
-		fontsLabel
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		fontsLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		fontsLabel.setText("Font files:");
 		fontsLabel.pack();
 
@@ -171,8 +181,7 @@ public class FontsWindow extends CustomWindow {
 		fonts.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		browse.setFont(CustomWindow.DEFAULT_FONT);
-		browse.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1,
-				1));
+		browse.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1));
 		browse.setText("...");
 		browse.pack();
 
