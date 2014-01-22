@@ -63,7 +63,8 @@ public class AppManager {
 		// the main shell is closed last
 		Shell main = null;
 		for (Shell shell : Display.getCurrent().getShells()) {
-			if (shell.getText().equals("Gadget")) main = shell;
+			if (shell.getText().equals("Gadget"))
+				main = shell;
 			else
 				shell.close();
 		}

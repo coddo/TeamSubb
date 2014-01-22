@@ -32,8 +32,8 @@ import com.coddotech.teamsubb.main.CustomWindow;
  */
 public class JobWindow extends CustomWindow implements Observer {
 
-	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator", "Verificator", "Encoder", "Typesetter", "Manga", "Stiri",
-			"Postator" };
+	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator", "Verificator", "Encoder",
+			"Typesetter", "Manga", "Stiri", "Postator" };
 
 	private static final Color COLOR_ACCEPTED = Display.getCurrent().getSystemColor(SWT.COLOR_GREEN);
 	private static final Color COLOR_ACCEPTABLE = Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW);

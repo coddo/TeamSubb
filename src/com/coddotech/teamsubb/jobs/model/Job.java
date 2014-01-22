@@ -123,7 +123,9 @@ public final class Job {
 	public void setName(String jobName) {
 		this.name = jobName;
 
-		configFile = new File(JobManager.WORKING_DIRECTORY.getAbsolutePath() + File.separator + this.name + ".cfg");
+		String configPath = JobManager.WORKING_DIRECTORY.getAbsolutePath() + File.separator;
+
+		configFile = new File(configPath + this.name + ".cfg");
 	}
 
 	/**
@@ -432,12 +434,17 @@ public final class Job {
 		if (!this.bookedBy.equals("-"))
 			return false;
 
-		if (!this.intendedTo.equals(Job.DEFAULT_NEXT_STAFF) && !this.intendedTo.equals(this.currentStaffMember))
+		boolean defaultStaff = this.intendedTo.equals(Job.DEFAULT_NEXT_STAFF);
+		boolean intendedToCurrentStaff = this.intendedTo.equals(this.currentStaffMember);
+
+		if (!defaultStaff && !intendedToCurrentStaff)
 			return false;
 
 		for (String pos : possible) {
+
 			if (JobWindow.DEFAULT_JOBS_INFO_HEADERS[this.type].equals(pos))
 				return true;
+
 		}
 
 		return false;
@@ -641,6 +648,7 @@ public final class Job {
 
 		// fill it with data (exclude raw data about the subfile and font files)
 		BufferedWriter writer = new BufferedWriter(new FileWriter(this.configFile.getAbsoluteFile()));
+
 		writer.write(this.id + "\n");
 		writer.write(this.name + "\n");
 		writer.write(this.type + "\n");

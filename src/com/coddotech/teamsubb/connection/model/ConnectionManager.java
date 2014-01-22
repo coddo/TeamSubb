@@ -70,8 +70,11 @@ public final class ConnectionManager {
 
 		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Login request", "SEND");
 
-		String response = ConnectionManager.sendMessage(ConnectionManager.URL_USER_LOGGING, new String[] { "user", "pass" },
-				new String[] { user, pass });
+		String[] messageHeaders = new String[] { "user", "pass" };
+		String[] message = new String[] { user, pass };
+
+		String response = ConnectionManager.sendMessage(ConnectionManager.URL_USER_LOGGING, messageHeaders,
+				message);
 
 		return response;
 	}
@@ -87,7 +90,10 @@ public final class ConnectionManager {
 
 		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Logout request", "SEND");
 
-		ConnectionManager.sendMessage(ConnectionManager.URL_USER_LOGGING, new String[] { "logout" }, new String[] { user });
+		String[] messageHeaders = new String[] { "logout" };
+		String[] message = new String[] { user };
+
+		ConnectionManager.sendMessage(ConnectionManager.URL_USER_LOGGING, messageHeaders, message);
 	}
 
 	/**
@@ -108,8 +114,10 @@ public final class ConnectionManager {
 
 		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Job search request", "SEND");
 
-		String response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, new String[] { "jobs", "staff" },
-				new String[] { "search", user });
+		String[] messageHeaders = new String[] { "jobs", "staff" };
+		String[] message = new String[] { "search", user };
+
+		String response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, message);
 
 		return response;
 	}
@@ -141,8 +149,8 @@ public final class ConnectionManager {
 	 * 
 	 * @return A Logical value telling the user if the request was accepted or not by the server
 	 */
-	public static boolean sendJobCreateRequest(String user, String name, int type, String description, String nextStaff,
-			String subFile, String[] fonts) {
+	public static boolean sendJobCreateRequest(String user, String name, int type, String description,
+			String nextStaff, String subFile, String[] fonts) {
 
 		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Job create request", "SEND");
 
@@ -180,7 +188,8 @@ public final class ConnectionManager {
 		}
 
 		// request sending
-		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, messages, fileHeaders, files);
+		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, messages,
+				fileHeaders, files);
 
 		return Boolean.parseBoolean(response);
 	}
@@ -276,10 +285,11 @@ public final class ConnectionManager {
 		// Text messages data
 		String[] messageHeaders = { "push", "staff", "jobid", "jobtype", "comments", "nextstaff" };
 
-		String[] messages = { "available", user, Integer.toString(job.getID()), Integer.toString(job.getType()),
-				job.getDescription(), job.getNextStaffMember() };
+		String[] messages = { "available", user, Integer.toString(job.getID()),
+				Integer.toString(job.getType()), job.getDescription(), job.getNextStaffMember() };
 
-		if (canceled) messages[0] = "canceled";
+		if (canceled)
+			messages[0] = "canceled";
 
 		// files data
 		String response;
@@ -312,7 +322,8 @@ public final class ConnectionManager {
 		}
 
 		// send the request to the server and wait for a response
-		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, messages, fileHeaders, files);
+		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, messages,
+				fileHeaders, files);
 
 		// return the servers response
 		return Boolean.parseBoolean(response);
@@ -357,7 +368,10 @@ public final class ConnectionManager {
 	public static String sendStaffRequest() {
 		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Fonts request", "SEND");
 
-		return ConnectionManager.sendMessage(ConnectionManager.URL_CHAT, new String[] { "liststaff" }, new String[] { "1" });
+		String[] messageHeaders = new String[] { "liststaff" };
+		String[] message = new String[] { "1" };
+
+		return ConnectionManager.sendMessage(ConnectionManager.URL_CHAT, messageHeaders, message);
 	}
 
 	/**
@@ -369,7 +383,10 @@ public final class ConnectionManager {
 	public static String sendFontsRequest() {
 		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Fonts request", "SEND");
 
-		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, new String[] { "listfonts" }, new String[] { "1" });
+		String[] messageHeaders = new String[] { "listfonts" };
+		String[] message = new String[] { "1" };
+
+		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, message);
 	}
 
 	/**
@@ -389,7 +406,8 @@ public final class ConnectionManager {
 	 * @throws IllegalStateException
 	 * @throws IOException
 	 */
-	private static String sendMessage(String url, MultipartEntity data) throws IllegalStateException, IOException {
+	private static String sendMessage(String url, MultipartEntity data) throws IllegalStateException,
+			IOException {
 
 		// create a http client used as an interface for interacting with the server
 		HttpClient httpClient = new DefaultHttpClient();
@@ -485,7 +503,8 @@ public final class ConnectionManager {
 	 * @return A String value containing the response that has been received from the server.<br>
 	 *         This method returns "false" if a connection error has been encountered.
 	 */
-	private static String sendMessage(String url, String[] messageHeaders, String[] messages, String[] fileHeaders, String[] files) {
+	private static String sendMessage(String url, String[] messageHeaders, String[] messages,
+			String[] fileHeaders, String[] files) {
 		try {
 
 			// create a MultiPart entity which will contain the text message and

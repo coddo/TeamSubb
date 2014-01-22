@@ -36,6 +36,7 @@ public final class AppSettings extends Observable {
 	public static final Point DEFAULT_LOCATION = new Point(200, 200);
 	public static final boolean DEFAULT_AUTOSAVE_LOCATION = true;
 	public static final int DEFAULT_SEARCH_INTERVAL = 1; // one minute
+
 	public static final boolean[] DEFAULT_USER_JOBS = { false, false, false, false, false, false, false };
 	public static final String[] DEFAULT_USER_INFO = { "NONE", "NONE", "NONE" };
 
@@ -352,13 +353,16 @@ public final class AppSettings extends Observable {
 	 */
 	private void notifyCompleteSettings() {
 		this.setChanged();
-		notifyObservers(AppSettings.MESSAGE_AUTOSAVE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR + this.gadgetAutosaveLocation);
+		notifyObservers(AppSettings.MESSAGE_AUTOSAVE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR
+				+ this.gadgetAutosaveLocation);
 
 		this.setChanged();
-		notifyObservers(AppSettings.MESSAGE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR + this.gadgetLocation.x + "," + gadgetLocation.y);
+		notifyObservers(AppSettings.MESSAGE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR
+				+ this.gadgetLocation.x + "," + gadgetLocation.y);
 
 		this.setChanged();
-		notifyObservers(AppSettings.MESSAGE_SEARCH_INTERVAL + CustomWindow.NOTIFICATION_SEPARATOR + this.searchInterval);
+		notifyObservers(AppSettings.MESSAGE_SEARCH_INTERVAL + CustomWindow.NOTIFICATION_SEPARATOR
+				+ this.searchInterval);
 	}
 
 	/**

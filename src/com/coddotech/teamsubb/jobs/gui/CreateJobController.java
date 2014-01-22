@@ -70,7 +70,7 @@ public class CreateJobController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			browseSub.open();
-			
+
 			view.setSub(browseSub.getFilterPath() + File.separator + browseSub.getFileName());
 
 		}
@@ -117,7 +117,7 @@ public class CreateJobController extends CustomController {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
-			
+
 			if (e.keyCode == SWT.DEL)
 				view.deleteSelectedFonts();
 
@@ -159,12 +159,13 @@ public class CreateJobController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			if (CustomWindow.isConnected(true)) {
-				
+
 				if (view.verifFields()) {
 
 					String[] fonts = FontsManager.excludeServerFontsAsStrings(view.getFonts());
 
-					model.createJob(view.getName(), view.getType(), view.getComments(), view.getNextStaff(), view.getSub(), fonts);
+					model.createJob(view.getName(), view.getType(), view.getComments(), view.getNextStaff(),
+							view.getSub(), fonts);
 				}
 			}
 

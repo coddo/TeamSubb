@@ -21,8 +21,8 @@ public abstract class CustomWindow {
 	public static final Font DEFAULT_FONT = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
 	public static final Font BOLD_FONT = new Font(Display.getCurrent(), "Calibri", 12, SWT.BOLD);
 
-	public static final Image APP_ICON = new Image(Display.getCurrent(), System.getProperty("user.dir") + File.separator + "resources"
-			+ File.separator + "icon.png");
+	public static final Image APP_ICON = new Image(Display.getCurrent(), System.getProperty("user.dir")
+			+ File.separator + "resources" + File.separator + "icon.png");
 
 	private Shell shell;
 	private boolean disposed;
@@ -111,10 +111,11 @@ public abstract class CustomWindow {
 		boolean connected = ConnectionManager.isConnected();
 
 		if (!connected && displayMessage) {
-
 			MessageBox message = new MessageBox(Display.getCurrent().getShells()[0], SWT.ICON_ERROR);
+			
 			message.setMessage("A connection error has occured.\nPlease try again later...");
 			message.setText("Connection failed");
+			
 			message.open();
 		}
 

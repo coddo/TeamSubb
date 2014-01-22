@@ -223,12 +223,13 @@ public class JobManager extends Observable {
 	 * @param fonts
 	 *            The font files that are needed in order to finish this job
 	 */
-	public void createJob(String name, int type, String description, String nextStaff, String subFile, String[] fonts) {
+	public void createJob(String name, int type, String description, String nextStaff, String subFile,
+			String[] fonts) {
 
 		try {
 
-			boolean response = ConnectionManager.sendJobCreateRequest(settings.getUserName(), name, type, description, nextStaff, subFile,
-					fonts);
+			boolean response = ConnectionManager.sendJobCreateRequest(settings.getUserName(), name, type,
+					description, nextStaff, subFile, fonts);
 
 			this.setChanged();
 			notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR + response);
@@ -684,7 +685,8 @@ public class JobManager extends Observable {
 			// get all the jobs that are accepted by this user and add them to
 			// the "accepted jobs" list
 			for (String jobDir : JobManager.WORKING_DIRECTORY.list()) {
-				File jobFolder = new File(JobManager.WORKING_DIRECTORY.getAbsolutePath() + File.separator + jobDir);
+				File jobFolder = new File(JobManager.WORKING_DIRECTORY.getAbsolutePath() + File.separator
+						+ jobDir);
 
 				try {
 
@@ -709,7 +711,8 @@ public class JobManager extends Observable {
 
 				}
 				catch (Exception ex) {
-					ActivityLogger.logException(this.getClass().getName(), "Initialize working directory", ex);
+					ActivityLogger
+							.logException(this.getClass().getName(), "Initialize working directory", ex);
 
 					// also create a dump file for this situation
 					ActivityLogger.dumpAppErrorStack(ex);

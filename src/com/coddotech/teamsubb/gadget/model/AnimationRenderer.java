@@ -44,9 +44,11 @@ public class AnimationRenderer extends Observable implements Observer {
 	public static final int TYPE_HIGH_PRIORITY = 0x003;
 
 	// paths where the files necessary for the gadget's animation are stored
-	private static final String DIR_IDLE = System.getProperty("user.dir") + File.separator + "resources" + File.separator + "idle";
-	private static final String DIR_LOW = System.getProperty("user.dir") + File.separator + "resources" + File.separator + "low";
-	private static final String DIR_HIGH = System.getProperty("user.dir") + File.separator + "resources" + File.separator + "high";
+	private static final String RESOURCE_DIR = System.getProperty("user.dir") + File.separator + "resources";
+
+	private static final String DIR_IDLE = RESOURCE_DIR + File.separator + "idle";
+	private static final String DIR_LOW = RESOURCE_DIR + File.separator + "low";
+	private static final String DIR_HIGH = RESOURCE_DIR + File.separator + "high";
 
 	// interval used to
 	private int imageInterval = 300;
@@ -260,7 +262,8 @@ public class AnimationRenderer extends Observable implements Observer {
 			int k = 0;
 			for (String img : idleFolder.list(filter)) {
 
-				idle[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_IDLE + File.separator + img), size, size);
+				idle[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_IDLE
+						+ File.separator + img), size, size);
 
 				k++;
 			}
@@ -269,7 +272,8 @@ public class AnimationRenderer extends Observable implements Observer {
 			k = 0;
 			for (String img : lowFolder.list(filter)) {
 
-				lowPriority[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_LOW + File.separator + img), size, size);
+				lowPriority[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_LOW
+						+ File.separator + img), size, size);
 				k++;
 			}
 
@@ -277,8 +281,8 @@ public class AnimationRenderer extends Observable implements Observer {
 			k = 0;
 			for (String img : highFolder.list(filter)) {
 
-				highPriority[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_HIGH + File.separator + img), size,
-						size);
+				highPriority[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_HIGH
+						+ File.separator + img), size, size);
 				k++;
 			}
 

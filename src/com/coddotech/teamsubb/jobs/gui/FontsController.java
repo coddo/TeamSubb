@@ -21,7 +21,7 @@ import com.coddotech.teamsubb.main.CustomController;
  * Class for managing font files
  * 
  * @author Coddo
- *
+ * 
  */
 public class FontsController extends CustomController {
 
@@ -44,7 +44,7 @@ public class FontsController extends CustomController {
 	}
 
 	public void dispose() {
-		
+
 		// delete all the marked files from the job's directory if the settings have been applied
 		try {
 
@@ -108,7 +108,7 @@ public class FontsController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			
+
 			// copy the fonts to the location of the job
 			String[] fonts = view.getFonts();
 
@@ -120,7 +120,7 @@ public class FontsController extends CustomController {
 			boolean ok = true;
 
 			for (int i = 0; i < fonts.length; i++) {
-				
+
 				File source = new File(fonts[i]);
 				fontFiles[i] = new File(job.getDirectoryPath() + File.separator + source.getName());
 
@@ -179,6 +179,7 @@ public class FontsController extends CustomController {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.keyCode == SWT.DEL) {
+
 				for (String font : view.getSelectedFonts())
 					deleted.add(new File(font));
 

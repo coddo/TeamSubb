@@ -55,7 +55,8 @@ public class PushJobController extends CustomController {
 			if (CustomWindow.isConnected(true)) {
 
 				if (view.verifyFields()) {
-					boolean result = model.pushJob(view.getID(), view.getNextStaff(), view.getType(), view.getComments());
+					boolean result = model.pushJob(view.getID(), view.getNextStaff(), view.getType(),
+							view.getComments());
 
 					if (result)
 						view.close();
