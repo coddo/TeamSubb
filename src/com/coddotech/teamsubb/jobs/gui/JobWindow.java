@@ -340,34 +340,34 @@ public class JobWindow extends CustomWindow {
 
 					switch (data[0]) {
 
-					case "find": {
-						createJobList(obs);
+						case "find": {
+							createJobList(obs);
 
-					}
-						break;
+						}
+							break;
 
-					case "jobinformation": {
-						updateJobInfo(data);
-					}
-						break;
+						case "jobinformation": {
+							updateJobInfo(data);
+						}
+							break;
 
-					case "end": {
-						handleEndJobResult(obs, data);
+						case "end": {
+							handleEndJobResult(obs, data);
 
-					}
-						break;
+						}
+							break;
 
-					case "accept": {
-						handleAcceptJobResult(obs, data);
+						case "accept": {
+							handleAcceptJobResult(obs, data);
 
-					}
-						break;
+						}
+							break;
 
-					case "cancel": {
-						handleCancelJobResult(obs, data);
+						case "cancel": {
+							handleCancelJobResult(obs, data);
 
-					}
-						break;
+						}
+							break;
 
 					}
 				}
@@ -379,7 +379,7 @@ public class JobWindow extends CustomWindow {
 			}
 		};
 
-		Display.getDefault().syncExec(update);
+		Display.getDefault().asyncExec(update);
 
 	}
 
@@ -670,26 +670,45 @@ public class JobWindow extends CustomWindow {
 		this.jobsList.removeAll();
 
 		for (Job job : ((JobManager) obs).getAcceptedJobs()) {
-			TableItem item = new TableItem(this.jobsList, SWT.None);
 
-			item.setText(job.getName());
-			item.setData(job.getID());
+			if (!isInList(job)) {
+				TableItem item = new TableItem(this.jobsList, SWT.None);
 
-			item.setBackground(JobWindow.COLOR_ACCEPTED);
+				item.setText(job.getName());
+				item.setData(job.getID());
+
+				item.setBackground(JobWindow.COLOR_ACCEPTED);
+
+			}
 		}
 
 		for (Job job : ((JobManager) obs).getJobs()) {
-			TableItem item = new TableItem(this.jobsList, SWT.None);
 
-			item.setText(job.getName());
-			item.setData(job.getID());
+			if (!isInList(job)) {
+				TableItem item = new TableItem(this.jobsList, SWT.None);
 
-			if (job.getIntendedTo().equals(this.tempUserInfo[0]))
-				item.setBackground(JobWindow.COLOR_IMPORTANT);
+				item.setText(job.getName());
+				item.setData(job.getID());
 
-			else if (job.isAcceptable(this.tempUserJobs))
-				item.setBackground(JobWindow.COLOR_ACCEPTABLE);
+				if (job.getIntendedTo().equals(this.tempUserInfo[0]))
+					item.setBackground(JobWindow.COLOR_IMPORTANT);
+
+				else if (job.isAcceptable(this.tempUserJobs))
+					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
+			}
+
 		}
+	}
+
+	private boolean isInList(Job job) {
+		for (TableItem item : jobsList.getItems()) {
+
+			if ((int) item.getData() == job.getID())
+				return true;
+
+		}
+
+		return false;
 	}
 
 	private void updateJobInfo(String[] data) {
