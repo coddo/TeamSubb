@@ -111,11 +111,6 @@ public class GadgetWindow extends CustomWindow {
 							first = false;
 
 						}
-
-						else if (data[0].equals(AppSettings.MESSAGE_SEARCH_INTERVAL)) {
-
-							controller.setSearchInterval(Integer.parseInt(data[1]));
-						}
 					}
 
 				}

@@ -13,7 +13,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -22,7 +21,6 @@ import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
-import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.gui.AppSettingsWindow;
 import com.coddotech.teamsubb.settings.model.AppSettings;
 
@@ -44,16 +42,17 @@ public class GadgetController extends CustomController {
 	private AppSettingsWindow settingsWindow;
 
 	private AnimationRenderer animations;
-
-	// 1 min = 60000 ms
-	private int searchInterval = AppSettings.DEFAULT_SEARCH_INTERVAL * 60000;
-
+	
 	private boolean disposed = false;
 
 	// data used for moving the form around
 	private boolean move = false;
 	private int x;
 	private int y;
+	
+	public boolean isDisposed() {
+		return this.disposed;
+	}
 
 	/**
 	 * Class constructor
@@ -66,9 +65,6 @@ public class GadgetController extends CustomController {
 
 		// initialize the components
 		this.initializeController();
-
-		// start the timer in order for it to search for new jobs
-		Display.getCurrent().timerExec(100, timer);
 	}
 
 	/**
@@ -76,8 +72,9 @@ public class GadgetController extends CustomController {
 	 */
 	public void dispose() {
 		try {
+			
 			this.disposed = true;
-
+			
 			if (jobsWindow != null)
 				if (!jobsWindow.isDisposed() && !jobsWindow.isExiting())
 					jobsWindow.close();
@@ -89,7 +86,6 @@ public class GadgetController extends CustomController {
 			animations.dispose();
 			animations = null;
 
-			timer = null;
 			gadget = null;
 
 			jobsWindow = null;
@@ -108,42 +104,6 @@ public class GadgetController extends CustomController {
 
 		}
 	}
-
-	/**
-	 * Set the interval in which
-	 * 
-	 * @param mins
-	 */
-	public void setSearchInterval(int mins) {
-		this.searchInterval = mins * 60000;
-	}
-
-	/**
-	 * Chek if the controller has been disposed or not
-	 * 
-	 * @return A logical value
-	 */
-	public boolean isDisposed() {
-		return this.disposed;
-	}
-
-	/**
-	 * Timer used to search for new jobs. This method checks if there is an internet connection
-	 * available before sending the request
-	 */
-	Runnable timer = new Runnable() {
-
-		@Override
-		public void run() {
-			if (!disposed) {
-				if (CustomWindow.isConnected(false))
-					jobs.findJobs();
-
-				Display.getCurrent().timerExec(searchInterval, this);
-			}
-		}
-
-	};
 
 	public SelectionListener trayClicked = new SelectionListener() {
 

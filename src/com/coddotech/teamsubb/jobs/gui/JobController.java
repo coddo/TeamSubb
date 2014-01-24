@@ -247,12 +247,10 @@ public class JobController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (CustomWindow.isConnected(true)) {
-				PushJobWindow push = new PushJobWindow(model.getAcceptedJob(view.getSelectedJobID()));
-				push.open();
+			PushJobWindow push = new PushJobWindow(model.getAcceptedJob(view.getSelectedJobID()));
+			push.open();
 
-				model.findJobs();
-			}
+			model.findJobs();
 
 		}
 

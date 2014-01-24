@@ -9,6 +9,7 @@ import com.coddotech.teamsubb.connection.gui.LoginWindow;
 import com.coddotech.teamsubb.connection.model.Login;
 import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
+import com.coddotech.teamsubb.jobs.model.JobSearchTimer;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.model.AppSettings;
 
@@ -36,8 +37,15 @@ public class AppManager {
 			// application's main functionalities and close the login window
 			if (Login.isLoggedIn()) {
 
+				// start the job searcher timer
+				JobSearchTimer timer = JobSearchTimer.getInstance();
+				
+				AppSettings.getInstance().addObserver(timer);
+				
+				timer.startTimer();
+				
+				// display the gadget
 				GadgetWindow gadget = new GadgetWindow();
-
 				gadget.open();
 
 			}
@@ -60,7 +68,10 @@ public class AppManager {
 	}
 
 	public static void exitApp() {
-		// the main shell is closed last
+		// Dispose the timer that searches for jobs
+		JobSearchTimer.getInstance().dispose();
+
+		// Close all the shells (the main shell is closed last)
 		Shell main = null;
 		for (Shell shell : Display.getCurrent().getShells()) {
 			if (shell.getText().equals("Gadget"))
