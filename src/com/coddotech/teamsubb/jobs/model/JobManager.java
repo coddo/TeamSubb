@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Observable;
 
 import org.apache.commons.io.FileUtils;
-import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.appmanage.model.AppManager;
@@ -35,8 +34,6 @@ public class JobManager extends Observable {
 	private List<Job> acceptedJobs;
 
 	private AppSettings settings;
-
-	private Thread jobFinderThread = null;
 
 	private static JobManager instance = null;
 
@@ -298,19 +295,17 @@ public class JobManager extends Observable {
 	 */
 	public void findJobs() {
 
-		Runnable jobFinder = new Runnable() {
+		class JobFinder extends Thread {
 
 			String message = "normal";
 
 			@Override
 			public void run() {
 
-				if (search())
-					Display.getDefault().syncExec(notifier);
+				// check for an internet connection
+				if (!CustomWindow.isConnected(false))
+					return;
 
-			}
-
-			private boolean search() {
 				try {
 
 					// clear the jobs list and reinstantiate the message
@@ -336,40 +331,22 @@ public class JobManager extends Observable {
 
 					ActivityLogger.logActivity(this.getClass().getName(), "Find jobs");
 
-					return true;
+					// send the according notification to the observers
+					setChanged();
+					notifyObservers(message);
 
 				}
 				catch (Exception ex) {
 					ActivityLogger.logException(this.getClass().getName(), "Find jobs", ex);
 
-					return false;
 				}
 			}
 
-			// send the according notification to the observers
-			private Runnable notifier = new Runnable() {
-
-				@Override
-				public void run() {
-
-					setChanged();
-
-					notifyObservers(message);
-
-				}
-
-			};
-
-		};
-
-		if (jobFinderThread == null)
-			jobFinderThread = new Thread(jobFinder);
-
-		if (!jobFinderThread.isAlive()) {
-			jobFinderThread.start();
-
-			jobFinderThread = new Thread(jobFinder);
 		}
+		;
+
+		JobFinder finder = new JobFinder();
+		finder.start();
 	}
 
 	/**
