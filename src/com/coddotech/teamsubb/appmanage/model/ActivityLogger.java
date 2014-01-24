@@ -87,6 +87,9 @@ public class ActivityLogger {
 
 		logStack.add("[!] " + ActivityLogger.getCurrentTime() + message + "\n");
 
+		// save the contents of the log file
+		ActivityLogger.dumpLogStack();
+
 	}
 
 	/**
@@ -131,11 +134,11 @@ public class ActivityLogger {
 	/**
 	 * Closes the stream for the log file and unlocks it
 	 */
-	public static void createLogFile() {
+	public static void dumpLogStack() {
 		if (!initializationFailed) {
 
 			try {
-				BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFile.getAbsoluteFile()));
+				BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFile.getAbsoluteFile(), true));
 
 				while (ActivityLogger.logStack.size() > 0)
 					logWriter.write(ActivityLogger.logStack.remove(0));

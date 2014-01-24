@@ -73,13 +73,13 @@ public class AppManager {
 
 		main.close();
 
-		// close the dump files
-		ActivityLogger.createLogFile();
-
 		// dispose of global resources
 		AppManager.disposeGlobalResources();
 
 		ActivityLogger.logActivity(AppManager.class.getName(), "App exit");
+		// close the dump files
+		
+		ActivityLogger.dumpLogStack();
 	}
 
 	private static void disposeGlobalResources() {
