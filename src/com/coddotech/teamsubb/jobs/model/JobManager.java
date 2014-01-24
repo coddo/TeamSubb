@@ -35,6 +35,9 @@ public class JobManager extends Observable {
 
 	private AppSettings settings;
 
+	// variables used in order to know when the threads are running
+	private boolean findJobsRunning = false;
+
 	private static JobManager instance = null;
 
 	/**
@@ -302,6 +305,8 @@ public class JobManager extends Observable {
 			@Override
 			public void run() {
 
+				findJobsRunning = true;
+
 				// check for an internet connection
 				if (!CustomWindow.isConnected(false))
 					return;
@@ -340,13 +345,19 @@ public class JobManager extends Observable {
 					ActivityLogger.logException(this.getClass().getName(), "Find jobs", ex);
 
 				}
+				finally {
+					findJobsRunning = false;
+				}
 			}
 
 		}
 		;
 
-		JobFinder finder = new JobFinder();
-		finder.start();
+		if (!findJobsRunning) {
+			JobFinder finder = new JobFinder();
+
+			finder.start();
+		}
 	}
 
 	/**
