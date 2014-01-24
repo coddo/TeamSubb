@@ -1,7 +1,6 @@
 package com.coddotech.teamsubb.settings.gui;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -23,7 +22,7 @@ import com.coddotech.teamsubb.settings.model.AppSettings;
  * @author Coddo
  * 
  */
-public final class AppSettingsWindow extends CustomWindow implements Observer {
+public final class AppSettingsWindow extends CustomWindow {
 
 	private Button cancel;
 	private Button apply;
@@ -130,54 +129,60 @@ public final class AppSettingsWindow extends CustomWindow implements Observer {
 		}
 	}
 
-	/**
-	 * Updates the interface based on the way the model has changed
-	 */
 	@Override
-	public void update(Observable obs, Object obj) {
+	protected void updateGUI(final Observable obs, final Object obj) {
 		try {
-			String[] data = ((String) obj).split(CustomWindow.NOTIFICATION_SEPARATOR);
 
-			switch (data[0]) {
+			Runnable update = new Runnable() {
 
-			case AppSettings.MESSAGE_AUTOSAVE_LOCATION: {
-				this.autosaveLocation.setSelection(Boolean.parseBoolean(data[1]));
+				@Override
+				public void run() {
+					String[] data = ((String) obj).split(CustomWindow.NOTIFICATION_SEPARATOR);
 
-			}
-				break;
+					switch (data[0]) {
 
-			case AppSettings.MESSAGE_SEARCH_INTERVAL: {
-				this.searchInterval.setText(data[1]);
+					case AppSettings.MESSAGE_AUTOSAVE_LOCATION: {
+						autosaveLocation.setSelection(Boolean.parseBoolean(data[1]));
 
-			}
-				break;
+					}
+						break;
 
-			case AppSettings.MESSAGE_SAVE: {
-				MessageBox message;
+					case AppSettings.MESSAGE_SEARCH_INTERVAL: {
+						searchInterval.setText(data[1]);
 
-				if (Boolean.parseBoolean(data[1])) {
-					message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
-					message.setText("Success");
-					message.setMessage("The settings have been successfully applied !");
+					}
+						break;
+
+					case AppSettings.MESSAGE_SAVE: {
+						MessageBox message;
+
+						if (Boolean.parseBoolean(data[1])) {
+							message = new MessageBox(getShell(), SWT.ICON_INFORMATION);
+							message.setText("Success");
+							message.setMessage("The settings have been successfully applied !");
+						}
+
+						else {
+							message = new MessageBox(getShell(), SWT.ICON_ERROR);
+							message.setText("Error");
+							message.setMessage("An error has been encountered while saving the changes !");
+						}
+
+						message.open();
+
+					}
+						break;
+					}
 				}
+			};
 
-				else {
-					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-					message.setText("Error");
-					message.setMessage("An error has been encountered while saving the changes !");
-				}
-
-				message.open();
-
-			}
-				break;
-
-			}
+			Display.getDefault().syncExec(update);
 		}
 		catch (Exception ex) {
 			ActivityLogger.logException(this.getClass().getName(), "GUI Update", ex);
 
 		}
+
 	}
 
 	@Override

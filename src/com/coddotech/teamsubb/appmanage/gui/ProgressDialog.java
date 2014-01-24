@@ -1,5 +1,7 @@
 package com.coddotech.teamsubb.appmanage.gui;
 
+import java.util.Observable;
+
 import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
@@ -26,6 +28,12 @@ public class ProgressDialog extends CustomWindow {
 
 	public void performStep() {
 
+	}
+
+	@Override
+	protected void updateGUI(Observable obs, Object obj) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

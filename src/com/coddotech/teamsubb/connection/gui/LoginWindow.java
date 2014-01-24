@@ -1,10 +1,10 @@
 package com.coddotech.teamsubb.connection.gui;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
@@ -19,7 +19,7 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * 
  * @author Coddo
  */
-public class LoginWindow extends CustomWindow implements Observer {
+public class LoginWindow extends CustomWindow {
 
 	private LoginController controller;
 
@@ -93,24 +93,30 @@ public class LoginWindow extends CustomWindow implements Observer {
 		return this.passBox.getText();
 	}
 
-	/**
-	 * Update the GUI based on the modifications that took place in the registered models
-	 */
 	@Override
-	public void update(Observable obs, Object obj) {
-		if (!(boolean) obj) {
+	protected void updateGUI(final Observable obs, final Object obj) {
 
-			// On failed login, show the "wrong credentials" message
-			MessageBox message = new MessageBox(getShell(), SWT.ICON_ERROR);
-			message.setMessage("The entered username or password is incorrect");
-			message.setText("Wrong credentials");
-			message.open();
-		}
-		else {
+		Runnable update = new Runnable() {
 
-			// On successful login, close this windows
-			this.close();
-		}
+			@Override
+			public void run() {
+				if (!(boolean) obj) {
+
+					// On failed login, show the "wrong credentials" message
+					MessageBox message = new MessageBox(getShell(), SWT.ICON_ERROR);
+					message.setMessage("The entered username or password is incorrect");
+					message.setText("Wrong credentials");
+					message.open();
+				}
+				else {
+					// On successful login, close this windows
+					close();
+				}
+			}
+		};
+
+		Display.getDefault().syncExec(update);
+
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package com.coddotech.teamsubb.gadget.gui;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -26,7 +25,7 @@ import com.coddotech.teamsubb.settings.model.AppSettings;
  * @author Coddo
  * 
  */
-public class GadgetWindow extends CustomWindow implements Observer {
+public class GadgetWindow extends CustomWindow {
 
 	private GadgetController controller;
 
@@ -88,33 +87,44 @@ public class GadgetWindow extends CustomWindow implements Observer {
 	}
 
 	@Override
-	public void update(Observable obs, Object obj) {
-		if (!controller.isDisposed()) {
+	protected void updateGUI(final Observable obs, final Object obj) {
 
-			if (obs instanceof AnimationRenderer) {
-				imageContainer.setBackgroundImage((Image) obj);
-			}
+		Runnable update = new Runnable() {
 
-			else if (obs instanceof AppSettings) {
+			@Override
+			public void run() {
+				if (!controller.isDisposed()) {
 
-				String[] data = ((String) obj).split(CustomWindow.NOTIFICATION_SEPARATOR);
+					if (obs instanceof AnimationRenderer) {
+						imageContainer.setBackgroundImage((Image) obj);
+					}
 
-				if (data[0].equals(AppSettings.MESSAGE_LOCATION) && first) {
-					int x = Integer.parseInt(data[1].split(",")[0]);
-					int y = Integer.parseInt(data[1].split(",")[1]);
+					else if (obs instanceof AppSettings) {
 
-					this.getShell().setLocation(x, y);
-					first = false;
+						String[] data = ((String) obj).split(CustomWindow.NOTIFICATION_SEPARATOR);
+
+						if (data[0].equals(AppSettings.MESSAGE_LOCATION) && first) {
+							int x = Integer.parseInt(data[1].split(",")[0]);
+							int y = Integer.parseInt(data[1].split(",")[1]);
+
+							getShell().setLocation(x, y);
+							first = false;
+
+						}
+
+						else if (data[0].equals(AppSettings.MESSAGE_SEARCH_INTERVAL)) {
+
+							controller.setSearchInterval(Integer.parseInt(data[1]));
+						}
+					}
 
 				}
 
-				else if (data[0].equals(AppSettings.MESSAGE_SEARCH_INTERVAL)) {
-
-					controller.setSearchInterval(Integer.parseInt(data[1]));
-				}
 			}
+		};
 
-		}
+		Display.getDefault().syncExec(update);
+
 	}
 
 	@Override

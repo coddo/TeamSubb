@@ -1,5 +1,7 @@
 package com.coddotech.teamsubb.appmanage.gui;
 
+import java.util.Observable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -48,6 +50,12 @@ public class ApplicationInformation extends CustomWindow {
 			this.logDiposeFail(ex);
 
 		}
+	}
+
+	@Override
+	protected void updateGUI(Observable obs, Object obj) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

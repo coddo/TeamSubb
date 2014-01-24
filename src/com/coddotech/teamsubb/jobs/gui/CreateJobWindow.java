@@ -2,7 +2,6 @@ package com.coddotech.teamsubb.jobs.gui;
 
 import java.io.File;
 import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -21,7 +20,7 @@ import com.coddotech.teamsubb.chat.model.StaffManager;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.main.CustomWindow;
 
-public class CreateJobWindow extends CustomWindow implements Observer {
+public class CreateJobWindow extends CustomWindow {
 
 	private CreateJobController controller;
 
@@ -221,30 +220,39 @@ public class CreateJobWindow extends CustomWindow implements Observer {
 	}
 
 	@Override
-	public void update(Observable obs, Object obj) {
-		String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
+	protected void updateGUI(final Observable obs, final Object obj) {
 
-		if (data[0].equals("create")) {
-			MessageBox message;
+		Runnable update = new Runnable() {
 
-			if (Boolean.parseBoolean(data[1])) {
-				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION | SWT.APPLICATION_MODAL);
-				message.setText("Success");
-				message.setMessage("The job has been successfully created");
+			@Override
+			public void run() {
+				String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
 
-				message.open();
+				if (data[0].equals("create")) {
+					MessageBox message;
 
-				this.close();
+					if (Boolean.parseBoolean(data[1])) {
+						message = new MessageBox(getShell(), SWT.ICON_INFORMATION | SWT.APPLICATION_MODAL);
+						message.setText("Success");
+						message.setMessage("The job has been successfully created");
+
+						message.open();
+
+						close();
+					}
+					else {
+						message = new MessageBox(getShell(), SWT.ICON_ERROR);
+						message.setText("Error");
+						message.setMessage("There was a problem while creating this job");
+
+						message.open();
+					}
+
+				}
 			}
-			else {
-				message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-				message.setText("Error");
-				message.setMessage("There was a problem while creating this job");
+		};
 
-				message.open();
-			}
-
-		}
+		Display.getDefault().syncExec(update);
 
 	}
 

@@ -1,7 +1,6 @@
 package com.coddotech.teamsubb.jobs.gui;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -19,7 +18,7 @@ import com.coddotech.teamsubb.chat.model.StaffManager;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.main.CustomWindow;
 
-public class PushJobWindow extends CustomWindow implements Observer {
+public class PushJobWindow extends CustomWindow {
 
 	private Job job;
 
@@ -157,26 +156,35 @@ public class PushJobWindow extends CustomWindow implements Observer {
 	}
 
 	@Override
-	public void update(Observable obs, Object obj) {
-		String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
+	protected void updateGUI(final Observable obs, final Object obj) {
 
-		if (data[0].equals("push")) {
-			MessageBox message;
+		Runnable update = new Runnable() {
 
-			if (Boolean.parseBoolean(data[1])) {
-				message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
-				message.setText("Success");
-				message.setMessage("The job has been successfully sent back to the server !");
+			@Override
+			public void run() {
+				String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
+
+				if (data[0].equals("push")) {
+					MessageBox message;
+
+					if (Boolean.parseBoolean(data[1])) {
+						message = new MessageBox(getShell(), SWT.ICON_INFORMATION);
+						message.setText("Success");
+						message.setMessage("The job has been successfully sent back to the server !");
+					}
+
+					else {
+						message = new MessageBox(getShell(), SWT.ERROR);
+						message.setText("Error");
+						message.setMessage("The job could not be finished !\n The server may have refused your request...");
+					}
+
+					message.open();
+				}
 			}
+		};
 
-			else {
-				message = new MessageBox(this.getShell(), SWT.ERROR);
-				message.setText("Error");
-				message.setMessage("The job could not be finished !\n The server may have refused your request...");
-			}
-
-			message.open();
-		}
+		Display.getDefault().syncExec(update);
 	}
 
 	@Override

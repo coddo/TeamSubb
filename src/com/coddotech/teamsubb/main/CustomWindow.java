@@ -1,6 +1,8 @@
 package com.coddotech.teamsubb.main;
 
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -14,7 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 
-public abstract class CustomWindow {
+public abstract class CustomWindow implements Observer {
 
 	public static final String NOTIFICATION_SEPARATOR = "#@&!#&@!";
 
@@ -122,6 +124,12 @@ public abstract class CustomWindow {
 		return connected;
 	}
 
+	@Override
+	public void update(Observable obs, Object obj) {
+		this.updateGUI(obs, obj);
+		
+	}
+
 	/*
 	 * Create the contents for this shell instance
 	 */
@@ -155,7 +163,7 @@ public abstract class CustomWindow {
 	protected void logDiposeFail(Exception ex) {
 		ActivityLogger.logException(this.getClass().getName(), "GUI dispose", ex);
 	}
-
+	
 	/**
 	 * Initializez all the components that are used in this GUI
 	 */
@@ -221,6 +229,11 @@ public abstract class CustomWindow {
 
 		}
 	}
+	
+	/**
+	 * Updates the GUI based on the way the models have changed
+	 */
+	protected abstract void updateGUI(final Observable obs, final Object obj);
 
 	/**
 	 * Dispose all the components for this class

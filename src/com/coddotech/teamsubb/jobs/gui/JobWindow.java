@@ -1,7 +1,6 @@
 package com.coddotech.teamsubb.jobs.gui;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -30,7 +29,7 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * @author Coddo
  * 
  */
-public class JobWindow extends CustomWindow implements Observer {
+public class JobWindow extends CustomWindow {
 
 	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator", "Verificator", "Encoder",
 			"Typesetter", "Manga", "Stiri", "Postator" };
@@ -330,123 +329,57 @@ public class JobWindow extends CustomWindow implements Observer {
 	}
 
 	@Override
-	public void update(Observable obs, Object obj) {
-		// the only observable that this class has is the JobManager class
+	protected void updateGUI(final Observable obs, final Object obj) {
+		Runnable update = new Runnable() {
 
-		try {
-			String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
+			@Override
+			public void run() {
+				// the only observable that this class has is the JobManager class
+				try {
+					String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
 
-			switch (data[0]) {
+					switch (data[0]) {
 
-			case "find": {
+					case "find": {
+						createJobList(obs);
 
-				this.jobsList.clearAll();
-				this.jobsList.removeAll();
+					}
+						break;
 
-				for (Job job : ((JobManager) obs).getAcceptedJobs()) {
-					TableItem item = new TableItem(this.jobsList, SWT.None);
+					case "jobinformation": {
+						updateJobInfo(data);
+					}
+						break;
 
-					item.setText(job.getName());
-					item.setData(job.getID());
+					case "end": {
+						handleEndJobResult(obs, data);
 
-					item.setBackground(JobWindow.COLOR_ACCEPTED);
+					}
+						break;
+
+					case "accept": {
+						handleAcceptJobResult(obs, data);
+
+					}
+						break;
+
+					case "cancel": {
+						handleCancelJobResult(obs, data);
+
+					}
+						break;
+
+					}
 				}
+				catch (Exception ex) {
+					ActivityLogger.logException(this.getClass().getName(), "GUI update", ex);
 
-				for (Job job : ((JobManager) obs).getJobs()) {
-					TableItem item = new TableItem(this.jobsList, SWT.None);
-
-					item.setText(job.getName());
-					item.setData(job.getID());
-
-					if (job.getIntendedTo().equals(this.tempUserInfo[0]))
-						item.setBackground(JobWindow.COLOR_IMPORTANT);
-
-					else if (job.isAcceptable(this.tempUserJobs))
-						item.setBackground(JobWindow.COLOR_ACCEPTABLE);
-				}
-			}
-				break;
-
-			case "jobinformation": {
-				this.jobType.setText(data[1]);
-				this.jobStartDate.setText(data[2]);
-				this.jobPreviousStaff.setText(data[3]);
-				this.jobIntendedTo.setText(data[4]);
-				this.jobBookedBy.setText(data[5]);
-				this.jobComments.setText(data[6]);
-
-				this.jobType.pack();
-				this.jobStartDate.pack();
-				this.jobPreviousStaff.pack();
-				this.jobIntendedTo.pack();
-				this.jobBookedBy.pack();
-			}
-				break;
-
-			case "end": {
-				MessageBox message;
-
-				if (Boolean.parseBoolean(data[1])) {
-					((JobManager) obs).findJobs();
-
-				}
-				else {
-					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-					message.setText("Error");
-					message.setMessage("There was an error while ending the job");
-
-					message.open();
 				}
 
 			}
-				break;
+		};
 
-			case "accept": {
-				MessageBox message;
-
-				if (Boolean.parseBoolean(data[1])) {
-					((JobManager) obs).findJobs();
-
-					message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
-					message.setText("Success");
-					message.setMessage("The job has been successfully accepted");
-				}
-
-				else {
-					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-					message.setText("Error");
-					message.setMessage("There was an error while accepting the job");
-				}
-
-				message.open();
-			}
-				break;
-
-			case "cancel": {
-				MessageBox message;
-
-				if (Boolean.parseBoolean(data[1])) {
-					((JobManager) obs).findJobs();
-
-				}
-
-				else {
-					message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-					message.setText("Error");
-					message.setMessage("There was an error while cancelling the job");
-
-					message.open();
-				}
-
-			}
-				break;
-
-			}
-		}
-		catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "GUI update", ex);
-
-		}
+		Display.getDefault().syncExec(update);
 
 	}
 
@@ -730,6 +663,102 @@ public class JobWindow extends CustomWindow implements Observer {
 		jobsList.addSelectionListener(controller.jobsListItemSelected);
 		jobsList.addMenuDetectListener(controller.jobsListMenuOpened);
 		jobsList.addListener(SWT.KeyDown, controller.jobListButtonPress);
+	}
+
+	private void createJobList(Observable obs) {
+		this.jobsList.clearAll();
+		this.jobsList.removeAll();
+
+		for (Job job : ((JobManager) obs).getAcceptedJobs()) {
+			TableItem item = new TableItem(this.jobsList, SWT.None);
+
+			item.setText(job.getName());
+			item.setData(job.getID());
+
+			item.setBackground(JobWindow.COLOR_ACCEPTED);
+		}
+
+		for (Job job : ((JobManager) obs).getJobs()) {
+			TableItem item = new TableItem(this.jobsList, SWT.None);
+
+			item.setText(job.getName());
+			item.setData(job.getID());
+
+			if (job.getIntendedTo().equals(this.tempUserInfo[0]))
+				item.setBackground(JobWindow.COLOR_IMPORTANT);
+
+			else if (job.isAcceptable(this.tempUserJobs))
+				item.setBackground(JobWindow.COLOR_ACCEPTABLE);
+		}
+	}
+
+	private void updateJobInfo(String[] data) {
+		this.jobType.setText(data[1]);
+		this.jobStartDate.setText(data[2]);
+		this.jobPreviousStaff.setText(data[3]);
+		this.jobIntendedTo.setText(data[4]);
+		this.jobBookedBy.setText(data[5]);
+		this.jobComments.setText(data[6]);
+
+		this.jobType.pack();
+		this.jobStartDate.pack();
+		this.jobPreviousStaff.pack();
+		this.jobIntendedTo.pack();
+		this.jobBookedBy.pack();
+	}
+
+	private void handleEndJobResult(Observable obs, String[] data) {
+		MessageBox message;
+
+		if (Boolean.parseBoolean(data[1])) {
+			((JobManager) obs).findJobs();
+
+		}
+		else {
+			message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+			message.setText("Error");
+			message.setMessage("There was an error while ending the job");
+
+			message.open();
+		}
+	}
+
+	private void handleAcceptJobResult(Observable obs, String[] data) {
+		MessageBox message;
+
+		if (Boolean.parseBoolean(data[1])) {
+			((JobManager) obs).findJobs();
+
+			message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
+			message.setText("Success");
+			message.setMessage("The job has been successfully accepted");
+		}
+
+		else {
+			message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+			message.setText("Error");
+			message.setMessage("There was an error while accepting the job");
+		}
+
+		message.open();
+	}
+
+	private void handleCancelJobResult(Observable obs, String[] data) {
+		MessageBox message;
+
+		if (Boolean.parseBoolean(data[1])) {
+			((JobManager) obs).findJobs();
+
+		}
+
+		else {
+			message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
+			message.setText("Error");
+			message.setMessage("There was an error while cancelling the job");
+
+			message.open();
+		}
+
 	}
 
 	/**

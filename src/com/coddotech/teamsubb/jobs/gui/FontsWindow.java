@@ -1,5 +1,7 @@
 package com.coddotech.teamsubb.jobs.gui;
 
+import java.util.Observable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -135,6 +137,12 @@ public class FontsWindow extends CustomWindow {
 
 			message.open();
 		}
+	}
+
+	@Override
+	protected void updateGUI(Observable obs, Object obj) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
