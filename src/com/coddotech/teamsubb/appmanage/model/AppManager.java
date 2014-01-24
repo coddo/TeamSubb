@@ -39,11 +39,11 @@ public class AppManager {
 
 				// start the job searcher timer
 				JobSearchTimer timer = JobSearchTimer.getInstance();
-				
+
 				AppSettings.getInstance().addObserver(timer);
-				
+
 				timer.startTimer();
-				
+
 				// display the gadget
 				GadgetWindow gadget = new GadgetWindow();
 				gadget.open();
@@ -59,18 +59,9 @@ public class AppManager {
 			AppManager.displayFatalErrorMessage();
 
 		}
-
-		// close the dump files
-		ActivityLogger.createLogFile();
-
-		// dispose of global resources
-		AppManager.disposeGlobalResources();
 	}
 
 	public static void exitApp() {
-		// Dispose the timer that searches for jobs
-		JobSearchTimer.getInstance().dispose();
-
 		// Close all the shells (the main shell is closed last)
 		Shell main = null;
 		for (Shell shell : Display.getCurrent().getShells()) {
@@ -82,12 +73,19 @@ public class AppManager {
 
 		main.close();
 
+		// close the dump files
+		ActivityLogger.createLogFile();
+
+		// dispose of global resources
+		AppManager.disposeGlobalResources();
+
 		ActivityLogger.logActivity(AppManager.class.getName(), "App exit");
 	}
 
 	private static void disposeGlobalResources() {
 
 		// user classes (singletons)
+		JobSearchTimer.getInstance().dispose();
 		JobManager.getInstance().dispose();
 		AppSettings.getInstance().dispose();
 
@@ -95,7 +93,13 @@ public class AppManager {
 		CustomWindow.APP_ICON.dispose();
 		CustomWindow.BOLD_FONT.dispose();
 		CustomWindow.DEFAULT_FONT.dispose();
-		Display.getCurrent().dispose();
+
+		try {
+			Display.getDefault().dispose();
+		}
+		catch (Exception ex) {
+
+		}
 	}
 
 	private static void displayFatalErrorMessage() {

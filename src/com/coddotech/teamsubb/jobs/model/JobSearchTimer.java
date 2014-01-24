@@ -5,6 +5,7 @@ import java.util.Observer;
 
 import org.eclipse.swt.widgets.Display;
 
+import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.model.AppSettings;
 
@@ -30,7 +31,15 @@ public class JobSearchTimer implements Observer {
 	public void dispose() {
 		disposed = true;
 
-		AppSettings.getInstance().deleteObserver(this);
+		try {
+			AppSettings.getInstance().deleteObserver(instance);
+			
+			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Dispose", ex);
+			
+		}
 	}
 
 	/**
