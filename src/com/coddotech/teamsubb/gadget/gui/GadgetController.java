@@ -42,14 +42,14 @@ public class GadgetController extends CustomController {
 	private AppSettingsWindow settingsWindow;
 
 	private AnimationRenderer animations;
-	
+
 	private boolean disposed = false;
 
 	// data used for moving the form around
 	private boolean move = false;
 	private int x;
 	private int y;
-	
+
 	public boolean isDisposed() {
 		return this.disposed;
 	}
@@ -72,9 +72,9 @@ public class GadgetController extends CustomController {
 	 */
 	public void dispose() {
 		try {
-			
+
 			this.disposed = true;
-			
+
 			if (jobsWindow != null)
 				if (!jobsWindow.isDisposed() && !jobsWindow.isExiting())
 					jobsWindow.close();

@@ -33,12 +33,12 @@ public class JobSearchTimer implements Observer {
 
 		try {
 			AppSettings.getInstance().deleteObserver(instance);
-			
+
 			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
 		}
 		catch (Exception ex) {
 			ActivityLogger.logException(this.getClass().getName(), "Dispose", ex);
-			
+
 		}
 	}
 

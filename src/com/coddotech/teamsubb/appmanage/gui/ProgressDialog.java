@@ -33,7 +33,7 @@ public class ProgressDialog extends CustomWindow {
 	@Override
 	protected void updateGUI(Observable obs, Object obj) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

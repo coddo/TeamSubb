@@ -141,37 +141,37 @@ public final class AppSettingsWindow extends CustomWindow {
 
 					switch (data[0]) {
 
-					case AppSettings.MESSAGE_AUTOSAVE_LOCATION: {
-						autosaveLocation.setSelection(Boolean.parseBoolean(data[1]));
+						case AppSettings.MESSAGE_AUTOSAVE_LOCATION: {
+							autosaveLocation.setSelection(Boolean.parseBoolean(data[1]));
 
-					}
-						break;
-
-					case AppSettings.MESSAGE_SEARCH_INTERVAL: {
-						searchInterval.setText(data[1]);
-
-					}
-						break;
-
-					case AppSettings.MESSAGE_SAVE: {
-						MessageBox message;
-
-						if (Boolean.parseBoolean(data[1])) {
-							message = new MessageBox(getShell(), SWT.ICON_INFORMATION);
-							message.setText("Success");
-							message.setMessage("The settings have been successfully applied !");
 						}
+							break;
 
-						else {
-							message = new MessageBox(getShell(), SWT.ICON_ERROR);
-							message.setText("Error");
-							message.setMessage("An error has been encountered while saving the changes !");
+						case AppSettings.MESSAGE_SEARCH_INTERVAL: {
+							searchInterval.setText(data[1]);
+
 						}
+							break;
 
-						message.open();
+						case AppSettings.MESSAGE_SAVE: {
+							MessageBox message;
 
-					}
-						break;
+							if (Boolean.parseBoolean(data[1])) {
+								message = new MessageBox(getShell(), SWT.ICON_INFORMATION);
+								message.setText("Success");
+								message.setMessage("The settings have been successfully applied !");
+							}
+
+							else {
+								message = new MessageBox(getShell(), SWT.ICON_ERROR);
+								message.setText("Error");
+								message.setMessage("An error has been encountered while saving the changes !");
+							}
+
+							message.open();
+
+						}
+							break;
 					}
 				}
 			};

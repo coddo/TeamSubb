@@ -114,10 +114,10 @@ public abstract class CustomWindow implements Observer {
 
 		if (!connected && displayMessage) {
 			MessageBox message = new MessageBox(Display.getCurrent().getShells()[0], SWT.ICON_ERROR);
-			
+
 			message.setMessage("A connection error has occured.\nPlease try again later...");
 			message.setText("Connection failed");
-			
+
 			message.open();
 		}
 
@@ -127,7 +127,7 @@ public abstract class CustomWindow implements Observer {
 	@Override
 	public void update(Observable obs, Object obj) {
 		this.updateGUI(obs, obj);
-		
+
 	}
 
 	/*
@@ -163,7 +163,7 @@ public abstract class CustomWindow implements Observer {
 	protected void logDiposeFail(Exception ex) {
 		ActivityLogger.logException(this.getClass().getName(), "GUI dispose", ex);
 	}
-	
+
 	/**
 	 * Initializez all the components that are used in this GUI
 	 */
@@ -229,7 +229,7 @@ public abstract class CustomWindow implements Observer {
 
 		}
 	}
-	
+
 	/**
 	 * Updates the GUI based on the way the models have changed
 	 */

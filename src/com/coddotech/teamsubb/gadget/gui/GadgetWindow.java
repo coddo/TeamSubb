@@ -29,7 +29,7 @@ public class GadgetWindow extends CustomWindow {
 
 	private GadgetController controller;
 
-	private Label imageContainer;
+	public Label imageContainer;
 
 	private TrayItem tray;
 
@@ -93,7 +93,7 @@ public class GadgetWindow extends CustomWindow {
 
 			@Override
 			public void run() {
-				
+
 				if (!controller.isDisposed()) {
 
 					if (obs instanceof AnimationRenderer) {

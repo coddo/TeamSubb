@@ -78,7 +78,7 @@ public class AppManager {
 
 		ActivityLogger.logActivity(AppManager.class.getName(), "App exit");
 		// close the dump files
-		
+
 		ActivityLogger.dumpLogStack();
 	}
 
