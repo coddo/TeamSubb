@@ -7,7 +7,6 @@ import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
-import com.coddotech.teamsubb.main.CustomWindow;
 
 public class PushJobController extends CustomController {
 
@@ -52,17 +51,10 @@ public class PushJobController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (CustomWindow.isConnected(true)) {
 
-				if (view.verifyFields()) {
-					boolean result = model.pushJob(view.getID(), view.getNextStaff(), view.getType(),
-							view.getComments());
+			if (view.verifyFields())
+				model.pushJob(view.getID(), view.getNextStaff(), view.getType(), view.getComments());
 
-					if (result)
-						view.close();
-
-				}
-			}
 		}
 
 		@Override

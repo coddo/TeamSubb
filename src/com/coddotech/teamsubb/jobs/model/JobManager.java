@@ -36,7 +36,12 @@ public class JobManager extends Observable {
 	private AppSettings settings;
 
 	// variables used in order to know when the threads are running
-	private boolean findJobsRunning = false;
+	private volatile boolean findJobsRunning = false;
+	private volatile boolean acceptJobRunning = false;
+	private volatile boolean endJobRunning = false;
+	private volatile boolean createJobRunning = false;
+	private volatile boolean cancelJobRunning = false;
+	private volatile boolean pushJobRunning = false;
 
 	private static JobManager instance = null;
 
@@ -223,26 +228,48 @@ public class JobManager extends Observable {
 	 * @param fonts
 	 *            The font files that are needed in order to finish this job
 	 */
-	public void createJob(String name, int type, String description, String nextStaff, String subFile,
-			String[] fonts) {
+	public void createJob(final String name, final int type, final String description,
+			final String nextStaff, final String subFile, final String[] fonts) {
 
-		try {
+		class CreateJob extends Thread {
 
-			boolean response = ConnectionManager.sendJobCreateRequest(settings.getUserName(), name, type,
-					description, nextStaff, subFile, fonts);
+			@Override
+			public void run() {
 
-			this.setChanged();
-			notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR + response);
+				if (!CustomWindow.isConnected(true))
+					return;
 
-			// after the job is created, start a new search in order to update the job list
-			this.findJobs();
+				createJobRunning = true;
 
-			ActivityLogger.logActivity(this.getClass().getName(), "Create job");
+				try {
 
+					boolean response = ConnectionManager.sendJobCreateRequest(settings.getUserName(), name,
+							type, description, nextStaff, subFile, fonts);
+
+					setChanged();
+					notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR + response);
+
+					// after the job is created, start a new search in order to update the job list
+					findJobs();
+
+					ActivityLogger.logActivity(this.getClass().getName(), "Create job");
+
+				}
+				catch (Exception ex) {
+					ActivityLogger.logException(this.getClass().getName(), "Create job", ex);
+
+				}
+				finally {
+					createJobRunning = false;
+
+				}
+			}
 		}
-		catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Create job", ex);
 
+		if (!createJobRunning) {
+			CreateJob create = new CreateJob();
+
+			create.start();
 		}
 	}
 
@@ -258,32 +285,56 @@ public class JobManager extends Observable {
 	 * 
 	 * @return A logical value indicating if the job was ended successfully
 	 */
-	public void endJob(int jobID) {
-		try {
+	public void endJob(final int jobID) {
 
-			boolean response = ConnectionManager.sendJobEndRequest(jobID, settings.getUserName());
+		class EndJob extends Thread {
 
-			if (response) {
-				for (int i = 0; i < jobs.size(); i++) {
-					if (jobs.get(i).getID() == jobID) {
-						jobs.get(i).dispose(true);
-						jobs.remove(i);
+			@Override
+			public void run() {
+
+				// check for an internet connection
+				if (!CustomWindow.isConnected(true))
+					return;
+
+				endJobRunning = true;
+
+				try {
+
+					boolean response = ConnectionManager.sendJobEndRequest(jobID, settings.getUserName());
+
+					if (response) {
+						for (int i = 0; i < jobs.size(); i++) {
+							if (jobs.get(i).getID() == jobID) {
+								jobs.get(i).dispose(true);
+								jobs.remove(i);
+							}
+						}
+
+						removeJob(jobID);
 					}
+
+					// notify all the observers about the change
+					setChanged();
+					notifyObservers("end" + CustomWindow.NOTIFICATION_SEPARATOR + response);
+
+					ActivityLogger.logActivity(this.getClass().getName(), "End job");
+
 				}
+				catch (Exception ex) {
+					ActivityLogger.logException(this.getClass().getName(), "End job", ex);
 
-				this.removeJob(jobID);
+				}
+				finally {
+					endJobRunning = false;
+
+				}
 			}
-
-			// notify all the observers about the change
-			this.setChanged();
-			notifyObservers("end" + CustomWindow.NOTIFICATION_SEPARATOR + response);
-
-			ActivityLogger.logActivity(this.getClass().getName(), "End job");
-
 		}
-		catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "End job", ex);
 
+		if (!endJobRunning) {
+			EndJob end = new EndJob();
+
+			end.start();
 		}
 	}
 
@@ -298,18 +349,18 @@ public class JobManager extends Observable {
 	 */
 	public void findJobs() {
 
-		class JobFinder extends Thread {
+		class FindJobs extends Thread {
 
 			String message = "normal";
 
 			@Override
 			public void run() {
 
-				findJobsRunning = true;
-
 				// check for an internet connection
 				if (!CustomWindow.isConnected(false))
 					return;
+
+				findJobsRunning = true;
 
 				try {
 
@@ -350,13 +401,12 @@ public class JobManager extends Observable {
 				}
 			}
 
-		}
-		;
+		};
 
 		if (!findJobsRunning) {
-			JobFinder finder = new JobFinder();
+			FindJobs find = new FindJobs();
 
-			finder.start();
+			find.start();
 		}
 	}
 
@@ -367,40 +417,63 @@ public class JobManager extends Observable {
 	 * 
 	 * @param jobID
 	 */
-	public void acceptJob(int jobID) {
-		try {
+	public void acceptJob(final int jobID) {
 
-			boolean response = false;
+		class AcceptJob extends Thread {
 
-			for (int i = 0; i < jobs.size(); i++) {
-				Job job = jobs.get(i);
+			@Override
+			public void run() {
 
-				if (job.getID() == jobID) {
-					response = job.accept();
+				if (!CustomWindow.isConnected(true))
+					return;
 
-					if (response) {
-						jobs.remove(job);
+				acceptJobRunning = true;
 
-						acceptedJobs.add(job);
+				try {
 
-						job.setBookedBy("Yourself");
+					boolean response = false;
 
-						this.findJobs();
+					for (int i = 0; i < jobs.size(); i++) {
+						Job job = jobs.get(i);
+
+						if (job.getID() == jobID) {
+							response = job.accept();
+
+							if (response) {
+								jobs.remove(job);
+
+								acceptedJobs.add(job);
+
+								job.setBookedBy("Yourself");
+
+								findJobs();
+							}
+
+						}
 					}
+
+					// notify all the observers about the change
+					setChanged();
+					notifyObservers("accept" + CustomWindow.NOTIFICATION_SEPARATOR + response);
+
+					ActivityLogger.logActivity(this.getClass().getName(), "Accept job");
+
+				}
+				catch (Exception ex) {
+					ActivityLogger.logException(this.getClass().getName(), "Accept job", ex);
+
+				}
+				finally {
+					acceptJobRunning = false;
 
 				}
 			}
-
-			// notify all the observers about the change
-			this.setChanged();
-			notifyObservers("accept" + CustomWindow.NOTIFICATION_SEPARATOR + response);
-
-			ActivityLogger.logActivity(this.getClass().getName(), "Accept job");
-
 		}
-		catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Accept job", ex);
 
+		if (!acceptJobRunning) {
+			AcceptJob accept = new AcceptJob();
+
+			accept.start();
 		}
 	}
 
@@ -411,36 +484,127 @@ public class JobManager extends Observable {
 	 * @param jobID
 	 *            The ID of the job to be canceled
 	 */
-	public void cancelJob(int jobID) {
-		try {
+	public void cancelJob(final int jobID) {
 
-			boolean response = false;
+		class CancelJob extends Thread {
 
-			for (int i = 0; i < acceptedJobs.size(); i++) {
-				Job job = acceptedJobs.get(i);
+			@Override
+			public void run() {
 
-				if (job.getID() == jobID) {
-					response = job.cancel();
+				if (!CustomWindow.isConnected(true))
+					return;
 
-					if (response) {
-						job.dispose(true);
+				cancelJobRunning = true;
+				try {
 
-						acceptedJobs.remove(job);
+					boolean response = false;
+
+					for (int i = 0; i < acceptedJobs.size(); i++) {
+						Job job = acceptedJobs.get(i);
+
+						if (job.getID() == jobID) {
+							response = job.cancel();
+
+							if (response) {
+								job.dispose(true);
+
+								acceptedJobs.remove(job);
+							}
+
+						}
 					}
+
+					// notify all the observers about the change
+					setChanged();
+					notifyObservers("cancel" + CustomWindow.NOTIFICATION_SEPARATOR + response);
+
+					ActivityLogger.logActivity(this.getClass().getName(), "Cancel job");
+
+				}
+				catch (Exception ex) {
+					ActivityLogger.logException(this.getClass().getName(), "Cancel job", ex);
+
+				}
+				finally {
+					cancelJobRunning = false;
 
 				}
 			}
-
-			// notify all the observers about the change
-			this.setChanged();
-			notifyObservers("cancel" + CustomWindow.NOTIFICATION_SEPARATOR + response);
-
-			ActivityLogger.logActivity(this.getClass().getName(), "Cancel job");
-
 		}
-		catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Cancel job", ex);
 
+		if (!cancelJobRunning) {
+			CancelJob cancel = new CancelJob();
+
+			cancel.start();
+		}
+	}
+
+	/**
+	 * Send all the data that has been worked on for a certains job to the server.<br>
+	 * This notifies the observers with the response that has been received from the server.
+	 * 
+	 * @param jobID
+	 *            The ID of the job to be sent back to the server
+	 */
+	public void pushJob(final int jobID, final String nextStaff, final int type, final String comments) {
+
+		class PushJob extends Thread {
+
+			@Override
+			public void run() {
+
+				if (!CustomWindow.isConnected(true))
+					return;
+
+				pushJobRunning = true;
+
+				try {
+
+					boolean response = false;
+
+					for (int i = 0; i < acceptedJobs.size(); i++) {
+						Job job = acceptedJobs.get(i);
+
+						if (job.getID() == jobID) {
+
+							job.setType(type);
+							job.setNextStaffMember(nextStaff);
+							job.setDescription(comments);
+
+							response = job.push();
+
+							if (response) {
+								job.dispose(true);
+
+								acceptedJobs.remove(job);
+
+							}
+
+						}
+					}
+
+					// notify all the observers about the change
+					setChanged();
+					notifyObservers("push" + CustomWindow.NOTIFICATION_SEPARATOR + response);
+
+					ActivityLogger.logActivity(this.getClass().getName(), "Push job");
+
+				}
+				catch (Exception ex) {
+					ActivityLogger.logException(this.getClass().getName(), "Push job", ex);
+
+				}
+				finally {
+					pushJobRunning = false;
+
+				}
+			}
+		}
+
+		if (!pushJobRunning) {
+			PushJob push = new PushJob();
+
+			push.start();
 		}
 	}
 
@@ -450,7 +614,8 @@ public class JobManager extends Observable {
 	 * @param jobID
 	 *            The ID of the job (integer value)
 	 */
-	public void removeJob(int jobID) {
+	public void removeJob(final int jobID) {
+
 		try {
 
 			for (int i = 0; i < acceptedJobs.size(); i++) {
@@ -477,55 +642,6 @@ public class JobManager extends Observable {
 		catch (Exception ex) {
 			ActivityLogger.logException(this.getClass().getName(), "Remove job", ex);
 
-		}
-	}
-
-	/**
-	 * Send all the data that has been worked on for a certains job to the server.<br>
-	 * This notifies the observers with the response that has been received from the server.
-	 * 
-	 * @param jobID
-	 *            The ID of the job to be sent back to the server
-	 */
-	public boolean pushJob(int jobID, String nextStaff, int type, String comments) {
-		try {
-
-			boolean response = false;
-
-			for (int i = 0; i < acceptedJobs.size(); i++) {
-				Job job = acceptedJobs.get(i);
-
-				if (job.getID() == jobID) {
-
-					job.setType(type);
-					job.setNextStaffMember(nextStaff);
-					job.setDescription(comments);
-
-					response = job.push();
-
-					if (response) {
-						job.dispose(true);
-
-						acceptedJobs.remove(job);
-
-					}
-
-				}
-			}
-
-			// notify all the observers about the change
-			this.setChanged();
-			notifyObservers("push" + CustomWindow.NOTIFICATION_SEPARATOR + response);
-
-			ActivityLogger.logActivity(this.getClass().getName(), "Push job");
-
-			return response;
-
-		}
-		catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Push job", ex);
-
-			return false;
 		}
 	}
 

@@ -118,20 +118,21 @@ public class AnimationRenderer extends Observable implements Observer {
 	 * Start animating the gadget
 	 */
 	public void startAnimations() {
-		Display.getCurrent().timerExec(this.imageInterval, animationTimer);
+		AnimationTimer timer = new AnimationTimer();
+
+		timer.start();
 	}
 
 	/**
 	 * Timer used for changing the resources between them at set intervals in order to perform the
 	 * animation for the gadget
 	 */
-	private Runnable animationTimer = new Runnable() {
+	private class AnimationTimer extends Thread {
 
 		@Override
 		public void run() {
 
-			if (!disposed) {
-
+			while (!disposed) {
 				// mark this model as being changed
 				setChanged();
 
@@ -139,38 +140,46 @@ public class AnimationRenderer extends Observable implements Observer {
 				// type currently selected
 				switch (type) {
 
-				case AnimationRenderer.TYPE_IDLE: {
-					if (counter == idle.length)
-						counter = 0;
+					case AnimationRenderer.TYPE_IDLE: {
+						if (counter == idle.length)
+							counter = 0;
 
-					notifyObservers(idle[counter]);
-				}
-					break;
+						notifyObservers(idle[counter]);
+					}
+						break;
 
-				case AnimationRenderer.TYPE_LOW_PRIORITY: {
-					if (counter == lowPriority.length)
-						counter = 0;
+					case AnimationRenderer.TYPE_LOW_PRIORITY: {
+						if (counter == lowPriority.length)
+							counter = 0;
 
-					notifyObservers(lowPriority[counter]);
-				}
-					break;
+						notifyObservers(lowPriority[counter]);
+					}
+						break;
 
-				case AnimationRenderer.TYPE_HIGH_PRIORITY: {
-					if (counter == highPriority.length)
-						counter = 0;
+					case AnimationRenderer.TYPE_HIGH_PRIORITY: {
+						if (counter == highPriority.length)
+							counter = 0;
 
-					notifyObservers(highPriority[counter]);
-				}
-					break;
+						notifyObservers(highPriority[counter]);
+					}
+						break;
 				}
 
 				counter++;
 
-				// recursive method calling in order to mimic a real timer
-				Display.getCurrent().timerExec(imageInterval, this);
+				try {
+
+					Thread.sleep(imageInterval);
+
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+
+				}
 			}
+
 		}
-	};
+	}
 
 	@Override
 	public void update(Observable obs, Object obj) {
@@ -183,20 +192,20 @@ public class AnimationRenderer extends Observable implements Observer {
 
 			switch (fragments[fragments.length - 1]) {
 
-			case "normal": {
-				this.setAnimationType(TYPE_IDLE);
-			}
-				break;
+				case "normal": {
+					this.setAnimationType(TYPE_IDLE);
+				}
+					break;
 
-			case "acceptable": {
-				this.setAnimationType(TYPE_LOW_PRIORITY);
-			}
-				break;
+				case "acceptable": {
+					this.setAnimationType(TYPE_LOW_PRIORITY);
+				}
+					break;
 
-			case "important": {
-				this.setAnimationType(AnimationRenderer.TYPE_HIGH_PRIORITY);
-			}
-				break;
+				case "important": {
+					this.setAnimationType(AnimationRenderer.TYPE_HIGH_PRIORITY);
+				}
+					break;
 
 			}
 		}

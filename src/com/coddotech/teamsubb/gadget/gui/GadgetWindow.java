@@ -93,6 +93,7 @@ public class GadgetWindow extends CustomWindow {
 
 			@Override
 			public void run() {
+				
 				if (!controller.isDisposed()) {
 
 					if (obs instanceof AnimationRenderer) {

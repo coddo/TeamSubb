@@ -171,15 +171,21 @@ public class PushJobWindow extends CustomWindow {
 						message = new MessageBox(getShell(), SWT.ICON_INFORMATION);
 						message.setText("Success");
 						message.setMessage("The job has been successfully sent back to the server !");
+
+						message.open();
+
+						// close the window on successful push
+						close();
 					}
 
 					else {
 						message = new MessageBox(getShell(), SWT.ERROR);
 						message.setText("Error");
 						message.setMessage("The job could not be finished !\n The server may have refused your request...");
+
+						message.open();
 					}
 
-					message.open();
 				}
 			}
 		};

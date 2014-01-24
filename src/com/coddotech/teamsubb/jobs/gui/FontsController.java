@@ -125,12 +125,14 @@ public class FontsController extends CustomController {
 				fontFiles[i] = new File(job.getDirectoryPath() + File.separator + source.getName());
 
 				try {
+
 					if (!fontFiles[i].exists())
 						FileUtils.copyFile(source, fontFiles[i]);
 
 				}
 				catch (Exception ex) {
 					ok = false;
+
 				}
 			}
 
@@ -196,10 +198,12 @@ public class FontsController extends CustomController {
 			view.setJobName(job.getName());
 
 			if (job.getAddedFonts() != null) {
+
 				String[] fonts = new String[job.getAddedFonts().length];
 
 				for (int i = 0; i < fonts.length; i++) {
 					fonts[i] = job.getAddedFonts()[i].getAbsolutePath();
+
 				}
 
 				view.appendFonts(fonts);

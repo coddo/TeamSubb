@@ -14,7 +14,6 @@ import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
-import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.gui.AppSettingsWindow;
 
 /**
@@ -155,9 +154,8 @@ public class JobController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (CustomWindow.isConnected(true)) {
-				model.findJobs();
-			}
+
+			model.findJobs();
 
 		}
 
@@ -176,9 +174,8 @@ public class JobController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (CustomWindow.isConnected(true)) {
-				model.acceptJob(view.getSelectedJobID());
-			}
+
+			model.acceptJob(view.getSelectedJobID());
 
 		}
 
@@ -197,9 +194,8 @@ public class JobController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (CustomWindow.isConnected(true)) {
-				model.cancelJob(view.getSelectedJobID());
-			}
+
+			model.cancelJob(view.getSelectedJobID());
 
 		}
 
@@ -218,13 +214,11 @@ public class JobController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (CustomWindow.isConnected(true)) {
 
-				if (ConnectionManager.sendJobForceCancelRequest(view.getSelectedJobID(), view.getUserName())) {
+			if (ConnectionManager.sendJobForceCancelRequest(view.getSelectedJobID(), view.getUserName())) {
 
-					model.removeJob(view.getSelectedJobID());
-					model.findJobs();
-				}
+				model.removeJob(view.getSelectedJobID());
+				model.findJobs();
 			}
 
 		}
@@ -269,11 +263,9 @@ public class JobController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			if (CustomWindow.isConnected(true)) {
-				model.endJob(view.getSelectedJobID());
+			model.endJob(view.getSelectedJobID());
 
-				model.findJobs();
-			}
+			model.findJobs();
 
 		}
 
