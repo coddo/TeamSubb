@@ -49,7 +49,7 @@ public class CreateJobWindow extends CustomWindow {
 	 * Class constructor
 	 */
 	public CreateJobWindow() {
-		this.setShell(new Shell(Display.getCurrent(), SWT.SHELL_TRIM));
+		this.setShell(new Shell(Display.getDefault(), SWT.SHELL_TRIM));
 
 		this.initializeComponents();
 	}

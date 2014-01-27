@@ -11,7 +11,7 @@ import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.jobs.model.JobSearchTimer;
 import com.coddotech.teamsubb.main.CustomWindow;
-import com.coddotech.teamsubb.settings.model.AppSettings;
+import com.coddotech.teamsubb.settings.model.Settings;
 
 public class AppManager {
 
@@ -40,14 +40,12 @@ public class AppManager {
 				// start the job searcher timer
 				JobSearchTimer timer = JobSearchTimer.getInstance();
 
-				AppSettings.getInstance().addObserver(timer);
+				Settings.getInstance().addObserver(timer);
 
 				timer.startTimer();
 
-				// display the gadget
-				GadgetWindow gadget = new GadgetWindow();
+				final GadgetWindow gadget = new GadgetWindow();
 				gadget.open();
-
 			}
 
 		}
@@ -64,14 +62,15 @@ public class AppManager {
 	public static void exitApp() {
 		// Close all the shells (the main shell is closed last)
 		Shell main = null;
-		for (Shell shell : Display.getCurrent().getShells()) {
+		for (Shell shell : Display.getDefault().getShells()) {
 			if (shell.getText().equals("Gadget"))
 				main = shell;
 			else
 				shell.close();
 		}
 
-		main.close();
+		// main.close();
+		test(main);
 
 		// dispose of global resources
 		AppManager.disposeGlobalResources();
@@ -82,12 +81,26 @@ public class AppManager {
 		ActivityLogger.dumpLogStack();
 	}
 
+	public static void test(final Shell main) {
+
+		Runnable close = new Runnable() {
+
+			@Override
+			public void run() {
+				main.close();
+
+			}
+		};
+
+		Display.getDefault().syncExec(close);
+	}
+
 	private static void disposeGlobalResources() {
 
 		// user classes (singletons)
 		JobSearchTimer.getInstance().dispose();
 		JobManager.getInstance().dispose();
-		AppSettings.getInstance().dispose();
+		Settings.getInstance().dispose();
 
 		// resources
 		CustomWindow.APP_ICON.dispose();
@@ -103,7 +116,7 @@ public class AppManager {
 	}
 
 	private static void displayFatalErrorMessage() {
-		Shell shell = new Shell(Display.getCurrent(), SWT.None);
+		Shell shell = new Shell(Display.getDefault(), SWT.None);
 
 		MessageBox message = new MessageBox(shell, SWT.ICON_ERROR);
 		message.setMessage("A FATAL ERROR has occured and the app has stopped working !");

@@ -27,7 +27,7 @@ public class ApplicationInformation extends CustomWindow {
 	private Label copyWright;
 
 	public ApplicationInformation() {
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM));
+		this.setShell(new Shell(Display.getDefault(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM));
 
 		this.initializeComponents();
 	}
@@ -60,7 +60,7 @@ public class ApplicationInformation extends CustomWindow {
 
 	@Override
 	protected void performInitializations() {
-		font = new Font(Display.getCurrent(), "Calibri", 15, SWT.BOLD);
+		font = new Font(Display.getDefault(), "Calibri", 15, SWT.BOLD);
 
 		applicationName = new Label(this.getShell(), SWT.None);
 		type = new Label(this.getShell(), SWT.None);
@@ -94,7 +94,7 @@ public class ApplicationInformation extends CustomWindow {
 
 		copyWright.setFont(CustomWindow.DEFAULT_FONT);
 		copyWright.setLocation(10, 130);
-		copyWright.setText("Copywright: © CoddoTechnologies 2014");
+		copyWright.setText("Copyright: © CoddoTechnologies 2014");
 		copyWright.pack();
 	}
 

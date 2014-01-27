@@ -6,12 +6,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.main.CustomController;
-import com.coddotech.teamsubb.settings.model.AppSettings;
+import com.coddotech.teamsubb.settings.model.Settings;
 
-public class AppSettingsController extends CustomController {
+public class SettingsController extends CustomController {
 
-	private AppSettingsWindow view;
-	private AppSettings model;
+	private SettingsWindow view;
+	private Settings model;
 
 	/**
 	 * The constructor for this view controller class
@@ -19,9 +19,9 @@ public class AppSettingsController extends CustomController {
 	 * @param view
 	 *            The view which uses this controller
 	 */
-	public AppSettingsController(AppSettingsWindow view) {
+	public SettingsController(SettingsWindow view) {
 		this.view = view;
-		model = AppSettings.getInstance();
+		model = Settings.getInstance();
 		model.addObserver(view);
 	}
 

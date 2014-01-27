@@ -48,7 +48,7 @@ public class PushJobWindow extends CustomWindow {
 	public PushJobWindow(Job job) {
 		this.job = job;
 
-		this.setShell(new Shell(Display.getCurrent(), SWT.SHELL_TRIM));
+		this.setShell(new Shell(Display.getDefault(), SWT.SHELL_TRIM));
 
 		this.initializeComponents();
 	}

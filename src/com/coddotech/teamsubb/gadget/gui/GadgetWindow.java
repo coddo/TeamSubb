@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.TrayItem;
 
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
 import com.coddotech.teamsubb.main.CustomWindow;
-import com.coddotech.teamsubb.settings.model.AppSettings;
+import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
  * A window similar to a gadget that stays stationary on the workspace of the
@@ -48,7 +48,7 @@ public class GadgetWindow extends CustomWindow {
 	public GadgetWindow() {
 		super();
 
-		this.setShell(new Shell(Display.getCurrent(), SWT.NO_TRIM | SWT.ON_TOP));
+		this.setShell(new Shell(Display.getDefault(), SWT.NO_TRIM | SWT.ON_TOP));
 
 		this.initializeComponents();
 	}
@@ -100,11 +100,11 @@ public class GadgetWindow extends CustomWindow {
 						imageContainer.setBackgroundImage((Image) obj);
 					}
 
-					else if (obs instanceof AppSettings) {
+					else if (obs instanceof Settings) {
 
 						String[] data = ((String) obj).split(CustomWindow.NOTIFICATION_SEPARATOR);
 
-						if (data[0].equals(AppSettings.MESSAGE_LOCATION) && first) {
+						if (data[0].equals(Settings.MESSAGE_LOCATION) && first) {
 							int x = Integer.parseInt(data[1].split(",")[0]);
 							int y = Integer.parseInt(data[1].split(",")[1]);
 
@@ -129,7 +129,7 @@ public class GadgetWindow extends CustomWindow {
 
 		imageContainer = new Label(getShell(), SWT.NO_TRIM);
 
-		tray = new TrayItem(Display.getCurrent().getSystemTray(), SWT.NONE);
+		tray = new TrayItem(Display.getDefault().getSystemTray(), SWT.NONE);
 
 		trayMenu = new Menu(this.getShell(), SWT.POP_UP);
 		openJobs = new MenuItem(trayMenu, SWT.PUSH);

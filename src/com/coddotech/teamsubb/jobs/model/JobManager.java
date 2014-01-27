@@ -12,7 +12,7 @@ import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.appmanage.model.AppManager;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.main.CustomWindow;
-import com.coddotech.teamsubb.settings.model.AppSettings;
+import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
  * Class used for realizing the communication between this client and the target
@@ -33,7 +33,7 @@ public class JobManager extends Observable {
 	private List<Job> jobs;
 	private List<Job> acceptedJobs;
 
-	private AppSettings settings;
+	private Settings settings;
 
 	// variables used in order to know when the threads are running
 	private volatile boolean findJobsRunning = false;
@@ -58,7 +58,7 @@ public class JobManager extends Observable {
 		jobs = new ArrayList<Job>();
 		acceptedJobs = new ArrayList<Job>();
 
-		settings = AppSettings.getInstance();
+		settings = Settings.getInstance();
 
 		initializeWorkingDirectory();
 
@@ -304,10 +304,14 @@ public class JobManager extends Observable {
 
 					if (response) {
 						for (int i = 0; i < jobs.size(); i++) {
+
 							if (jobs.get(i).getID() == jobID) {
+
 								jobs.get(i).dispose(true);
+
 								jobs.remove(i);
 							}
+
 						}
 
 						removeJob(jobID);
@@ -360,6 +364,20 @@ public class JobManager extends Observable {
 				if (!CustomWindow.isConnected(false))
 					return;
 
+				boolean mayRun = !findJobsRunning && !acceptJobRunning && !endJobRunning && !createJobRunning
+						&& !cancelJobRunning && !pushJobRunning;
+
+				// wait for other threads to complete
+				while (!mayRun) {
+					try {
+						Thread.sleep(100);
+					}
+					catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
 				findJobsRunning = true;
 
 				try {
@@ -403,11 +421,8 @@ public class JobManager extends Observable {
 
 		};
 
-		if (!findJobsRunning) {
-			FindJobs find = new FindJobs();
-
-			find.start();
-		}
+		FindJobs find = new FindJobs();
+		find.start();
 	}
 
 	/**

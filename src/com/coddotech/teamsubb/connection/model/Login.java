@@ -4,7 +4,7 @@ import java.util.Observable;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
-import com.coddotech.teamsubb.settings.model.AppSettings;
+import com.coddotech.teamsubb.settings.model.Settings;
 
 public class Login extends Observable {
 
@@ -30,7 +30,7 @@ public class Login extends Observable {
 			ActivityLogger.logActivity(this.getClass().getName(), "User login");
 
 			if (Login.loginSuccess = Boolean.parseBoolean(result[0])) {
-				AppSettings set = AppSettings.getInstance();
+				Settings set = Settings.getInstance();
 
 				set.setUserInfo(Login.getUserInfo(result));
 

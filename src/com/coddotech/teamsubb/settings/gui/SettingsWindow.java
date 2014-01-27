@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.main.CustomWindow;
-import com.coddotech.teamsubb.settings.model.AppSettings;
+import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
  * This class represents the GUI wrapped around the Settings class and is solely
@@ -22,7 +22,7 @@ import com.coddotech.teamsubb.settings.model.AppSettings;
  * @author Coddo
  * 
  */
-public final class AppSettingsWindow extends CustomWindow {
+public final class SettingsWindow extends CustomWindow {
 
 	private Button cancel;
 	private Button apply;
@@ -30,16 +30,16 @@ public final class AppSettingsWindow extends CustomWindow {
 	private Label searchIntervalLabel;
 	private Text searchInterval;
 
-	private AppSettingsController controller;
+	private SettingsController controller;
 
 	/**
 	 * Class constructor
 	 */
-	public AppSettingsWindow() {
+	public SettingsWindow() {
 		super();
 
 		// make the window a modal one
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM));
+		this.setShell(new Shell(Display.getDefault(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM));
 
 		this.initializeComponents();
 	}
@@ -141,19 +141,19 @@ public final class AppSettingsWindow extends CustomWindow {
 
 					switch (data[0]) {
 
-						case AppSettings.MESSAGE_AUTOSAVE_LOCATION: {
+						case Settings.MESSAGE_AUTOSAVE_LOCATION: {
 							autosaveLocation.setSelection(Boolean.parseBoolean(data[1]));
 
 						}
 							break;
 
-						case AppSettings.MESSAGE_SEARCH_INTERVAL: {
+						case Settings.MESSAGE_SEARCH_INTERVAL: {
 							searchInterval.setText(data[1]);
 
 						}
 							break;
 
-						case AppSettings.MESSAGE_SAVE: {
+						case Settings.MESSAGE_SAVE: {
 							MessageBox message;
 
 							if (Boolean.parseBoolean(data[1])) {
@@ -187,7 +187,7 @@ public final class AppSettingsWindow extends CustomWindow {
 
 	@Override
 	protected void performInitializations() {
-		controller = new AppSettingsController(this);
+		controller = new SettingsController(this);
 
 		cancel = new Button(this.getShell(), SWT.PUSH);
 		apply = new Button(this.getShell(), SWT.PUSH);

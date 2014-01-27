@@ -271,7 +271,7 @@ public class AnimationRenderer extends Observable implements Observer {
 			int k = 0;
 			for (String img : idleFolder.list(filter)) {
 
-				idle[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_IDLE
+				idle[k] = resizeImage(new Image(Display.getDefault(), AnimationRenderer.DIR_IDLE
 						+ File.separator + img), size, size);
 
 				k++;
@@ -281,7 +281,7 @@ public class AnimationRenderer extends Observable implements Observer {
 			k = 0;
 			for (String img : lowFolder.list(filter)) {
 
-				lowPriority[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_LOW
+				lowPriority[k] = resizeImage(new Image(Display.getDefault(), AnimationRenderer.DIR_LOW
 						+ File.separator + img), size, size);
 				k++;
 			}
@@ -290,7 +290,7 @@ public class AnimationRenderer extends Observable implements Observer {
 			k = 0;
 			for (String img : highFolder.list(filter)) {
 
-				highPriority[k] = resizeImage(new Image(Display.getCurrent(), AnimationRenderer.DIR_HIGH
+				highPriority[k] = resizeImage(new Image(Display.getDefault(), AnimationRenderer.DIR_HIGH
 						+ File.separator + img), size, size);
 				k++;
 			}

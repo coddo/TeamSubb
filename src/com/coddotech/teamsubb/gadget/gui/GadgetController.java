@@ -21,8 +21,8 @@ import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
-import com.coddotech.teamsubb.settings.gui.AppSettingsWindow;
-import com.coddotech.teamsubb.settings.model.AppSettings;
+import com.coddotech.teamsubb.settings.gui.SettingsWindow;
+import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
  * Controller class for the GadgetWindow.<br>
@@ -38,8 +38,8 @@ public class GadgetController extends CustomController {
 	private JobManager jobs;
 	private JobWindow jobsWindow;
 
-	private AppSettings settings;
-	private AppSettingsWindow settingsWindow;
+	private Settings settings;
+	private SettingsWindow settingsWindow;
 
 	private AnimationRenderer animations;
 
@@ -304,7 +304,7 @@ public class GadgetController extends CustomController {
 	};
 
 	private void openJobsWindow() {
-		AppSettings set = AppSettings.getInstance();
+		Settings set = Settings.getInstance();
 
 		try {
 
@@ -330,7 +330,7 @@ public class GadgetController extends CustomController {
 	}
 
 	private void openSettingsWindow() {
-		settingsWindow = new AppSettingsWindow();
+		settingsWindow = new SettingsWindow();
 
 		settingsWindow.open();
 
@@ -372,7 +372,7 @@ public class GadgetController extends CustomController {
 	private void initializeController() {
 		// create the models
 		jobs = JobManager.getInstance();
-		settings = AppSettings.getInstance();
+		settings = Settings.getInstance();
 		animations = new AnimationRenderer();
 
 		// set the observers for the models

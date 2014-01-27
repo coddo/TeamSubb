@@ -20,10 +20,10 @@ public abstract class CustomWindow implements Observer {
 
 	public static final String NOTIFICATION_SEPARATOR = "#@&!#&@!";
 
-	public static final Font DEFAULT_FONT = new Font(Display.getCurrent(), "Calibri", 12, SWT.NORMAL);
-	public static final Font BOLD_FONT = new Font(Display.getCurrent(), "Calibri", 12, SWT.BOLD);
+	public static final Font DEFAULT_FONT = new Font(Display.getDefault(), "Calibri", 12, SWT.NORMAL);
+	public static final Font BOLD_FONT = new Font(Display.getDefault(), "Calibri", 12, SWT.BOLD);
 
-	public static final Image APP_ICON = new Image(Display.getCurrent(), System.getProperty("user.dir")
+	public static final Image APP_ICON = new Image(Display.getDefault(), System.getProperty("user.dir")
 			+ File.separator + "resources" + File.separator + "icon.png");
 
 	private Shell shell;
@@ -80,8 +80,8 @@ public abstract class CustomWindow implements Observer {
 
 		while (!shell.isDisposed()) {
 
-			if (!Display.getCurrent().readAndDispatch())
-				Display.getCurrent().sleep();
+			if (!Display.getDefault().readAndDispatch())
+				Display.getDefault().sleep();
 
 		}
 	}
@@ -99,8 +99,8 @@ public abstract class CustomWindow implements Observer {
 	 * Position the window at the center of the desktop
 	 */
 	public void placeToCenter() {
-		int x = Display.getCurrent().getMonitors()[0].getClientArea().width / 2;
-		int y = Display.getCurrent().getMonitors()[0].getClientArea().height / 2;
+		int x = Display.getDefault().getMonitors()[0].getClientArea().width / 2;
+		int y = Display.getDefault().getMonitors()[0].getClientArea().height / 2;
 
 		shell.setLocation(x - getShell().getSize().x / 2, y - getShell().getSize().y / 2);
 	}
@@ -113,7 +113,7 @@ public abstract class CustomWindow implements Observer {
 		boolean connected = ConnectionManager.isConnected();
 
 		if (!connected && displayMessage) {
-			MessageBox message = new MessageBox(Display.getCurrent().getShells()[0], SWT.ICON_ERROR);
+			MessageBox message = new MessageBox(Display.getDefault().getShells()[0], SWT.ICON_ERROR);
 
 			message.setMessage("A connection error has occured.\nPlease try again later...");
 			message.setText("Connection failed");
@@ -136,7 +136,7 @@ public abstract class CustomWindow implements Observer {
 	private void createShell() {
 
 		// Prevent the window from being resized
-		this.shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM ^ SWT.RESIZE ^ SWT.DIALOG_TRIM);
+		this.shell = new Shell(Display.getDefault(), SWT.SHELL_TRIM ^ SWT.RESIZE ^ SWT.DIALOG_TRIM);
 
 		this.shell.addListener(SWT.Close, this.disposeListener);
 	}

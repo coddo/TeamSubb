@@ -28,7 +28,7 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * @author Coddo
  * 
  */
-public final class AppSettings extends Observable {
+public final class Settings extends Observable {
 
 	/*
 	 * Defautl values for each all the settings
@@ -62,21 +62,21 @@ public final class AppSettings extends Observable {
 	private DocumentBuilder dBuilder;
 	private Document settingsFile;
 
-	private static AppSettings instance = null;
+	private static Settings instance = null;
 
 	/**
 	 * Class constructor
 	 */
-	private AppSettings() {
+	private Settings() {
 		createXMLComponents();
 	}
 
 	/**
 	 * Get the existing instance for this class
 	 */
-	public static AppSettings getInstance() {
+	public static Settings getInstance() {
 		if (instance == null)
-			instance = new AppSettings();
+			instance = new Settings();
 
 		return instance;
 	}
@@ -167,7 +167,7 @@ public final class AppSettings extends Observable {
 	}
 
 	public String getUserName() {
-		return AppSettings.getInstance().getUserInfo()[0];
+		return Settings.getInstance().getUserInfo()[0];
 
 	}
 
@@ -180,19 +180,19 @@ public final class AppSettings extends Observable {
 	 */
 	public void restoreDefaultSettings() {
 		// gadget position
-		this.gadgetLocation = AppSettings.DEFAULT_LOCATION;
+		this.gadgetLocation = Settings.DEFAULT_LOCATION;
 
 		// gadget autosave position
-		this.gadgetAutosaveLocation = AppSettings.DEFAULT_AUTOSAVE_LOCATION;
+		this.gadgetAutosaveLocation = Settings.DEFAULT_AUTOSAVE_LOCATION;
 
 		// job search interval
-		this.searchInterval = AppSettings.DEFAULT_SEARCH_INTERVAL;
+		this.searchInterval = Settings.DEFAULT_SEARCH_INTERVAL;
 
 		// user jobs
-		this.userJobs = AppSettings.DEFAULT_USER_JOBS;
+		this.userJobs = Settings.DEFAULT_USER_JOBS;
 
 		// user info
-		this.userInfo = AppSettings.DEFAULT_USER_INFO;
+		this.userInfo = Settings.DEFAULT_USER_INFO;
 
 		// notify the observers about this
 		notifyCompleteSettings();
@@ -217,14 +217,14 @@ public final class AppSettings extends Observable {
 			transformer.transform(input, output);
 
 			this.setChanged();
-			notifyObservers(AppSettings.MESSAGE_SAVE + CustomWindow.NOTIFICATION_SEPARATOR + true);
+			notifyObservers(Settings.MESSAGE_SAVE + CustomWindow.NOTIFICATION_SEPARATOR + true);
 
 			ActivityLogger.logActivity(this.getClass().getName(), "Commit changes to file");
 
 		}
 		catch (Exception ex) {
 			this.setChanged();
-			notifyObservers(AppSettings.MESSAGE_SAVE + CustomWindow.NOTIFICATION_SEPARATOR + false);
+			notifyObservers(Settings.MESSAGE_SAVE + CustomWindow.NOTIFICATION_SEPARATOR + false);
 
 			ActivityLogger.logException(this.getClass().getName(), "Commit changes to file", ex);
 		}
@@ -325,7 +325,7 @@ public final class AppSettings extends Observable {
 		}
 
 		catch (Exception ex) {
-			this.gadgetAutosaveLocation = AppSettings.DEFAULT_AUTOSAVE_LOCATION;
+			this.gadgetAutosaveLocation = Settings.DEFAULT_AUTOSAVE_LOCATION;
 
 		}
 	}
@@ -342,7 +342,7 @@ public final class AppSettings extends Observable {
 
 		}
 		catch (Exception ex) {
-			this.searchInterval = AppSettings.DEFAULT_SEARCH_INTERVAL;
+			this.searchInterval = Settings.DEFAULT_SEARCH_INTERVAL;
 
 		}
 	}
@@ -353,15 +353,15 @@ public final class AppSettings extends Observable {
 	 */
 	private void notifyCompleteSettings() {
 		this.setChanged();
-		notifyObservers(AppSettings.MESSAGE_AUTOSAVE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR
+		notifyObservers(Settings.MESSAGE_AUTOSAVE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR
 				+ this.gadgetAutosaveLocation);
 
 		this.setChanged();
-		notifyObservers(AppSettings.MESSAGE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR
+		notifyObservers(Settings.MESSAGE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR
 				+ this.gadgetLocation.x + "," + gadgetLocation.y);
 
 		this.setChanged();
-		notifyObservers(AppSettings.MESSAGE_SEARCH_INTERVAL + CustomWindow.NOTIFICATION_SEPARATOR
+		notifyObservers(Settings.MESSAGE_SEARCH_INTERVAL + CustomWindow.NOTIFICATION_SEPARATOR
 				+ this.searchInterval);
 	}
 

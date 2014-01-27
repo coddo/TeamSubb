@@ -34,9 +34,9 @@ public class JobWindow extends CustomWindow {
 	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator", "Verificator", "Encoder",
 			"Typesetter", "Manga", "Stiri", "Postator" };
 
-	private static final Color COLOR_ACCEPTED = Display.getCurrent().getSystemColor(SWT.COLOR_GREEN);
-	private static final Color COLOR_ACCEPTABLE = Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW);
-	private static final Color COLOR_IMPORTANT = Display.getCurrent().getSystemColor(SWT.COLOR_MAGENTA);
+	private static final Color COLOR_ACCEPTED = Display.getDefault().getSystemColor(SWT.COLOR_GREEN);
+	private static final Color COLOR_ACCEPTABLE = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
+	private static final Color COLOR_IMPORTANT = Display.getDefault().getSystemColor(SWT.COLOR_MAGENTA);
 
 	// auxiliary data
 	private String[] tempUserInfo;
@@ -125,7 +125,7 @@ public class JobWindow extends CustomWindow {
 	 */
 	public JobWindow(String[] userInfo, String[] userJobs) {
 		super();
-		this.setShell(new Shell(Display.getCurrent(), SWT.SHELL_TRIM));
+		this.setShell(new Shell(Display.getDefault(), SWT.SHELL_TRIM));
 
 		tempUserInfo = userInfo;
 		tempUserJobs = userJobs;

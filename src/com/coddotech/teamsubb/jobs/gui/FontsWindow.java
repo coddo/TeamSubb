@@ -32,7 +32,7 @@ public class FontsWindow extends CustomWindow {
 	private Button cancel;
 
 	public FontsWindow(Job job) {
-		this.setShell(new Shell(Display.getCurrent(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM));
+		this.setShell(new Shell(Display.getDefault(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM));
 
 		this.initializeComponents();
 
