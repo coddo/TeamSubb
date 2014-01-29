@@ -57,7 +57,7 @@ public final class Settings extends Observable {
 	private int searchInterval;
 	private String[] userInfo;
 	private boolean[] userJobs;
-
+	
 	private DocumentBuilderFactory dbFactory;
 	private DocumentBuilder dBuilder;
 	private Document settingsFile;

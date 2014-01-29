@@ -29,6 +29,9 @@ public final class SettingsWindow extends CustomWindow {
 	private Button autosaveLocation;
 	private Label searchIntervalLabel;
 	private Text searchInterval;
+	private Button restoreDefaults;
+
+	private boolean changed = false;
 
 	private SettingsController controller;
 
@@ -54,19 +57,16 @@ public final class SettingsWindow extends CustomWindow {
 
 			// GUI objects
 			apply.dispose();
-			apply = null;
 
 			cancel.dispose();
-			cancel = null;
+
+			restoreDefaults.dispose();
 
 			autosaveLocation.dispose();
-			autosaveLocation = null;
 
 			searchIntervalLabel.dispose();
-			searchIntervalLabel = null;
 
 			searchInterval.dispose();
-			searchInterval = null;
 
 			this.logDispose();
 
@@ -93,6 +93,22 @@ public final class SettingsWindow extends CustomWindow {
 	 */
 	public int getSearchInterval() {
 		return Integer.parseInt(this.searchInterval.getText());
+	}
+
+	/**
+	 * Get the value indicating whether the settings have been altered
+	 * 
+	 * @return A logical value
+	 */
+	public boolean isChanged() {
+		return this.changed;
+	}
+
+	/**
+	 * Mark the settings as having been changed
+	 */
+	public void setAsChanged(boolean value) {
+		this.changed = value;
 	}
 
 	/**
@@ -127,6 +143,20 @@ public final class SettingsWindow extends CustomWindow {
 
 			return false;
 		}
+	}
+
+	/**
+	 * Display a message asking the user whether to save all the changes
+	 * 
+	 * @return A Logical value indicating if the user has pressed YES(true) or NO(false)
+	 */
+	public boolean displaySaveChangesQBox() {
+		MessageBox message = new MessageBox(this.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+
+		message.setText("Unsaved changes");
+		message.setMessage("The are unsaved changes. Do you want to save them now ?");
+
+		return (message.open() == SWT.YES);
 	}
 
 	@Override
@@ -190,9 +220,15 @@ public final class SettingsWindow extends CustomWindow {
 		controller = new SettingsController(this);
 
 		cancel = new Button(this.getShell(), SWT.PUSH);
+
 		apply = new Button(this.getShell(), SWT.PUSH);
+
+		restoreDefaults = new Button(this.getShell(), SWT.PUSH);
+
 		autosaveLocation = new Button(this.getShell(), SWT.CHECK);
+
 		searchIntervalLabel = new Label(this.getShell(), SWT.None);
+
 		searchInterval = new Text(this.getShell(), SWT.BORDER);
 	}
 
@@ -209,13 +245,17 @@ public final class SettingsWindow extends CustomWindow {
 		searchInterval.setSize(67, 20);
 		searchInterval.setLocation(175, 38);
 
-		cancel.setText("Cancel");
-		cancel.setLocation(195, 70);
+		cancel.setText("Close");
+		cancel.setLocation(200, 70);
 		cancel.pack();
 
 		apply.setText("Apply");
 		apply.setLocation(10, 70);
 		apply.pack();
+
+		restoreDefaults.setText("Restore defaults");
+		restoreDefaults.setLocation(77, 70);
+		restoreDefaults.pack();
 	}
 
 	@Override
@@ -228,7 +268,14 @@ public final class SettingsWindow extends CustomWindow {
 	@Override
 	protected void createListeners() {
 		apply.addSelectionListener(controller.applyClicked);
+
 		cancel.addSelectionListener(controller.cancelClicked);
+
+		restoreDefaults.addSelectionListener(controller.restoreDefaultsClicked);
+
+		autosaveLocation.addListener(SWT.Selection, controller.modificationListener);
+		searchInterval.addListener(SWT.CHANGED, controller.modificationListener);
+
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 	}

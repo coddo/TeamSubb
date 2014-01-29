@@ -11,7 +11,7 @@ import com.coddotech.teamsubb.settings.model.Settings;
 public class SettingsController extends CustomController {
 
 	private SettingsWindow view;
-	private Settings model;
+	private Settings settings;
 
 	/**
 	 * The constructor for this view controller class
@@ -21,8 +21,8 @@ public class SettingsController extends CustomController {
 	 */
 	public SettingsController(SettingsWindow view) {
 		this.view = view;
-		model = Settings.getInstance();
-		model.addObserver(view);
+		settings = Settings.getInstance();
+		settings.addObserver(view);
 	}
 
 	/**
@@ -30,10 +30,10 @@ public class SettingsController extends CustomController {
 	 */
 	public void dispose() {
 		try {
-			model.deleteObserver(view);
+			settings.deleteObserver(view);
 
 			view = null;
-			model = null;
+			settings = null;
 
 			this.logDispose();
 
@@ -51,12 +51,10 @@ public class SettingsController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
+
 			if (view.verifySettings()) {
-				model.setGadgetAutosaveLocation(view.isGadgetAutosaveLocation());
+				applySettings();
 
-				model.setSearchInterval(view.getSearchInterval());
-
-				model.commitChangesToFile();
 			}
 		}
 
@@ -84,6 +82,38 @@ public class SettingsController extends CustomController {
 	};
 
 	/**
+	 * Listener for when the restore default settings button is pressed
+	 */
+	public SelectionListener restoreDefaultsClicked = new SelectionListener() {
+
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			settings.restoreDefaultSettings();
+
+			view.setAsChanged(true);
+
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
+	/**
+	 * Listener for when changes occur in the settings
+	 */
+	public Listener modificationListener = new Listener() {
+
+		@Override
+		public void handleEvent(Event arg0) {
+			view.setAsChanged(true);
+
+		}
+	};
+
+	/**
 	 * Listener for when the shell is shown -> reads all the settings from the XML settings file.<br>
 	 * 
 	 * This forces the view to update its interface based on the read settings.
@@ -92,7 +122,7 @@ public class SettingsController extends CustomController {
 
 		@Override
 		public void handleEvent(Event arg0) {
-			model.readSettings();
+			settings.readSettings();
 		}
 
 	};
@@ -105,8 +135,25 @@ public class SettingsController extends CustomController {
 
 		@Override
 		public void handleEvent(Event arg0) {
+			if (view.isChanged()) {
+
+				if (view.displaySaveChangesQBox())
+					applySettings();
+
+			}
+
 			view.dispose();
 		}
 	};
+
+	private void applySettings() {
+		settings.setGadgetAutosaveLocation(view.isGadgetAutosaveLocation());
+
+		settings.setSearchInterval(view.getSearchInterval());
+
+		settings.commitChangesToFile();
+
+		view.setAsChanged(false);
+	}
 
 }

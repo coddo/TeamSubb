@@ -59,11 +59,9 @@ public class GadgetWindow extends CustomWindow {
 
 			// user classes
 			controller.dispose();
-			controller = null;
 
 			// fields
 			imageContainer.dispose();
-			imageContainer = null;
 
 			openJobs.dispose();
 			openSettings.dispose();
@@ -71,7 +69,6 @@ public class GadgetWindow extends CustomWindow {
 			trayMenu.dispose();
 
 			tray.dispose();
-			tray = null;
 
 			this.logDispose();
 
@@ -98,6 +95,7 @@ public class GadgetWindow extends CustomWindow {
 
 					if (obs instanceof AnimationRenderer) {
 						imageContainer.setBackgroundImage((Image) obj);
+						
 					}
 
 					else if (obs instanceof Settings) {
@@ -107,6 +105,7 @@ public class GadgetWindow extends CustomWindow {
 						if (data[0].equals(Settings.MESSAGE_LOCATION) && first) {
 							int x = Integer.parseInt(data[1].split(",")[0]);
 							int y = Integer.parseInt(data[1].split(",")[1]);
+							getShell().setAlpha(255);
 
 							getShell().setLocation(x, y);
 							first = false;
@@ -156,6 +155,7 @@ public class GadgetWindow extends CustomWindow {
 		this.getShell().setText("Gadget");
 		this.getShell().setSize(200, 200);
 		this.getShell().setMenu(trayMenu);
+		this.getShell().setAlpha(0);
 	}
 
 	@Override
