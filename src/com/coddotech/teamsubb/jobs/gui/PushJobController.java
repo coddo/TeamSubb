@@ -1,8 +1,10 @@
 package com.coddotech.teamsubb.jobs.gui;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.jobs.model.JobManager;
@@ -11,8 +13,9 @@ import com.coddotech.teamsubb.main.CustomController;
 public class PushJobController extends CustomController {
 
 	private PushJobWindow view;
-
 	private JobManager model;
+
+	private FileDialog browseSub;
 
 	/**
 	 * Class constructor
@@ -22,8 +25,12 @@ public class PushJobController extends CustomController {
 	 */
 	public PushJobController(PushJobWindow view) {
 		this.view = view;
+
 		this.model = JobManager.getInstance();
 		this.model.addObserver(view);
+
+		browseSub = new FileDialog(view.getShell(), SWT.OPEN);
+		browseSub.setText("Select sub file");
 	}
 
 	/**
@@ -52,8 +59,12 @@ public class PushJobController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 
-			if (view.verifyFields())
-				model.pushJob(view.getID(), view.getNextStaff(), view.getType(), view.getComments());
+			if (view.verifyFields()) {
+
+				model.pushJob(view.getID(), view.getNextStaff(), view.getType(), view.getComments(),
+						view.getSubFile());
+
+			}
 
 		}
 
@@ -82,6 +93,31 @@ public class PushJobController extends CustomController {
 		}
 	};
 
+	public SelectionListener subFileChecked = new SelectionListener() {
+
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			if (view.hasNewSubFile()) {
+				String result = browseSub.open();
+
+				if (result != null)
+					view.setSubFile(result);
+
+				else
+					view.setSubFile("");
+			}
+
+			else
+				view.setSubFile("");
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
 	/**
 	 * Listener for when the view is closing. Disposes of all the components in
 	 * use
@@ -94,4 +130,5 @@ public class PushJobController extends CustomController {
 
 		}
 	};
+
 }

@@ -68,9 +68,10 @@ public class CreateJobController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			browseSub.open();
+			String result = browseSub.open();
 
-			view.setSub(browseSub.getFilterPath() + File.separator + browseSub.getFileName());
+			if (result != null)
+				view.setSub(result);
 
 		}
 

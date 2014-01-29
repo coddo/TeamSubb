@@ -47,7 +47,7 @@ public class AppManager {
 				final GadgetWindow gadget = new GadgetWindow();
 				gadget.open();
 			}
-			
+
 			performExitOperations();
 
 		}
@@ -92,9 +92,9 @@ public class AppManager {
 	private static void performExitOperations() {
 		// dispose of global resources
 		AppManager.disposeGlobalResources();
-	
+
 		ActivityLogger.logActivity(AppManager.class.getName(), "App exit");
-		
+
 		// close the dump files
 		ActivityLogger.dumpLogStack();
 	}

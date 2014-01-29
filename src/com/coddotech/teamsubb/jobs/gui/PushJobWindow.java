@@ -1,5 +1,6 @@
 package com.coddotech.teamsubb.jobs.gui;
 
+import java.io.File;
 import java.util.Observable;
 
 import org.eclipse.swt.SWT;
@@ -27,16 +28,20 @@ public class PushJobWindow extends CustomWindow {
 	private Composite panel;
 
 	private Label nameLabel;
-	private Text name;
 	private Label typeLabel;
-	private Combo type;
 	private Label commentsLabel;
-	private Text comments;
 	private Label nextStaffLabel;
+
+	private Text name;
+	private Text comments;
+	private Text subFile;
+
+	private Combo type;
 	private Combo nextStaff;
 
 	private Button finish;
 	private Button cancel;
+	private Button subFileCheck;
 
 	/**
 	 * Class constructor
@@ -72,6 +77,9 @@ public class PushJobWindow extends CustomWindow {
 
 			finish.dispose();
 			cancel.dispose();
+
+			subFile.dispose();
+			subFileCheck.dispose();
 
 			panel.dispose();
 
@@ -127,6 +135,37 @@ public class PushJobWindow extends CustomWindow {
 	 */
 	public String getComments() {
 		return this.comments.getText();
+	}
+
+	/**
+	 * Set the path to the selected sub file.
+	 * 
+	 * Enter an empty string in order to disable the textbox
+	 * 
+	 * @param filePath
+	 *            A String value
+	 */
+	public void setSubFile(String filePath) {
+		this.subFile.setText(filePath);
+
+		this.subFile.setEnabled(!filePath.equals(""));
+		this.subFileCheck.setSelection(!filePath.equals(""));
+	}
+
+	/**
+	 * Get the newly selected sub file.
+	 * 
+	 * @return A File entity or null if the user didn't select a new file
+	 */
+	public File getSubFile() {
+		if (!this.subFileCheck.getSelection())
+			return null;
+
+		return new File(this.subFile.getText());
+	}
+
+	public boolean hasNewSubFile() {
+		return this.subFileCheck.getSelection();
 	}
 
 	/**
@@ -211,6 +250,9 @@ public class PushJobWindow extends CustomWindow {
 		nextStaffLabel = new Label(panel, SWT.None);
 		nextStaff = new Combo(panel, SWT.READ_ONLY);
 
+		subFileCheck = new Button(panel, SWT.CHECK);
+		subFile = new Text(panel, SWT.BORDER);
+
 		finish = new Button(this.getShell(), SWT.PUSH);
 		cancel = new Button(this.getShell(), SWT.PUSH);
 	}
@@ -232,6 +274,7 @@ public class PushJobWindow extends CustomWindow {
 		name.setFont(CustomWindow.DEFAULT_FONT);
 		name.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		name.setText(this.job.getName());
+		name.setEnabled(false);
 
 		typeLabel.setFont(CustomWindow.BOLD_FONT);
 		typeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -264,6 +307,15 @@ public class PushJobWindow extends CustomWindow {
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF, 0);
 		nextStaff.select(0);
 
+		subFileCheck.setFont(CustomWindow.BOLD_FONT);
+		subFileCheck.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		subFileCheck.setText("Change the subfile (leave unchecked for same sub)");
+		subFileCheck.pack();
+
+		subFile.setFont(CustomWindow.DEFAULT_FONT);
+		subFile.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		subFile.setEnabled(false);
+
 		finish.setFont(CustomWindow.DEFAULT_FONT);
 		finish.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, false, false));
 		finish.setText("Finish job");
@@ -271,7 +323,7 @@ public class PushJobWindow extends CustomWindow {
 
 		cancel.setFont(CustomWindow.DEFAULT_FONT);
 		cancel.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
-		cancel.setText("Cancel");
+		cancel.setText("Close");
 		cancel.pack();
 	}
 
@@ -283,7 +335,7 @@ public class PushJobWindow extends CustomWindow {
 
 		this.getShell().setLayout(layout);
 		this.getShell().setText("Finish job");
-		this.getShell().setSize(400, 310);
+		this.getShell().setSize(430, 370);
 
 		this.placeToCenter();
 	}
@@ -294,5 +346,6 @@ public class PushJobWindow extends CustomWindow {
 
 		this.finish.addSelectionListener(controller.finishButtonClicked);
 		this.cancel.addSelectionListener(controller.cancelButtonClicked);
+		this.subFileCheck.addSelectionListener(controller.subFileChecked);
 	}
 }

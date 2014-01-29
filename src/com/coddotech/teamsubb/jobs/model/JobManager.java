@@ -561,7 +561,8 @@ public class JobManager extends Observable {
 	 * @param jobID
 	 *            The ID of the job to be sent back to the server
 	 */
-	public void pushJob(final int jobID, final String nextStaff, final int type, final String comments) {
+	public void pushJob(final int jobID, final String nextStaff, final int type, final String comments,
+			final File subFile) {
 
 		class PushJob extends Thread {
 
@@ -585,6 +586,9 @@ public class JobManager extends Observable {
 							job.setType(type);
 							job.setNextStaffMember(nextStaff);
 							job.setDescription(comments);
+							
+							if (subFile != null)
+								job.setSubFile(subFile);
 
 							response = job.push();
 
