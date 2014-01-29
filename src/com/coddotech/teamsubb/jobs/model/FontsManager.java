@@ -11,24 +11,47 @@ import com.coddotech.teamsubb.connection.model.FileDownloader;
 
 public class FontsManager {
 
+	private static File FONTS_WINDOWS = null;
+	private static File[] FONTS_LINUX = null;
+
+	private static enum Platform {
+		Windows, Linux;
+	}
+
+	private static Platform operatingSystem = null;
+
 	/**
 	 * Retrieve a list containing all the system fonts
 	 * 
 	 * @return A String collection
 	 */
 	public static String[] getSystemFonts() {
-		String[] fontNames;
+		generateFontPaths();
 
-		File fontsDir = null;
+		List<String> fontNames = new ArrayList<String>();
 
-		String osName = System.getProperty("os.name").split(" ")[0];
+		switch (FontsManager.getOS()) {
 
-		if (osName.equals("Windows"))
-			fontsDir = new File("C:" + File.separator + "Windows" + File.separator + "Fonts");
+			case Windows: {
+				fontNames = Arrays.asList(FONTS_WINDOWS.list());
 
-		fontNames = fontsDir.list();
+			}
+				break;
 
-		return fontNames;
+			case Linux: {
+
+				for (File fontFolder : FONTS_LINUX) {
+
+					for (String font : fontFolder.list())
+						fontNames.add(font);
+				}
+
+			}
+				break;
+
+		}
+
+		return fontNames.toArray(new String[fontNames.size()]);
 	}
 
 	/**
@@ -123,4 +146,60 @@ public class FontsManager {
 		return Arrays.asList(response.split(Pattern.quote(JobManager.SEPARATOR_FIELDS)));
 	}
 
+	/**
+	 * Get the operating system under which this app is running
+	 * 
+	 * @return A Platform entity
+	 */
+	private static Platform getOS() {
+		if (operatingSystem == null) {
+			String os = System.getProperty("os.name").toLowerCase();
+
+			if (os.indexOf("win") >= 0)
+				operatingSystem = Platform.Windows;
+
+			if (os.indexOf("nux") >= 0)
+				operatingSystem = Platform.Linux;
+
+		}
+
+		return operatingSystem;
+	}
+
+	/**
+	 * Create the File entities representing the font folders for each operating system
+	 */
+	private static void generateFontPaths() {
+		String properties = System.getProperties().toString();
+
+		if (FONTS_WINDOWS == null) {
+			String mainDrive = extractWindowsDrive(properties);
+
+			FONTS_WINDOWS = new File(mainDrive + "Windows" + File.separator + "Fonts");
+		}
+
+		if (FONTS_LINUX == null) {
+
+		}
+	}
+
+	/**
+	 * Read the windows drive letter from the Windows Properties string.
+	 * 
+	 * @param properties
+	 *            The string representing containing all the Windows properties
+	 * 
+	 * @return A String value representing the drive letter in which the Windows OS is installed. <br>
+	 *         For example: C:\
+	 */
+	private static String extractWindowsDrive(String properties) {
+		int index = properties.indexOf("Windows" + File.separator + "system32");
+
+		while (properties.charAt(index) != ';')
+			index--;
+
+		index++;
+
+		return properties.charAt(index) + ":" + File.separator;
+	}
 }

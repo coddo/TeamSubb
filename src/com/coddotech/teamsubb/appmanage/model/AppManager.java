@@ -47,6 +47,8 @@ public class AppManager {
 				final GadgetWindow gadget = new GadgetWindow();
 				gadget.open();
 			}
+			
+			performExitOperations();
 
 		}
 		catch (Exception ex) {
@@ -71,14 +73,6 @@ public class AppManager {
 
 		// main.close();
 		test(main);
-
-		// dispose of global resources
-		AppManager.disposeGlobalResources();
-
-		ActivityLogger.logActivity(AppManager.class.getName(), "App exit");
-		// close the dump files
-
-		ActivityLogger.dumpLogStack();
 	}
 
 	public static void test(final Shell main) {
@@ -93,6 +87,16 @@ public class AppManager {
 		};
 
 		Display.getDefault().syncExec(close);
+	}
+
+	private static void performExitOperations() {
+		// dispose of global resources
+		AppManager.disposeGlobalResources();
+	
+		ActivityLogger.logActivity(AppManager.class.getName(), "App exit");
+		
+		// close the dump files
+		ActivityLogger.dumpLogStack();
 	}
 
 	private static void disposeGlobalResources() {
