@@ -90,15 +90,17 @@ public class CreateJobController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			browseFonts.open();
+			String result = browseFonts.open();
 
-			String[] files = browseFonts.getFileNames();
+			if (result != null) {
+				String[] files = browseFonts.getFileNames();
 
-			for (int i = 0; i < files.length; i++) {
-				files[i] = browseFonts.getFilterPath() + File.separator + files[i];
+				for (int i = 0; i < files.length; i++) {
+					files[i] = browseFonts.getFilterPath() + File.separator + files[i];
+				}
+
+				view.appendFonts(files);
 			}
-
-			view.appendFonts(files);
 
 		}
 
@@ -120,6 +122,9 @@ public class CreateJobController extends CustomController {
 
 			if (e.keyCode == SWT.DEL)
 				view.deleteSelectedFonts();
+
+			if (((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'a'))
+				view.selectEntireFontList();
 
 		}
 

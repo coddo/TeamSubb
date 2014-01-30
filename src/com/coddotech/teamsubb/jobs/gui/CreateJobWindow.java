@@ -213,6 +213,13 @@ public class CreateJobWindow extends CustomWindow {
 	}
 
 	/**
+	 * Select all the items of the font list
+	 */
+	public void selectEntireFontList() {
+		this.fonts.selectAll();
+	}
+
+	/**
 	 * Deletes all the fonts that are selected in the list
 	 */
 	public void deleteSelectedFonts() {
@@ -240,6 +247,7 @@ public class CreateJobWindow extends CustomWindow {
 
 						close();
 					}
+
 					else {
 						message = new MessageBox(getShell(), SWT.ICON_ERROR);
 						message.setText("Error");

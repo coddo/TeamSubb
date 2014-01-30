@@ -239,6 +239,8 @@ public class JobManager extends Observable {
 				if (!CustomWindow.isConnected(true))
 					return;
 
+				waitForThreadsToComplete();
+
 				createJobRunning = true;
 
 				try {
@@ -249,9 +251,6 @@ public class JobManager extends Observable {
 					setChanged();
 					notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR + response);
 
-					// after the job is created, start a new search in order to update the job list
-					findJobs();
-
 					ActivityLogger.logActivity(this.getClass().getName(), "Create job");
 
 				}
@@ -261,6 +260,8 @@ public class JobManager extends Observable {
 				}
 				finally {
 					createJobRunning = false;
+
+					findJobs();
 
 				}
 			}
@@ -295,6 +296,8 @@ public class JobManager extends Observable {
 				// check for an internet connection
 				if (!CustomWindow.isConnected(true))
 					return;
+
+				waitForThreadsToComplete();
 
 				endJobRunning = true;
 
@@ -364,21 +367,7 @@ public class JobManager extends Observable {
 				if (!CustomWindow.isConnected(false))
 					return;
 
-				boolean mayRun = !findJobsRunning && !acceptJobRunning && !endJobRunning && !createJobRunning
-						&& !cancelJobRunning && !pushJobRunning;
-
-				// wait for other threads to complete
-				while (!mayRun) {
-					try {
-						Thread.sleep(100);
-					}
-					catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-
-				findJobsRunning = true;
+				waitForThreadsToComplete();
 
 				try {
 
@@ -442,6 +431,8 @@ public class JobManager extends Observable {
 				if (!CustomWindow.isConnected(true))
 					return;
 
+				waitForThreadsToComplete();
+
 				acceptJobRunning = true;
 
 				try {
@@ -461,7 +452,6 @@ public class JobManager extends Observable {
 
 								job.setBookedBy("Yourself");
 
-								findJobs();
 							}
 
 						}
@@ -480,6 +470,8 @@ public class JobManager extends Observable {
 				}
 				finally {
 					acceptJobRunning = false;
+					
+					findJobs();
 
 				}
 			}
@@ -509,7 +501,10 @@ public class JobManager extends Observable {
 				if (!CustomWindow.isConnected(true))
 					return;
 
+				waitForThreadsToComplete();
+
 				cancelJobRunning = true;
+
 				try {
 
 					boolean response = false;
@@ -572,6 +567,8 @@ public class JobManager extends Observable {
 				if (!CustomWindow.isConnected(true))
 					return;
 
+				waitForThreadsToComplete();
+
 				pushJobRunning = true;
 
 				try {
@@ -586,7 +583,7 @@ public class JobManager extends Observable {
 							job.setType(type);
 							job.setNextStaffMember(nextStaff);
 							job.setDescription(comments);
-							
+
 							if (subFile != null)
 								job.setSubFile(subFile);
 
@@ -771,11 +768,42 @@ public class JobManager extends Observable {
 	 */
 	private boolean isAccepted(int id) {
 		for (Job job : acceptedJobs) {
+
 			if (job.getID() == id)
 				return true;
+
 		}
 
 		return false;
+	}
+
+	/**
+	 * Wait for all the threads to complete. Times out after 30 seconds
+	 */
+	private void waitForThreadsToComplete() {
+		int loopCounter = 0;
+
+		boolean active = findJobsRunning && acceptJobRunning && endJobRunning && createJobRunning
+				&& cancelJobRunning && pushJobRunning;
+
+		while (active && loopCounter < 600) {
+
+			try {
+				Thread.sleep(50);
+			}
+
+			catch (InterruptedException e) {
+				e.printStackTrace();
+
+			}
+
+			loopCounter++;
+
+			active = findJobsRunning && acceptJobRunning && endJobRunning && createJobRunning
+					&& cancelJobRunning && pushJobRunning;
+
+		}
+
 	}
 
 	/**
@@ -785,9 +813,16 @@ public class JobManager extends Observable {
 	 *            The list that needs to be disposed
 	 */
 	private void clearJobList(List<Job> list) {
+		if (list == null)
+			return;
+
+		if (list.size() == 0)
+			return;
+
 		for (Job job : list) {
 			job.dispose(false);
 		}
+
 		list.clear();
 	}
 
