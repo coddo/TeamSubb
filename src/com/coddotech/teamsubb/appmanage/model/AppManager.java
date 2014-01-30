@@ -1,5 +1,8 @@
 package com.coddotech.teamsubb.appmanage.model;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
@@ -15,40 +18,43 @@ import com.coddotech.teamsubb.settings.model.Settings;
 
 public class AppManager {
 
+	private static File FILE_LOCK = new File(System.getProperty("user.dir") + File.separator + "lock.coddo");
+
 	public static void startApp() {
 		ActivityLogger.performInitializations();
 
 		ActivityLogger.logActivity("Main", "App initialization");
 
 		try {
-			if (AppManager.isAutoLogin()) {
-				// login automatically
 
+			if (!AppManager.isRunning()) {
+
+				AppManager.createAppInstanceLock();
+
+				AppManager.performUserLogin();
+
+				AppManager.startMainComponents();
+
+				AppManager.performExitOperations();
+
+				AppManager.deleteAppInstanceLock();
 			}
+
+			// display a message telling the user that the app is already running
 			else {
+				Shell shell = new Shell(Display.getDefault());
 
-				// display the login window
-				LoginWindow loginWindow = new LoginWindow();
-				loginWindow.open();
-				loginWindow = null;
+				MessageBox message = new MessageBox(shell, SWT.ICON_WARNING);
+
+				message.setText("Already running");
+				message.setMessage("TeamSubb is already running !\n Stop the currently active instance in order to start a new one.");
+
+				message.open();
+
+				// dispose the temporary shell
+				shell.dispose();
+
 			}
-
-			// if the login process is successful continue with starting the
-			// application's main functionalities and close the login window
-			if (Login.isLoggedIn()) {
-
-				// start the job searcher timer
-				JobSearchTimer timer = JobSearchTimer.getInstance();
-
-				Settings.getInstance().addObserver(timer);
-
-				timer.startTimer();
-
-				final GadgetWindow gadget = new GadgetWindow();
-				gadget.open();
-			}
-
-			performExitOperations();
 
 		}
 		catch (Exception ex) {
@@ -71,22 +77,38 @@ public class AppManager {
 				shell.close();
 		}
 
-		// main.close();
-		test(main);
+		main.close();
 	}
 
-	public static void test(final Shell main) {
+	private static void startMainComponents() {
+		// if the login process is successful continue with starting the
+		// application's main functionalities and close the login window
+		if (Login.isLoggedIn()) {
 
-		Runnable close = new Runnable() {
+			// start the job searcher timer
+			JobSearchTimer timer = JobSearchTimer.getInstance();
 
-			@Override
-			public void run() {
-				main.close();
+			Settings.getInstance().addObserver(timer);
 
-			}
-		};
+			timer.startTimer();
 
-		Display.getDefault().syncExec(close);
+			final GadgetWindow gadget = new GadgetWindow();
+			gadget.open();
+		}
+	}
+
+	private static void performUserLogin() {
+		if (AppManager.isAutoLogin()) {
+			// login automatically
+
+		}
+		else {
+
+			// display the login window
+			LoginWindow loginWindow = new LoginWindow();
+			loginWindow.open();
+			loginWindow = null;
+		}
 	}
 
 	private static void performExitOperations() {
@@ -137,5 +159,23 @@ public class AppManager {
 	 */
 	private static boolean isAutoLogin() {
 		return false;
+	}
+
+	private static void createAppInstanceLock() {
+		try {
+			AppManager.FILE_LOCK.createNewFile();
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private static void deleteAppInstanceLock() {
+		AppManager.FILE_LOCK.delete();
+	}
+
+	private static boolean isRunning() {
+		return AppManager.FILE_LOCK.exists();
 	}
 }
