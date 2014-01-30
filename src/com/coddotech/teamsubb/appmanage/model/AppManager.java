@@ -35,8 +35,6 @@ public class AppManager {
 
 				AppManager.startMainComponents(); // locks the main thread
 
-				AppManager.performExitOperations();
-
 				AppManager.deleteAppInstanceLock();
 			}
 
@@ -53,7 +51,6 @@ public class AppManager {
 
 				// dispose the temporary shell
 				shell.dispose();
-
 			}
 
 		}
@@ -64,6 +61,11 @@ public class AppManager {
 
 			AppManager.displayFatalErrorMessage();
 
+			AppManager.deleteAppInstanceLock();
+
+		}
+		finally {
+			AppManager.performExitOperations();
 		}
 	}
 
@@ -84,6 +86,8 @@ public class AppManager {
 		// if the login process is successful continue with starting the
 		// application's main functionalities and close the login window
 		if (Login.isLoggedIn()) {
+			// read the settings for the first time
+			Settings.getInstance().readSettings();
 
 			// start the job searcher timer
 			JobSearchTimer timer = JobSearchTimer.getInstance();
@@ -163,7 +167,8 @@ public class AppManager {
 	}
 
 	private static void deleteAppInstanceLock() {
-		AppManager.FILE_LOCK.delete();
+		if (AppManager.FILE_LOCK.exists())
+			AppManager.FILE_LOCK.delete();
 	}
 
 	/**

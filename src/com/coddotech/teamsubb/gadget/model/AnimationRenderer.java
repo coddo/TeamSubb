@@ -60,17 +60,17 @@ public class AnimationRenderer extends Observable implements Observer {
 
 	private int type;
 	private int counter = 0;
+
+	private boolean paused = false;
+	private AnimationTimer timer;
+
 	private boolean disposed = false;
 
 	/**
 	 * Class constructor
 	 */
 	public AnimationRenderer() {
-		initializeAnimationData();
 
-		// initially set the idle image
-		this.setChanged();
-		this.notifyObservers(idle[0]);
 	}
 
 	/**
@@ -80,14 +80,8 @@ public class AnimationRenderer extends Observable implements Observer {
 		try {
 			this.disposed = true;
 
-			for (int i = 0; i < idle.length; i++)
-				idle[i].dispose();
-
-			for (int i = 0; i < lowPriority.length; i++)
-				lowPriority[i].dispose();
-
-			for (int i = 0; i < highPriority.length; i++)
-				highPriority[i].dispose();
+			timer.interrupt();
+			disposeAnimationData();
 
 			idle = null;
 			lowPriority = null;
@@ -100,6 +94,21 @@ public class AnimationRenderer extends Observable implements Observer {
 			ActivityLogger.logException(this.getClass().getName(), "Dispose", ex);
 
 		}
+	}
+
+	public void disposeAnimationData() {
+		if (idle == null)
+			return;
+
+		for (int i = 0; i < idle.length; i++)
+			idle[i].dispose();
+
+		for (int i = 0; i < lowPriority.length; i++)
+			lowPriority[i].dispose();
+
+		for (int i = 0; i < highPriority.length; i++)
+			highPriority[i].dispose();
+
 	}
 
 	/**
@@ -117,10 +126,18 @@ public class AnimationRenderer extends Observable implements Observer {
 	/**
 	 * Start animating the gadget
 	 */
-	public void startAnimations() {
-		AnimationTimer timer = new AnimationTimer();
+	public void startAnimation() {
+		timer = new AnimationTimer();
 
 		timer.start();
+	}
+
+	public void pauseAnimation() {
+		paused = true;
+	}
+
+	public void resumeAnimation() {
+		paused = false;
 	}
 
 	/**
@@ -133,39 +150,6 @@ public class AnimationRenderer extends Observable implements Observer {
 		public void run() {
 
 			while (!disposed) {
-				// mark this model as being changed
-				setChanged();
-
-				// send the animation data to the gadget based on the animation
-				// type currently selected
-				switch (type) {
-
-					case AnimationRenderer.TYPE_IDLE: {
-						if (counter == idle.length)
-							counter = 0;
-
-						notifyObservers(idle[counter]);
-					}
-						break;
-
-					case AnimationRenderer.TYPE_LOW_PRIORITY: {
-						if (counter == lowPriority.length)
-							counter = 0;
-
-						notifyObservers(lowPriority[counter]);
-					}
-						break;
-
-					case AnimationRenderer.TYPE_HIGH_PRIORITY: {
-						if (counter == highPriority.length)
-							counter = 0;
-
-						notifyObservers(highPriority[counter]);
-					}
-						break;
-				}
-
-				counter++;
 
 				try {
 
@@ -173,9 +157,45 @@ public class AnimationRenderer extends Observable implements Observer {
 
 				}
 				catch (InterruptedException e) {
-					e.printStackTrace();
-
 				}
+
+				if (!paused && !disposed) {
+
+					// mark this model as being changed
+					setChanged();
+
+					// send the animation data to the gadget based on the animation
+					// type currently selected
+					switch (type) {
+
+						case AnimationRenderer.TYPE_IDLE: {
+							if (counter == idle.length)
+								counter = 0;
+
+							notifyObservers(idle[counter]);
+						}
+							break;
+
+						case AnimationRenderer.TYPE_LOW_PRIORITY: {
+							if (counter == lowPriority.length)
+								counter = 0;
+
+							notifyObservers(lowPriority[counter]);
+						}
+							break;
+
+						case AnimationRenderer.TYPE_HIGH_PRIORITY: {
+							if (counter == highPriority.length)
+								counter = 0;
+
+							notifyObservers(highPriority[counter]);
+						}
+							break;
+					}
+
+					counter++;
+				}
+
 			}
 
 		}
@@ -245,7 +265,7 @@ public class AnimationRenderer extends Observable implements Observer {
 	 * Gets and stores the animation files and data into the local memory of the
 	 * app for faster use
 	 */
-	private void initializeAnimationData() {
+	public void generateAnimationData() {
 		try {
 
 			File idleFolder = new File(AnimationRenderer.DIR_IDLE);
@@ -265,14 +285,14 @@ public class AnimationRenderer extends Observable implements Observer {
 			lowPriority = new Image[lowFolder.list(filter).length];
 			highPriority = new Image[highFolder.list(filter).length];
 
-			int size = 88;
+			int imgsize = GadgetProfiler.getInstance().getSizeFactor();
 
 			// idle image sequence
 			int k = 0;
 			for (String img : idleFolder.list(filter)) {
 
 				idle[k] = resizeImage(new Image(Display.getDefault(), AnimationRenderer.DIR_IDLE
-						+ File.separator + img), size, size);
+						+ File.separator + img), imgsize, imgsize);
 
 				k++;
 			}
@@ -282,7 +302,7 @@ public class AnimationRenderer extends Observable implements Observer {
 			for (String img : lowFolder.list(filter)) {
 
 				lowPriority[k] = resizeImage(new Image(Display.getDefault(), AnimationRenderer.DIR_LOW
-						+ File.separator + img), size, size);
+						+ File.separator + img), imgsize, imgsize);
 				k++;
 			}
 
@@ -291,7 +311,7 @@ public class AnimationRenderer extends Observable implements Observer {
 			for (String img : highFolder.list(filter)) {
 
 				highPriority[k] = resizeImage(new Image(Display.getDefault(), AnimationRenderer.DIR_HIGH
-						+ File.separator + img), size, size);
+						+ File.separator + img), imgsize, imgsize);
 				k++;
 			}
 

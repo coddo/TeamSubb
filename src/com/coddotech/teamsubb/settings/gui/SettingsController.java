@@ -7,11 +7,14 @@ import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.settings.model.Settings;
+import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 
 public class SettingsController extends CustomController {
 
 	private SettingsWindow view;
 	private Settings settings;
+
+	private int initialProfile;
 
 	/**
 	 * The constructor for this view controller class
@@ -21,8 +24,12 @@ public class SettingsController extends CustomController {
 	 */
 	public SettingsController(SettingsWindow view) {
 		this.view = view;
+		
 		settings = Settings.getInstance();
 		settings.addObserver(view);
+		
+		//reload the profiles from the file
+		GadgetProfiler.getInstance().fetchProfiles();
 	}
 
 	/**
@@ -67,7 +74,7 @@ public class SettingsController extends CustomController {
 	/**
 	 * Listener for when the cancel button is clicked
 	 */
-	public SelectionListener cancelClicked = new SelectionListener() {
+	public SelectionListener closeClicked = new SelectionListener() {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
@@ -113,6 +120,23 @@ public class SettingsController extends CustomController {
 		}
 	};
 
+	public SelectionListener profileSelected = new SelectionListener() {
+
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			settings.setGadgetProfile(view.getSelectedProfile());
+
+			GadgetProfiler.getInstance().select(view.getSelectedProfile());
+
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
 	/**
 	 * Listener for when the shell is shown -> reads all the settings from the XML settings file.<br>
 	 * 
@@ -123,6 +147,8 @@ public class SettingsController extends CustomController {
 		@Override
 		public void handleEvent(Event arg0) {
 			settings.readSettings();
+
+			initialProfile = settings.getGadgetProfile();
 		}
 
 	};
@@ -139,6 +165,11 @@ public class SettingsController extends CustomController {
 
 				if (view.displaySaveChangesQBox())
 					applySettings();
+
+				else {
+					GadgetProfiler.getInstance().select(initialProfile);
+					settings.setGadgetProfile(initialProfile);
+				}
 
 			}
 

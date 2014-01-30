@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gadget>
+	<profile id="0" name="Very big" size_factor="117" polygon="46" offset_x="-13" offset_y="-13"></profile>
+	<profile id="1" name="Big" size_factor="99" polygon="38" offset_x="-12" offset_y="-13"></profile>
+	<profile id="2" name="Medium" size_factor="88" polygon="34" offset_x="-10" offset_y="-11"></profile>
+	<profile id="3" name="Small" size_factor="72" polygon="28" offset_x="-8" offset_y="-8"></profile>
+	<profile id="4" name="Very small" size_factor="58" polygon="23" offset_x="-6" offset_y="-6"></profile>
+</gadget>

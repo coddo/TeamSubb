@@ -126,7 +126,13 @@ public abstract class CustomWindow implements Observer {
 
 	@Override
 	public void update(Observable obs, Object obj) {
-		this.updateGUI(obs, obj);
+		try {
+			this.updateGUI(obs, obj);
+		}
+
+		catch (Exception ex) {
+
+		}
 
 	}
 

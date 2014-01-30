@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TrayItem;
 
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
+import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.model.Settings;
 
@@ -38,9 +39,8 @@ public class GadgetWindow extends CustomWindow {
 	private MenuItem openSettings;
 	private MenuItem exitApp;
 
-	// this lets the app be repositioned with the value stored in the settings
-	// file only once
-	private boolean first = true;
+	// this lets the app be repositioned with the value stored in the settings file only once
+	private boolean firstInstance = true;
 
 	/**
 	 * Class constructor
@@ -95,20 +95,33 @@ public class GadgetWindow extends CustomWindow {
 
 					if (obs instanceof AnimationRenderer) {
 						imageContainer.setBackgroundImage((Image) obj);
-						
+
 					}
 
 					else if (obs instanceof Settings) {
 
 						String[] data = ((String) obj).split(CustomWindow.NOTIFICATION_SEPARATOR);
 
-						if (data[0].equals(Settings.MESSAGE_LOCATION) && first) {
+						if (data[0].equals(Settings.MESSAGE_LOCATION) && firstInstance) {
+
 							int x = Integer.parseInt(data[1].split(",")[0]);
 							int y = Integer.parseInt(data[1].split(",")[1]);
+
 							getShell().setAlpha(255);
 
 							getShell().setLocation(x, y);
-							first = false;
+							firstInstance = false;
+
+						}
+
+						else if (data[0].equals(Settings.MESSAGE_GADGET_PROFILE)) {
+
+							controller.ResetAnimationData();
+
+							// force gadget repaint
+							controller.redrawGadget();
+							
+							imageContainer.setLocation(GadgetProfiler.getInstance().getOffset());
 
 						}
 					}

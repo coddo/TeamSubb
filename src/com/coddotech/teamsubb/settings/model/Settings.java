@@ -16,6 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
+import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.main.CustomWindow;
 
@@ -36,6 +37,7 @@ public final class Settings extends Observable {
 	public static final Point DEFAULT_LOCATION = new Point(200, 200);
 	public static final boolean DEFAULT_AUTOSAVE_LOCATION = true;
 	public static final int DEFAULT_SEARCH_INTERVAL = 1; // one minute
+	public static final int DEFAULT_GADGET_PROFILE = 2;
 
 	public static final boolean[] DEFAULT_USER_JOBS = { false, false, false, false, false, false, false };
 	public static final String[] DEFAULT_USER_INFO = { "NONE", "NONE", "NONE" };
@@ -48,6 +50,7 @@ public final class Settings extends Observable {
 	public static final String MESSAGE_LOCATION = "location";
 	public static final String MESSAGE_AUTOSAVE_LOCATION = "autosave_location";
 	public static final String MESSAGE_SEARCH_INTERVAL = "search_interval";
+	public static final String MESSAGE_GADGET_PROFILE = "gadget_profile";
 
 	/*
 	 * All the settings are retained in the apps memory
@@ -55,9 +58,11 @@ public final class Settings extends Observable {
 	private Point gadgetLocation;
 	private boolean gadgetAutosaveLocation;
 	private int searchInterval;
+	private int gadgetProfile;
+
 	private String[] userInfo;
 	private boolean[] userJobs;
-	
+
 	private DocumentBuilderFactory dbFactory;
 	private DocumentBuilder dBuilder;
 	private Document settingsFile;
@@ -130,6 +135,17 @@ public final class Settings extends Observable {
 		return this.userJobs;
 	}
 
+	public int getGadgetProfile() {
+		return this.gadgetProfile;
+	}
+
+	public void setGadgetProfile(int gadgetProfile) {
+		this.gadgetProfile = gadgetProfile;
+
+		// generate a preview of the new size by notifying the gadget with the new size
+		notifyGadgetProfile();
+	}
+
 	public String[] getUserJobs() {
 		int available = 0;
 
@@ -194,6 +210,9 @@ public final class Settings extends Observable {
 		// user info
 		this.userInfo = Settings.DEFAULT_USER_INFO;
 
+		// gadget profile
+		this.gadgetProfile = Settings.DEFAULT_GADGET_PROFILE;
+
 		// notify the observers about this
 		notifyCompleteSettings();
 	}
@@ -208,6 +227,7 @@ public final class Settings extends Observable {
 			saveGadgetLocation(this.gadgetLocation);
 			saveGadgetAutosaveLocation(this.gadgetAutosaveLocation);
 			saveSearchInterval(this.searchInterval);
+			saveGadgetProfile(this.gadgetProfile);
 
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			StreamResult output = new StreamResult(new File("Settings.xml"));
@@ -238,6 +258,7 @@ public final class Settings extends Observable {
 			readGadgetLocation();
 			readGadgetAutosaveLocation();
 			readSearchInterval();
+			readGadgetProfile();
 
 			notifyCompleteSettings();
 
@@ -286,6 +307,11 @@ public final class Settings extends Observable {
 		element.setAttribute("value", Integer.toString(searchInterval));
 	}
 
+	private void saveGadgetProfile(int gadgetProfile2) {
+		Element element = (Element) settingsFile.getElementsByTagName("gadget_profile").item(0);
+		element.setAttribute("value", Integer.toString(this.gadgetProfile));
+	}
+
 	/**
 	 * Read the default location for the gadget from the application's settings
 	 * XML file
@@ -306,6 +332,7 @@ public final class Settings extends Observable {
 				this.gadgetLocation = new Point(x, y);
 
 		}
+
 		catch (Exception ex) {
 			this.gadgetLocation = DEFAULT_LOCATION;
 
@@ -341,9 +368,25 @@ public final class Settings extends Observable {
 			this.searchInterval = Integer.parseInt(element.getAttribute("value"));
 
 		}
+
 		catch (Exception ex) {
 			this.searchInterval = Settings.DEFAULT_SEARCH_INTERVAL;
 
+		}
+	}
+
+	private void readGadgetProfile() {
+		Element element = (Element) settingsFile.getElementsByTagName("gadget_profile").item(0);
+
+		try {
+			this.gadgetProfile = Integer.parseInt(element.getAttribute("value"));
+
+			GadgetProfiler.getInstance().select(this.gadgetProfile);
+
+		}
+
+		catch (Exception ex) {
+			this.gadgetProfile = Settings.DEFAULT_GADGET_PROFILE;
 		}
 	}
 
@@ -352,17 +395,37 @@ public final class Settings extends Observable {
 	 * the application
 	 */
 	private void notifyCompleteSettings() {
+		notifyAutosaveLocation();
+
+		notifyLocation();
+
+		notifySearchInterval();
+
+		notifyGadgetProfile();
+	}
+
+	private void notifyAutosaveLocation() {
 		this.setChanged();
 		notifyObservers(Settings.MESSAGE_AUTOSAVE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR
 				+ this.gadgetAutosaveLocation);
+	}
 
+	private void notifyLocation() {
 		this.setChanged();
 		notifyObservers(Settings.MESSAGE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR
 				+ this.gadgetLocation.x + "," + gadgetLocation.y);
+	}
 
+	private void notifySearchInterval() {
 		this.setChanged();
 		notifyObservers(Settings.MESSAGE_SEARCH_INTERVAL + CustomWindow.NOTIFICATION_SEPARATOR
 				+ this.searchInterval);
+	}
+
+	private void notifyGadgetProfile() {
+		this.setChanged();
+		notifyObservers(Settings.MESSAGE_GADGET_PROFILE + CustomWindow.NOTIFICATION_SEPARATOR
+				+ this.gadgetProfile);
 	}
 
 	/**

@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.appmanage.model.AppManager;
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
+import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
@@ -42,6 +43,7 @@ public class GadgetController extends CustomController {
 	private SettingsWindow settingsWindow;
 
 	private AnimationRenderer animations;
+	private GadgetProfiler profiler;
 
 	private boolean disposed = false;
 
@@ -103,6 +105,15 @@ public class GadgetController extends CustomController {
 			this.logDiposeFail(ex);
 
 		}
+	}
+
+	public void ResetAnimationData() {
+		animations.pauseAnimation();
+
+		animations.disposeAnimationData();
+		animations.generateAnimationData();
+
+		animations.resumeAnimation();
 	}
 
 	public SelectionListener trayClicked = new SelectionListener() {
@@ -252,7 +263,9 @@ public class GadgetController extends CustomController {
 			settings.readSettings();
 
 			animations.setAnimationType(AnimationRenderer.TYPE_IDLE);
-			animations.startAnimations();
+
+			animations.generateAnimationData();
+			animations.startAnimation();
 		}
 
 	};
@@ -284,24 +297,31 @@ public class GadgetController extends CustomController {
 	public PaintListener shellPaint = new PaintListener() {
 
 		@Override
-		public void paintControl(PaintEvent arg0) {
+		public void paintControl(PaintEvent e) {
 
-			// create the region defining the gadget
-			Region region = new Region();
-
-			// set the circle data to the region
-			region.add(generateCircle(34, 34, 34));
-
-			// define the shape of the shell
-			gadget.getShell().setRegion(region);
-
-			Rectangle size = region.getBounds();
-			gadget.getShell().setSize(size.width, size.height);
-
-			// dispose of the region object
-			region.dispose();
+			redrawGadget();
 		}
+
 	};
+
+	public void redrawGadget() {
+		// create the region defining the gadget
+		Region region = new Region();
+
+		// set the circle data to the region
+		int polygon = profiler.getPolygon();
+
+		region.add(GadgetProfiler.generateCircle(polygon, polygon, polygon));
+
+		// define the shape of the shell
+		gadget.getShell().setRegion(region);
+
+		Rectangle size = region.getBounds();
+		gadget.getShell().setSize(size.width, size.height);
+
+		// dispose of the region object
+		region.dispose();
+	}
 
 	private void openJobsWindow() {
 		Settings set = Settings.getInstance();
@@ -337,42 +357,14 @@ public class GadgetController extends CustomController {
 	}
 
 	/**
-	 * Get the ecuation defining a circle with the set radius
-	 * 
-	 * @param r
-	 *            The radius of the circle
-	 * @param offsetX
-	 *            Horizontal offset
-	 * @param offsetY
-	 *            Vertical offset
-	 * @return The polygon ecuation for the circle
-	 */
-	private int[] generateCircle(int r, int offsetX, int offsetY) {
-		int[] polygon = new int[8 * r + 4];
-
-		// x^2 + y^2 = r^2
-		for (int i = 0; i < 2 * r + 1; i++) {
-			int x = i - r;
-
-			int y = (int) Math.sqrt(r * r - x * x);
-
-			polygon[2 * i] = offsetX + x;
-			polygon[2 * i + 1] = offsetY + y;
-			polygon[8 * r - 2 * i - 2] = offsetX + x;
-			polygon[8 * r - 2 * i - 1] = offsetY - y;
-
-		}
-
-		return polygon;
-	}
-
-	/**
 	 * Creates all the components for this class
 	 */
 	private void initializeController() {
 		// create the models
 		jobs = JobManager.getInstance();
 		settings = Settings.getInstance();
+		profiler = GadgetProfiler.getInstance();
+		
 		animations = new AnimationRenderer();
 
 		// set the observers for the models

@@ -3,7 +3,11 @@ package com.coddotech.teamsubb.settings.gui;
 import java.util.Observable;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
@@ -11,6 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
+import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.settings.model.Settings;
 
@@ -24,12 +29,19 @@ import com.coddotech.teamsubb.settings.model.Settings;
  */
 public final class SettingsWindow extends CustomWindow {
 
-	private Button cancel;
+	private Composite panel;
+
+	private Button close;
 	private Button apply;
 	private Button autosaveLocation;
-	private Label searchIntervalLabel;
-	private Text searchInterval;
 	private Button restoreDefaults;
+
+	private Label searchIntervalLabel;
+	private Label gadgetProfileLabel;
+
+	private Text searchInterval;
+
+	private Combo gadgetProfile;
 
 	private boolean changed = false;
 
@@ -42,7 +54,7 @@ public final class SettingsWindow extends CustomWindow {
 		super();
 
 		// make the window a modal one
-		this.setShell(new Shell(Display.getDefault(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM));
+		this.setShell(new Shell(Display.getDefault(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM));
 
 		this.initializeComponents();
 	}
@@ -53,21 +65,23 @@ public final class SettingsWindow extends CustomWindow {
 
 			// user classes
 			controller.dispose();
-			controller = null;
 
 			// GUI objects
 			apply.dispose();
-
-			cancel.dispose();
-
+			close.dispose();
 			restoreDefaults.dispose();
 
 			autosaveLocation.dispose();
 
 			searchIntervalLabel.dispose();
-
 			searchInterval.dispose();
 
+			gadgetProfileLabel.dispose();
+			gadgetProfile.dispose();
+
+			panel.dispose();
+
+			// log the disposal of this class
 			this.logDispose();
 
 		}
@@ -93,6 +107,10 @@ public final class SettingsWindow extends CustomWindow {
 	 */
 	public int getSearchInterval() {
 		return Integer.parseInt(this.searchInterval.getText());
+	}
+
+	public int getSelectedProfile() {
+		return gadgetProfile.getSelectionIndex();
 	}
 
 	/**
@@ -183,6 +201,12 @@ public final class SettingsWindow extends CustomWindow {
 						}
 							break;
 
+						case Settings.MESSAGE_GADGET_PROFILE: {
+							gadgetProfile.select(Integer.parseInt(data[1]));
+
+						}
+							break;
+
 						case Settings.MESSAGE_SAVE: {
 							MessageBox message;
 
@@ -219,49 +243,77 @@ public final class SettingsWindow extends CustomWindow {
 	protected void performInitializations() {
 		controller = new SettingsController(this);
 
-		cancel = new Button(this.getShell(), SWT.PUSH);
+		panel = new Composite(this.getShell(), SWT.BORDER);
+
+		autosaveLocation = new Button(this.panel, SWT.CHECK);
+
+		searchIntervalLabel = new Label(this.panel, SWT.None);
+		searchInterval = new Text(this.panel, SWT.BORDER);
+
+		gadgetProfileLabel = new Label(this.panel, SWT.None);
+		gadgetProfile = new Combo(this.panel, SWT.READ_ONLY);
 
 		apply = new Button(this.getShell(), SWT.PUSH);
-
 		restoreDefaults = new Button(this.getShell(), SWT.PUSH);
+		close = new Button(this.getShell(), SWT.PUSH);
 
-		autosaveLocation = new Button(this.getShell(), SWT.CHECK);
-
-		searchIntervalLabel = new Label(this.getShell(), SWT.None);
-
-		searchInterval = new Text(this.getShell(), SWT.BORDER);
 	}
 
 	@Override
 	protected void createObjectProperties() {
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+
+		panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 3));
+		panel.setLayout(layout);
+
+		autosaveLocation.setFont(CustomWindow.DEFAULT_FONT);
+		autosaveLocation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		autosaveLocation.setText("Automatically save the gadget's location");
-		autosaveLocation.setLocation(10, 10);
 		autosaveLocation.pack();
 
+		searchIntervalLabel.setFont(CustomWindow.DEFAULT_FONT);
+		searchIntervalLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		searchIntervalLabel.setText("Job search interval (minutes):");
-		searchIntervalLabel.setLocation(10, 40);
 		searchIntervalLabel.pack();
 
-		searchInterval.setSize(67, 20);
-		searchInterval.setLocation(175, 38);
+		searchInterval.setFont(CustomWindow.DEFAULT_FONT);
+		searchInterval.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
-		cancel.setText("Close");
-		cancel.setLocation(200, 70);
-		cancel.pack();
+		gadgetProfileLabel.setFont(CustomWindow.DEFAULT_FONT);
+		gadgetProfileLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		gadgetProfileLabel.setText("Gadget size:");
+		gadgetProfileLabel.pack();
 
+		gadgetProfile.setFont(CustomWindow.DEFAULT_FONT);
+		gadgetProfile.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		gadgetProfile.setItems(GadgetProfiler.getInstance().getProfiles());
+
+		close.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		close.setFont(CustomWindow.DEFAULT_FONT);
+		close.setText("Close");
+		close.pack();
+
+		apply.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		apply.setFont(CustomWindow.DEFAULT_FONT);
 		apply.setText("Apply");
-		apply.setLocation(10, 70);
 		apply.pack();
-
+		
+		restoreDefaults.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+		restoreDefaults.setFont(CustomWindow.DEFAULT_FONT);
 		restoreDefaults.setText("Restore defaults");
-		restoreDefaults.setLocation(77, 70);
 		restoreDefaults.pack();
 	}
 
 	@Override
 	protected void createShellProperties() {
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.makeColumnsEqualWidth = true;
+
+		this.getShell().setLayout(layout);
 		this.getShell().setText("Settings");
-		this.getShell().setSize(258, 128);
+		this.getShell().setSize(400, 185);
 		this.placeToCenter();
 	}
 
@@ -269,12 +321,15 @@ public final class SettingsWindow extends CustomWindow {
 	protected void createListeners() {
 		apply.addSelectionListener(controller.applyClicked);
 
-		cancel.addSelectionListener(controller.cancelClicked);
+		close.addSelectionListener(controller.closeClicked);
 
 		restoreDefaults.addSelectionListener(controller.restoreDefaultsClicked);
 
 		autosaveLocation.addListener(SWT.Selection, controller.modificationListener);
 		searchInterval.addListener(SWT.CHANGED, controller.modificationListener);
+
+		gadgetProfile.addListener(SWT.Selection, controller.modificationListener);
+		gadgetProfile.addSelectionListener(controller.profileSelected);
 
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 		this.getShell().addListener(SWT.Show, controller.shellShownListener);
