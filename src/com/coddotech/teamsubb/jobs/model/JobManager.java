@@ -390,11 +390,13 @@ public class JobManager extends Observable {
 						}
 					}
 
-					message = "find" + CustomWindow.NOTIFICATION_SEPARATOR + message;
+					// get rid of jobs that no longer exist
+					removeInactiveJobs();
 
 					ActivityLogger.logActivity(this.getClass().getName(), "Find jobs");
 
 					// send the according notification to the observers
+					message = "find" + CustomWindow.NOTIFICATION_SEPARATOR + message;
 					setChanged();
 					notifyObservers(message);
 
@@ -470,7 +472,7 @@ public class JobManager extends Observable {
 				}
 				finally {
 					acceptJobRunning = false;
-					
+
 					findJobs();
 
 				}
@@ -683,9 +685,10 @@ public class JobManager extends Observable {
 
 		// split the String into bits representing specific job data
 		String[] data = fragment.split(JobManager.SEPARATOR_FIELDS);
+		int jobID = Integer.parseInt(data[0]);
 
 		// ignore this job if it already in the accepted list
-		if (!isAccepted(Integer.parseInt(data[0]))) {
+		if (!isAccepted(jobID)) {
 
 			// create variables representing this job's folder
 			String dirPath = JobManager.WORKING_DIRECTORY.getAbsolutePath() + File.separator + data[1];
@@ -706,6 +709,16 @@ public class JobManager extends Observable {
 
 			// add it to the list
 			jobs.add(job);
+		}
+		else { // mark the job as being valid (still active in the database on the server)
+
+			for (Job job : acceptedJobs) {
+
+				if (job.getID() == jobID)
+					job.valid = true;
+
+			}
+
 		}
 		return message;
 	}
@@ -756,6 +769,18 @@ public class JobManager extends Observable {
 		job.setFontLinks(fontLinks);
 
 		return job;
+	}
+
+	/**
+	 * Deletes all the jobs that are marked as being invalid from the user's HDD
+	 */
+	private void removeInactiveJobs() {
+		for (int i = 0; i < acceptedJobs.size(); i++) {
+
+			if (!acceptedJobs.get(i).valid)
+				removeJob(acceptedJobs.get(i).getID());
+
+		}
 	}
 
 	/**

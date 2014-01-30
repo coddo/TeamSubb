@@ -26,6 +26,8 @@ public final class Job {
 	public static final String[] DEFAULT_JOB_TYPES = { "Traducere", "Verificare", "Encode", "Typeset", "end" };
 
 	public static final String DEFAULT_NEXT_STAFF = "anyone";
+	
+	public boolean valid = false;
 
 	private int id;
 	private String name;
@@ -53,6 +55,7 @@ public final class Job {
 		this.setNextStaffMember(Job.DEFAULT_NEXT_STAFF);
 
 		addedFonts = null;
+		valid = false;
 	}
 
 	/**

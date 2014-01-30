@@ -31,9 +31,9 @@ public class AppManager {
 
 				AppManager.createAppInstanceLock();
 
-				AppManager.performUserLogin();
+				AppManager.performUserLogin(); // locks the main thread
 
-				AppManager.startMainComponents();
+				AppManager.startMainComponents(); // locks the main thread
 
 				AppManager.performExitOperations();
 
@@ -152,15 +152,6 @@ public class AppManager {
 		shell.dispose();
 	}
 
-	/**
-	 * METHOD CREATED IN PREPARATION FOR ADDING NEW FEATURES TO THE SETTINGS NOT IMPLEMENTED YET !
-	 * 
-	 * @return Always false
-	 */
-	private static boolean isAutoLogin() {
-		return false;
-	}
-
 	private static void createAppInstanceLock() {
 		try {
 			AppManager.FILE_LOCK.createNewFile();
@@ -173,6 +164,15 @@ public class AppManager {
 
 	private static void deleteAppInstanceLock() {
 		AppManager.FILE_LOCK.delete();
+	}
+
+	/**
+	 * METHOD CREATED IN PREPARATION FOR ADDING NEW FEATURES TO THE SETTINGS NOT IMPLEMENTED YET !
+	 * 
+	 * @return Always false
+	 */
+	private static boolean isAutoLogin() {
+		return false;
 	}
 
 	private static boolean isRunning() {
