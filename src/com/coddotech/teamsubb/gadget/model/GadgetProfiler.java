@@ -1,16 +1,10 @@
 package com.coddotech.teamsubb.gadget.model;
 
-import java.io.File;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.eclipse.swt.graphics.Point;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
+import com.coddotech.teamsubb.main.XmlHandler;
 
 /**
  * Class for managing size profiles for the gadget
@@ -20,7 +14,7 @@ import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
  * @author Coddo
  * 
  */
-public class GadgetProfiler {
+public class GadgetProfiler extends XmlHandler {
 
 	private class Profile {
 
@@ -32,17 +26,13 @@ public class GadgetProfiler {
 		int offsetY;
 	}
 
-	private DocumentBuilderFactory dbFactory;
-	private DocumentBuilder dBuilder;
-	private Document profilesFile;
-
 	private Profile[] profiles;
 	private int selected;
 
 	private static GadgetProfiler instance = null;
 
 	private GadgetProfiler() {
-		initializeXMLReaders();
+		createXMLComponents("GadgetProfiling.xml");
 		fetchProfiles();
 	}
 
@@ -52,7 +42,7 @@ public class GadgetProfiler {
 
 		return instance;
 	}
-	
+
 	/**
 	 * Get the ecuation defining a circle with the set radius
 	 * 
@@ -82,17 +72,17 @@ public class GadgetProfiler {
 
 		return polygon;
 	}
-	
+
 	public void select(int index) {
 		selected = index;
 	}
 
 	public String[] getProfiles() {
 		String[] names = new String[profiles.length];
-		
-		for(int i = 0; i < profiles.length; i++)
+
+		for (int i = 0; i < profiles.length; i++)
 			names[i] = profiles[i].name;
-		
+
 		return names;
 	}
 
@@ -109,8 +99,8 @@ public class GadgetProfiler {
 	}
 
 	public void fetchProfiles() {
-		NodeList nodes = profilesFile.getElementsByTagName("profile");
-		
+		NodeList nodes = xmlFile.getElementsByTagName("profile");
+
 		profiles = new Profile[nodes.getLength()];
 
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -128,19 +118,4 @@ public class GadgetProfiler {
 		}
 	}
 
-	private void initializeXMLReaders() {
-		try {
-			dbFactory = DocumentBuilderFactory.newInstance();
-			dBuilder = dbFactory.newDocumentBuilder();
-			profilesFile = dBuilder.parse(System.getProperty("user.dir") + File.separator
-					+ "GadgetProfiling.xml");
-
-			ActivityLogger.logActivity(this.getClass().getName(), "XML components creation");
-
-		}
-		catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "XML components creation", ex);
-
-		}
-	}
 }

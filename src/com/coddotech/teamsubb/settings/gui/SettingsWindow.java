@@ -34,6 +34,7 @@ public final class SettingsWindow extends CustomWindow {
 	private Button close;
 	private Button apply;
 	private Button autosaveLocation;
+	private Button automaticLogin;
 	private Button restoreDefaults;
 
 	private Label searchIntervalLabel;
@@ -72,6 +73,7 @@ public final class SettingsWindow extends CustomWindow {
 			restoreDefaults.dispose();
 
 			autosaveLocation.dispose();
+			automaticLogin.dispose();
 
 			searchIntervalLabel.dispose();
 			searchInterval.dispose();
@@ -92,9 +94,9 @@ public final class SettingsWindow extends CustomWindow {
 	}
 
 	/**
-	 * Tells the user is the gadget is set to automatically save its own location on the screen
+	 * Get the value indicating whether the gadget shoudl automatically save its location
 	 * 
-	 * @return A logical value indicating the result
+	 * @return A logical value
 	 */
 	public boolean isGadgetAutosaveLocation() {
 		return this.autosaveLocation.getSelection();
@@ -109,8 +111,22 @@ public final class SettingsWindow extends CustomWindow {
 		return Integer.parseInt(this.searchInterval.getText());
 	}
 
+	/**
+	 * Get the ID of the selected profile (the index of the selected item)
+	 * 
+	 * @return An integer value
+	 */
 	public int getSelectedProfile() {
 		return gadgetProfile.getSelectionIndex();
+	}
+	
+	/**
+	 * Get the automatic login selection valeu
+	 * 
+	 * @return A logical value
+	 */
+	public boolean isAutomaticLogin() {
+		return automaticLogin.getSelection();
 	}
 
 	/**
@@ -195,6 +211,11 @@ public final class SettingsWindow extends CustomWindow {
 						}
 							break;
 
+						case Settings.MESSAGE_AUTOMATIC_LOGIN: {
+							automaticLogin.setSelection(Boolean.parseBoolean(data[1]));
+						}
+							break;
+
 						case Settings.MESSAGE_SEARCH_INTERVAL: {
 							searchInterval.setText(data[1]);
 
@@ -246,6 +267,7 @@ public final class SettingsWindow extends CustomWindow {
 		panel = new Composite(this.getShell(), SWT.BORDER);
 
 		autosaveLocation = new Button(this.panel, SWT.CHECK);
+		automaticLogin = new Button(this.panel, SWT.CHECK);
 
 		searchIntervalLabel = new Label(this.panel, SWT.None);
 		searchInterval = new Text(this.panel, SWT.BORDER);
@@ -271,6 +293,12 @@ public final class SettingsWindow extends CustomWindow {
 		autosaveLocation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		autosaveLocation.setText("Automatically save the gadget's location");
 		autosaveLocation.pack();
+		
+		automaticLogin.setFont(CustomWindow.DEFAULT_FONT);
+		automaticLogin.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true ,false, 2, 1));
+		automaticLogin.setEnabled(Settings.getInstance().isAutomaticLogin());
+		automaticLogin.setText("Login automatically");
+		automaticLogin.pack();
 
 		searchIntervalLabel.setFont(CustomWindow.DEFAULT_FONT);
 		searchIntervalLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -298,7 +326,7 @@ public final class SettingsWindow extends CustomWindow {
 		apply.setFont(CustomWindow.DEFAULT_FONT);
 		apply.setText("Apply");
 		apply.pack();
-		
+
 		restoreDefaults.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 		restoreDefaults.setFont(CustomWindow.DEFAULT_FONT);
 		restoreDefaults.setText("Restore defaults");
@@ -313,7 +341,7 @@ public final class SettingsWindow extends CustomWindow {
 
 		this.getShell().setLayout(layout);
 		this.getShell().setText("Settings");
-		this.getShell().setSize(400, 185);
+		this.getShell().setSize(400, 205);
 		this.placeToCenter();
 	}
 

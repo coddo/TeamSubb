@@ -1,10 +1,7 @@
 package com.coddotech.teamsubb.settings.model;
 
 import java.io.File;
-import java.util.Observable;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -12,13 +9,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.swt.graphics.Point;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.main.XmlHandler;
 
 /**
  * Class used for managing the settings for this application.
@@ -29,12 +26,13 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * @author Coddo
  * 
  */
-public final class Settings extends Observable {
+public final class Settings extends XmlHandler {
 
 	/*
 	 * Defautl values for each all the settings
 	 */
 	public static final Point DEFAULT_LOCATION = new Point(200, 200);
+	public static final boolean DEFAULT_AUTOMATIC_LOGIN = false;
 	public static final boolean DEFAULT_AUTOSAVE_LOCATION = true;
 	public static final int DEFAULT_SEARCH_INTERVAL = 1; // one minute
 	public static final int DEFAULT_GADGET_PROFILE = 2;
@@ -49,6 +47,7 @@ public final class Settings extends Observable {
 	public static final String MESSAGE_SAVE = "save changes";
 	public static final String MESSAGE_LOCATION = "location";
 	public static final String MESSAGE_AUTOSAVE_LOCATION = "autosave_location";
+	public static final String MESSAGE_AUTOMATIC_LOGIN = "automatic_login";
 	public static final String MESSAGE_SEARCH_INTERVAL = "search_interval";
 	public static final String MESSAGE_GADGET_PROFILE = "gadget_profile";
 
@@ -57,15 +56,12 @@ public final class Settings extends Observable {
 	 */
 	private Point gadgetLocation;
 	private boolean gadgetAutosaveLocation;
+	private boolean automaticLogin;
 	private int searchInterval;
 	private int gadgetProfile;
 
 	private String[] userInfo;
 	private boolean[] userJobs;
-
-	private DocumentBuilderFactory dbFactory;
-	private DocumentBuilder dBuilder;
-	private Document settingsFile;
 
 	private static Settings instance = null;
 
@@ -73,7 +69,7 @@ public final class Settings extends Observable {
 	 * Class constructor
 	 */
 	private Settings() {
-		createXMLComponents();
+		createXMLComponents("Settings.xml");
 	}
 
 	/**
@@ -95,7 +91,7 @@ public final class Settings extends Observable {
 			// clear flieds
 			dbFactory = null;
 			dBuilder = null;
-			settingsFile = null;
+			xmlFile = null;
 			gadgetLocation = null;
 
 			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
@@ -121,6 +117,14 @@ public final class Settings extends Observable {
 
 	public void setGadgetAutosaveLocation(boolean gadgetAutosaveLocation) {
 		this.gadgetAutosaveLocation = gadgetAutosaveLocation;
+	}
+
+	public boolean isAutomaticLogin() {
+		return this.automaticLogin;
+	}
+
+	public void setAutomaticLogin(boolean automaticLogin) {
+		this.automaticLogin = automaticLogin;
 	}
 
 	public int getSearchInterval() {
@@ -226,13 +230,14 @@ public final class Settings extends Observable {
 		try {
 			saveGadgetLocation(this.gadgetLocation);
 			saveGadgetAutosaveLocation(this.gadgetAutosaveLocation);
+			saveAutomaticLogin(this.automaticLogin);
 			saveSearchInterval(this.searchInterval);
 			saveGadgetProfile(this.gadgetProfile);
 
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			StreamResult output = new StreamResult(new File("Settings.xml"));
 
-			Source input = new DOMSource(settingsFile);
+			Source input = new DOMSource(xmlFile);
 
 			transformer.transform(input, output);
 
@@ -257,17 +262,23 @@ public final class Settings extends Observable {
 		try {
 			readGadgetLocation();
 			readGadgetAutosaveLocation();
+			readAutomaticLogin();
 			readSearchInterval();
 			readGadgetProfile();
-
-			notifyCompleteSettings();
 
 			ActivityLogger.logActivity(this.getClass().getName(), "Read settings");
 
 		}
+		
 		catch (Exception ex) {
 			ActivityLogger.logException(this.getClass().getName(), "Read settings", ex);
-
+			
+			restoreDefaultSettings();
+		}
+		
+		finally {
+			notifyCompleteSettings();
+			
 		}
 	}
 
@@ -278,7 +289,7 @@ public final class Settings extends Observable {
 	 *            An org.eclipse.graphics.Point determining the default position for the gadget
 	 */
 	private void saveGadgetLocation(Point gadgetLocation) {
-		Element element = (Element) settingsFile.getElementsByTagName("location").item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_LOCATION).item(0);
 
 		element.setAttribute("location_x", Integer.toString(gadgetLocation.x));
 		element.setAttribute("location_y", Integer.toString(gadgetLocation.y));
@@ -292,8 +303,20 @@ public final class Settings extends Observable {
 	 *            A boolean value representing the save statement
 	 */
 	private void saveGadgetAutosaveLocation(boolean gadgetAutosaveLocation) {
-		Element element = (Element) settingsFile.getElementsByTagName("autosave_location").item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_AUTOSAVE_LOCATION).item(0);
 		element.setAttribute("value", Boolean.toString(gadgetAutosaveLocation));
+	}
+
+	/**
+	 * Save the logical value which tells the app whether the user has chosen the login process to
+	 * be automatic or not
+	 * 
+	 * @param automaticLogin
+	 *            The logical value to be stored
+	 */
+	private void saveAutomaticLogin(boolean automaticLogin) {
+		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_AUTOMATIC_LOGIN).item(0);
+		element.setAttribute("value", Boolean.toString(automaticLogin));
 	}
 
 	/**
@@ -303,12 +326,18 @@ public final class Settings extends Observable {
 	 *            The interval to be written to the file
 	 */
 	private void saveSearchInterval(int searchInterval) {
-		Element element = (Element) settingsFile.getElementsByTagName("search_interval").item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_SEARCH_INTERVAL).item(0);
 		element.setAttribute("value", Integer.toString(searchInterval));
 	}
 
+	/**
+	 * Save the gadget profile ID that has been selected by the user.
+	 * 
+	 * @param gadgetProfile2
+	 *            The ID of the profile (Integer)
+	 */
 	private void saveGadgetProfile(int gadgetProfile2) {
-		Element element = (Element) settingsFile.getElementsByTagName("gadget_profile").item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_GADGET_PROFILE).item(0);
 		element.setAttribute("value", Integer.toString(this.gadgetProfile));
 	}
 
@@ -320,7 +349,7 @@ public final class Settings extends Observable {
 	 */
 	private void readGadgetLocation() {
 		try {
-			Element element = (Element) settingsFile.getElementsByTagName("location").item(0);
+			Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_LOCATION).item(0);
 
 			int x = Integer.parseInt(element.getAttribute("location_x"));
 			int y = Integer.parseInt(element.getAttribute("location_y"));
@@ -344,7 +373,7 @@ public final class Settings extends Observable {
 	 * screen from the XML settings file
 	 */
 	private void readGadgetAutosaveLocation() {
-		Element element = (Element) settingsFile.getElementsByTagName("autosave_location").item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_AUTOSAVE_LOCATION).item(0);
 
 		try {
 			this.gadgetAutosaveLocation = Boolean.parseBoolean(element.getAttribute("value"));
@@ -358,11 +387,27 @@ public final class Settings extends Observable {
 	}
 
 	/**
+	 * Read the value telling the app whether to login the user automatically using the data stored
+	 * in the login file
+	 */
+	private void readAutomaticLogin() {
+		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_AUTOMATIC_LOGIN).item(0);
+
+		try {
+			this.automaticLogin = Boolean.parseBoolean(element.getAttribute("value"));
+		}
+
+		catch (Exception ex) {
+			this.automaticLogin = Settings.DEFAULT_AUTOMATIC_LOGIN;
+		}
+	}
+
+	/**
 	 * Read the value representing the search interval used by the app in order
 	 * to find new jobs for the user from the XML settings file
 	 */
 	private void readSearchInterval() {
-		Element element = (Element) settingsFile.getElementsByTagName("search_interval").item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_SEARCH_INTERVAL).item(0);
 
 		try {
 			this.searchInterval = Integer.parseInt(element.getAttribute("value"));
@@ -375,8 +420,11 @@ public final class Settings extends Observable {
 		}
 	}
 
+	/**
+	 * Read the value representing the ID of the profile used for the gadget size.
+	 */
 	private void readGadgetProfile() {
-		Element element = (Element) settingsFile.getElementsByTagName("gadget_profile").item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_GADGET_PROFILE).item(0);
 
 		try {
 			this.gadgetProfile = Integer.parseInt(element.getAttribute("value"));
@@ -397,6 +445,8 @@ public final class Settings extends Observable {
 	private void notifyCompleteSettings() {
 		notifyAutosaveLocation();
 
+		notifyAutomaticLogin();
+
 		notifyLocation();
 
 		notifySearchInterval();
@@ -408,6 +458,12 @@ public final class Settings extends Observable {
 		this.setChanged();
 		notifyObservers(Settings.MESSAGE_AUTOSAVE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR
 				+ this.gadgetAutosaveLocation);
+	}
+
+	private void notifyAutomaticLogin() {
+		this.setChanged();
+		notifyObservers(Settings.MESSAGE_AUTOMATIC_LOGIN + CustomWindow.NOTIFICATION_SEPARATOR
+				+ this.automaticLogin);
 	}
 
 	private void notifyLocation() {
@@ -428,21 +484,4 @@ public final class Settings extends Observable {
 				+ this.gadgetProfile);
 	}
 
-	/**
-	 * Initialize the XML builders and files in which to persist the application settings
-	 */
-	private void createXMLComponents() {
-		try {
-			dbFactory = DocumentBuilderFactory.newInstance();
-			dBuilder = dbFactory.newDocumentBuilder();
-			settingsFile = dBuilder.parse(System.getProperty("user.dir") + File.separator + "Settings.xml");
-
-			ActivityLogger.logActivity(this.getClass().getName(), "XML components creation");
-
-		}
-		catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "XML components creation", ex);
-
-		}
-	}
 }

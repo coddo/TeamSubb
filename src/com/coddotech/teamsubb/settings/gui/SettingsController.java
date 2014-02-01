@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.settings.model.Settings;
+import com.coddotech.teamsubb.connection.model.Login;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 
 public class SettingsController extends CustomController {
@@ -61,7 +62,6 @@ public class SettingsController extends CustomController {
 
 			if (view.verifySettings()) {
 				applySettings();
-
 			}
 		}
 
@@ -136,7 +136,7 @@ public class SettingsController extends CustomController {
 
 		}
 	};
-
+	
 	/**
 	 * Listener for when the shell is shown -> reads all the settings from the XML settings file.<br>
 	 * 
@@ -185,6 +185,10 @@ public class SettingsController extends CustomController {
 		settings.commitChangesToFile();
 
 		view.setAsChanged(false);
+		
+		if (!view.isAutomaticLogin())
+			if(Login.loginDataFile.exists())
+				Login.loginDataFile.delete();
 	}
 
 }

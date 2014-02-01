@@ -1,5 +1,6 @@
 package com.coddotech.teamsubb.connection.model;
 
+import java.io.File;
 import java.util.Observable;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
@@ -8,8 +9,10 @@ import com.coddotech.teamsubb.settings.model.Settings;
 
 public class Login extends Observable {
 
+	public static File loginDataFile = new File(System.getProperty("user.dr") + File.separator + "login.lin");
+	
 	private static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator", "Administrator", "Fondator" };
-
+	
 	private static boolean loginSuccess = false;
 
 	/**
