@@ -19,3 +19,4 @@ For those who are not part of the staff but want to preview the app, there is a 
 If exporting the project to a runnable jar file, you need to place the following things in the same location as the jar file in order for the application to run:<br>
 	-> resources folder<br>
 	-> Settings.xml file
+	-> GadgetProfiling.xml

@@ -5,7 +5,8 @@
 *.war
 *.ear
 *.db
-*.xml
 bin/
 Jobs/
 DUMP/
+*.lin
+*.xml
