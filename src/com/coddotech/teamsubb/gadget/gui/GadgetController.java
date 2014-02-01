@@ -283,7 +283,7 @@ public class GadgetController extends CustomController {
 			if (settings.isGadgetAutosaveLocation()) {
 
 				settings.setGadgetLocation(gadget.getShell().getLocation());
-				settings.commitChangesToFile();
+				settings.saveSettings();
 
 			}
 

@@ -182,7 +182,7 @@ public class SettingsController extends CustomController {
 
 		settings.setSearchInterval(view.getSearchInterval());
 
-		settings.commitChangesToFile();
+		settings.saveSettings();
 
 		view.setAsChanged(false);
 		

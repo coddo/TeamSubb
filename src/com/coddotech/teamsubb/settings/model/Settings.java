@@ -226,7 +226,7 @@ public final class Settings extends XmlHandler {
 	 * 
 	 * @return A boolean value indicating if the action was finished successfully or not
 	 */
-	public void commitChangesToFile() {
+	public void saveSettings() {
 		try {
 			saveGadgetLocation(this.gadgetLocation);
 			saveGadgetAutosaveLocation(this.gadgetAutosaveLocation);
@@ -269,16 +269,16 @@ public final class Settings extends XmlHandler {
 			ActivityLogger.logActivity(this.getClass().getName(), "Read settings");
 
 		}
-		
+
 		catch (Exception ex) {
 			ActivityLogger.logException(this.getClass().getName(), "Read settings", ex);
-			
+
 			restoreDefaultSettings();
 		}
-		
+
 		finally {
 			notifyCompleteSettings();
-			
+
 		}
 	}
 

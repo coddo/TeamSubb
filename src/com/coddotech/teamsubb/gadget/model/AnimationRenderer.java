@@ -129,7 +129,12 @@ public class AnimationRenderer extends Observable implements Observer {
 	public void startAnimation() {
 		timer = new AnimationTimer();
 
-		timer.start();
+		try {
+			timer.start();
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "ANIMATION TIMER", ex);;
+		}
 	}
 
 	public void pauseAnimation() {
@@ -151,54 +156,71 @@ public class AnimationRenderer extends Observable implements Observer {
 
 			while (!disposed) {
 
+				threadPause();
+
 				try {
 
-					Thread.sleep(imageInterval);
+					if (!paused && !disposed) {
 
-				}
-				catch (InterruptedException e) {
-				}
+						// mark this model as being changed
+						setChanged();
 
-				if (!paused && !disposed) {
+						// send the animation data to the gadget based on the animation type
+						// currently selected
+						sendAnimationData();
 
-					// mark this model as being changed
-					setChanged();
-
-					// send the animation data to the gadget based on the animation
-					// type currently selected
-					switch (type) {
-
-						case AnimationRenderer.TYPE_IDLE: {
-							if (counter == idle.length)
-								counter = 0;
-
-							notifyObservers(idle[counter]);
-						}
-							break;
-
-						case AnimationRenderer.TYPE_LOW_PRIORITY: {
-							if (counter == lowPriority.length)
-								counter = 0;
-
-							notifyObservers(lowPriority[counter]);
-						}
-							break;
-
-						case AnimationRenderer.TYPE_HIGH_PRIORITY: {
-							if (counter == highPriority.length)
-								counter = 0;
-
-							notifyObservers(highPriority[counter]);
-						}
-							break;
+						counter++;
 					}
+				}
 
-					counter++;
+				catch (Exception ex) {
+					ActivityLogger.logException(this.getClass().getName(), "Animation rendering", ex);
 				}
 
 			}
 
 		}
+
+		private void sendAnimationData() {
+			switch (type) {
+
+				case AnimationRenderer.TYPE_IDLE: {
+					if (counter == idle.length)
+						counter = 0;
+
+					notifyObservers(idle[counter]);
+				}
+					break;
+
+				case AnimationRenderer.TYPE_LOW_PRIORITY: {
+					if (counter == lowPriority.length)
+						counter = 0;
+
+					notifyObservers(lowPriority[counter]);
+				}
+					break;
+
+				case AnimationRenderer.TYPE_HIGH_PRIORITY: {
+					if (counter == highPriority.length)
+						counter = 0;
+
+					notifyObservers(highPriority[counter]);
+				}
+					break;
+			}
+		}
+
+		private void threadPause() {
+			try {
+
+				Thread.sleep(imageInterval);
+
+			}
+
+			catch (InterruptedException e) {
+			}
+		}
+
 	}
 
 	@Override

@@ -128,10 +128,11 @@ public abstract class CustomWindow implements Observer {
 	public void update(Observable obs, Object obj) {
 		try {
 			this.updateGUI(obs, obj);
+			
 		}
 
 		catch (Exception ex) {
-
+			ActivityLogger.logException(this.getClass().getName(), "GUI Update", ex);
 		}
 
 	}
