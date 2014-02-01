@@ -29,6 +29,9 @@ public class AppManager {
 
 			if (!AppManager.isRunning()) {
 
+				// read the settings for the first time
+				Settings.getInstance().readSettings();
+
 				AppManager.createAppInstanceLock();
 
 				AppManager.performUserLogin(); // locks the main thread
@@ -86,8 +89,6 @@ public class AppManager {
 		// if the login process is successful continue with starting the
 		// application's main functionalities and close the login window
 		if (Login.isLoggedIn()) {
-			// read the settings for the first time
-			Settings.getInstance().readSettings();
 
 			// start the job searcher timer
 			JobSearchTimer timer = JobSearchTimer.getInstance();
@@ -102,16 +103,32 @@ public class AppManager {
 	}
 
 	private static void performUserLogin() {
+		boolean displayLoginWindow = false;
+
 		if (AppManager.isAutoLogin()) {
+
 			// login automatically
+			String[] data;
+
+			if ((data = Login.readLoginDetails()) == null)
+				displayLoginWindow = true;
+
+			else {
+				new Login().doLogin(data[0], data[1], false);
+			}
 
 		}
 		else {
+			displayLoginWindow = true;
+		}
+
+		if (displayLoginWindow) {
 
 			// display the login window
 			LoginWindow loginWindow = new LoginWindow();
 			loginWindow.open();
 			loginWindow = null;
+
 		}
 	}
 
@@ -172,12 +189,13 @@ public class AppManager {
 	}
 
 	/**
-	 * METHOD CREATED IN PREPARATION FOR ADDING NEW FEATURES TO THE SETTINGS NOT IMPLEMENTED YET !
+	 * Get the logical value indicating is the application should automatically login with the saved
+	 * user data.
 	 * 
 	 * @return Always false
 	 */
 	private static boolean isAutoLogin() {
-		return false;
+		return Settings.getInstance().isAutomaticLogin();
 	}
 
 	private static boolean isRunning() {

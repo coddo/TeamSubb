@@ -29,6 +29,7 @@ public class LoginWindow extends CustomWindow {
 	private Text passBox;
 	private Button exitButton;
 	private Button loginButton;
+	private Button automaticLogin;
 
 	/**
 	 * Class constructor
@@ -65,6 +66,9 @@ public class LoginWindow extends CustomWindow {
 
 			loginButton.dispose();
 			loginButton = null;
+			
+			automaticLogin.dispose();
+			automaticLogin = null;
 
 			this.logDispose();
 
@@ -91,6 +95,10 @@ public class LoginWindow extends CustomWindow {
 	 */
 	public String getPassword() {
 		return this.passBox.getText();
+	}
+	
+	public boolean isAutomaticLogin() {
+		return this.automaticLogin.getSelection();
 	}
 
 	@Override
@@ -129,6 +137,7 @@ public class LoginWindow extends CustomWindow {
 		passBox = new Text(this.getShell(), SWT.PASSWORD | SWT.BORDER | SWT.SINGLE);
 		exitButton = new Button(this.getShell(), SWT.PUSH);
 		loginButton = new Button(this.getShell(), SWT.PUSH);
+		automaticLogin = new Button(this.getShell(), SWT.CHECK);
 	}
 
 	@Override
@@ -140,7 +149,7 @@ public class LoginWindow extends CustomWindow {
 
 		passLabel.setFont(DEFAULT_FONT);
 		passLabel.setText("Password:");
-		passLabel.setLocation(10, 60);
+		passLabel.setLocation(10, 45);
 		passLabel.pack();
 
 		userBox.setFont(DEFAULT_FONT);
@@ -148,8 +157,13 @@ public class LoginWindow extends CustomWindow {
 		userBox.setSize(175, 23);
 
 		passBox.setFont(DEFAULT_FONT);
-		passBox.setLocation(100, 60);
+		passBox.setLocation(100, 43);
 		passBox.setSize(175, 23);
+		
+		automaticLogin.setFont(DEFAULT_FONT);
+		automaticLogin.setLocation(35, 75);
+		automaticLogin.setText("Automatically login at startup");
+		automaticLogin.pack();
 
 		loginButton.setFont(DEFAULT_FONT);
 		loginButton.setText("Login");
@@ -165,7 +179,7 @@ public class LoginWindow extends CustomWindow {
 	@Override
 	protected void createShellProperties() {
 		this.getShell().setText("Login into your account");
-		this.getShell().setSize(295, 165);
+		this.getShell().setSize(290, 160);
 		this.placeToCenter();
 	}
 

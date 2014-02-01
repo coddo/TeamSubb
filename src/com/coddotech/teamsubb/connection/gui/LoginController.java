@@ -69,8 +69,9 @@ public class LoginController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			if (CustomWindow.isConnected(true))
-				model.doLogin(view.getUserName(), view.getPassword());
+			if (CustomWindow.isConnected(true)) {
+				model.doLogin(view.getUserName(), view.getPassword(), view.isAutomaticLogin());
+			}
 
 		}
 
@@ -94,7 +95,7 @@ public class LoginController extends CustomController {
 
 			if (e.detail == org.eclipse.swt.SWT.TRAVERSE_RETURN)
 				if (CustomWindow.isConnected(true))
-					model.doLogin(view.getUserName(), view.getPassword());
+					model.doLogin(view.getUserName(), view.getPassword(), view.isAutomaticLogin());
 
 		}
 

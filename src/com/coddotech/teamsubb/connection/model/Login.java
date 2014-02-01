@@ -1,6 +1,11 @@
 package com.coddotech.teamsubb.connection.model;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Observable;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
@@ -9,16 +14,17 @@ import com.coddotech.teamsubb.settings.model.Settings;
 
 public class Login extends Observable {
 
-	public static File loginDataFile = new File(System.getProperty("user.dr") + File.separator + "login.lin");
-	
+	public static final File loginDataFile = new File(System.getProperty("user.dir") + File.separator
+			+ "login.lin");
+
 	private static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator", "Administrator", "Fondator" };
-	
+
 	private static boolean loginSuccess = false;
 
 	/**
 	 * Start the login procedure
 	 */
-	public void doLogin(String user, String pass) {
+	public void doLogin(String user, String pass, boolean automaticLogin) {
 
 		try {
 			String response = ConnectionManager.sendLoginRequest(user, pass);
@@ -31,6 +37,13 @@ public class Login extends Observable {
 			notifyObservers(Boolean.parseBoolean(result[0]));
 
 			ActivityLogger.logActivity(this.getClass().getName(), "User login");
+
+			if (automaticLogin) {
+				Login.createLoginDataFile(user, pass);
+
+				Settings.getInstance().setAutomaticLogin(true);
+				Settings.getInstance().saveSettings();
+			}
 
 			if (Login.loginSuccess = Boolean.parseBoolean(result[0])) {
 				Settings set = Settings.getInstance();
@@ -49,6 +62,57 @@ public class Login extends Observable {
 
 	public static boolean isLoggedIn() {
 		return Login.loginSuccess;
+	}
+
+	/**
+	 * Read the login details from the data file
+	 * 
+	 * @return A String collection: (user, pass)
+	 */
+	public static String[] readLoginDetails() {
+		try {
+
+			if (!Login.loginDataFile.exists())
+				throw new Exception();
+
+			BufferedReader reader = new BufferedReader(new FileReader(Login.loginDataFile.getAbsoluteFile()));
+
+			String[] data = new String[2];
+
+			data[0] = reader.readLine();
+			data[1] = reader.readLine();
+
+			reader.close();
+
+			return data;
+		}
+
+		catch (Exception ex) {
+			return null;
+		}
+	}
+
+	/**
+	 * Create the data file which contain the details for this user in order to be able to do the
+	 * login automatically on next program start
+	 * 
+	 * @param user
+	 *            The username for login
+	 * @param pass
+	 *            The password for login
+	 * 
+	 * @throws IOException
+	 */
+	private static void createLoginDataFile(String user, String pass) throws IOException {
+		if (!Login.loginDataFile.exists())
+			Login.loginDataFile.createNewFile();
+
+		BufferedWriter writer = new BufferedWriter(new FileWriter(Login.loginDataFile.getAbsoluteFile()));
+
+		writer.write(user + "\n");
+		writer.write(pass);
+
+		writer.close();
 	}
 
 	/**
@@ -112,5 +176,4 @@ public class Login extends Observable {
 
 		return info;
 	}
-
 }
