@@ -1,14 +1,14 @@
 package com.coddotech.teamsubb.connection.model;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Observable;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
+import com.coddotech.teamsubb.crypting.Cypher;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.settings.model.Settings;
 
@@ -75,16 +75,12 @@ public class Login extends Observable {
 			if (!Login.loginDataFile.exists())
 				throw new Exception();
 
-			BufferedReader reader = new BufferedReader(new FileReader(Login.loginDataFile.getAbsoluteFile()));
+			FileInputStream fis = new FileInputStream(Login.loginDataFile);
+			byte[] data = new byte[(int) Login.loginDataFile.length()];
+			fis.read(data);
+			fis.close();
 
-			String[] data = new String[2];
-
-			data[0] = reader.readLine();
-			data[1] = reader.readLine();
-
-			reader.close();
-
-			return data;
+			return Cypher.decrypt(new String(data, "UTF-8")).split("\n");
 		}
 
 		catch (Exception ex) {
@@ -109,8 +105,8 @@ public class Login extends Observable {
 
 		BufferedWriter writer = new BufferedWriter(new FileWriter(Login.loginDataFile.getAbsoluteFile()));
 
-		writer.write(user + "\n");
-		writer.write(pass);
+		writer.write(Cypher.encrypt(user + "\n"));
+		writer.write(Cypher.encrypt(pass));
 
 		writer.close();
 	}
