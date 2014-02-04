@@ -94,7 +94,7 @@ public class ApplicationInformation extends CustomWindow {
 
 		copyWright.setFont(CustomWindow.DEFAULT_FONT);
 		copyWright.setLocation(10, 130);
-		copyWright.setText("Copyright: © CoddoTechnologies 2014");
+		copyWright.setText("Copyright: ï¿½ CoddoTechnologies 2014");
 		copyWright.pack();
 	}
 

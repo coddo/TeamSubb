@@ -40,16 +40,19 @@ public class FontsManager {
 
 			case Linux: {
 
-				for (File fontFolder : FONTS_LINUX) {
-
-					for (String font : fontFolder.list())
-						fontNames.add(font);
-				}
+//				for (File fontFolder : FONTS_LINUX) {
+//
+//					for (String font : fontFolder.list())
+//						fontNames.add(font);
+//				}
 
 			}
 				break;
 
 		}
+
+		if (fontNames.size() == 0)
+			return null;
 
 		return fontNames.toArray(new String[fontNames.size()]);
 	}
@@ -67,7 +70,12 @@ public class FontsManager {
 		if (fontLinks == null)
 			return null;
 
-		List<String> systemFonts = Arrays.asList(FontsManager.getSystemFonts());
+		String[] sysf = FontsManager.getSystemFonts();
+
+		if (sysf == null)
+			return fontLinks;
+
+		List<String> systemFonts = Arrays.asList(sysf);
 
 		List<String> created = new ArrayList<String>();
 
@@ -172,15 +180,17 @@ public class FontsManager {
 	private static void generateFontPaths() {
 		String properties = System.getProperties().toString();
 
-		if (FONTS_WINDOWS == null) {
-			String mainDrive = extractWindowsDrive(properties);
+		if (FontsManager.getOS() == Platform.Windows)
+			if (FONTS_WINDOWS == null) {
+				String mainDrive = extractWindowsDrive(properties);
 
-			FONTS_WINDOWS = new File(mainDrive + "Windows" + File.separator + "Fonts");
-		}
+				FONTS_WINDOWS = new File(mainDrive + "Windows" + File.separator + "Fonts");
+			}
 
-		if (FONTS_LINUX == null) {
+		if (FontsManager.getOS() == Platform.Linux)
+			if (FONTS_LINUX == null) {
 
-		}
+			}
 	}
 
 	/**
