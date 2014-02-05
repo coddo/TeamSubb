@@ -112,8 +112,28 @@ public class GadgetController extends CustomController {
 
 		animations.disposeAnimationData();
 		animations.generateAnimationData();
-
+		
 		animations.resumeAnimation();
+	}
+
+	public void redrawGadget() {
+		// create the region defining the gadget
+		Region region = new Region();
+	
+		// set the circle data to the region
+		int polygon = profiler.getPolygon();
+	
+		region.add(GadgetProfiler.generateCircle(polygon, polygon, polygon));
+	
+		// define the shape of the shell
+		gadget.getShell().setRegion(region);
+	
+		Rectangle size = region.getBounds();
+		gadget.getShell().setSize(size.width, size.height);
+	
+		// dispose of the region object
+		region.dispose();
+		
 	}
 
 	public SelectionListener trayClicked = new SelectionListener() {
@@ -203,8 +223,8 @@ public class GadgetController extends CustomController {
 			if (e.button == 1) {
 				move = true;
 
-				x = MouseInfo.getPointerInfo().getLocation().x;
-				y = MouseInfo.getPointerInfo().getLocation().y;
+				x = MouseInfo.getPointerInfo().getLocation().x - gadget.getShell().getLocation().x;
+				y = MouseInfo.getPointerInfo().getLocation().y - gadget.getShell().getLocation().y;
 			}
 		}
 
@@ -232,20 +252,15 @@ public class GadgetController extends CustomController {
 	public MouseMoveListener shellMoved = new MouseMoveListener() {
 
 		@Override
-		public void mouseMove(MouseEvent arg0) {
+		public void mouseMove(MouseEvent e) {
 
 			if (move) {
 
-				int difx = MouseInfo.getPointerInfo().getLocation().x - x;
-				int dify = MouseInfo.getPointerInfo().getLocation().y - y;
+				int posx = MouseInfo.getPointerInfo().getLocation().x;
+				int posy = MouseInfo.getPointerInfo().getLocation().y;
 
-				int curx = gadget.getShell().getLocation().x;
-				int cury = gadget.getShell().getLocation().y;
+				gadget.getShell().setLocation(posx - x, posy - y);
 
-				gadget.getShell().setLocation(curx + difx, cury + dify);
-
-				x = MouseInfo.getPointerInfo().getLocation().x;
-				y = MouseInfo.getPointerInfo().getLocation().y;
 			}
 		}
 	};
@@ -304,25 +319,6 @@ public class GadgetController extends CustomController {
 
 	};
 
-	public void redrawGadget() {
-		// create the region defining the gadget
-		Region region = new Region();
-
-		// set the circle data to the region
-		int polygon = profiler.getPolygon();
-
-		region.add(GadgetProfiler.generateCircle(polygon, polygon, polygon));
-
-		// define the shape of the shell
-		gadget.getShell().setRegion(region);
-
-		Rectangle size = region.getBounds();
-		gadget.getShell().setSize(size.width, size.height);
-
-		// dispose of the region object
-		region.dispose();
-	}
-
 	private void openJobsWindow() {
 		Settings set = Settings.getInstance();
 
@@ -364,7 +360,7 @@ public class GadgetController extends CustomController {
 		jobs = JobManager.getInstance();
 		settings = Settings.getInstance();
 		profiler = GadgetProfiler.getInstance();
-		
+
 		animations = new AnimationRenderer();
 
 		// set the observers for the models

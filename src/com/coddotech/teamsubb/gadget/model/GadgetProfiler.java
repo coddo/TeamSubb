@@ -26,7 +26,7 @@ public class GadgetProfiler extends XmlHandler {
 		int offsetY;
 	}
 
-	private Profile[] profiles;
+	private Profile[] profiles = null;
 	private int selected;
 
 	private static GadgetProfiler instance = null;
@@ -99,23 +99,25 @@ public class GadgetProfiler extends XmlHandler {
 	}
 
 	public void fetchProfiles() {
-		NodeList nodes = xmlFile.getElementsByTagName("profile");
+		if (profiles == null) {
 
-		profiles = new Profile[nodes.getLength()];
+			NodeList nodes = xmlFile.getElementsByTagName("profile");
 
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Element element = (Element) nodes.item(i);
+			profiles = new Profile[nodes.getLength()];
 
-			Profile profile = new Profile();
+			for (int i = 0; i < nodes.getLength(); i++) {
+				Element element = (Element) nodes.item(i);
 
-			profile.name = element.getAttribute("name");
-			profile.sizeFactor = Integer.parseInt(element.getAttribute("size_factor"));
-			profile.polygon = Integer.parseInt(element.getAttribute("polygon"));
-			profile.offsetX = Integer.parseInt(element.getAttribute("offset_x"));
-			profile.offsetY = Integer.parseInt(element.getAttribute("offset_y"));
+				Profile profile = new Profile();
 
-			profiles[i] = profile;
+				profile.name = element.getAttribute("name");
+				profile.sizeFactor = Integer.parseInt(element.getAttribute("size_factor"));
+				profile.polygon = Integer.parseInt(element.getAttribute("polygon"));
+				profile.offsetX = Integer.parseInt(element.getAttribute("offset_x"));
+				profile.offsetY = Integer.parseInt(element.getAttribute("offset_y"));
+
+				profiles[i] = profile;
+			}
 		}
 	}
-
 }

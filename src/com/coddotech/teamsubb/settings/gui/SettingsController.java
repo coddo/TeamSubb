@@ -124,9 +124,9 @@ public class SettingsController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			settings.setGadgetProfile(view.getSelectedProfile());
-
 			GadgetProfiler.getInstance().select(view.getSelectedProfile());
+	
+			settings.setGadgetProfile(view.getSelectedProfile());
 
 		}
 

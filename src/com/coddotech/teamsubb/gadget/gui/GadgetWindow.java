@@ -48,7 +48,7 @@ public class GadgetWindow extends CustomWindow {
 	public GadgetWindow() {
 		super();
 
-		this.setShell(new Shell(Display.getDefault(), SWT.NO_TRIM | SWT.ON_TOP));
+		this.setShell(new Shell(Display.getDefault(), SWT.NO_TRIM | SWT.Hide));
 
 		this.initializeComponents();
 	}
@@ -94,7 +94,13 @@ public class GadgetWindow extends CustomWindow {
 				if (!controller.isDisposed()) {
 
 					if (obs instanceof AnimationRenderer) {
-						imageContainer.setBackgroundImage((Image) obj);
+
+						try {
+							imageContainer.setBackgroundImage((Image) obj);
+						}
+						catch (Exception ex) {
+
+						}
 
 					}
 
@@ -120,7 +126,7 @@ public class GadgetWindow extends CustomWindow {
 
 							// force gadget repaint
 							controller.redrawGadget();
-							
+
 							imageContainer.setLocation(GadgetProfiler.getInstance().getOffset());
 
 						}

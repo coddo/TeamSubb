@@ -355,7 +355,7 @@ public final class SettingsWindow extends CustomWindow {
 
 		autosaveLocation.addListener(SWT.Selection, controller.modificationListener);
 		automaticLogin.addListener(SWT.Selection, controller.modificationListener);
-		searchInterval.addListener(SWT.CHANGED, controller.modificationListener);
+		searchInterval.addListener(SWT.KeyDown, controller.modificationListener);
 
 		gadgetProfile.addListener(SWT.Selection, controller.modificationListener);
 		gadgetProfile.addSelectionListener(controller.profileSelected);
