@@ -882,11 +882,18 @@ public class JobManager extends Observable {
 							// read the data from the file and place it in the Job entity
 							File cfgFile = new File(jobFolder.getAbsolutePath() + ".cfg");
 
-							Job job = new Job();
-							job.readConfigFile(cfgFile);
+							if (!cfgFile.exists())
+								FileUtils.deleteDirectory(jobFolder);
 
-							// add the Job entity to the "accepted list"
-							acceptedJobs.add(job);
+							else {
+
+								Job job = new Job();
+								job.readConfigFile(cfgFile);
+
+								// add the Job entity to the "accepted list"
+								acceptedJobs.add(job);
+							}
+
 						}
 					}
 
