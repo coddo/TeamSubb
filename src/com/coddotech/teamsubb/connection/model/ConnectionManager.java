@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -412,7 +414,8 @@ public final class ConnectionManager {
 		// create a http client used as an interface for interacting with the server
 		HttpClient httpClient = new DefaultHttpClient();
 		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
-
+		httpClient.getParams().setParameter("http.protocol.content-charset", "UTF-8");
+		
 		// the POST type message to be sent to the server
 		HttpPost httpPost = new HttpPost(url);
 
@@ -467,7 +470,7 @@ public final class ConnectionManager {
 			MultipartEntity data = new MultipartEntity();
 
 			for (int i = 0; i < messages.length; i++) {
-				data.addPart(messageHeaders[i], new StringBody(messages[i]));
+				data.addPart(messageHeaders[i], new StringBody(encodeMessage(messages[i])));
 			}
 
 			return ConnectionManager.sendMessage(url, data);
@@ -479,7 +482,7 @@ public final class ConnectionManager {
 			return "false";
 		}
 	}
-
+	
 	/**
 	 * Send a message to a server with the entered parameters (containing both text and files)
 	 * 
@@ -512,7 +515,7 @@ public final class ConnectionManager {
 			MultipartEntity data = new MultipartEntity();
 
 			for (int i = 0; i < messages.length; i++) {
-				data.addPart(messageHeaders[i], new StringBody(messages[i]));
+				data.addPart(messageHeaders[i], new StringBody(encodeMessage(messages[i])));
 			}
 
 			for (int i = 0; i < files.length; i++) {
@@ -527,6 +530,10 @@ public final class ConnectionManager {
 
 			return "false";
 		}
+	}
+
+	private static String encodeMessage(String message) throws UnsupportedEncodingException {
+		return URLEncoder.encode(message, "UTF-8");
 	}
 
 	/**

@@ -131,7 +131,7 @@ public class GadgetWindow extends CustomWindow {
 			}
 		};
 
-		Display.getDefault().asyncExec(update);
+		Display.getDefault().syncExec(update);
 
 	}
 
