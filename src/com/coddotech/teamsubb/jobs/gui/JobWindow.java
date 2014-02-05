@@ -510,7 +510,7 @@ public class JobWindow extends CustomWindow {
 		// application menu objects
 		openSettingsMenuItem.setText("Settings");
 		closeWindowMenuItem.setText("Close");
-		exitApplicationMenuItem.setText("Exit TeamSubb");
+		exitApplicationMenuItem.setText("Quit");
 
 		// jobs menu objects
 		createJobMenuItem.setText("Create a new job");

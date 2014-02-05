@@ -158,9 +158,9 @@ public class GadgetWindow extends CustomWindow {
 		tray.setToolTipText("TeamSubb");
 		tray.setImage(CustomWindow.APP_ICON);
 
-		exitApp.setText("Exit TeamSubb");
-		openJobs.setText("Open jobs window");
-		openSettings.setText("Open settings window");
+		exitApp.setText("Quit");
+		openJobs.setText("View Jobs");
+		openSettings.setText("Settings");
 	}
 
 	@Override

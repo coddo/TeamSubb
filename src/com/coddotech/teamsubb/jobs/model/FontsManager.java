@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
+
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.connection.model.FileDownloader;
 
@@ -40,11 +42,12 @@ public class FontsManager {
 
 			case Linux: {
 
-//				for (File fontFolder : FONTS_LINUX) {
-//
-//					for (String font : fontFolder.list())
-//						fontNames.add(font);
-//				}
+				for (File fontFolder : FONTS_LINUX) {
+
+					for (File font : FileUtils.listFiles(fontFolder, null, true))
+						fontNames.add(font.getName());
+					
+				}
 
 			}
 				break;
@@ -189,7 +192,18 @@ public class FontsManager {
 
 		if (FontsManager.getOS() == Platform.Linux)
 			if (FONTS_LINUX == null) {
+				FONTS_LINUX = new File[3];
 
+				String sharedFontsPath = File.separator + "share" + File.separator + "fonts";
+				String userFontsPath = System.getProperty("user.name") + File.separator + ".fonts";
+
+				FONTS_LINUX[0] = new File(File.separator + "usr" + sharedFontsPath);
+				FONTS_LINUX[1] = new File(File.separator + "usr" + File.separator + "local" + sharedFontsPath);
+				FONTS_LINUX[2] = new File(File.separator + "home" + File.separator + userFontsPath);
+
+				// Create the user fonts path if it doesn't exist
+				if (!FONTS_LINUX[2].exists())
+					FONTS_LINUX[2].mkdir();
 			}
 	}
 
