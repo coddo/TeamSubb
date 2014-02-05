@@ -84,9 +84,9 @@ public class ApplicationInformation extends CustomWindow {
 
 		server.setFont(CustomWindow.DEFAULT_FONT);
 		server.setLocation(10, 70);
-		server.setText("Server: <a>http://anime4FUN.ro</a>");
+		server.setText("Server: <a>anime4FUN.ro</a>");
 		server.pack();
-
+		
 		author.setFont(CustomWindow.DEFAULT_FONT);
 		author.setLocation(10, 100);
 		author.setText("Author: <a>Coddo</a>");
@@ -94,7 +94,7 @@ public class ApplicationInformation extends CustomWindow {
 
 		copyWright.setFont(CustomWindow.DEFAULT_FONT);
 		copyWright.setLocation(10, 130);
-		copyWright.setText("Copyright: � CoddoTechnologies 2014");
+		copyWright.setText("Copyright: @ CoddoTechnologies 2014");
 		copyWright.pack();
 	}
 

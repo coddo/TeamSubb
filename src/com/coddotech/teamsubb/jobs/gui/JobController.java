@@ -15,6 +15,7 @@ import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.settings.gui.SettingsWindow;
+import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
  * Controller class used by the JobWindow in order to complete the job actions
@@ -215,7 +216,9 @@ public class JobController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 
-			if (ConnectionManager.sendJobForceCancelRequest(view.getSelectedJobID(), view.getUserName())) {
+			Settings set = Settings.getInstance();
+
+			if (ConnectionManager.sendJobForceCancelRequest(view.getSelectedJobID(), set.getUserName())) {
 
 				model.removeJob(view.getSelectedJobID());
 				model.findJobs();

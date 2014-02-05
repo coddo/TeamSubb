@@ -20,6 +20,7 @@ import org.apache.http.params.CoreProtocolPNames;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.jobs.model.Job;
+import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
  * This class is used for bridging the connection between the server and the
@@ -415,7 +416,7 @@ public final class ConnectionManager {
 		HttpClient httpClient = new DefaultHttpClient();
 		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 		httpClient.getParams().setParameter("http.protocol.content-charset", "UTF-8");
-		
+
 		// the POST type message to be sent to the server
 		HttpPost httpPost = new HttpPost(url);
 
@@ -465,6 +466,10 @@ public final class ConnectionManager {
 	private static String sendMessage(String url, String[] messageHeaders, String[] messages) {
 		try {
 
+			// append special information to the text bodies
+			messageHeaders = ConnectionManager.appendSpecialHeaders(messageHeaders);
+			messages = ConnectionManager.appendSpecialMessages(messages);
+
 			// create a MultiPart entity which will contain the text message, representing the
 			// request that will be made to the server
 			MultipartEntity data = new MultipartEntity();
@@ -482,7 +487,7 @@ public final class ConnectionManager {
 			return "false";
 		}
 	}
-	
+
 	/**
 	 * Send a message to a server with the entered parameters (containing both text and files)
 	 * 
@@ -510,16 +515,22 @@ public final class ConnectionManager {
 			String[] fileHeaders, String[] files) {
 		try {
 
+			// append special information to the text bodies
+			messageHeaders = ConnectionManager.appendSpecialHeaders(messageHeaders);
+			messages = ConnectionManager.appendSpecialMessages(messages);
+
 			// create a MultiPart entity which will contain the text message and
 			// files, representing the request that will be made to the server
 			MultipartEntity data = new MultipartEntity();
 
 			for (int i = 0; i < messages.length; i++) {
 				data.addPart(messageHeaders[i], new StringBody(encodeMessage(messages[i])));
+
 			}
 
 			for (int i = 0; i < files.length; i++) {
 				data.addPart(fileHeaders[i], new FileBody(new File(files[i])));
+
 			}
 
 			return ConnectionManager.sendMessage(url, data);
@@ -530,6 +541,40 @@ public final class ConnectionManager {
 
 			return "false";
 		}
+	}
+
+	private static String[] appendSpecialHeaders(String[] messageHeaders) {
+		Settings set = Settings.getInstance();
+
+		if (set.getUserInfo() == null)
+			return messageHeaders;
+
+		String[] data = new String[messageHeaders.length + 2];
+
+		data[data.length - 2] = "userid";
+		data[data.length - 1] = "code";
+
+		for (int i = 0; i < messageHeaders.length; i++)
+			data[i] = messageHeaders[i];
+
+		return data;
+	}
+
+	private static String[] appendSpecialMessages(String[] messages) {
+		Settings set = Settings.getInstance();
+
+		if (set.getUserInfo() == null)
+			return messages;
+
+		String[] data = new String[messages.length + 2];
+
+		data[data.length - 2] = set.getUserID();
+		data[data.length - 1] = set.getUserCode();
+
+		for (int i = 0; i < messages.length; i++)
+			data[i] = messages[i];
+
+		return data;
 	}
 
 	private static String encodeMessage(String message) throws UnsupportedEncodingException {

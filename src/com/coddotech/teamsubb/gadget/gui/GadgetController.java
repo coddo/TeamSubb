@@ -112,28 +112,28 @@ public class GadgetController extends CustomController {
 
 		animations.disposeAnimationData();
 		animations.generateAnimationData();
-		
+
 		animations.resumeAnimation();
 	}
 
 	public void redrawGadget() {
 		// create the region defining the gadget
 		Region region = new Region();
-	
+
 		// set the circle data to the region
 		int polygon = profiler.getPolygon();
-	
+
 		region.add(GadgetProfiler.generateCircle(polygon, polygon, polygon));
-	
+
 		// define the shape of the shell
 		gadget.getShell().setRegion(region);
-	
+
 		Rectangle size = region.getBounds();
 		gadget.getShell().setSize(size.width, size.height);
-	
+
 		// dispose of the region object
 		region.dispose();
-		
+
 	}
 
 	public SelectionListener trayClicked = new SelectionListener() {
@@ -325,12 +325,12 @@ public class GadgetController extends CustomController {
 		try {
 
 			if (jobsWindow.getShell().isDisposed())
-				jobsWindow = new JobWindow(set.getUserInfo(), set.getUserJobs());
+				jobsWindow = new JobWindow(set.getUserInfo());
 
 		}
 		catch (Exception ex) {
 
-			jobsWindow = new JobWindow(set.getUserInfo(), set.getUserJobs());
+			jobsWindow = new JobWindow(set.getUserInfo());
 
 		}
 

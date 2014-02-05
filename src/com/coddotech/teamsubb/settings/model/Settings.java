@@ -60,8 +60,8 @@ public final class Settings extends XmlHandler {
 	private int searchInterval;
 	private int gadgetProfile;
 
-	private String[] userInfo;
-	private boolean[] userJobs;
+	private String[] userInfo = null;
+	private boolean[] userJobs = null;
 
 	private static Settings instance = null;
 
@@ -187,8 +187,16 @@ public final class Settings extends XmlHandler {
 	}
 
 	public String getUserName() {
-		return Settings.getInstance().getUserInfo()[0];
+		return this.userInfo[0];
 
+	}
+	
+	public String getUserID() {
+		return this.userInfo[1];
+	}
+	
+	public String getUserCode() {
+		return this.userInfo[2];
 	}
 
 	public void setUserInfo(String[] userInfo) {

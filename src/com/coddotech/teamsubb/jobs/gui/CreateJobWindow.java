@@ -341,7 +341,7 @@ public class CreateJobWindow extends CustomWindow {
 		nextStaff.setFont(CustomWindow.DEFAULT_FONT);
 		nextStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF);
-		nextStaff.setItems(StaffManager.getStaffList());
+		nextStaff.setItems(StaffManager.downloadStaffList(false));
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF, 0);
 		nextStaff.select(0);
 

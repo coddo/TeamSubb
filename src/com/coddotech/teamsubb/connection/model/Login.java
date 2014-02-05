@@ -129,7 +129,7 @@ public class Login extends Observable {
 	private static boolean[] getJobsInfo(String[] data) {
 		boolean[] jobsData = { false, false, false, false, false, false, false };
 
-		for (int i = 3; i < data.length; i++) {
+		for (int i = 4; i < data.length; i++) {
 
 			for (int j = 0; j < JobWindow.DEFAULT_JOBS_INFO_HEADERS.length; j++) {
 
@@ -159,16 +159,18 @@ public class Login extends Observable {
 	 * @return A String array containing the user's information
 	 */
 	private static String[] getUserInfo(String[] data) {
-		String[] info = new String[3];
+		String[] info = new String[5];
 
 		info[0] = data[1];
 		info[1] = data[2];
-
+		info[2] = data[3];
+		info[3] = data[4];
+		
 		/*
 		 * The rank is stored as an integer, indicating on of the following
 		 * ranks: 0 - Membru; 1 - Moderator; 2 - Administrator; 3 - Fondator;
 		 */
-		info[2] = Login.DEFAULT_USER_RANKS[Integer.parseInt(data[3])];
+		info[4] = Login.DEFAULT_USER_RANKS[Integer.parseInt(data[5])];
 
 		return info;
 	}

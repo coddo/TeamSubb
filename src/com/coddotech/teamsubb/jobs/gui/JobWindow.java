@@ -21,6 +21,7 @@ import com.coddotech.teamsubb.jobs.gui.JobController;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
  * Main window that is used by the user to manage his/her jobs and communicate
@@ -39,8 +40,6 @@ public class JobWindow extends CustomWindow {
 	private static final Color COLOR_IMPORTANT = Display.getDefault().getSystemColor(SWT.COLOR_MAGENTA);
 
 	// auxiliary data
-	private String[] tempUserInfo;
-	private String[] tempUserJobs;
 	private boolean exiting = false;
 	private boolean isTestUser = true;
 
@@ -123,13 +122,11 @@ public class JobWindow extends CustomWindow {
 	 * @param userJobs
 	 *            Information about the jobs that the user can take
 	 */
-	public JobWindow(String[] userInfo, String[] userJobs) {
+	public JobWindow(String[] userInfo) {
 		super();
 		this.setShell(new Shell(Display.getDefault(), SWT.SHELL_TRIM));
 
-		tempUserInfo = userInfo;
-		tempUserJobs = userJobs;
-		this.isTestUser = tempUserInfo[0].equals("testcoddo");
+		this.isTestUser = userInfo[0].equals("testcoddo");
 
 		this.initializeComponents();
 		this.exiting = false;
@@ -227,15 +224,6 @@ public class JobWindow extends CustomWindow {
 
 	public boolean isExiting() {
 		return this.exiting;
-	}
-
-	/**
-	 * Retrieve the current user's name
-	 * 
-	 * @return A String value
-	 */
-	public String getUserName() {
-		return this.tempUserInfo[0];
 	}
 
 	/**
@@ -669,6 +657,8 @@ public class JobWindow extends CustomWindow {
 		this.jobsList.clearAll();
 		this.jobsList.removeAll();
 
+		String[] userJobs = Settings.getInstance().getUserJobs();
+
 		for (Job job : ((JobManager) obs).getAcceptedJobs()) {
 
 			if (!isInList(job)) {
@@ -690,10 +680,10 @@ public class JobWindow extends CustomWindow {
 				item.setText(job.getName());
 				item.setData(job.getID());
 
-				if (job.getIntendedTo().equals(this.tempUserInfo[0]))
+				if (job.getIntendedTo().equals(userJobs[0]))
 					item.setBackground(JobWindow.COLOR_IMPORTANT);
 
-				else if (job.isAcceptable(this.tempUserJobs))
+				else if (job.isAcceptable(userJobs))
 					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
 			}
 
@@ -784,19 +774,21 @@ public class JobWindow extends CustomWindow {
 	 * Generate the user information objects and display the on the GUI for the user to see
 	 */
 	private void generateUserInfo() {
-		userNameLabel.setText(tempUserInfo[0]);
-		userEmailLabel.setText(tempUserInfo[1]);
-		userRankLabel.setText(tempUserInfo[2]);
+		String[] userJobs = Settings.getInstance().getUserJobs();
+
+		userNameLabel.setText(userJobs[0]);
+		userEmailLabel.setText(userJobs[3]);
+		userRankLabel.setText(userJobs[4]);
 
 		userNameLabel.pack();
 		userEmailLabel.pack();
 		userRankLabel.pack();
 
-		userJobsLabels = new Label[tempUserJobs.length];
-		for (int i = 0; i < tempUserJobs.length; i++) {
+		userJobsLabels = new Label[userJobs.length];
+		for (int i = 0; i < userJobs.length; i++) {
 			userJobsLabels[i] = new Label(this.userJobsGroup, SWT.None);
 			userJobsLabels[i].setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			userJobsLabels[i].setText(tempUserJobs[i]);
+			userJobsLabels[i].setText(userJobs[i]);
 			userJobsLabels[i].setFont(CustomWindow.DEFAULT_FONT);
 			userJobsLabels[i].pack();
 		}
