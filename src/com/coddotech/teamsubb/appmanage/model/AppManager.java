@@ -1,7 +1,7 @@
 package com.coddotech.teamsubb.appmanage.model;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -18,7 +18,7 @@ import com.coddotech.teamsubb.settings.model.Settings;
 
 public class AppManager {
 
-	private static File FILE_LOCK = new File(System.getProperty("user.dir") + File.separator + "lock.coddo");
+	private static ServerSocket instanceLock = null;
 
 	public static void startApp() {
 		ActivityLogger.performInitializations();
@@ -27,12 +27,10 @@ public class AppManager {
 
 		try {
 
-			if (!AppManager.isRunning()) {
+			if (AppManager.createAppInstanceLock()) {
 
 				// read the settings for the first time
 				Settings.getInstance().readSettings();
-
-				AppManager.createAppInstanceLock();
 
 				AppManager.performUserLogin(); // locks the main thread
 
@@ -48,7 +46,7 @@ public class AppManager {
 				MessageBox message = new MessageBox(shell, SWT.ICON_WARNING);
 
 				message.setText("Already running");
-				message.setMessage("TeamSubb is already running !\n Stop the currently active instance in order to start a new one.");
+				message.setMessage("TeamSubb is already running !\n\n Stop the currently active instance in order to start a new one.");
 
 				message.open();
 
@@ -173,19 +171,33 @@ public class AppManager {
 		shell.dispose();
 	}
 
-	private static void createAppInstanceLock() {
+	private static boolean createAppInstanceLock() {
+
 		try {
-			AppManager.FILE_LOCK.createNewFile();
+
+			instanceLock = new ServerSocket(1993);
+
+			return true;
 		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		catch (Exception ex) {
+			return false;
+
 		}
 	}
 
 	private static void deleteAppInstanceLock() {
-		if (AppManager.FILE_LOCK.exists())
-			AppManager.FILE_LOCK.delete();
+		if (instanceLock != null) {
+
+			try {
+				instanceLock.close();
+
+			}
+
+			catch (IOException e) {
+
+			}
+		}
 	}
 
 	/**
@@ -198,7 +210,4 @@ public class AppManager {
 		return Settings.getInstance().isAutomaticLogin();
 	}
 
-	private static boolean isRunning() {
-		return AppManager.FILE_LOCK.exists();
-	}
 }
