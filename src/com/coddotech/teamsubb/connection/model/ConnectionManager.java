@@ -286,10 +286,11 @@ public final class ConnectionManager {
 		job.enhanceAddedFonts();
 
 		// Text messages data
-		String[] messageHeaders = { "push", "staff", "jobid", "jobtype", "comments", "nextstaff" };
+		String[] messageHeaders = { "push", "staff", "jobid", "jobtype", "comments", "nextstaff", "torrent" };
 
 		String[] messages = { "available", user, Integer.toString(job.getID()),
-				Integer.toString(job.getType()), job.getDescription(), job.getNextStaffMember() };
+				Integer.toString(job.getType()), job.getDescription(), job.getNextStaffMember(),
+				job.getTorrent() };
 
 		if (canceled)
 			messages[0] = "canceled";

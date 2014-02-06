@@ -192,7 +192,7 @@ public class JobManager extends Observable {
 			message += Job.DEFAULT_JOB_TYPES[job.getType()] + CustomWindow.NOTIFICATION_SEPARATOR;
 
 			message += job.getStartDate() + CustomWindow.NOTIFICATION_SEPARATOR;
-			
+
 			message += job.getTorrent() + CustomWindow.NOTIFICATION_SEPARATOR;
 
 			message += job.getPreviousStaffMember() + CustomWindow.NOTIFICATION_SEPARATOR;
@@ -560,7 +560,7 @@ public class JobManager extends Observable {
 	 * @param jobID
 	 *            The ID of the job to be sent back to the server
 	 */
-	public void pushJob(final int jobID, final String nextStaff, final int type, final String comments,
+	public void pushJob(final int jobID, final String nextStaff, final int type, final String torrent, final String comments,
 			final File subFile) {
 
 		class PushJob extends Thread {
@@ -590,6 +590,9 @@ public class JobManager extends Observable {
 
 							if (subFile != null)
 								job.setSubFile(subFile);
+							
+							if(!torrent.equals(""))
+								job.setTorrent(torrent);
 
 							response = job.push();
 
@@ -740,7 +743,7 @@ public class JobManager extends Observable {
 
 		// basic job information
 		Job job = new Job();
-		
+
 		job.setID(Integer.parseInt(data[0]));
 		job.setName(data[1]);
 		job.setType(Integer.parseInt(data[2]));

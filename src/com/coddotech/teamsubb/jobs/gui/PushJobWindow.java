@@ -35,10 +35,12 @@ public class PushJobWindow extends CustomWindow {
 	private Text name;
 	private Text comments;
 	private Text subFile;
+	private Text torrent;
 
 	private Combo type;
 	private Combo nextStaff;
 
+	private Button torrentCheck;
 	private Button finish;
 	private Button cancel;
 	private Button subFileCheck;
@@ -68,6 +70,9 @@ public class PushJobWindow extends CustomWindow {
 
 			typeLabel.dispose();
 			type.dispose();
+
+			torrentCheck.dispose();
+			torrent.dispose();
 
 			commentsLabel.dispose();
 			comments.dispose();
@@ -136,6 +141,15 @@ public class PushJobWindow extends CustomWindow {
 	public String getComments() {
 		return this.comments.getText();
 	}
+	
+	/**
+	 * Get the torrent link entered by the user
+	 * 
+	 * @return A String value
+	 */
+	public String getTorrent() {
+		return this.torrent.getText();
+	}
 
 	/**
 	 * Set the path to the selected sub file.
@@ -164,8 +178,23 @@ public class PushJobWindow extends CustomWindow {
 		return new File(this.subFile.getText());
 	}
 
+	/**
+	 * Verify if the user has decided to use a new subfile
+	 * 
+	 * @return A Logical value
+	 */
 	public boolean hasNewSubFile() {
 		return this.subFileCheck.getSelection();
+	}
+
+	/**
+	 * Change the state of the torrent TextBox according to the state of its corresponding checkbox
+	 */
+	public void changeTorrentState() {
+		this.torrent.setEnabled(this.torrentCheck.getSelection());
+		
+		if (!torrent.getEnabled())
+			torrent.setText("");
 	}
 
 	/**
@@ -190,6 +219,13 @@ public class PushJobWindow extends CustomWindow {
 
 			return false;
 		}
+
+		if (torrentCheck.getSelection())
+			if (torrent.getText() == null || torrent.getText().equals("")) {
+				message.open();
+
+				return false;
+			}
 
 		return true;
 	}
@@ -244,6 +280,9 @@ public class PushJobWindow extends CustomWindow {
 		typeLabel = new Label(panel, SWT.None);
 		type = new Combo(panel, SWT.READ_ONLY);
 
+		torrentCheck = new Button(panel, SWT.CHECK);
+		torrent = new Text(panel, SWT.BORDER);
+
 		commentsLabel = new Label(panel, SWT.None);
 		comments = new Text(panel, SWT.BORDER);
 
@@ -286,6 +325,16 @@ public class PushJobWindow extends CustomWindow {
 
 		for (String jobType : Job.DEFAULT_JOB_TYPES)
 			type.add(jobType);
+		type.select(0); // make the first item selected by default
+
+		torrentCheck.setFont(CustomWindow.BOLD_FONT);
+		torrentCheck.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		torrentCheck.setText("Change the torrent link (leave unchecked for same torrent)");
+		torrentCheck.pack();
+
+		torrent.setFont(CustomWindow.DEFAULT_FONT);
+		torrent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		torrent.setEnabled(false);
 
 		commentsLabel.setFont(CustomWindow.BOLD_FONT);
 		commentsLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -335,7 +384,7 @@ public class PushJobWindow extends CustomWindow {
 
 		this.getShell().setLayout(layout);
 		this.getShell().setText("Finish job");
-		this.getShell().setSize(430, 370);
+		this.getShell().setSize(485, 400);
 
 		this.placeToCenter();
 	}
@@ -347,5 +396,6 @@ public class PushJobWindow extends CustomWindow {
 		this.finish.addSelectionListener(controller.finishButtonClicked);
 		this.cancel.addSelectionListener(controller.cancelButtonClicked);
 		this.subFileCheck.addSelectionListener(controller.subFileChecked);
+		this.torrentCheck.addSelectionListener(controller.torrentChecked);
 	}
 }

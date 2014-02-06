@@ -61,8 +61,8 @@ public class PushJobController extends CustomController {
 
 			if (view.verifyFields()) {
 
-				model.pushJob(view.getID(), view.getNextStaff(), view.getType(), view.getComments(),
-						view.getSubFile());
+				model.pushJob(view.getID(), view.getNextStaff(), view.getType(), view.getTorrent(),
+						view.getComments(), view.getSubFile());
 
 			}
 
@@ -93,6 +93,9 @@ public class PushJobController extends CustomController {
 		}
 	};
 
+	/**
+	 * Listener for when the sub file checkbox check state has changed
+	 */
 	public SelectionListener subFileChecked = new SelectionListener() {
 
 		@Override
@@ -109,6 +112,24 @@ public class PushJobController extends CustomController {
 
 			else
 				view.setSubFile("");
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
+	/**
+	 * Listener for when the torrent checkbox check state has changed
+	 */
+	public SelectionListener torrentChecked = new SelectionListener() {
+
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			view.changeTorrentState();
+
 		}
 
 		@Override
