@@ -254,7 +254,7 @@ public class JobWindow extends CustomWindow {
 	public Color getSelectedJobColor() {
 		return this.jobsList.getSelection()[0].getBackground();
 	}
-	
+
 	/**
 	 * Get the torrent link for the selected job
 	 * 
@@ -561,11 +561,11 @@ public class JobWindow extends CustomWindow {
 
 		jobStartDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		jobStartDate.setFont(CustomWindow.DEFAULT_FONT);
-		
+
 		jobTorrentLabel.setFont(CustomWindow.DEFAULT_FONT);
 		jobTorrentLabel.setText("Torrent:");
 		jobTorrentLabel.pack();
-		
+
 		jobTorrent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		jobTorrent.setFont(CustomWindow.DEFAULT_FONT);
 
@@ -670,7 +670,7 @@ public class JobWindow extends CustomWindow {
 		configureFontsMenuItem.addSelectionListener(controller.configureFontsClicked);
 
 		aboutMenuItem.addSelectionListener(controller.aboutClicked);
-		
+
 		jobTorrent.addSelectionListener(controller.jobTorrentClicked);
 
 		jobsList.addSelectionListener(controller.jobsListItemSelected);
@@ -681,8 +681,6 @@ public class JobWindow extends CustomWindow {
 	private void createJobList(Observable obs) {
 		this.jobsList.clearAll();
 		this.jobsList.removeAll();
-
-		String[] userJobs = Settings.getInstance().getUserJobs();
 
 		for (Job job : ((JobManager) obs).getAcceptedJobs()) {
 
@@ -705,10 +703,10 @@ public class JobWindow extends CustomWindow {
 				item.setText(job.getName());
 				item.setData(job.getID());
 
-				if (job.getIntendedTo().equals(userJobs[0]))
+				if (job.getIntendedTo().equals(Settings.getInstance().getUserName()))
 					item.setBackground(JobWindow.COLOR_IMPORTANT);
 
-				else if (job.isAcceptable(userJobs))
+				else if (job.isAcceptable(Settings.getInstance().getUserJobs()))
 					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
 			}
 

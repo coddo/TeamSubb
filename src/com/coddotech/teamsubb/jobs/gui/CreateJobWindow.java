@@ -345,6 +345,11 @@ public class CreateJobWindow extends CustomWindow {
 		type.setFont(CustomWindow.DEFAULT_FONT);
 		type.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
+		for (String jobType : Job.DEFAULT_JOB_TYPES)
+			type.add(jobType);
+		type.remove(type.getItemCount() - 1); // remove last item ("end" type)
+		type.select(0); //make the first item selected by default
+		
 		torrentLabel.setFont(CustomWindow.DEFAULT_FONT);
 		torrentLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		torrentLabel.setText("Torrent link:");
@@ -352,10 +357,6 @@ public class CreateJobWindow extends CustomWindow {
 
 		torrent.setFont(CustomWindow.DEFAULT_FONT);
 		torrent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
-
-		for (String jobType : Job.DEFAULT_JOB_TYPES)
-			type.add(jobType);
-		type.remove(type.getItemCount() - 1); // remove last item ("end" type)
 
 		commentsLabel.setFont(CustomWindow.DEFAULT_FONT);
 		commentsLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
