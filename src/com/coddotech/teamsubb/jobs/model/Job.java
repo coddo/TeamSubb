@@ -30,8 +30,9 @@ public final class Job {
 	public boolean valid = false;
 
 	private int id;
-	private String name;
 	private int type;
+	
+	private String name;
 	private String description;
 	private String bookedBy;
 	private String currentStaffMember;
@@ -40,12 +41,16 @@ public final class Job {
 	private String intendedTo;
 	private String startDate; // store the date as a String value for now
 	private String directoryPath;
-	private File subFile;
-	private File[] fonts;
+	private String torrent;
 	private String subFileLink;
+	
 	private String[] fontLinks;
-	private File[] addedFonts;
+	
+	private File subFile;
 	private File configFile;
+
+	private File[] fonts;
+	private File[] addedFonts;
 
 	/**
 	 * Class constructor
@@ -78,6 +83,9 @@ public final class Job {
 			this.directoryPath = null;
 			this.subFileLink = null;
 			this.fontLinks = null;
+			this.subFile = null;
+			this.fonts = null;
+			this.torrent = null;
 
 			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
 
@@ -312,6 +320,24 @@ public final class Job {
 	 */
 	public File getDirectoryInstance() {
 		return new File(this.directoryPath);
+	}
+
+	/**
+	 * Get the link to the torrent file used for the sub
+	 * 
+	 * @return A String value
+	 */
+	public String getTorrent() {
+		return torrent;
+	}
+
+	/**
+	 * Set the link to the torrent file used for the sub
+	 * 
+	 * @param torrent A String value
+	 */
+	public void setTorrent(String torrent) {
+		this.torrent = torrent;
 	}
 
 	/**
@@ -612,6 +638,7 @@ public final class Job {
 		this.setIntendedTo(reader.readLine());
 		this.setStartDate(reader.readLine());
 		this.setDirectoryPath(reader.readLine());
+		this.setTorrent(reader.readLine());
 		this.setSubFile(new File(reader.readLine()));
 
 		int nr = Integer.parseInt(reader.readLine());
@@ -661,6 +688,7 @@ public final class Job {
 		writer.write(this.intendedTo + "\n");
 		writer.write(this.startDate + "\n");
 		writer.write(this.directoryPath + "\n");
+		writer.write(this.torrent + "\n");
 		writer.write(this.subFile.getAbsolutePath() + "\n");
 
 		if (addedFonts != null) {

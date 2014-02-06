@@ -153,13 +153,13 @@ public final class ConnectionManager {
 	 * @return A Logical value telling the user if the request was accepted or not by the server
 	 */
 	public static boolean sendJobCreateRequest(String user, String name, int type, String description,
-			String nextStaff, String subFile, String[] fonts) {
+			String nextStaff, String torrent, String subFile, String[] fonts) {
 
 		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Job create request", "SEND");
 
 		// user info handling
-		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype", "comments", "nextstaff" };
-		String[] messages = { "create", user, name, Integer.toString(type), description, nextStaff };
+		String[] messageHeaders = { "jobs", "staff", "jobname", "jobtype", "comments", "nextstaff", "torrent" };
+		String[] messages = { "create", user, name, Integer.toString(type), description, nextStaff, torrent };
 
 		// files handling
 		String response;
@@ -467,8 +467,8 @@ public final class ConnectionManager {
 		try {
 
 			// append special information to the text bodies
-			messageHeaders = ConnectionManager.appendSpecialHeaders(messageHeaders);
-			messages = ConnectionManager.appendSpecialMessages(messages);
+			messageHeaders = ConnectionManager.appendSessionHeaders(messageHeaders);
+			messages = ConnectionManager.appendSessionMessages(messages);
 
 			// create a MultiPart entity which will contain the text message, representing the
 			// request that will be made to the server
@@ -516,8 +516,8 @@ public final class ConnectionManager {
 		try {
 
 			// append special information to the text bodies
-			messageHeaders = ConnectionManager.appendSpecialHeaders(messageHeaders);
-			messages = ConnectionManager.appendSpecialMessages(messages);
+			messageHeaders = ConnectionManager.appendSessionHeaders(messageHeaders);
+			messages = ConnectionManager.appendSessionMessages(messages);
 
 			// create a MultiPart entity which will contain the text message and
 			// files, representing the request that will be made to the server
@@ -543,7 +543,7 @@ public final class ConnectionManager {
 		}
 	}
 
-	private static String[] appendSpecialHeaders(String[] messageHeaders) {
+	private static String[] appendSessionHeaders(String[] messageHeaders) {
 		Settings set = Settings.getInstance();
 
 		if (set.getUserInfo() == null)
@@ -560,7 +560,7 @@ public final class ConnectionManager {
 		return data;
 	}
 
-	private static String[] appendSpecialMessages(String[] messages) {
+	private static String[] appendSessionMessages(String[] messages) {
 		Settings set = Settings.getInstance();
 
 		if (set.getUserInfo() == null)

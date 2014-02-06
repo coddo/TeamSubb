@@ -27,16 +27,21 @@ public class CreateJobWindow extends CustomWindow {
 	private Composite panel;
 
 	private Label nameLabel;
-	private Text name;
 	private Label typeLabel;
-	private Combo type;
 	private Label commentsLabel;
-	private Text comments;
 	private Label nextStaffLabel;
-	private Combo nextStaff;
 	private Label subLabel;
-	private Text sub;
 	private Label fontsLabel;
+	private Label torrentLabel;
+
+	private Text name;
+	private Text comments;
+	private Text sub;
+	private Text torrent;
+
+	private Combo type;
+	private Combo nextStaff;
+
 	private List fonts;
 
 	private Button browseSubButton;
@@ -65,6 +70,9 @@ public class CreateJobWindow extends CustomWindow {
 
 			typeLabel.dispose();
 			type.dispose();
+
+			torrentLabel.dispose();
+			torrent.dispose();
 
 			commentsLabel.dispose();
 			comments.dispose();
@@ -132,6 +140,15 @@ public class CreateJobWindow extends CustomWindow {
 	}
 
 	/**
+	 * Get the link to the torrent that is used for the job
+	 * 
+	 * @return A String value
+	 */
+	public String getTorrentLink() {
+		return this.torrent.getText();
+	}
+
+	/**
 	 * Get the sub file selected by the user
 	 * 
 	 * @return A String value representing the absolute path to the file
@@ -176,7 +193,7 @@ public class CreateJobWindow extends CustomWindow {
 	 * 
 	 * @return A logical value indicating if the fields are ok or not
 	 */
-	public boolean verifFields() {
+	public boolean verifyFields() {
 		MessageBox message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 		message.setText("Empty fields");
 		message.setMessage("There cannot be any empty fields except the font list and comments field!");
@@ -187,6 +204,9 @@ public class CreateJobWindow extends CustomWindow {
 			empty = true;
 
 		if (type.getText() == null || type.getText().equals(""))
+			empty = true;
+
+		if (torrent.getText() == null || torrent.getText().equals(""))
 			empty = true;
 
 		if (nextStaff.getText() == null || nextStaff.getText().equals(""))
@@ -200,6 +220,7 @@ public class CreateJobWindow extends CustomWindow {
 
 			return false;
 		}
+
 		else if (!new File(this.sub.getText()).exists()) {
 
 			message.setText("Invalid sub file");
@@ -276,6 +297,9 @@ public class CreateJobWindow extends CustomWindow {
 		typeLabel = new Label(panel, SWT.None);
 		type = new Combo(panel, SWT.READ_ONLY);
 
+		torrentLabel = new Label(panel, SWT.None);
+		torrent = new Text(panel, SWT.BORDER);
+
 		commentsLabel = new Label(panel, SWT.None);
 		comments = new Text(panel, SWT.BORDER);
 
@@ -321,6 +345,14 @@ public class CreateJobWindow extends CustomWindow {
 		type.setFont(CustomWindow.DEFAULT_FONT);
 		type.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
+		torrentLabel.setFont(CustomWindow.DEFAULT_FONT);
+		torrentLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		torrentLabel.setText("Torrent link:");
+		torrentLabel.pack();
+
+		torrent.setFont(CustomWindow.DEFAULT_FONT);
+		torrent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+
 		for (String jobType : Job.DEFAULT_JOB_TYPES)
 			type.add(jobType);
 		type.remove(type.getItemCount() - 1); // remove last item ("end" type)
@@ -341,7 +373,7 @@ public class CreateJobWindow extends CustomWindow {
 		nextStaff.setFont(CustomWindow.DEFAULT_FONT);
 		nextStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF);
-		nextStaff.setItems(StaffManager.downloadStaffList(false));
+		nextStaff.setItems(StaffManager.fetchStaffList(false));
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF, 0);
 		nextStaff.select(0);
 

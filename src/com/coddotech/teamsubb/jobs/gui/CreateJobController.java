@@ -164,12 +164,12 @@ public class CreateJobController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 
-			if (view.verifFields()) {
+			if (view.verifyFields()) {
 
 				String[] fonts = FontsManager.excludeServerFontsAsStrings(view.getFonts());
 
 				model.createJob(view.getName(), view.getType(), view.getComments(), view.getNextStaff(),
-						view.getSub(), fonts);
+						view.getTorrentLink(), view.getSub(), fonts);
 			}
 
 		}

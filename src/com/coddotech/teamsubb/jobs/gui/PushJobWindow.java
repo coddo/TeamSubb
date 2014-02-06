@@ -303,7 +303,7 @@ public class PushJobWindow extends CustomWindow {
 		nextStaff.setFont(CustomWindow.DEFAULT_FONT);
 		nextStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF);
-		nextStaff.setItems(StaffManager.downloadStaffList(false));
+		nextStaff.setItems(StaffManager.fetchStaffList(false));
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF, 0);
 		nextStaff.select(0);
 

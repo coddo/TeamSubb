@@ -9,6 +9,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -96,6 +97,8 @@ public class JobWindow extends CustomWindow {
 	private Label jobType;
 	private Label jobStartDateLabel;
 	private Label jobStartDate;
+	private Label jobTorrentLabel;
+	private Link jobTorrent;
 	private Label jobPreviousStaffLabel;
 	private Label jobPreviousStaff;
 	private Label jobIntendedToLabel;
@@ -145,6 +148,8 @@ public class JobWindow extends CustomWindow {
 			jobType.dispose();
 			jobStartDateLabel.dispose();
 			jobStartDate.dispose();
+			jobTorrentLabel.dispose();
+			jobTorrent.dispose();
 			jobPreviousStaffLabel.dispose();
 			jobPreviousStaff.dispose();
 			jobIntendedToLabel.dispose();
@@ -248,6 +253,15 @@ public class JobWindow extends CustomWindow {
 	 */
 	public Color getSelectedJobColor() {
 		return this.jobsList.getSelection()[0].getBackground();
+	}
+	
+	/**
+	 * Get the torrent link for the selected job
+	 * 
+	 * @return A String value
+	 */
+	public String getTorrentLink() {
+		return this.jobTorrent.getText().replace("<a>", "").replace("</a>", "");
 	}
 
 	/**
@@ -424,6 +438,8 @@ public class JobWindow extends CustomWindow {
 		jobType = new Label(this.jobInfoGroup, SWT.None);
 		jobStartDateLabel = new Label(this.jobInfoGroup, SWT.None);
 		jobStartDate = new Label(this.jobInfoGroup, SWT.None);
+		jobTorrentLabel = new Label(this.jobInfoGroup, SWT.None);
+		jobTorrent = new Link(this.jobInfoGroup, SWT.None);
 		jobPreviousStaffLabel = new Label(this.jobInfoGroup, SWT.None);
 		jobPreviousStaff = new Label(this.jobInfoGroup, SWT.None);
 		jobIntendedToLabel = new Label(this.jobInfoGroup, SWT.None);
@@ -545,6 +561,13 @@ public class JobWindow extends CustomWindow {
 
 		jobStartDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		jobStartDate.setFont(CustomWindow.DEFAULT_FONT);
+		
+		jobTorrentLabel.setFont(CustomWindow.DEFAULT_FONT);
+		jobTorrentLabel.setText("Torrent:");
+		jobTorrentLabel.pack();
+		
+		jobTorrent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		jobTorrent.setFont(CustomWindow.DEFAULT_FONT);
 
 		jobPreviousStaffLabel.setFont(CustomWindow.DEFAULT_FONT);
 		jobPreviousStaffLabel.setText("Worked on by:");
@@ -647,6 +670,8 @@ public class JobWindow extends CustomWindow {
 		configureFontsMenuItem.addSelectionListener(controller.configureFontsClicked);
 
 		aboutMenuItem.addSelectionListener(controller.aboutClicked);
+		
+		jobTorrent.addSelectionListener(controller.jobTorrentClicked);
 
 		jobsList.addSelectionListener(controller.jobsListItemSelected);
 		jobsList.addMenuDetectListener(controller.jobsListMenuOpened);
@@ -704,13 +729,15 @@ public class JobWindow extends CustomWindow {
 	private void updateJobInfo(String[] data) {
 		this.jobType.setText(data[1]);
 		this.jobStartDate.setText(data[2]);
-		this.jobPreviousStaff.setText(data[3]);
-		this.jobIntendedTo.setText(data[4]);
-		this.jobBookedBy.setText(data[5]);
-		this.jobComments.setText(data[6]);
+		this.jobTorrent.setText("<a>" + data[3] + "</a>");
+		this.jobPreviousStaff.setText(data[4]);
+		this.jobIntendedTo.setText(data[5]);
+		this.jobBookedBy.setText(data[6]);
+		this.jobComments.setText(data[7]);
 
 		this.jobType.pack();
 		this.jobStartDate.pack();
+		this.jobTorrent.pack();
 		this.jobPreviousStaff.pack();
 		this.jobIntendedTo.pack();
 		this.jobBookedBy.pack();

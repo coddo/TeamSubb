@@ -192,6 +192,8 @@ public class JobManager extends Observable {
 			message += Job.DEFAULT_JOB_TYPES[job.getType()] + CustomWindow.NOTIFICATION_SEPARATOR;
 
 			message += job.getStartDate() + CustomWindow.NOTIFICATION_SEPARATOR;
+			
+			message += job.getTorrent() + CustomWindow.NOTIFICATION_SEPARATOR;
 
 			message += job.getPreviousStaffMember() + CustomWindow.NOTIFICATION_SEPARATOR;
 
@@ -229,7 +231,7 @@ public class JobManager extends Observable {
 	 *            The font files that are needed in order to finish this job
 	 */
 	public void createJob(final String name, final int type, final String description,
-			final String nextStaff, final String subFile, final String[] fonts) {
+			final String nextStaff, final String torrent, final String subFile, final String[] fonts) {
 
 		class CreateJob extends Thread {
 
@@ -246,7 +248,7 @@ public class JobManager extends Observable {
 				try {
 
 					boolean response = ConnectionManager.sendJobCreateRequest(settings.getUserName(), name,
-							type, description, nextStaff, subFile, fonts);
+							type, description, nextStaff, torrent, subFile, fonts);
 
 					setChanged();
 					notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR + response);
@@ -738,6 +740,7 @@ public class JobManager extends Observable {
 
 		// basic job information
 		Job job = new Job();
+		
 		job.setID(Integer.parseInt(data[0]));
 		job.setName(data[1]);
 		job.setType(Integer.parseInt(data[2]));
@@ -746,21 +749,22 @@ public class JobManager extends Observable {
 		job.setPreviousStaffMember(data[5]);
 		job.setIntendedTo(data[6]);
 		job.setStartDate(data[7]);
+		job.setTorrent(data[8]);
 		job.setDirectoryPath(dirPath);
 		job.setCurrentStaffMember(settings.getUserName());
 
 		// sub file
-		job.setSubFileLink(data[8]);
+		job.setSubFileLink(data[9]);
 
 		// font files
 		String[] fontLinks = null;
 
-		if (data.length - 9 > 0) {
+		if (data.length - 10 > 0) {
 
-			fontLinks = new String[data.length - 9];
+			fontLinks = new String[data.length - 10];
 
-			for (int i = 9; i < data.length; i++)
-				fontLinks[i - 9] = data[i];
+			for (int i = 10; i < data.length; i++)
+				fontLinks[i - 10] = data[i];
 
 		}
 

@@ -5,6 +5,7 @@ import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -377,8 +378,7 @@ public class JobController extends CustomController {
 	};
 
 	/**
-	 * Listener for when the F5 button is pressed in order for faster refresh
-	 * actions
+	 * Listener for when the F5 button is pressed in order for faster refresh actions
 	 */
 	public Listener jobListButtonPress = new Listener() {
 
@@ -390,6 +390,24 @@ public class JobController extends CustomController {
 
 		}
 
+	};
+	
+	/**
+	 * Listener for when the torrent link is clicked
+	 */
+	public SelectionListener jobTorrentClicked = new SelectionListener() {
+		
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			Program.launch(view.getTorrentLink());
+			
+		}
+		
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
 	};
 
 	/**
