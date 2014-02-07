@@ -1,5 +1,6 @@
 package com.coddotech.teamsubb.jobs.gui;
 
+import java.util.List;
 import java.util.Observable;
 
 import org.eclipse.swt.SWT;
@@ -338,33 +339,33 @@ public class JobWindow extends CustomWindow {
 				try {
 					NotificationEntity notif = (NotificationEntity) obj;
 
-					switch (notif.message) {
+					switch (notif.getMessage()) {
 
-						case NotificationEntity.MESSAGE_JOB_FIND: {
-							createJobList(obs);
-
-						}
-							break;
-
-						case NotificationEntity.MESSAGE_JOB_INFORMATION: {
-							updateJobInfo(notif.job);
-						}
-							break;
-
-						case NotificationEntity.MESSAGE_JOB_END: {
-							handleEndJobResult(obs, notif.actionSuccess);
+						case JobManager.JOB_FIND: {
+							createJobList(notif);
 
 						}
 							break;
 
-						case NotificationEntity.MESSAGE_JOB_ACCEPT: {
-							handleAcceptJobResult(obs, notif.actionSuccess);
+						case JobManager.JOB_INFORMATION: {
+							updateJobInfo(notif.getJob());
+						}
+							break;
+
+						case JobManager.JOB_END: {
+							handleEndJobResult(obs, notif.getBoolean());
 
 						}
 							break;
 
-						case NotificationEntity.MESSAGE_JOB_CANCEL: {
-							handleCancelJobResult(obs, notif.actionSuccess);
+						case JobManager.JOB_ACCEPT: {
+							handleAcceptJobResult(obs, notif.getBoolean());
+
+						}
+							break;
+
+						case JobManager.JOB_CANCEL: {
+							handleCancelJobResult(obs, notif.getBoolean());
 
 						}
 							break;
@@ -676,11 +677,26 @@ public class JobWindow extends CustomWindow {
 		jobsList.addListener(SWT.KeyDown, controller.jobListButtonPress);
 	}
 
-	private void createJobList(Observable obs) {
+	@SuppressWarnings ("unchecked")
+	private void createJobList(NotificationEntity notif) {
 		this.jobsList.clearAll();
 		this.jobsList.removeAll();
 
-		for (Job job : ((JobManager) obs).getAcceptedJobs()) {
+		List<Job> acceptedJobs = null;
+		List<Job> jobs = null;
+
+		try {
+
+			acceptedJobs = (List<Job>) notif.getExtraArguments()[0];
+			jobs = (List<Job>) notif.getExtraArguments()[1];
+
+		}
+
+		catch (Exception ex) {
+
+		}
+
+		for (Job job : acceptedJobs) {
 
 			if (!isInList(job)) {
 				TableItem item = new TableItem(this.jobsList, SWT.None);
@@ -693,7 +709,7 @@ public class JobWindow extends CustomWindow {
 			}
 		}
 
-		for (Job job : ((JobManager) obs).getJobs()) {
+		for (Job job : jobs) {
 
 			if (!isInList(job)) {
 				TableItem item = new TableItem(this.jobsList, SWT.None);
@@ -723,6 +739,9 @@ public class JobWindow extends CustomWindow {
 	}
 
 	private void updateJobInfo(Job job) {
+		if (job == null)
+			return;
+
 		this.jobType.setText(Job.DEFAULT_JOB_TYPES[job.getType()]);
 		this.jobStartDate.setText(job.getStartDate());
 		this.jobTorrent.setText("<a>" + job.getTorrent() + "</a>");
@@ -798,7 +817,7 @@ public class JobWindow extends CustomWindow {
 	 */
 	private void generateUserInfo() {
 		LoggedUser user = LoggedUser.getInstance();
-		
+
 		userNameLabel.setText(user.getName());
 		userEmailLabel.setText(user.getEmail());
 		userRankLabel.setText(user.getRank());
@@ -808,9 +827,9 @@ public class JobWindow extends CustomWindow {
 		userRankLabel.pack();
 
 		String[] userJobs = user.getJobNames();
-		
+
 		userJobsLabels = new Label[userJobs.length];
-		
+
 		for (int i = 0; i < userJobs.length; i++) {
 			userJobsLabels[i] = new Label(this.userJobsGroup, SWT.None);
 			userJobsLabels[i].setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

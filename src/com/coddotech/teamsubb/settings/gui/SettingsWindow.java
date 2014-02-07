@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Text;
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
@@ -201,37 +202,37 @@ public final class SettingsWindow extends CustomWindow {
 
 				@Override
 				public void run() {
-					String[] data = ((String) obj).split(CustomWindow.NOTIFICATION_SEPARATOR);
+					NotificationEntity notif = (NotificationEntity) obj;
 
-					switch (data[0]) {
+					switch (notif.getMessage()) {
 
-						case Settings.MESSAGE_AUTOSAVE_LOCATION: {
-							autosaveLocation.setSelection(Boolean.parseBoolean(data[1]));
-
-						}
-							break;
-
-						case Settings.MESSAGE_AUTOMATIC_LOGIN: {
-							automaticLogin.setSelection(Boolean.parseBoolean(data[1]));
-						}
-							break;
-
-						case Settings.MESSAGE_SEARCH_INTERVAL: {
-							searchInterval.setText(data[1]);
+						case Settings.AUTOSAVE_LOCATION: {
+							autosaveLocation.setSelection(notif.getBoolean());
 
 						}
 							break;
 
-						case Settings.MESSAGE_GADGET_PROFILE: {
-							gadgetProfile.select(Integer.parseInt(data[1]));
+						case Settings.AUTOMATIC_LOGIN: {
+							automaticLogin.setSelection(notif.getBoolean());
+						}
+							break;
+
+						case Settings.SEARCH_INTERVAL: {
+							searchInterval.setText(notif.getString());
 
 						}
 							break;
 
-						case Settings.MESSAGE_SAVE: {
+						case Settings.GADGET_PROFILE: {
+							gadgetProfile.select(notif.getInteger());
+
+						}
+							break;
+
+						case Settings.SAVE: {
 							MessageBox message;
 
-							if (Boolean.parseBoolean(data[1])) {
+							if (notif.getBoolean()) {
 								message = new MessageBox(getShell(), SWT.ICON_INFORMATION);
 								message.setText("Success");
 								message.setMessage("The settings have been successfully applied !");

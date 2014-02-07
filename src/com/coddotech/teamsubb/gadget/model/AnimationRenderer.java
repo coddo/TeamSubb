@@ -12,7 +12,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
-import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.jobs.model.JobManager;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 /**
  * Class which has the purpose to guide the gadget's animation. It also observes
@@ -225,26 +226,27 @@ public class AnimationRenderer extends Observable implements Observer {
 
 	@Override
 	public void update(Observable obs, Object obj) {
+		NotificationEntity notif = (NotificationEntity) obj;
 
-		// update is done only by the job manager in order to know what type of animation needs to
+		// update is done only by the job manager in order to know what type of t needs to
 		// be done
-		if (obj instanceof String) {
+		if (notif.getMessage().equals(JobManager.JOB_FIND)) {
 
-			String[] fragments = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
+			String[] fragments = notif.getString().split(JobManager.SEPARATOR_DATA);
 
 			switch (fragments[fragments.length - 1]) {
 
-				case "normal": {
+				case JobManager.JOB_PRIORITY_NORMAL: {
 					this.setAnimationType(TYPE_IDLE);
 				}
 					break;
 
-				case "acceptable": {
+				case JobManager.JOB_PRIORITY_ACCEPTABLE: {
 					this.setAnimationType(TYPE_LOW_PRIORITY);
 				}
 					break;
 
-				case "important": {
+				case JobManager.JOB_PRIORITY_IMPORTANT: {
 					this.setAnimationType(AnimationRenderer.TYPE_HIGH_PRIORITY);
 				}
 					break;
@@ -313,8 +315,9 @@ public class AnimationRenderer extends Observable implements Observer {
 			int k = 0;
 			for (String img : idleFolder.list(filter)) {
 
-				idle[k] = resizeImage(new Image(Display.getDefault(), AnimationRenderer.DIR_IDLE
-						+ File.separator + img), imgsize, imgsize);
+				idle[k] = resizeImage(
+						new Image(Display.getDefault(), AnimationRenderer.DIR_IDLE + File.separator + img), imgsize,
+						imgsize);
 
 				k++;
 			}
@@ -323,8 +326,8 @@ public class AnimationRenderer extends Observable implements Observer {
 			k = 0;
 			for (String img : lowFolder.list(filter)) {
 
-				lowPriority[k] = resizeImage(new Image(Display.getDefault(), AnimationRenderer.DIR_LOW
-						+ File.separator + img), imgsize, imgsize);
+				lowPriority[k] = resizeImage(new Image(Display.getDefault(), AnimationRenderer.DIR_LOW + File.separator
+						+ img), imgsize, imgsize);
 				k++;
 			}
 

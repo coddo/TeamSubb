@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.appmanage.gui;
+package com.coddotech.teamsubb.notifications.gui;
 
 import java.util.Observable;
 

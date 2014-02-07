@@ -17,7 +17,9 @@ import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.chat.model.StaffManager;
 import com.coddotech.teamsubb.jobs.model.Job;
+import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 public class PushJobWindow extends CustomWindow {
 
@@ -237,13 +239,14 @@ public class PushJobWindow extends CustomWindow {
 
 			@Override
 			public void run() {
-				String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
+				NotificationEntity notif = (NotificationEntity) obj;
 
-				if (data[0].equals("push")) {
+				if (notif.getMessage().equals(JobManager.JOB_PUSH)) {
 					MessageBox message;
 
-					if (Boolean.parseBoolean(data[1])) {
+					if (notif.getBoolean()) {
 						message = new MessageBox(getShell(), SWT.ICON_INFORMATION);
+						
 						message.setText("Success");
 						message.setMessage("The job has been successfully sent back to the server !");
 

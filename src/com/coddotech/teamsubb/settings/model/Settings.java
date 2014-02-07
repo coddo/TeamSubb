@@ -13,8 +13,8 @@ import org.w3c.dom.Element;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
-import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.main.XmlHandler;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 /**
  * Class used for managing the settings for this application.
@@ -31,21 +31,19 @@ public final class Settings extends XmlHandler {
 	 * Defautl values for each all the settings
 	 */
 	public static final Point DEFAULT_LOCATION = new Point(200, 200);
+
 	public static final boolean DEFAULT_AUTOMATIC_LOGIN = false;
 	public static final boolean DEFAULT_AUTOSAVE_LOCATION = true;
+
 	public static final int DEFAULT_SEARCH_INTERVAL = 1; // one minute
 	public static final int DEFAULT_GADGET_PROFILE = 2;
 
-	/*
-	 * Constants representing the settings headers from the XML file and other Strings that are used
-	 * in order to relay what type of notification is sent to the observers
-	 */
-	public static final String MESSAGE_SAVE = "save changes";
-	public static final String MESSAGE_LOCATION = "location";
-	public static final String MESSAGE_AUTOSAVE_LOCATION = "autosave_location";
-	public static final String MESSAGE_AUTOMATIC_LOGIN = "automatic_login";
-	public static final String MESSAGE_SEARCH_INTERVAL = "search_interval";
-	public static final String MESSAGE_GADGET_PROFILE = "gadget_profile";
+	public static final String SAVE = "save changes";
+	public static final String LOCATION = "location";
+	public static final String AUTOSAVE_LOCATION = "autosave_location";
+	public static final String AUTOMATIC_LOGIN = "automatic_login";
+	public static final String SEARCH_INTERVAL = "search_interval";
+	public static final String GADGET_PROFILE = "gadget_profile";
 
 	/*
 	 * All the settings are retained in the apps memory
@@ -165,6 +163,8 @@ public final class Settings extends XmlHandler {
 	 * @return A boolean value indicating if the action was finished successfully or not
 	 */
 	public void saveSettings() {
+		NotificationEntity notif = null;
+
 		try {
 			saveGadgetLocation(this.gadgetLocation);
 			saveGadgetAutosaveLocation(this.gadgetAutosaveLocation);
@@ -179,17 +179,22 @@ public final class Settings extends XmlHandler {
 
 			transformer.transform(input, output);
 
-			this.setChanged();
-			notifyObservers(Settings.MESSAGE_SAVE + CustomWindow.NOTIFICATION_SEPARATOR + true);
+			notif = new NotificationEntity(Settings.SAVE, true);
 
 			ActivityLogger.logActivity(this.getClass().getName(), "Commit changes to file");
 
 		}
+
 		catch (Exception ex) {
-			this.setChanged();
-			notifyObservers(Settings.MESSAGE_SAVE + CustomWindow.NOTIFICATION_SEPARATOR + false);
+			notif = new NotificationEntity(Settings.SAVE, false);
 
 			ActivityLogger.logException(this.getClass().getName(), "Commit changes to file", ex);
+		}
+
+		finally {
+			this.setChanged();
+			notifyObservers(notif);
+
 		}
 	}
 
@@ -227,7 +232,7 @@ public final class Settings extends XmlHandler {
 	 *            An org.eclipse.graphics.Point determining the default position for the gadget
 	 */
 	private void saveGadgetLocation(Point gadgetLocation) {
-		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_LOCATION).item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(Settings.LOCATION).item(0);
 
 		element.setAttribute("location_x", Integer.toString(gadgetLocation.x));
 		element.setAttribute("location_y", Integer.toString(gadgetLocation.y));
@@ -241,7 +246,7 @@ public final class Settings extends XmlHandler {
 	 *            A boolean value representing the save statement
 	 */
 	private void saveGadgetAutosaveLocation(boolean gadgetAutosaveLocation) {
-		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_AUTOSAVE_LOCATION).item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(Settings.AUTOSAVE_LOCATION).item(0);
 		element.setAttribute("value", Boolean.toString(gadgetAutosaveLocation));
 	}
 
@@ -253,7 +258,7 @@ public final class Settings extends XmlHandler {
 	 *            The logical value to be stored
 	 */
 	private void saveAutomaticLogin(boolean automaticLogin) {
-		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_AUTOMATIC_LOGIN).item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(Settings.AUTOMATIC_LOGIN).item(0);
 		element.setAttribute("value", Boolean.toString(automaticLogin));
 	}
 
@@ -264,7 +269,7 @@ public final class Settings extends XmlHandler {
 	 *            The interval to be written to the file
 	 */
 	private void saveSearchInterval(int searchInterval) {
-		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_SEARCH_INTERVAL).item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(Settings.SEARCH_INTERVAL).item(0);
 		element.setAttribute("value", Integer.toString(searchInterval));
 	}
 
@@ -275,7 +280,7 @@ public final class Settings extends XmlHandler {
 	 *            The ID of the profile (Integer)
 	 */
 	private void saveGadgetProfile(int gadgetProfile2) {
-		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_GADGET_PROFILE).item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(Settings.GADGET_PROFILE).item(0);
 		element.setAttribute("value", Integer.toString(this.gadgetProfile));
 	}
 
@@ -287,7 +292,7 @@ public final class Settings extends XmlHandler {
 	 */
 	private void readGadgetLocation() {
 		try {
-			Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_LOCATION).item(0);
+			Element element = (Element) xmlFile.getElementsByTagName(Settings.LOCATION).item(0);
 
 			int x = Integer.parseInt(element.getAttribute("location_x"));
 			int y = Integer.parseInt(element.getAttribute("location_y"));
@@ -311,7 +316,7 @@ public final class Settings extends XmlHandler {
 	 * screen from the XML settings file
 	 */
 	private void readGadgetAutosaveLocation() {
-		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_AUTOSAVE_LOCATION).item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(Settings.AUTOSAVE_LOCATION).item(0);
 
 		try {
 			this.gadgetAutosaveLocation = Boolean.parseBoolean(element.getAttribute("value"));
@@ -329,7 +334,7 @@ public final class Settings extends XmlHandler {
 	 * in the login file
 	 */
 	private void readAutomaticLogin() {
-		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_AUTOMATIC_LOGIN).item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(Settings.AUTOMATIC_LOGIN).item(0);
 
 		try {
 			this.automaticLogin = Boolean.parseBoolean(element.getAttribute("value"));
@@ -345,7 +350,7 @@ public final class Settings extends XmlHandler {
 	 * to find new jobs for the user from the XML settings file
 	 */
 	private void readSearchInterval() {
-		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_SEARCH_INTERVAL).item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(Settings.SEARCH_INTERVAL).item(0);
 
 		try {
 			this.searchInterval = Integer.parseInt(element.getAttribute("value"));
@@ -362,7 +367,7 @@ public final class Settings extends XmlHandler {
 	 * Read the value representing the ID of the profile used for the gadget size.
 	 */
 	private void readGadgetProfile() {
-		Element element = (Element) xmlFile.getElementsByTagName(MESSAGE_GADGET_PROFILE).item(0);
+		Element element = (Element) xmlFile.getElementsByTagName(Settings.GADGET_PROFILE).item(0);
 
 		try {
 			this.gadgetProfile = Integer.parseInt(element.getAttribute("value"));
@@ -393,33 +398,39 @@ public final class Settings extends XmlHandler {
 	}
 
 	private void notifyAutosaveLocation() {
+		NotificationEntity notif = new NotificationEntity(Settings.AUTOSAVE_LOCATION, this.gadgetAutosaveLocation);
+
 		this.setChanged();
-		notifyObservers(Settings.MESSAGE_AUTOSAVE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR
-				+ this.gadgetAutosaveLocation);
+		notifyObservers(notif);
 	}
 
 	private void notifyAutomaticLogin() {
+		NotificationEntity notif = new NotificationEntity(Settings.AUTOMATIC_LOGIN, this.automaticLogin);
+
 		this.setChanged();
-		notifyObservers(Settings.MESSAGE_AUTOMATIC_LOGIN + CustomWindow.NOTIFICATION_SEPARATOR
-				+ this.automaticLogin);
+		notifyObservers(notif);
 	}
 
 	private void notifyLocation() {
+		NotificationEntity notif = new NotificationEntity(Settings.LOCATION, this.gadgetLocation.x + ","
+				+ gadgetLocation.y);
+
 		this.setChanged();
-		notifyObservers(Settings.MESSAGE_LOCATION + CustomWindow.NOTIFICATION_SEPARATOR
-				+ this.gadgetLocation.x + "," + gadgetLocation.y);
+		notifyObservers(notif);
 	}
 
 	private void notifySearchInterval() {
+		NotificationEntity notif = new NotificationEntity(Settings.SEARCH_INTERVAL, this.searchInterval);
+
 		this.setChanged();
-		notifyObservers(Settings.MESSAGE_SEARCH_INTERVAL + CustomWindow.NOTIFICATION_SEPARATOR
-				+ this.searchInterval);
+		notifyObservers(notif);
 	}
 
 	private void notifyGadgetProfile() {
+		NotificationEntity notif = new NotificationEntity(Settings.GADGET_PROFILE, this.gadgetProfile);
+
 		this.setChanged();
-		notifyObservers(Settings.MESSAGE_GADGET_PROFILE + CustomWindow.NOTIFICATION_SEPARATOR
-				+ this.gadgetProfile);
+		notifyObservers(notif);
 	}
 
 }

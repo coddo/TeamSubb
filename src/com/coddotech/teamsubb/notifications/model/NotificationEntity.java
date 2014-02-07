@@ -2,19 +2,51 @@ package com.coddotech.teamsubb.notifications.model;
 
 import com.coddotech.teamsubb.jobs.model.Job;
 
-
 public final class NotificationEntity {
 
-	public static final String MESSAGE_JOB_FIND = "job find";
-	public static final String MESSAGE_JOB_INFORMATION = "job information";
-	public static final String MESSAGE_JOB_END = "job end";
-	public static final String MESSAGE_JOB_ACCEPT = "job accept";
-	public static final String MESSAGE_JOB_CANCEL = "job cancel";
+	private String message;
+
+	private Object argument;
+
+	private Object[] extraArguments;
+
+	public NotificationEntity(String message, Object argument) {
+		this.message = message;
+		this.argument = argument;
+	}
+
+	public NotificationEntity(String message, Object argument, Object[] extraArguments) {
+		this(message, argument);
+
+		this.extraArguments = extraArguments;
+	}
+
+	public String getString() {
+		return argument.toString();
+	}
+
+	public String getMessage() {
+		return this.message;
+	}
+
+	public Boolean getBoolean() {
+		return Boolean.parseBoolean(argument.toString());
+	}
 	
-	public String message;
-	
-	public Job job;
-	
-	public boolean actionSuccess;
-	
+	public int getInteger() {
+		return Integer.parseInt(argument.toString());
+	}
+
+	public Job getJob() {
+		return (Job) argument;
+	}
+
+	public Job[] getJobList() {
+		return (Job[]) argument;
+	}
+
+	public Object[] getExtraArguments() {
+		return extraArguments;
+	}
+
 }

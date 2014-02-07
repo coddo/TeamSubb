@@ -18,7 +18,9 @@ import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.chat.model.StaffManager;
 import com.coddotech.teamsubb.jobs.model.Job;
+import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 public class CreateJobWindow extends CustomWindow {
 
@@ -254,12 +256,12 @@ public class CreateJobWindow extends CustomWindow {
 
 			@Override
 			public void run() {
-				String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
+				NotificationEntity notif = (NotificationEntity) obj;
 
-				if (data[0].equals("create")) {
+				if (notif.getMessage().equals(JobManager.JOB_CREATE)) {
 					MessageBox message;
 
-					if (Boolean.parseBoolean(data[1])) {
+					if (notif.getBoolean()) {
 						message = new MessageBox(getShell(), SWT.ICON_INFORMATION | SWT.APPLICATION_MODAL);
 						message.setText("Success");
 						message.setMessage("The job has been successfully created");
@@ -348,8 +350,8 @@ public class CreateJobWindow extends CustomWindow {
 		for (String jobType : Job.DEFAULT_JOB_TYPES)
 			type.add(jobType);
 		type.remove(type.getItemCount() - 1); // remove last item ("end" type)
-		type.select(0); //make the first item selected by default
-		
+		type.select(0); // make the first item selected by default
+
 		torrentLabel.setFont(CustomWindow.DEFAULT_FONT);
 		torrentLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		torrentLabel.setText("Torrent link:");

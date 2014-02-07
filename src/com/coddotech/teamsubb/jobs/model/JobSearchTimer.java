@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 import com.coddotech.teamsubb.settings.model.Settings;
 
 public class JobSearchTimer implements Observer {
@@ -53,10 +54,10 @@ public class JobSearchTimer implements Observer {
 
 	@Override
 	public void update(Observable obs, Object obj) {
-		String[] data = ((String) obj).split(CustomWindow.NOTIFICATION_SEPARATOR);
+		NotificationEntity notif = (NotificationEntity) obj;
 
-		if (data[0].equals(Settings.MESSAGE_SEARCH_INTERVAL))
-			this.searchInterval = Integer.parseInt(data[1]) * 60000;
+		if (notif.getMessage().equals(Settings.SEARCH_INTERVAL))
+			this.searchInterval = notif.getInteger() * 60000;
 
 	}
 

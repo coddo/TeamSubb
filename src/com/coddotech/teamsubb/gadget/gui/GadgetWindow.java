@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.TrayItem;
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
@@ -92,12 +93,14 @@ public class GadgetWindow extends CustomWindow {
 			public void run() {
 
 				if (!controller.isDisposed()) {
+					NotificationEntity notif = null;
 
 					if (obs instanceof AnimationRenderer) {
 
 						try {
 							imageContainer.setBackgroundImage((Image) obj);
 						}
+
 						catch (Exception ex) {
 
 						}
@@ -105,22 +108,21 @@ public class GadgetWindow extends CustomWindow {
 					}
 
 					else if (obs instanceof Settings) {
+						notif = (NotificationEntity) obj;
 
-						String[] data = ((String) obj).split(CustomWindow.NOTIFICATION_SEPARATOR);
+						if (notif.getMessage().equals(Settings.LOCATION) && firstInstance) {
 
-						if (data[0].equals(Settings.MESSAGE_LOCATION) && firstInstance) {
-
-							int x = Integer.parseInt(data[1].split(",")[0]);
-							int y = Integer.parseInt(data[1].split(",")[1]);
+							int x = Integer.parseInt(notif.getString().split(",")[0]);
+							int y = Integer.parseInt(notif.getString().split(",")[1]);
 
 							getShell().setAlpha(255);
 
 							getShell().setLocation(x, y);
-							firstInstance = false;
 
+							firstInstance = false;
 						}
 
-						else if (data[0].equals(Settings.MESSAGE_GADGET_PROFILE)) {
+						else if (notif.getMessage().equals(Settings.GADGET_PROFILE)) {
 
 							controller.ResetAnimationData();
 
@@ -137,7 +139,7 @@ public class GadgetWindow extends CustomWindow {
 			}
 		};
 
-		Display.getDefault().syncExec(update);
+		Display.getDefault().asyncExec(update);
 
 	}
 
