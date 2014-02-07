@@ -145,7 +145,7 @@ public class FontsWindow extends CustomWindow {
 		panel = new Composite(this.getShell(), SWT.BORDER);
 
 		nameLabel = new Label(panel, SWT.None);
-		name = new Text(this.panel, SWT.READ_ONLY);
+		name = new Text(this.panel, SWT.READ_ONLY | SWT.BORDER);
 
 		fontsLabel = new Label(panel, SWT.None);
 		fonts = new List(panel, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);

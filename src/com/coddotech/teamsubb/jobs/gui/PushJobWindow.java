@@ -264,7 +264,7 @@ public class PushJobWindow extends CustomWindow {
 		panel = new Composite(this.getShell(), SWT.BORDER);
 
 		nameLabel = new Label(panel, SWT.None);
-		name = new Text(panel, SWT.READ_ONLY);
+		name = new Text(panel, SWT.READ_ONLY | SWT.BORDER);
 
 		typeLabel = new Label(panel, SWT.None);
 		type = new Combo(panel, SWT.READ_ONLY);
@@ -302,7 +302,6 @@ public class PushJobWindow extends CustomWindow {
 		name.setFont(CustomWindow.DEFAULT_FONT);
 		name.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		name.setText(this.job.getName());
-		name.setEnabled(false);
 
 		typeLabel.setFont(CustomWindow.BOLD_FONT);
 		typeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -373,7 +372,7 @@ public class PushJobWindow extends CustomWindow {
 
 		this.getShell().setLayout(layout);
 		this.getShell().setText("Finish job");
-		this.getShell().setSize(485, 400);
+		this.getShell().setSize(485, 405);
 
 		this.placeToCenter();
 	}

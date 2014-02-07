@@ -18,9 +18,9 @@ public class PopUpMessages implements NotificationCenter {
 
 	@Override
 	public void dispplayMessage(String title, String text, int ICON) {
-		Shell shell = new Shell(Display.getDefault(), ICON);
+		Shell shell = new Shell(Display.getDefault());
 
-		MessageBox message = new MessageBox(shell);
+		MessageBox message = new MessageBox(shell, ICON);
 
 		message.setText(title);
 		message.setMessage(text);

@@ -114,10 +114,10 @@ public class GadgetWindow extends CustomWindow {
 
 							int x = Integer.parseInt(notif.getString().split(",")[0]);
 							int y = Integer.parseInt(notif.getString().split(",")[1]);
+					
+							getShell().setLocation(x, y);
 
 							getShell().setAlpha(255);
-
-							getShell().setLocation(x, y);
 
 							firstInstance = false;
 						}
