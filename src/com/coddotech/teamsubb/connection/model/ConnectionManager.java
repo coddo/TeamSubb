@@ -76,8 +76,7 @@ public final class ConnectionManager {
 		String[] messageHeaders = new String[] { "user", "pass" };
 		String[] message = new String[] { user, pass };
 
-		String response = ConnectionManager.sendMessage(ConnectionManager.URL_USER_LOGGING, messageHeaders,
-				message);
+		String response = ConnectionManager.sendMessage(ConnectionManager.URL_USER_LOGGING, messageHeaders, message);
 
 		return response;
 	}
@@ -191,8 +190,8 @@ public final class ConnectionManager {
 		}
 
 		// request sending
-		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, messages,
-				fileHeaders, files);
+		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, messages, fileHeaders,
+				files);
 
 		return Boolean.parseBoolean(response);
 	}
@@ -288,9 +287,8 @@ public final class ConnectionManager {
 		// Text messages data
 		String[] messageHeaders = { "push", "staff", "jobid", "jobtype", "comments", "nextstaff", "torrent" };
 
-		String[] messages = { "available", user, Integer.toString(job.getID()),
-				Integer.toString(job.getType()), job.getComments(), job.getNextStaffMember(),
-				job.getTorrent() };
+		String[] messages = { "available", user, Integer.toString(job.getID()), Integer.toString(job.getType()),
+				job.getComments(), job.getNextStaffMember(), job.getTorrent() };
 
 		if (canceled)
 			messages[0] = "canceled";
@@ -326,8 +324,8 @@ public final class ConnectionManager {
 		}
 
 		// send the request to the server and wait for a response
-		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, messages,
-				fileHeaders, files);
+		response = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, messages, fileHeaders,
+				files);
 
 		// return the servers response
 		return Boolean.parseBoolean(response);
@@ -410,8 +408,7 @@ public final class ConnectionManager {
 	 * @throws IllegalStateException
 	 * @throws IOException
 	 */
-	private static String sendMessage(String url, MultipartEntity data) throws IllegalStateException,
-			IOException {
+	private static String sendMessage(String url, MultipartEntity data) throws IllegalStateException, IOException {
 
 		// create a http client used as an interface for interacting with the server
 		HttpClient httpClient = new DefaultHttpClient();
@@ -512,8 +509,8 @@ public final class ConnectionManager {
 	 * @return A String value containing the response that has been received from the server.<br>
 	 *         This method returns "false" if a connection error has been encountered.
 	 */
-	private static String sendMessage(String url, String[] messageHeaders, String[] messages,
-			String[] fileHeaders, String[] files) {
+	private static String sendMessage(String url, String[] messageHeaders, String[] messages, String[] fileHeaders,
+			String[] files) {
 		try {
 
 			// append special information to the text bodies

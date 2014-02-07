@@ -15,7 +15,7 @@ public abstract class XmlHandler extends Observable {
 	protected DocumentBuilderFactory dbFactory;
 	protected DocumentBuilder dBuilder;
 	protected Document xmlFile;
-	
+
 	/**
 	 * Initialize the XML builders and files in which to persist the application settings
 	 */
@@ -28,6 +28,7 @@ public abstract class XmlHandler extends Observable {
 			ActivityLogger.logActivity(this.getClass().getName(), "XML components creation");
 
 		}
+
 		catch (Exception ex) {
 			ActivityLogger.logException(this.getClass().getName(), "XML components creation", ex);
 

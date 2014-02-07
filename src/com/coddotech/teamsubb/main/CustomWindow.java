@@ -10,11 +10,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
+import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 
 public abstract class CustomWindow implements Observer {
 
@@ -111,12 +111,8 @@ public abstract class CustomWindow implements Observer {
 		boolean connected = ConnectionManager.isConnected();
 
 		if (!connected && displayMessage) {
-			MessageBox message = new MessageBox(Display.getDefault().getShells()[0], SWT.ICON_ERROR);
+			PopUpMessages.getInstance().connectionError();
 
-			message.setMessage("A connection error has occured.\nPlease try again later...");
-			message.setText("Connection failed");
-
-			message.open();
 		}
 
 		return connected;
@@ -126,7 +122,7 @@ public abstract class CustomWindow implements Observer {
 	public void update(Observable obs, Object obj) {
 		try {
 			this.updateGUI(obs, obj);
-			
+
 		}
 
 		catch (Exception ex) {

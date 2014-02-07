@@ -217,8 +217,8 @@ public class JobController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 
-			if (ConnectionManager.sendJobForceCancelRequest(view.getSelectedJobID(), LoggedUser.getInstance()
-					.getName())) {
+			if (ConnectionManager
+					.sendJobForceCancelRequest(view.getSelectedJobID(), LoggedUser.getInstance().getName())) {
 
 				model.removeJob(view.getSelectedJobID());
 				model.findJobs();

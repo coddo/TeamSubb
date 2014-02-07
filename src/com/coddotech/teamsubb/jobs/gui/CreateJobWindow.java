@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -20,6 +19,7 @@ import com.coddotech.teamsubb.chat.model.StaffManager;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 public class CreateJobWindow extends CustomWindow {
@@ -196,10 +196,6 @@ public class CreateJobWindow extends CustomWindow {
 	 * @return A logical value indicating if the fields are ok or not
 	 */
 	public boolean verifyFields() {
-		MessageBox message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-		message.setText("Empty fields");
-		message.setMessage("There cannot be any empty fields except the font list and comments field!");
-
 		boolean empty = false;
 
 		if (name.getText() == null || name.getText().equals(""))
@@ -218,16 +214,14 @@ public class CreateJobWindow extends CustomWindow {
 			empty = true;
 
 		if (empty) {
-			message.open();
+			PopUpMessages.getInstance().emptyFields();
 
 			return false;
 		}
 
 		else if (!new File(this.sub.getText()).exists()) {
 
-			message.setText("Invalid sub file");
-			message.setText("The entered sub file doesn't exist or it is corrupted !");
-			message.open();
+			PopUpMessages.getInstance().invalidSubFile();
 
 			return false;
 		}
@@ -259,24 +253,16 @@ public class CreateJobWindow extends CustomWindow {
 				NotificationEntity notif = (NotificationEntity) obj;
 
 				if (notif.getMessage().equals(JobManager.JOB_CREATE)) {
-					MessageBox message;
 
 					if (notif.getBoolean()) {
-						message = new MessageBox(getShell(), SWT.ICON_INFORMATION | SWT.APPLICATION_MODAL);
-						message.setText("Success");
-						message.setMessage("The job has been successfully created");
-
-						message.open();
+						PopUpMessages.getInstance().jobCreateSuccess();
 
 						close();
 					}
 
 					else {
-						message = new MessageBox(getShell(), SWT.ICON_ERROR);
-						message.setText("Error");
-						message.setMessage("There was a problem while creating this job");
+						PopUpMessages.getInstance().jobCreateError();
 
-						message.open();
 					}
 
 				}

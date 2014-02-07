@@ -10,12 +10,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 
 public class FontsWindow extends CustomWindow {
 
@@ -119,23 +119,16 @@ public class FontsWindow extends CustomWindow {
 	 *            A logical value representing the job state
 	 */
 	public void notifyUser(boolean jobCompletion) {
-		MessageBox message;
 
 		if (jobCompletion) {
-			message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
-			message.setText("Success");
-			message.setMessage("The fonts have been added to the job !");
-
-			message.open();
+			PopUpMessages.getInstance().fontsAddSuccess();
 
 			this.close();
 		}
-		else {
-			message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-			message.setText("Error");
-			message.setMessage("An error has occured while adding the fonts to the job");
 
-			message.open();
+		else {
+			PopUpMessages.getInstance().fontsAddError();
+
 		}
 	}
 

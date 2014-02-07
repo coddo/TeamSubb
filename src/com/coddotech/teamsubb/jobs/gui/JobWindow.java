@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -24,6 +23,7 @@ import com.coddotech.teamsubb.jobs.gui.JobController;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 /**
@@ -759,55 +759,40 @@ public class JobWindow extends CustomWindow {
 	}
 
 	private void handleEndJobResult(Observable obs, boolean succeeded) {
-		MessageBox message;
-
 		if (succeeded) {
 			((JobManager) obs).findJobs();
 
 		}
-		else {
-			message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-			message.setText("Error");
-			message.setMessage("There was an error while ending the job");
 
-			message.open();
+		else {
+			PopUpMessages.getInstance().jobEndError();
+
 		}
 	}
 
 	private void handleAcceptJobResult(Observable obs, boolean succeeded) {
-		MessageBox message;
-
 		if (succeeded) {
 			((JobManager) obs).findJobs();
 
-			message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
-			message.setText("Success");
-			message.setMessage("The job has been successfully accepted");
+			PopUpMessages.getInstance().jobAcceptSuccess();
 		}
 
 		else {
-			message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-			message.setText("Error");
-			message.setMessage("There was an error while accepting the job");
+			PopUpMessages.getInstance().jobAcceptError();
+
 		}
 
-		message.open();
 	}
 
 	private void handleCancelJobResult(Observable obs, boolean succeeded) {
-		MessageBox message;
-
 		if (succeeded) {
 			((JobManager) obs).findJobs();
 
 		}
 
 		else {
-			message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-			message.setText("Error");
-			message.setMessage("There was an error while cancelling the job");
+			PopUpMessages.getInstance().jobCancelError();
 
-			message.open();
 		}
 
 	}

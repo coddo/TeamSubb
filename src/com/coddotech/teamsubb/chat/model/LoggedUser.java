@@ -14,5 +14,5 @@ public class LoggedUser extends User {
 
 		return instance;
 	}
-	
+
 }

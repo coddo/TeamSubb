@@ -15,8 +15,7 @@ import com.coddotech.teamsubb.settings.model.Settings;
 
 public class Login extends Observable {
 
-	public static final File loginDataFile = new File(System.getProperty("user.dir") + File.separator
-			+ "login.lin");
+	public static final File loginDataFile = new File(System.getProperty("user.dir") + File.separator + "login.lin");
 
 	private static boolean loginSuccess = false;
 
@@ -77,9 +76,9 @@ public class Login extends Observable {
 				throw new Exception();
 
 			FileInputStream fis = new FileInputStream(Login.loginDataFile);
-			
+
 			byte[] data = new byte[(int) Login.loginDataFile.length()];
-			
+
 			fis.read(data);
 			fis.close();
 

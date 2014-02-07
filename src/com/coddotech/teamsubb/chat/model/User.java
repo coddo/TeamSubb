@@ -4,8 +4,8 @@ import com.coddotech.teamsubb.jobs.model.JobManager;
 
 public abstract class User {
 
-	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator", "Verificator", "Encoder",
-			"Typesetter", "Manga", "Stiri", "Postator" };
+	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator", "Verificator", "Encoder", "Typesetter",
+			"Manga", "Stiri", "Postator" };
 
 	protected static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator", "Administrator", "Fondator" };
 

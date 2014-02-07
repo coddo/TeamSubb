@@ -3,9 +3,7 @@ package com.coddotech.teamsubb.appmanage.model;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import com.coddotech.teamsubb.connection.gui.LoginWindow;
@@ -14,6 +12,7 @@ import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.jobs.model.JobSearchTimer;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 import com.coddotech.teamsubb.settings.model.Settings;
 
 public class AppManager {
@@ -41,17 +40,8 @@ public class AppManager {
 
 			// display a message telling the user that the app is already running
 			else {
-				Shell shell = new Shell(Display.getDefault());
-
-				MessageBox message = new MessageBox(shell, SWT.ICON_WARNING);
-
-				message.setText("Already running");
-				message.setMessage("TeamSubb is already running !\n\n Stop the currently active instance in order to start a new one.");
-
-				message.open();
-
-				// dispose the temporary shell
-				shell.dispose();
+				PopUpMessages.getInstance().areadyRunning();
+				
 			}
 
 		}
@@ -60,7 +50,7 @@ public class AppManager {
 
 			ActivityLogger.dumpAppErrorStack(ex);
 
-			AppManager.displayFatalErrorMessage();
+			PopUpMessages.getInstance().fatalError();
 
 			AppManager.deleteAppInstanceLock();
 
@@ -158,17 +148,6 @@ public class AppManager {
 		catch (Exception ex) {
 
 		}
-	}
-
-	private static void displayFatalErrorMessage() {
-		Shell shell = new Shell(Display.getDefault(), SWT.None);
-
-		MessageBox message = new MessageBox(shell, SWT.ICON_ERROR);
-		message.setMessage("A FATAL ERROR has occured and the app has stopped working !");
-		message.setText("TeamSubb");
-		message.open();
-
-		shell.dispose();
 	}
 
 	private static boolean createAppInstanceLock() {

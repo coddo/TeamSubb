@@ -10,13 +10,13 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 import com.coddotech.teamsubb.settings.model.Settings;
 
@@ -120,7 +120,7 @@ public final class SettingsWindow extends CustomWindow {
 	public int getSelectedProfile() {
 		return gadgetProfile.getSelectionIndex();
 	}
-	
+
 	/**
 	 * Get the automatic login selection valeu
 	 * 
@@ -153,17 +153,13 @@ public final class SettingsWindow extends CustomWindow {
 	 *         not
 	 */
 	public boolean verifySettings() {
-		MessageBox message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
 		int interval;
 
 		try {
 			interval = Integer.parseInt(this.searchInterval.getText());
 
 			if (interval < 1 || interval > 60) {
-				message.setText("Number error");
-				message.setMessage("The entered number is out of bounds. The search interval must be an integer between 1 and 60");
-
-				message.open();
+				PopUpMessages.getInstance().numberOutOfBounds();
 
 				return false;
 			}
@@ -171,27 +167,10 @@ public final class SettingsWindow extends CustomWindow {
 			return true;
 		}
 		catch (Exception ex) {
-			message.setText("Format error");
-			message.setMessage("The search interval must be an INTEGER between 1 and 60");
-
-			message.open();
+			PopUpMessages.getInstance().numberFormatError();
 
 			return false;
 		}
-	}
-
-	/**
-	 * Display a message asking the user whether to save all the changes
-	 * 
-	 * @return A Logical value indicating if the user has pressed YES(true) or NO(false)
-	 */
-	public boolean displaySaveChangesQBox() {
-		MessageBox message = new MessageBox(this.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-
-		message.setText("Unsaved changes");
-		message.setMessage("The are unsaved changes. Do you want to save them now ?");
-
-		return (message.open() == SWT.YES);
 	}
 
 	@Override
@@ -230,21 +209,15 @@ public final class SettingsWindow extends CustomWindow {
 							break;
 
 						case Settings.SAVE: {
-							MessageBox message;
-
 							if (notif.getBoolean()) {
-								message = new MessageBox(getShell(), SWT.ICON_INFORMATION);
-								message.setText("Success");
-								message.setMessage("The settings have been successfully applied !");
+								PopUpMessages.getInstance().saveSettingsSuccess();
+
 							}
 
 							else {
-								message = new MessageBox(getShell(), SWT.ICON_ERROR);
-								message.setText("Error");
-								message.setMessage("An error has been encountered while saving the changes !");
-							}
+								PopUpMessages.getInstance().saveSettingsError();
 
-							message.open();
+							}
 
 						}
 							break;
@@ -294,9 +267,9 @@ public final class SettingsWindow extends CustomWindow {
 		autosaveLocation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		autosaveLocation.setText("Automatically save the gadget's location");
 		autosaveLocation.pack();
-		
+
 		automaticLogin.setFont(CustomWindow.DEFAULT_FONT);
-		automaticLogin.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true ,false, 2, 1));
+		automaticLogin.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		automaticLogin.setEnabled(Settings.getInstance().isAutomaticLogin());
 		automaticLogin.setText("Login automatically");
 		automaticLogin.pack();

@@ -86,7 +86,7 @@ public class ApplicationInformation extends CustomWindow {
 		server.setLocation(10, 70);
 		server.setText("Server: <a>anime4FUN.ro</a>");
 		server.pack();
-		
+
 		author.setFont(CustomWindow.DEFAULT_FONT);
 		author.setLocation(10, 100);
 		author.setText("Author: <a>Coddo</a>");

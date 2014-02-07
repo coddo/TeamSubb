@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.main.CustomController;
+import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 import com.coddotech.teamsubb.settings.model.Settings;
 import com.coddotech.teamsubb.connection.model.Login;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
@@ -25,11 +26,11 @@ public class SettingsController extends CustomController {
 	 */
 	public SettingsController(SettingsWindow view) {
 		this.view = view;
-		
+
 		settings = Settings.getInstance();
 		settings.addObserver(view);
-		
-		//reload the profiles from the file
+
+		// reload the profiles from the file
 		GadgetProfiler.getInstance().fetchProfiles();
 	}
 
@@ -125,7 +126,7 @@ public class SettingsController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			GadgetProfiler.getInstance().select(view.getSelectedProfile());
-	
+
 			settings.setGadgetProfile(view.getSelectedProfile());
 
 		}
@@ -136,7 +137,7 @@ public class SettingsController extends CustomController {
 
 		}
 	};
-	
+
 	/**
 	 * Listener for when the shell is shown -> reads all the settings from the XML settings file.<br>
 	 * 
@@ -163,7 +164,7 @@ public class SettingsController extends CustomController {
 		public void handleEvent(Event arg0) {
 			if (view.isChanged()) {
 
-				if (view.displaySaveChangesQBox())
+				if (PopUpMessages.getInstance().unsavedChanges())
 					applySettings();
 
 				else {
@@ -185,9 +186,9 @@ public class SettingsController extends CustomController {
 		settings.saveSettings();
 
 		view.setAsChanged(false);
-		
+
 		if (!view.isAutomaticLogin())
-			if(Login.loginDataFile.exists())
+			if (Login.loginDataFile.exists())
 				Login.loginDataFile.delete();
 	}
 

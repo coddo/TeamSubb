@@ -11,7 +11,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -19,6 +18,7 @@ import com.coddotech.teamsubb.chat.model.StaffManager;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 public class PushJobWindow extends CustomWindow {
@@ -205,26 +205,21 @@ public class PushJobWindow extends CustomWindow {
 	 * @return A logical value
 	 */
 	public boolean verifyFields() {
-		MessageBox message = new MessageBox(this.getShell(), SWT.ICON_ERROR);
-
-		message.setText("Empty fields");
-		message.setMessage("There cannot be any empty fields !");
-
 		if (type.getText() == null || type.getText().equals("")) {
-			message.open();
+			PopUpMessages.getInstance().emptyFields();
 
 			return false;
 		}
 
 		if (nextStaff.getText() == null || nextStaff.getText().equals("")) {
-			message.open();
+			PopUpMessages.getInstance().emptyFields();
 
 			return false;
 		}
 
 		if (torrentCheck.getSelection())
 			if (torrent.getText() == null || torrent.getText().equals("")) {
-				message.open();
+				PopUpMessages.getInstance().emptyFields();
 
 				return false;
 			}
@@ -242,26 +237,17 @@ public class PushJobWindow extends CustomWindow {
 				NotificationEntity notif = (NotificationEntity) obj;
 
 				if (notif.getMessage().equals(JobManager.JOB_PUSH)) {
-					MessageBox message;
 
 					if (notif.getBoolean()) {
-						message = new MessageBox(getShell(), SWT.ICON_INFORMATION);
-
-						message.setText("Success");
-						message.setMessage("The job has been successfully sent back to the server !");
-
-						message.open();
+						PopUpMessages.getInstance().jobPushSuccess();
 
 						// close the window on successful push
 						close();
 					}
 
 					else {
-						message = new MessageBox(getShell(), SWT.ERROR);
-						message.setText("Error");
-						message.setMessage("The job could not be finished !\n The server may have refused your request...");
+						PopUpMessages.getInstance().jobPushError();
 
-						message.open();
 					}
 
 				}

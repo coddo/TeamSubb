@@ -6,10 +6,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 
 /**
  * This class representes the login interface for the application. <br>
@@ -66,7 +66,7 @@ public class LoginWindow extends CustomWindow {
 
 			loginButton.dispose();
 			loginButton = null;
-			
+
 			automaticLogin.dispose();
 			automaticLogin = null;
 
@@ -96,7 +96,7 @@ public class LoginWindow extends CustomWindow {
 	public String getPassword() {
 		return this.passBox.getText();
 	}
-	
+
 	public boolean isAutomaticLogin() {
 		return this.automaticLogin.getSelection();
 	}
@@ -108,14 +108,12 @@ public class LoginWindow extends CustomWindow {
 
 			@Override
 			public void run() {
-				if (!(boolean) obj) {
 
-					// On failed login, show the "wrong credentials" message
-					MessageBox message = new MessageBox(getShell(), SWT.ICON_ERROR);
-					message.setMessage("The entered username or password is incorrect");
-					message.setText("Wrong credentials");
-					message.open();
+				if (!(boolean) obj) {
+					PopUpMessages.getInstance().incorrectUserOrPass();
+
 				}
+
 				else {
 					// On successful login, close this windows
 					close();
@@ -159,7 +157,7 @@ public class LoginWindow extends CustomWindow {
 		passBox.setFont(DEFAULT_FONT);
 		passBox.setLocation(100, 43);
 		passBox.setSize(175, 23);
-		
+
 		automaticLogin.setFont(DEFAULT_FONT);
 		automaticLogin.setLocation(35, 75);
 		automaticLogin.setText("Automatically login at startup");

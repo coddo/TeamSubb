@@ -23,8 +23,7 @@ import java.util.regex.Pattern;
  */
 public class ActivityLogger {
 
-	private static String dumpPath = System.getProperty("user.dir") + File.separator + "DUMP"
-			+ File.separator;
+	private static String dumpPath = System.getProperty("user.dir") + File.separator + "DUMP" + File.separator;
 
 	private static File logFile;
 	private static File dumpFile;
