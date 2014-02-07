@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
+import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 
 public class PushJobController extends CustomController {
 
@@ -59,10 +60,10 @@ public class PushJobController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 
-			if (view.verifyFields()) {
+			if (verifyFields()) {
 
-				model.pushJob(view.getID(), view.getNextStaff(), view.getType(), view.getTorrent(),
-						view.getComments(), view.getSubFile());
+				model.pushJob(view.getID(), view.getNextStaff(), view.getType(), view.getTorrent(), view.getComments(),
+						view.getSubFile());
 
 			}
 
@@ -151,5 +152,30 @@ public class PushJobController extends CustomController {
 
 		}
 	};
+
+	/**
+	 * Verify if the fields are not empty or contain invalid data
+	 * 
+	 * @return A logical value
+	 */
+	private boolean verifyFields() {
+		String nextStaff = view.getNextStaff();
+		String torrent = view.getTorrent();
+
+		if (nextStaff == null || nextStaff.equals("")) {
+			PopUpMessages.getInstance().emptyFields();
+
+			return false;
+		}
+
+		if (view.hasNewTorrent())
+			if (torrent == null || torrent.equals("")) {
+				PopUpMessages.getInstance().emptyFields();
+
+				return false;
+			}
+
+		return true;
+	}
 
 }

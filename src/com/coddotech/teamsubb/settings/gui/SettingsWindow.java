@@ -146,33 +146,6 @@ public final class SettingsWindow extends CustomWindow {
 		this.changed = value;
 	}
 
-	/**
-	 * Verify the entered settings
-	 * 
-	 * @return A logical value indicating if the entered settings are correct or
-	 *         not
-	 */
-	public boolean verifySettings() {
-		int interval;
-
-		try {
-			interval = Integer.parseInt(this.searchInterval.getText());
-
-			if (interval < 1 || interval > 60) {
-				PopUpMessages.getInstance().numberOutOfBounds();
-
-				return false;
-			}
-
-			return true;
-		}
-		catch (Exception ex) {
-			PopUpMessages.getInstance().numberFormatError();
-
-			return false;
-		}
-	}
-
 	@Override
 	protected void updateGUI(final Observable obs, final Object obj) {
 		try {

@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Listener;
 import com.coddotech.teamsubb.jobs.model.FontsManager;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
+import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 
 public class CreateJobController extends CustomController {
 
@@ -164,7 +165,7 @@ public class CreateJobController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 
-			if (view.verifyFields()) {
+			if (verifyFields()) {
 
 				String[] fonts = FontsManager.excludeServerFontsAsStrings(view.getFonts());
 
@@ -194,4 +195,39 @@ public class CreateJobController extends CustomController {
 		}
 	};
 
+	/**
+	 * Checks all the fields containing the job data for arguments that are invalid or emprty
+	 * 
+	 * @return A logical value indicating if the fields are ok or not
+	 */
+	private boolean verifyFields() {
+		boolean empty = false;
+
+		String name = view.getName();
+		String torrent = view.getTorrentLink();
+		String sub = view.getSub();
+
+		if (name == null || name.equals(""))
+			empty = true;
+
+		if (torrent == null || torrent.equals(""))
+			empty = true;
+
+		if (sub == null || sub.equals(""))
+			empty = true;
+
+		if (empty) {
+			PopUpMessages.getInstance().emptyFields();
+
+			return false;
+		}
+
+		else if (!new File(sub).exists()) {
+			PopUpMessages.getInstance().invalidSubFile();
+
+			return false;
+		}
+
+		return true;
+	}
 }

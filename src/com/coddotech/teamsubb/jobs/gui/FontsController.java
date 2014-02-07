@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -14,6 +13,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 
+import com.coddotech.teamsubb.jobs.model.FontsManager;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.main.CustomController;
 
@@ -25,17 +25,23 @@ import com.coddotech.teamsubb.main.CustomController;
  */
 public class FontsController extends CustomController {
 
+	FontsManager model;
+
 	private Job job;
 
 	private FontsWindow view;
 
 	private FileDialog browseFonts;
-	List<File> deleted;
 
-	boolean applied = false;
+	private List<File> deleted;
+
+	public boolean applied = false;
 
 	public FontsController(FontsWindow view) {
 		this.view = view;
+
+		model = new FontsManager();
+		model.addObserver(view);
 
 		browseFonts = new FileDialog(view.getShell(), SWT.OPEN | SWT.MULTI);
 		browseFonts.setText("Select font files");
@@ -44,6 +50,8 @@ public class FontsController extends CustomController {
 	}
 
 	public void dispose() {
+
+		model.deleteObserver(view);
 
 		// delete all the marked files from the job's directory if the settings have been applied
 		try {
@@ -67,6 +75,7 @@ public class FontsController extends CustomController {
 			this.logDispose();
 
 		}
+
 		catch (Exception ex) {
 			this.logDiposeFail(ex);
 
@@ -110,37 +119,7 @@ public class FontsController extends CustomController {
 		public void widgetSelected(SelectionEvent arg0) {
 
 			// copy the fonts to the location of the job
-			String[] fonts = view.getFonts();
-
-			File[] fontFiles = new File[fonts.length];
-
-			if (fonts.length == 0)
-				fontFiles = null;
-
-			boolean ok = true;
-
-			for (int i = 0; i < fonts.length; i++) {
-
-				File source = new File(fonts[i]);
-				fontFiles[i] = new File(job.getDirectoryPath() + File.separator + source.getName());
-
-				try {
-
-					if (!fontFiles[i].exists())
-						FileUtils.copyFile(source, fontFiles[i]);
-
-				}
-				catch (Exception ex) {
-					ok = false;
-
-				}
-			}
-
-			if (ok)
-				ok = job.setAddedFonts(fontFiles);
-
-			applied = ok;
-			view.notifyUser(ok);
+			model.addCustomFonts(view.getFonts(), job);
 
 		}
 

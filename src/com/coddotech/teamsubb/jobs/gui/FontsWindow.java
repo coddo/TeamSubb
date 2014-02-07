@@ -13,9 +13,11 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.coddotech.teamsubb.jobs.model.FontsManager;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 public class FontsWindow extends CustomWindow {
 
@@ -112,29 +114,23 @@ public class FontsWindow extends CustomWindow {
 		this.fonts.remove(this.fonts.getSelectionIndices());
 	}
 
-	/**
-	 * Notify the user with the status of the job (completed or not)
-	 * 
-	 * @param jobCompletion
-	 *            A logical value representing the job state
-	 */
-	public void notifyUser(boolean jobCompletion) {
-
-		if (jobCompletion) {
-			PopUpMessages.getInstance().fontsAddSuccess();
-
-			this.close();
-		}
-
-		else {
-			PopUpMessages.getInstance().fontsAddError();
-
-		}
-	}
-
 	@Override
 	protected void updateGUI(Observable obs, Object obj) {
-		// TODO Auto-generated method stub
+		NotificationEntity notif = (NotificationEntity) obj;
+
+		if (notif.getMessage().equals(FontsManager.FONTS_ADD)) {
+			controller.applied = notif.getBoolean();
+
+			if (notif.getBoolean()) {
+				PopUpMessages.getInstance().fontsAddSuccess();
+				
+				this.close();
+			}
+
+			else
+				PopUpMessages.getInstance().fontsAddError();
+
+		}
 
 	}
 

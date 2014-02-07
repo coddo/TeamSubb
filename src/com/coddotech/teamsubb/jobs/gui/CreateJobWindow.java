@@ -1,6 +1,5 @@
 package com.coddotech.teamsubb.jobs.gui;
 
-import java.io.File;
 import java.util.Observable;
 
 import org.eclipse.swt.SWT;
@@ -191,45 +190,6 @@ public class CreateJobWindow extends CustomWindow {
 	}
 
 	/**
-	 * Checks all the fields containing the job data for arguments that are invalid or emprty
-	 * 
-	 * @return A logical value indicating if the fields are ok or not
-	 */
-	public boolean verifyFields() {
-		boolean empty = false;
-
-		if (name.getText() == null || name.getText().equals(""))
-			empty = true;
-
-		if (type.getText() == null || type.getText().equals(""))
-			empty = true;
-
-		if (torrent.getText() == null || torrent.getText().equals(""))
-			empty = true;
-
-		if (nextStaff.getText() == null || nextStaff.getText().equals(""))
-			empty = true;
-
-		if (sub.getText() == null || sub.getText().equals(""))
-			empty = true;
-
-		if (empty) {
-			PopUpMessages.getInstance().emptyFields();
-
-			return false;
-		}
-
-		else if (!new File(this.sub.getText()).exists()) {
-
-			PopUpMessages.getInstance().invalidSubFile();
-
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
 	 * Select all the items of the font list
 	 */
 	public void selectEntireFontList() {
@@ -319,7 +279,7 @@ public class CreateJobWindow extends CustomWindow {
 
 		nameLabel.setFont(CustomWindow.DEFAULT_FONT);
 		nameLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		nameLabel.setText("Job name:");
+		nameLabel.setText("*Job name:");
 		nameLabel.pack();
 
 		name.setFont(CustomWindow.DEFAULT_FONT);
@@ -327,7 +287,7 @@ public class CreateJobWindow extends CustomWindow {
 
 		typeLabel.setFont(CustomWindow.DEFAULT_FONT);
 		typeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		typeLabel.setText("Job type:");
+		typeLabel.setText("*Job type:");
 		typeLabel.pack();
 
 		type.setFont(CustomWindow.DEFAULT_FONT);
@@ -340,7 +300,7 @@ public class CreateJobWindow extends CustomWindow {
 
 		torrentLabel.setFont(CustomWindow.DEFAULT_FONT);
 		torrentLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		torrentLabel.setText("Torrent link:");
+		torrentLabel.setText("*Torrent link:");
 		torrentLabel.pack();
 
 		torrent.setFont(CustomWindow.DEFAULT_FONT);
@@ -356,7 +316,7 @@ public class CreateJobWindow extends CustomWindow {
 
 		nextStaffLabel.setFont(CustomWindow.DEFAULT_FONT);
 		nextStaffLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		nextStaffLabel.setText("Next staff member:");
+		nextStaffLabel.setText("*Next staff member:");
 		nextStaffLabel.pack();
 
 		nextStaff.setFont(CustomWindow.DEFAULT_FONT);
@@ -368,7 +328,7 @@ public class CreateJobWindow extends CustomWindow {
 
 		subLabel.setFont(CustomWindow.DEFAULT_FONT);
 		subLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
-		subLabel.setText("Sub file:");
+		subLabel.setText("*Sub file:");
 		subLabel.pack();
 
 		sub.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));

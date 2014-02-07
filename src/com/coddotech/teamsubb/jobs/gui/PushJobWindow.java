@@ -188,6 +188,15 @@ public class PushJobWindow extends CustomWindow {
 	public boolean hasNewSubFile() {
 		return this.subFileCheck.getSelection();
 	}
+	
+	/**
+	 * Verify if the user has decided to use a new torrent link
+	 * 
+	 * @return A Logical value
+	 */
+	public boolean hasNewTorrent() {
+		return this.torrentCheck.getSelection();
+	}
 
 	/**
 	 * Change the state of the torrent TextBox according to the state of its corresponding checkbox
@@ -197,34 +206,6 @@ public class PushJobWindow extends CustomWindow {
 
 		if (!torrent.getEnabled())
 			torrent.setText("");
-	}
-
-	/**
-	 * Verify if the fields are not empty or contain invalid data
-	 * 
-	 * @return A logical value
-	 */
-	public boolean verifyFields() {
-		if (type.getText() == null || type.getText().equals("")) {
-			PopUpMessages.getInstance().emptyFields();
-
-			return false;
-		}
-
-		if (nextStaff.getText() == null || nextStaff.getText().equals("")) {
-			PopUpMessages.getInstance().emptyFields();
-
-			return false;
-		}
-
-		if (torrentCheck.getSelection())
-			if (torrent.getText() == null || torrent.getText().equals("")) {
-				PopUpMessages.getInstance().emptyFields();
-
-				return false;
-			}
-
-		return true;
 	}
 
 	@Override
@@ -305,7 +286,7 @@ public class PushJobWindow extends CustomWindow {
 
 		typeLabel.setFont(CustomWindow.BOLD_FONT);
 		typeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		typeLabel.setText("Job type:");
+		typeLabel.setText("*Job type:");
 		typeLabel.pack();
 
 		type.setFont(CustomWindow.DEFAULT_FONT);
@@ -334,7 +315,7 @@ public class PushJobWindow extends CustomWindow {
 
 		nextStaffLabel.setFont(CustomWindow.BOLD_FONT);
 		nextStaffLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		nextStaffLabel.setText("Next staff member:");
+		nextStaffLabel.setText("*Next staff member:");
 		nextStaffLabel.pack();
 
 		nextStaff.setFont(CustomWindow.DEFAULT_FONT);

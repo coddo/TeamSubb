@@ -61,8 +61,9 @@ public class SettingsController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 
-			if (view.verifySettings()) {
+			if (verifySettings()) {
 				applySettings();
+
 			}
 		}
 
@@ -190,6 +191,33 @@ public class SettingsController extends CustomController {
 		if (!view.isAutomaticLogin())
 			if (Login.loginDataFile.exists())
 				Login.loginDataFile.delete();
+	}
+
+	/**
+	 * Verify the entered settings
+	 * 
+	 * @return A logical value indicating if the entered settings are correct or
+	 *         not
+	 */
+	private boolean verifySettings() {
+		int interval;
+
+		try {
+			interval = view.getSearchInterval();
+
+			if (interval < 1 || interval > 60) {
+				PopUpMessages.getInstance().numberOutOfBounds();
+
+				return false;
+			}
+
+			return true;
+		}
+		catch (Exception ex) {
+			PopUpMessages.getInstance().numberFormatError();
+
+			return false;
+		}
 	}
 
 }

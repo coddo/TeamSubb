@@ -4,14 +4,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observable;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.connection.model.FileDownloader;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
-public class FontsManager {
+public class FontsManager extends Observable {
+
+	public static final String FONTS_ADD = "add fonts";
 
 	private static File FONTS_WINDOWS = null;
 	private static File[] FONTS_LINUX = null;
@@ -21,6 +25,50 @@ public class FontsManager {
 	}
 
 	private static Platform operatingSystem = null;
+
+	/**
+	 * Copy all the selected fonts to the job's directory
+	 * 
+	 * @param fonts
+	 *            List of font paths (String[])
+	 * @param job
+	 *            The job entity which will contain the fonts
+	 */
+	public void addCustomFonts(String[] fonts, Job job) {
+		File[] fontFiles = new File[fonts.length];
+
+		if (fonts.length == 0)
+			fontFiles = null;
+
+		boolean ok = true;
+
+		for (int i = 0; i < fonts.length; i++) {
+
+			File source = new File(fonts[i]);
+			fontFiles[i] = new File(job.getDirectoryPath() + File.separator + source.getName());
+
+			try {
+
+				if (!fontFiles[i].exists())
+					FileUtils.copyFile(source, fontFiles[i]);
+
+			}
+
+			catch (Exception ex) {
+				ok = false;
+
+			}
+		}
+
+		if (ok)
+			ok = job.setAddedFonts(fontFiles);
+
+		NotificationEntity notif = new NotificationEntity(FONTS_ADD, ok);
+
+		this.setChanged();
+		this.notifyObservers(notif);
+
+	}
 
 	/**
 	 * Retrieve a list containing all the system fonts
@@ -46,7 +94,7 @@ public class FontsManager {
 
 					for (File font : FileUtils.listFiles(fontFolder, null, true))
 						fontNames.add(font.getName());
-					
+
 				}
 
 			}
