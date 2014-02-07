@@ -13,7 +13,6 @@ import org.w3c.dom.Element;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
-import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.main.XmlHandler;
 
@@ -37,9 +36,6 @@ public final class Settings extends XmlHandler {
 	public static final int DEFAULT_SEARCH_INTERVAL = 1; // one minute
 	public static final int DEFAULT_GADGET_PROFILE = 2;
 
-	public static final boolean[] DEFAULT_USER_JOBS = { false, false, false, false, false, false, false };
-	public static final String[] DEFAULT_USER_INFO = { "NONE", "NONE", "NONE" };
-
 	/*
 	 * Constants representing the settings headers from the XML file and other Strings that are used
 	 * in order to relay what type of notification is sent to the observers
@@ -59,9 +55,6 @@ public final class Settings extends XmlHandler {
 	private boolean automaticLogin;
 	private int searchInterval;
 	private int gadgetProfile;
-
-	private String[] userInfo = null;
-	private boolean[] userJobs = null;
 
 	private static Settings instance = null;
 
@@ -135,10 +128,6 @@ public final class Settings extends XmlHandler {
 		this.searchInterval = searchInterval;
 	}
 
-	public boolean[] getUserJobsRawData() {
-		return this.userJobs;
-	}
-
 	public int getGadgetProfile() {
 		return this.gadgetProfile;
 	}
@@ -148,59 +137,6 @@ public final class Settings extends XmlHandler {
 
 		// generate a preview of the new size by notifying the gadget with the new size
 		notifyGadgetProfile();
-	}
-
-	public String[] getUserJobs() {
-		int available = 0;
-
-		for (int i = 0; i < this.userJobs.length; i++) {
-
-			if (this.userJobs[i])
-				available++;
-
-		}
-
-		int counter = 0;
-
-		String[] userJobs = new String[available];
-
-		for (int i = 0; i < this.userJobs.length; i++) {
-
-			if (this.userJobs[i]) {
-				userJobs[counter] = JobWindow.DEFAULT_JOBS_INFO_HEADERS[i];
-				counter++;
-
-			}
-
-		}
-
-		return userJobs;
-
-	}
-
-	public void setUserJobs(boolean[] userJobs) {
-		this.userJobs = userJobs;
-	}
-
-	public String[] getUserInfo() {
-		return this.userInfo;
-	}
-
-	public String getUserName() {
-		return this.userInfo[0];
-
-	}
-	
-	public String getUserID() {
-		return this.userInfo[1];
-	}
-	
-	public String getUserCode() {
-		return this.userInfo[2];
-	}
-
-	public void setUserInfo(String[] userInfo) {
-		this.userInfo = userInfo;
 	}
 
 	/**
@@ -215,12 +151,6 @@ public final class Settings extends XmlHandler {
 
 		// job search interval
 		this.searchInterval = Settings.DEFAULT_SEARCH_INTERVAL;
-
-		// user jobs
-		this.userJobs = Settings.DEFAULT_USER_JOBS;
-
-		// user info
-		this.userInfo = Settings.DEFAULT_USER_INFO;
 
 		// gadget profile
 		this.gadgetProfile = Settings.DEFAULT_GADGET_PROFILE;

@@ -19,8 +19,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
+import com.coddotech.teamsubb.chat.model.LoggedUser;
 import com.coddotech.teamsubb.jobs.model.Job;
-import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
  * This class is used for bridging the connection between the server and the
@@ -289,7 +289,7 @@ public final class ConnectionManager {
 		String[] messageHeaders = { "push", "staff", "jobid", "jobtype", "comments", "nextstaff", "torrent" };
 
 		String[] messages = { "available", user, Integer.toString(job.getID()),
-				Integer.toString(job.getType()), job.getDescription(), job.getNextStaffMember(),
+				Integer.toString(job.getType()), job.getComments(), job.getNextStaffMember(),
 				job.getTorrent() };
 
 		if (canceled)
@@ -545,9 +545,7 @@ public final class ConnectionManager {
 	}
 
 	private static String[] appendSessionHeaders(String[] messageHeaders) {
-		Settings set = Settings.getInstance();
-
-		if (set.getUserInfo() == null)
+		if (LoggedUser.getInstance().getName() == null)
 			return messageHeaders;
 
 		String[] data = new String[messageHeaders.length + 2];
@@ -562,15 +560,15 @@ public final class ConnectionManager {
 	}
 
 	private static String[] appendSessionMessages(String[] messages) {
-		Settings set = Settings.getInstance();
+		LoggedUser user = LoggedUser.getInstance();
 
-		if (set.getUserInfo() == null)
+		if (user.getName() == null)
 			return messages;
 
 		String[] data = new String[messages.length + 2];
 
-		data[data.length - 2] = set.getUserID();
-		data[data.length - 1] = set.getUserCode();
+		data[data.length - 2] = Integer.toString(user.getId());
+		data[data.length - 1] = user.getCode();
 
 		for (int i = 0; i < messages.length; i++)
 			data[i] = messages[i];

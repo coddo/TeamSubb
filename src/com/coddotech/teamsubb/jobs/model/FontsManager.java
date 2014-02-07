@@ -154,7 +154,7 @@ public class FontsManager {
 	private static List<String> getServerFonts() {
 		String response = ConnectionManager.sendFontsRequest();
 
-		return Arrays.asList(response.split(Pattern.quote(JobManager.SEPARATOR_FIELDS)));
+		return Arrays.asList(response.split(Pattern.quote(JobManager.SEPARATOR_DATA)));
 	}
 
 	/**

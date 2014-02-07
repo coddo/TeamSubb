@@ -10,9 +10,9 @@ import org.apache.commons.io.FileUtils;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.appmanage.model.AppManager;
+import com.coddotech.teamsubb.chat.model.LoggedUser;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.main.CustomWindow;
-import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
  * Class used for realizing the communication between this client and the target
@@ -25,15 +25,13 @@ import com.coddotech.teamsubb.settings.model.Settings;
  */
 public class JobManager extends Observable {
 
-	public static final String SEPARATOR_FIELDS = "#!#";
-	public static final String SEPARATOR_JOBS = "&!&";
+	public static final String SEPARATOR_DATA = "#!#";
+	public static final String SEPARATOR_ENTITY = "&!&";
 
 	public static final File WORKING_DIRECTORY = new File("Jobs");
 
 	private List<Job> jobs;
 	private List<Job> acceptedJobs;
-
-	private Settings settings;
 
 	// variables used in order to know when the threads are running
 	private volatile boolean findJobsRunning = false;
@@ -57,8 +55,6 @@ public class JobManager extends Observable {
 	private JobManager() {
 		jobs = new ArrayList<Job>();
 		acceptedJobs = new ArrayList<Job>();
-
-		settings = Settings.getInstance();
 
 		initializeWorkingDirectory();
 
@@ -201,7 +197,7 @@ public class JobManager extends Observable {
 
 			message += job.getBookedBy() + CustomWindow.NOTIFICATION_SEPARATOR;
 
-			message += (message == null) ? " " : job.getDescription() + " ";
+			message += (message == null) ? " " : job.getComments() + " ";
 		}
 
 		this.setChanged();
@@ -247,8 +243,8 @@ public class JobManager extends Observable {
 
 				try {
 
-					boolean response = ConnectionManager.sendJobCreateRequest(settings.getUserName(), name,
-							type, description, nextStaff, torrent, subFile, fonts);
+					boolean response = ConnectionManager.sendJobCreateRequest(LoggedUser.getInstance()
+							.getName(), name, type, description, nextStaff, torrent, subFile, fonts);
 
 					setChanged();
 					notifyObservers("create" + CustomWindow.NOTIFICATION_SEPARATOR + response);
@@ -305,7 +301,8 @@ public class JobManager extends Observable {
 
 				try {
 
-					boolean response = ConnectionManager.sendJobEndRequest(jobID, settings.getUserName());
+					boolean response = ConnectionManager.sendJobEndRequest(jobID, LoggedUser.getInstance()
+							.getName());
 
 					if (response) {
 						for (int i = 0; i < jobs.size(); i++) {
@@ -377,13 +374,14 @@ public class JobManager extends Observable {
 					clearJobList(jobs);
 
 					// send the jobs request to the server
-					String response = ConnectionManager.sendJobSearchRequest(settings.getUserName());
+					String response = ConnectionManager.sendJobSearchRequest(LoggedUser.getInstance()
+							.getName());
 
 					// in case everything is ok, start processing the response that was received
 					// from the server
 					if (!response.equals("false") && !response.equals("")) {
 
-						String[] jobFragments = response.split(JobManager.SEPARATOR_JOBS);
+						String[] jobFragments = response.split(JobManager.SEPARATOR_ENTITY);
 
 						// take each job and wrap it in a Job entity
 						for (String fragment : jobFragments) {
@@ -560,8 +558,8 @@ public class JobManager extends Observable {
 	 * @param jobID
 	 *            The ID of the job to be sent back to the server
 	 */
-	public void pushJob(final int jobID, final String nextStaff, final int type, final String torrent, final String comments,
-			final File subFile) {
+	public void pushJob(final int jobID, final String nextStaff, final int type, final String torrent,
+			final String comments, final File subFile) {
 
 		class PushJob extends Thread {
 
@@ -586,12 +584,12 @@ public class JobManager extends Observable {
 
 							job.setType(type);
 							job.setNextStaffMember(nextStaff);
-							job.setDescription(comments);
+							job.setComments(comments);
 
 							if (subFile != null)
 								job.setSubFile(subFile);
-							
-							if(!torrent.equals(""))
+
+							if (!torrent.equals(""))
 								job.setTorrent(torrent);
 
 							response = job.push();
@@ -689,7 +687,7 @@ public class JobManager extends Observable {
 	private String wrapJob(String message, String fragment) {
 
 		// split the String into bits representing specific job data
-		String[] data = fragment.split(JobManager.SEPARATOR_FIELDS);
+		String[] data = fragment.split(JobManager.SEPARATOR_DATA);
 		int jobID = Integer.parseInt(data[0]);
 
 		// ignore this job if it already in the accepted list
@@ -703,10 +701,10 @@ public class JobManager extends Observable {
 
 			if (!message.equals("important")) {
 
-				if (job.getIntendedTo().equals(settings.getUserName()))
+				if (job.getIntendedTo().equals(LoggedUser.getInstance().getName()))
 					message = "important";
 
-				else if (job.isAcceptable(settings.getUserJobs())) {
+				else if (job.isAcceptable()) {
 					message = "acceptable";
 
 				}
@@ -747,14 +745,14 @@ public class JobManager extends Observable {
 		job.setID(Integer.parseInt(data[0]));
 		job.setName(data[1]);
 		job.setType(Integer.parseInt(data[2]));
-		job.setDescription(data[3]);
+		job.setComments(data[3]);
 		job.setBookedBy(data[4]);
 		job.setPreviousStaffMember(data[5]);
 		job.setIntendedTo(data[6]);
 		job.setStartDate(data[7]);
 		job.setTorrent(data[8]);
 		job.setDirectoryPath(dirPath);
-		job.setCurrentStaffMember(settings.getUserName());
+		job.setCurrentStaffMember(LoggedUser.getInstance().getName());
 
 		// sub file
 		job.setSubFileLink(data[9]);

@@ -18,11 +18,12 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
+import com.coddotech.teamsubb.chat.model.LoggedUser;
 import com.coddotech.teamsubb.jobs.gui.JobController;
 import com.coddotech.teamsubb.jobs.model.Job;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
-import com.coddotech.teamsubb.settings.model.Settings;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 /**
  * Main window that is used by the user to manage his/her jobs and communicate
@@ -32,9 +33,6 @@ import com.coddotech.teamsubb.settings.model.Settings;
  * 
  */
 public class JobWindow extends CustomWindow {
-
-	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator", "Verificator", "Encoder",
-			"Typesetter", "Manga", "Stiri", "Postator" };
 
 	private static final Color COLOR_ACCEPTED = Display.getDefault().getSystemColor(SWT.COLOR_GREEN);
 	private static final Color COLOR_ACCEPTABLE = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
@@ -125,11 +123,11 @@ public class JobWindow extends CustomWindow {
 	 * @param userJobs
 	 *            Information about the jobs that the user can take
 	 */
-	public JobWindow(String[] userInfo) {
+	public JobWindow() {
 		super();
 		this.setShell(new Shell(Display.getDefault(), SWT.SHELL_TRIM));
 
-		this.isTestUser = userInfo[0].equals("testcoddo");
+		this.isTestUser = LoggedUser.getInstance().getName().equals("testcoddo");
 
 		this.initializeComponents();
 		this.exiting = false;
@@ -338,35 +336,35 @@ public class JobWindow extends CustomWindow {
 			public void run() {
 				// the only observable that this class has is the JobManager class
 				try {
-					String[] data = obj.toString().split(CustomWindow.NOTIFICATION_SEPARATOR);
+					NotificationEntity notif = (NotificationEntity) obj;
 
-					switch (data[0]) {
+					switch (notif.message) {
 
-						case "find": {
+						case NotificationEntity.MESSAGE_JOB_FIND: {
 							createJobList(obs);
 
 						}
 							break;
 
-						case "jobinformation": {
-							updateJobInfo(data);
+						case NotificationEntity.MESSAGE_JOB_INFORMATION: {
+							updateJobInfo(notif.job);
 						}
 							break;
 
-						case "end": {
-							handleEndJobResult(obs, data);
-
-						}
-							break;
-
-						case "accept": {
-							handleAcceptJobResult(obs, data);
+						case NotificationEntity.MESSAGE_JOB_END: {
+							handleEndJobResult(obs, notif.actionSuccess);
 
 						}
 							break;
 
-						case "cancel": {
-							handleCancelJobResult(obs, data);
+						case NotificationEntity.MESSAGE_JOB_ACCEPT: {
+							handleAcceptJobResult(obs, notif.actionSuccess);
+
+						}
+							break;
+
+						case NotificationEntity.MESSAGE_JOB_CANCEL: {
+							handleCancelJobResult(obs, notif.actionSuccess);
 
 						}
 							break;
@@ -703,10 +701,10 @@ public class JobWindow extends CustomWindow {
 				item.setText(job.getName());
 				item.setData(job.getID());
 
-				if (job.getIntendedTo().equals(Settings.getInstance().getUserName()))
+				if (job.getIntendedTo().equals(LoggedUser.getInstance().getName()))
 					item.setBackground(JobWindow.COLOR_IMPORTANT);
 
-				else if (job.isAcceptable(Settings.getInstance().getUserJobs()))
+				else if (job.isAcceptable())
 					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
 			}
 
@@ -724,14 +722,14 @@ public class JobWindow extends CustomWindow {
 		return false;
 	}
 
-	private void updateJobInfo(String[] data) {
-		this.jobType.setText(data[1]);
-		this.jobStartDate.setText(data[2]);
-		this.jobTorrent.setText("<a>" + data[3] + "</a>");
-		this.jobPreviousStaff.setText(data[4]);
-		this.jobIntendedTo.setText(data[5]);
-		this.jobBookedBy.setText(data[6]);
-		this.jobComments.setText(data[7]);
+	private void updateJobInfo(Job job) {
+		this.jobType.setText(Job.DEFAULT_JOB_TYPES[job.getType()]);
+		this.jobStartDate.setText(job.getStartDate());
+		this.jobTorrent.setText("<a>" + job.getTorrent() + "</a>");
+		this.jobPreviousStaff.setText(job.getPreviousStaffMember());
+		this.jobIntendedTo.setText(job.getIntendedTo());
+		this.jobBookedBy.setText(job.getBookedBy());
+		this.jobComments.setText(job.getComments());
 
 		this.jobType.pack();
 		this.jobStartDate.pack();
@@ -741,10 +739,10 @@ public class JobWindow extends CustomWindow {
 		this.jobBookedBy.pack();
 	}
 
-	private void handleEndJobResult(Observable obs, String[] data) {
+	private void handleEndJobResult(Observable obs, boolean succeeded) {
 		MessageBox message;
 
-		if (Boolean.parseBoolean(data[1])) {
+		if (succeeded) {
 			((JobManager) obs).findJobs();
 
 		}
@@ -757,10 +755,10 @@ public class JobWindow extends CustomWindow {
 		}
 	}
 
-	private void handleAcceptJobResult(Observable obs, String[] data) {
+	private void handleAcceptJobResult(Observable obs, boolean succeeded) {
 		MessageBox message;
 
-		if (Boolean.parseBoolean(data[1])) {
+		if (succeeded) {
 			((JobManager) obs).findJobs();
 
 			message = new MessageBox(this.getShell(), SWT.ICON_INFORMATION);
@@ -777,10 +775,10 @@ public class JobWindow extends CustomWindow {
 		message.open();
 	}
 
-	private void handleCancelJobResult(Observable obs, String[] data) {
+	private void handleCancelJobResult(Observable obs, boolean succeeded) {
 		MessageBox message;
 
-		if (Boolean.parseBoolean(data[1])) {
+		if (succeeded) {
 			((JobManager) obs).findJobs();
 
 		}
@@ -799,17 +797,20 @@ public class JobWindow extends CustomWindow {
 	 * Generate the user information objects and display the on the GUI for the user to see
 	 */
 	private void generateUserInfo() {
-		String[] userJobs = Settings.getInstance().getUserJobs();
-
-		userNameLabel.setText(userJobs[0]);
-		userEmailLabel.setText(userJobs[3]);
-		userRankLabel.setText(userJobs[4]);
+		LoggedUser user = LoggedUser.getInstance();
+		
+		userNameLabel.setText(user.getName());
+		userEmailLabel.setText(user.getEmail());
+		userRankLabel.setText(user.getRank());
 
 		userNameLabel.pack();
 		userEmailLabel.pack();
 		userRankLabel.pack();
 
+		String[] userJobs = user.getJobNames();
+		
 		userJobsLabels = new Label[userJobs.length];
+		
 		for (int i = 0; i < userJobs.length; i++) {
 			userJobsLabels[i] = new Label(this.userJobsGroup, SWT.None);
 			userJobsLabels[i].setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -823,9 +824,11 @@ public class JobWindow extends CustomWindow {
 	 * Clears the fields that display the information for a selected job in the list
 	 */
 	@SuppressWarnings ("unused")
+	@Deprecated
 	private void clearJobInformation() {
 		this.jobType.setText("");
 		this.jobStartDate.setText("");
+		this.jobTorrent.setText("");
 		this.jobPreviousStaff.setText("");
 		this.jobIntendedTo.setText("");
 		this.jobBookedBy.setText("");

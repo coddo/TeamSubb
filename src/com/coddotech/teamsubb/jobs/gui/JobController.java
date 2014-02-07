@@ -11,12 +11,12 @@ import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.appmanage.gui.ApplicationInformation;
 import com.coddotech.teamsubb.appmanage.model.AppManager;
+import com.coddotech.teamsubb.chat.model.LoggedUser;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.settings.gui.SettingsWindow;
-import com.coddotech.teamsubb.settings.model.Settings;
 
 /**
  * Controller class used by the JobWindow in order to complete the job actions
@@ -217,9 +217,8 @@ public class JobController extends CustomController {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 
-			Settings set = Settings.getInstance();
-
-			if (ConnectionManager.sendJobForceCancelRequest(view.getSelectedJobID(), set.getUserName())) {
+			if (ConnectionManager.sendJobForceCancelRequest(view.getSelectedJobID(), LoggedUser.getInstance()
+					.getName())) {
 
 				model.removeJob(view.getSelectedJobID());
 				model.findJobs();
@@ -391,22 +390,22 @@ public class JobController extends CustomController {
 		}
 
 	};
-	
+
 	/**
 	 * Listener for when the torrent link is clicked
 	 */
 	public SelectionListener jobTorrentClicked = new SelectionListener() {
-		
+
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			Program.launch(view.getTorrentLink());
-			
+
 		}
-		
+
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	};
 

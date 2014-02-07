@@ -10,9 +10,10 @@ import java.io.FileWriter;
 import org.apache.commons.io.FileUtils;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
+import com.coddotech.teamsubb.chat.model.LoggedUser;
+import com.coddotech.teamsubb.chat.model.User;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.connection.model.FileDownloader;
-import com.coddotech.teamsubb.jobs.gui.JobWindow;
 
 /**
  * Entity used by the JobManager class. This class stores information about a
@@ -26,14 +27,14 @@ public final class Job {
 	public static final String[] DEFAULT_JOB_TYPES = { "Traducere", "Verificare", "Encode", "Typeset", "end" };
 
 	public static final String DEFAULT_NEXT_STAFF = "anyone";
-	
+
 	public boolean valid = false;
 
 	private int id;
 	private int type;
-	
+
 	private String name;
-	private String description;
+	private String comments;
 	private String bookedBy;
 	private String currentStaffMember;
 	private String previousStaffMember;
@@ -43,9 +44,9 @@ public final class Job {
 	private String directoryPath;
 	private String torrent;
 	private String subFileLink;
-	
+
 	private String[] fontLinks;
-	
+
 	private File subFile;
 	private File configFile;
 
@@ -74,7 +75,7 @@ public final class Job {
 				this.configFile.delete();
 
 			this.name = null;
-			this.description = null;
+			this.comments = null;
 			this.currentStaffMember = null;
 			this.previousStaffMember = null;
 			this.nextStaffMember = null;
@@ -164,8 +165,8 @@ public final class Job {
 	 * 
 	 * @return A String containing the entire description that comes along with the job
 	 */
-	public String getDescription() {
-		return description;
+	public String getComments() {
+		return comments;
 	}
 
 	/**
@@ -174,8 +175,8 @@ public final class Job {
 	 * @param jobDescription
 	 *            A String containing the description and comments that the job will have
 	 */
-	public void setDescription(String jobDescription) {
-		this.description = jobDescription;
+	public void setComments(String jobDescription) {
+		this.comments = jobDescription;
 	}
 
 	/**
@@ -334,7 +335,8 @@ public final class Job {
 	/**
 	 * Set the link to the torrent file used for the sub
 	 * 
-	 * @param torrent A String value
+	 * @param torrent
+	 *            A String value
 	 */
 	public void setTorrent(String torrent) {
 		this.torrent = torrent;
@@ -458,7 +460,8 @@ public final class Job {
 	 * 
 	 * @return A logical value indicating whether this job can be accepted by the user of not
 	 */
-	public boolean isAcceptable(String[] possible) {
+	public boolean isAcceptable() {
+		String[] possible = LoggedUser.getInstance().getJobNames();
 
 		if (!this.bookedBy.equals("-"))
 			return false;
@@ -471,7 +474,7 @@ public final class Job {
 
 		for (String pos : possible) {
 
-			if (JobWindow.DEFAULT_JOBS_INFO_HEADERS[this.type].equals(pos))
+			if (User.DEFAULT_JOBS_INFO_HEADERS[this.type].equals(pos))
 				return true;
 
 		}
@@ -540,7 +543,7 @@ public final class Job {
 	 */
 	public boolean cancel() {
 
-		this.description = "";
+		this.comments = "";
 
 		// send the cancel message request to the server
 		boolean response = ConnectionManager.sendJobCancelRequest(this, this.currentStaffMember);
@@ -632,7 +635,7 @@ public final class Job {
 		this.setID(Integer.parseInt(reader.readLine()));
 		this.setName(reader.readLine());
 		this.setType(Integer.parseInt(reader.readLine()));
-		this.setDescription(reader.readLine());
+		this.setComments(reader.readLine());
 		this.setCurrentStaffMember(reader.readLine());
 		this.setPreviousStaffMember(reader.readLine());
 		this.setIntendedTo(reader.readLine());
@@ -682,7 +685,7 @@ public final class Job {
 		writer.write(this.id + "\n");
 		writer.write(this.name + "\n");
 		writer.write(this.type + "\n");
-		writer.write(this.description + "\n");
+		writer.write(this.comments + "\n");
 		writer.write(this.currentStaffMember + "\n");
 		writer.write(this.previousStaffMember + "\n");
 		writer.write(this.intendedTo + "\n");

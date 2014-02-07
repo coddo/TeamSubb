@@ -16,49 +16,50 @@ import com.coddotech.teamsubb.main.CustomWindow;
  */
 public class StaffManager {
 
-	@SuppressWarnings ("unused")
-	private class Staff {
-
-		int ID;
-		String name;
-		String jobs;
-
-	}
-
-	List<Staff> staff = new ArrayList<Staff>();
+	List<StaffMember> staff = new ArrayList<StaffMember>();
 
 	public void dispose() {
 		staff.clear();
 
 	}
 
-	public Staff[] getStaff() {
-		return this.staff.toArray(new Staff[staff.size()]);
-		
+	public StaffMember[] getStaff() {
+		return this.staff.toArray(new StaffMember[staff.size()]);
+
 	}
 
 	/**
 	 * Refresh the list containing the staff details (fethes the data from the server)
 	 */
 	public void refreshStaffList() {
-		String[] staffData = StaffManager.fetchStaffList(true);
 
-		if (staffData == null)
-			return;
+		class StaffRefresher extends Thread {
 
-		staff.clear();
+			@Override
+			public void run() {
 
-		for (String data : staffData) {
-			String[] split = data.split(":");
+				if (CustomWindow.isConnected(false)) {
+					String[] staffData = ConnectionManager.sendStaffRequest().split(JobManager.SEPARATOR_ENTITY);
 
-			Staff member = new Staff();
+					if (staffData == null)
+						return;
 
-			member.ID = Integer.parseInt(split[0]);
-			member.name = split[1];
-			member.jobs = split[2];
+					staff.clear();
 
-			staff.add(member);
+					for (String data : staffData) {
+						StaffMember member = new StaffMember();
+
+						member.setUserDetails(data);
+
+						staff.add(member);
+					}
+				}
+
+			}
 		}
+
+		StaffRefresher refresher = new StaffRefresher();
+		refresher.start();
 	}
 
 	/**
@@ -74,10 +75,10 @@ public class StaffManager {
 	 * 
 	 * @return A String collection
 	 */
-	public static String[] fetchStaffList(boolean includeID) {
+	public static String[] fetchFormatedStaffList(boolean includeID) {
 		if (CustomWindow.isConnected(false)) {
 
-			String[] staffData = ConnectionManager.sendStaffRequest().split(JobManager.SEPARATOR_JOBS);
+			String[] staffData = ConnectionManager.sendStaffRequest().split(JobManager.SEPARATOR_ENTITY);
 
 			for (int i = 0; i < staffData.length; i++) {
 				staffData[i] = StaffManager.createStaffString(staffData[i], includeID);
@@ -106,7 +107,7 @@ public class StaffManager {
 	 * @return A String value
 	 */
 	private static String createStaffString(String staffData, boolean includeID) {
-		staffData = staffData.replaceAll(JobManager.SEPARATOR_FIELDS, " | ");
+		staffData = staffData.replaceAll(JobManager.SEPARATOR_DATA, " | ");
 
 		if (!includeID) {
 			staffData = staffData.replace(staffData.substring(0, staffData.indexOf(" | ") + 3), "");

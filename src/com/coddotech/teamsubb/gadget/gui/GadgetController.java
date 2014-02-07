@@ -320,17 +320,15 @@ public class GadgetController extends CustomController {
 	};
 
 	private void openJobsWindow() {
-		Settings set = Settings.getInstance();
-
 		try {
 
 			if (jobsWindow.getShell().isDisposed())
-				jobsWindow = new JobWindow(set.getUserInfo());
+				jobsWindow = new JobWindow();
 
 		}
 		catch (Exception ex) {
 
-			jobsWindow = new JobWindow(set.getUserInfo());
+			jobsWindow = new JobWindow();
 
 		}
 
