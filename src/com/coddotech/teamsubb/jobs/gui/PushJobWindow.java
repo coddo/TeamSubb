@@ -143,7 +143,7 @@ public class PushJobWindow extends CustomWindow {
 	public String getComments() {
 		return this.comments.getText();
 	}
-	
+
 	/**
 	 * Get the torrent link entered by the user
 	 * 
@@ -194,7 +194,7 @@ public class PushJobWindow extends CustomWindow {
 	 */
 	public void changeTorrentState() {
 		this.torrent.setEnabled(this.torrentCheck.getSelection());
-		
+
 		if (!torrent.getEnabled())
 			torrent.setText("");
 	}
@@ -246,7 +246,7 @@ public class PushJobWindow extends CustomWindow {
 
 					if (notif.getBoolean()) {
 						message = new MessageBox(getShell(), SWT.ICON_INFORMATION);
-						
+
 						message.setText("Success");
 						message.setMessage("The job has been successfully sent back to the server !");
 
@@ -355,7 +355,7 @@ public class PushJobWindow extends CustomWindow {
 		nextStaff.setFont(CustomWindow.DEFAULT_FONT);
 		nextStaff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF);
-		nextStaff.setItems(StaffManager.fetchFormatedStaffList(false));
+		nextStaff.setItems(StaffManager.fetchFormatedStaffList());
 		nextStaff.add(Job.DEFAULT_NEXT_STAFF, 0);
 		nextStaff.select(0);
 

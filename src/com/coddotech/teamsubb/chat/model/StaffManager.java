@@ -1,9 +1,5 @@
 package com.coddotech.teamsubb.chat.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -16,15 +12,10 @@ import com.coddotech.teamsubb.main.CustomWindow;
  */
 public class StaffManager {
 
-	List<StaffMember> staff = new ArrayList<StaffMember>();
-
-	public void dispose() {
-		staff.clear();
-
-	}
+	private StaffMember[] staff = null;
 
 	public StaffMember[] getStaff() {
-		return this.staff.toArray(new StaffMember[staff.size()]);
+		return this.staff;
 
 	}
 
@@ -37,23 +28,7 @@ public class StaffManager {
 
 			@Override
 			public void run() {
-
-				if (CustomWindow.isConnected(false)) {
-					String[] staffData = ConnectionManager.sendStaffRequest().split(JobManager.SEPARATOR_ENTITY);
-
-					if (staffData == null)
-						return;
-
-					staff.clear();
-
-					for (String data : staffData) {
-						StaffMember member = new StaffMember();
-
-						member.setUserDetails(data);
-
-						staff.add(member);
-					}
-				}
+				staff = StaffManager.createStaffArray();
 
 			}
 		}
@@ -75,50 +50,62 @@ public class StaffManager {
 	 * 
 	 * @return A String collection
 	 */
-	public static String[] fetchFormatedStaffList(boolean includeID) {
-		if (CustomWindow.isConnected(false)) {
+	public static String[] fetchFormatedStaffList() {
+		StaffMember[] staffArray = StaffManager.createStaffArray();
 
-			String[] staffData = ConnectionManager.sendStaffRequest().split(JobManager.SEPARATOR_ENTITY);
+		if (staffArray == null)
+			return null;
 
-			for (int i = 0; i < staffData.length; i++) {
-				staffData[i] = StaffManager.createStaffString(staffData[i], includeID);
+		String[] staffStrings = new String[staffArray.length];
 
+		for (int i = 0; i < staffArray.length; i++) {
+
+			try {
+				StaffMember user = staffArray[i];
+
+				String[] jobs = user.getJobNames();
+
+				staffStrings[i] = user.name + ": ";
+
+				for (int j = 0; j < jobs.length - 1; j++)
+					staffStrings[i] += jobs[j] + " | ";
+
+				staffStrings[i] += jobs[jobs.length - 1];
 			}
 
-			return staffData;
+			finally {
+				// do nothing on error
+			}
+
 		}
 
-		return null;
+		return staffStrings;
 	}
 
 	/**
-	 * Create an easier to read String out of the raw message received from the server.<br>
-	 * <br>
+	 * Gets the staff from the server and creates an array with the staff members
 	 * 
-	 * The two possible structures are: <br>
-	 * -NAME: Job1 | Job2 | Job3....
-	 * -ID: NAME: Job1 | Job2 | Job3....
-	 * 
-	 * @param staffData
-	 *            The raw message from the server
-	 * @param includeID
-	 *            Indicates whether to include the ID of the user in the String
-	 * 
-	 * @return A String value
+	 * @return A StaffMember colletion
 	 */
-	private static String createStaffString(String staffData, boolean includeID) {
-		staffData = staffData.replaceAll(JobManager.SEPARATOR_DATA, " | ");
+	private static StaffMember[] createStaffArray() {
+		StaffMember[] staffArray = null;
 
-		if (!includeID) {
-			staffData = staffData.replace(staffData.substring(0, staffData.indexOf(" | ") + 3), "");
+		if (CustomWindow.isConnected(false)) {
+			String[] staffData = ConnectionManager.sendStaffRequest().split(JobManager.SEPARATOR_ENTITY);
 
+			if (staffData == null)
+				return null;
+
+			staffArray = new StaffMember[staffData.length];
+
+			for (int i = 0; i < staffArray.length; i++) {
+				staffArray[i] = new StaffMember();
+
+				staffArray[i].setUserDetails(staffData[i]);
+			}
 		}
 
-		else
-			staffData = staffData.replaceFirst(Pattern.quote(" |"), ":");
-
-		staffData = staffData.replaceFirst(Pattern.quote(" |"), ":");
-
-		return staffData;
+		return staffArray;
 	}
+
 }
