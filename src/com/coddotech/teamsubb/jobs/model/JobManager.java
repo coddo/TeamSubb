@@ -32,7 +32,7 @@ public class JobManager extends Observable {
 	public static final String JOB_PRIORITY_NORMAL = "normal";
 	public static final String JOB_PRIORITY_ACCEPTABLE = "acceptable";
 	public static final String JOB_PRIORITY_IMPORTANT = "important";
-	
+
 	public static final String JOB_FIND = "job find";
 	public static final String JOB_INFORMATION = "job information";
 	public static final String JOB_END = "job end";
@@ -185,8 +185,8 @@ public class JobManager extends Observable {
 			}
 		}
 
-		NotificationEntity notif = new NotificationEntity(JobManager.JOB_INFORMATION, job);		
-		
+		NotificationEntity notif = new NotificationEntity(JobManager.JOB_INFORMATION, job);
+
 		this.setChanged();
 		notifyObservers(notif);
 	}
@@ -392,8 +392,8 @@ public class JobManager extends Observable {
 					// get rid of jobs that no longer exist
 					removeInactiveJobs();
 
-					NotificationEntity notif = new NotificationEntity(JobManager.JOB_FIND, message,
-							new Object[] { acceptedJobs, jobs });
+					NotificationEntity notif = new NotificationEntity(JobManager.JOB_FIND, message, new Object[] {
+							acceptedJobs, jobs });
 
 					// send the according notification to the observers
 					setChanged();
@@ -834,15 +834,12 @@ public class JobManager extends Observable {
 	 * Wait for all the threads to complete. Times out after 30 seconds
 	 */
 	private void waitForThreadsToComplete() {
-		int loopCounter = 0;
+		boolean active;
 
-		boolean active = findJobsRunning && acceptJobRunning && endJobRunning && createJobRunning && cancelJobRunning
-				&& pushJobRunning;
-
-		while (active && loopCounter < 600) {
+		do {
 
 			try {
-				Thread.sleep(50);
+				Thread.sleep(100);
 			}
 
 			catch (InterruptedException e) {
@@ -850,12 +847,12 @@ public class JobManager extends Observable {
 
 			}
 
-			loopCounter++;
+			finally {
+				active = findJobsRunning || acceptJobRunning || endJobRunning || createJobRunning || cancelJobRunning
+						|| pushJobRunning;
+			}
 
-			active = findJobsRunning && acceptJobRunning && endJobRunning && createJobRunning && cancelJobRunning
-					&& pushJobRunning;
-
-		}
+		} while (active);
 
 	}
 
