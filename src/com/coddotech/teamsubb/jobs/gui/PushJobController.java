@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Listener;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
+import com.coddotech.teamsubb.notifications.gui.ProgressDialog;
 
 public class PushJobController extends CustomController {
 
@@ -61,10 +62,10 @@ public class PushJobController extends CustomController {
 		public void widgetSelected(SelectionEvent arg0) {
 
 			if (verifyFields()) {
-
 				model.pushJob(view.getID(), view.getNextStaff(), view.getType(), view.getTorrent(), view.getComments(),
 						view.getSubFile());
 
+				displayProgressDialog();
 			}
 
 		}
@@ -178,4 +179,12 @@ public class PushJobController extends CustomController {
 		return true;
 	}
 
+	private void displayProgressDialog() {
+		String message = "Pushing job to server";
+
+		ProgressDialog prog = new ProgressDialog(message);
+		JobManager.getInstance().addObserver(prog);
+
+		prog.open();
+	}
 }

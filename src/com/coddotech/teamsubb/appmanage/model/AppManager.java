@@ -45,6 +45,7 @@ public class AppManager {
 			}
 
 		}
+		
 		catch (Exception ex) {
 			ActivityLogger.logActivity("Main", "App runtime", "FATAL ERROR !!!");
 
@@ -55,8 +56,10 @@ public class AppManager {
 			AppManager.deleteAppInstanceLock();
 
 		}
+		
 		finally {
 			AppManager.performExitOperations();
+			
 		}
 	}
 
@@ -103,9 +106,11 @@ public class AppManager {
 
 			else {
 				new Login().doLogin(data[0], data[1], false);
+				
 			}
 
 		}
+		
 		else {
 			displayLoginWindow = true;
 		}
@@ -144,7 +149,9 @@ public class AppManager {
 
 		try {
 			Display.getDefault().dispose();
+			
 		}
+		
 		catch (Exception ex) {
 
 		}

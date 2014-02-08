@@ -840,6 +840,7 @@ public class JobManager extends Observable {
 
 			try {
 				Thread.sleep(100);
+
 			}
 
 			catch (InterruptedException e) {
@@ -850,6 +851,7 @@ public class JobManager extends Observable {
 			finally {
 				active = findJobsRunning || acceptJobRunning || endJobRunning || createJobRunning || cancelJobRunning
 						|| pushJobRunning;
+
 			}
 
 		} while (active);
