@@ -10,3 +10,6 @@ Jobs/
 DUMP/
 *.lin
 *.xml
+*.out
+*.in
+
