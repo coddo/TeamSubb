@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-import org.eclipse.swt.widgets.Display;
-
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
+import com.coddotech.teamsubb.timers.StaffRefreshTimer;
 
 /**
  * Class for managing the lists with the staff (and their details) employed by
@@ -18,16 +18,25 @@ import com.coddotech.teamsubb.main.CustomWindow;
  */
 public class StaffManager extends Observable {
 
-	private static final int STAFF_REFRESH_INTERVAL = 15000; // 1 sec = 1000 ms => 15 sec = 15000 ms
-	
+	private static final String STAFF_LIST = "staff";
+
 	private StaffMember[] staff = null;
-	
+
 	private boolean disposed = false;
-	
+
+	public StaffManager() {
+		StaffRefreshTimer timer = new StaffRefreshTimer(this);
+		timer.run();
+	}
+
 	public void dispose() {
 		this.disposed = true;
-		
+
 		staff = null;
+	}
+
+	public boolean isDisposed() {
+		return this.disposed;
 	}
 
 	/**
@@ -50,7 +59,7 @@ public class StaffManager extends Observable {
 
 		for (StaffMember member : staff) {
 
-			if (member.getOnlineStatus())
+			if (member.isOnline())
 				list.add(member);
 
 		}
@@ -68,7 +77,7 @@ public class StaffManager extends Observable {
 
 		for (StaffMember member : staff) {
 
-			if (!member.getOnlineStatus())
+			if (!member.isOnline())
 				list.add(member);
 
 		}
@@ -85,26 +94,91 @@ public class StaffManager extends Observable {
 
 			@Override
 			public void run() {
+				// create the list of staff
 				staff = StaffManager.createStaffArray();
 
+				// get the list of online staff
+				refreshOnlineStaffList();
 			}
 		}
 
 		StaffRefresher refresher = new StaffRefresher();
 		refresher.start();
 	}
-	
-//	private Runnable refreshTimer = new Runnable() {
-//		
-//		@Override
-//		public void run() {
-//			if (!disposed) {
-//				refreshStaffList();
-//				
-//				Display.getDefault().timerExec(STAFF_REFRESH_INTERVAL, this);
-//			
-//		}
-//	};
+
+	/**
+	 * Refresh the staff list in order to have an updated list with who is online and who is not
+	 */
+	public void refreshOnlineStaffList() {
+		// set all the staff members as offline
+		resetOnlineStatus();
+
+		// set only the appropriate staff members as online
+		String[] response = ConnectionManager.sendOnlineStaffRequest().split(JobManager.SEPARATOR_DATA);
+
+		for (String ID : response) {
+			StaffMember member = getUserByID(Integer.parseInt(ID));
+
+			// if an ID is not in the list, then the staff list needs to be refreshed
+			if (member == null) {
+				refreshStaffList();
+
+				break;
+			}
+
+			else
+				member.setOnline(true);
+		}
+
+		// notify the observers about the new staff list
+		notifyStaffList();
+
+	}
+
+	/**
+	 * Find a staff member
+	 * 
+	 * @param id
+	 *            The ID for which to search
+	 * @return A StaffMember instance
+	 */
+	private StaffMember getUserByID(int id) {
+		for (StaffMember member : staff) {
+
+			if (member.getId() == id)
+				return member;
+
+		}
+
+		return null;
+	}
+
+	/**
+	 * Set all the staff members as offline
+	 */
+	private void resetOnlineStatus() {
+
+		for (StaffMember member : staff)
+			member.setOnline(false);
+
+	}
+
+	/**
+	 * Notify observers about the staff list when updated
+	 */
+	private void notifyStaffList() {
+		this.setChanged();
+
+		// Matrix that contains the 2 rows: online staff members and offline staff members
+		StaffMember[][] lists = new StaffMember[2][];
+
+		lists[0] = this.getOnlineStaff();
+		lists[1] = this.getOfflineStaff();
+
+		NotificationEntity notif = new NotificationEntity(StaffManager.STAFF_LIST, lists);
+
+		notifyObservers(notif);
+	}
 
 	/**
 	 * Fetch the staff list from the server.<br>
@@ -112,10 +186,6 @@ public class StaffManager extends Observable {
 	 * <br>
 	 * 
 	 * Example: NAME: Job1 | Job2 | Job3....
-	 * 
-	 * @param includeNeutral
-	 *            Logical value telling the method whether to include the "anyone" item into the
-	 *            collection (at the beginning)
 	 * 
 	 * @return A String collection
 	 */

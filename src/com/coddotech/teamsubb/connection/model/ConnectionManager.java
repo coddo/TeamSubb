@@ -362,21 +362,6 @@ public final class ConnectionManager {
 	}
 
 	/**
-	 * Send a request to the server in order to receive a list of all the registered staff and their
-	 * attributes
-	 * 
-	 * @return A String value
-	 */
-	public static String sendStaffRequest() {
-		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Fonts request", "SEND");
-
-		String[] messageHeaders = new String[] { "liststaff" };
-		String[] message = new String[] { "1" };
-
-		return ConnectionManager.sendMessage(ConnectionManager.URL_CHAT, messageHeaders, message);
-	}
-
-	/**
 	 * Send a request to the server in order to receive a list of all the fonts existent on the
 	 * server
 	 * 
@@ -386,9 +371,39 @@ public final class ConnectionManager {
 		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Fonts request", "SEND");
 
 		String[] messageHeaders = new String[] { "listfonts" };
-		String[] message = new String[] { "1" };
+		String[] messages = new String[] { "1" };
 
-		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, message);
+		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, messages);
+	}
+
+	/**
+	 * Send a request to the server in order to receive a list of all the registered staff and their
+	 * attributes
+	 * 
+	 * @return A String value
+	 */
+	public static String sendStaffRequest() {
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Staff request", "SEND");
+
+		String[] messageHeaders = new String[] { "liststaff" };
+		String[] messages = new String[] { "1" };
+
+		return ConnectionManager.sendMessage(ConnectionManager.URL_CHAT, messageHeaders, messages);
+	}
+
+	/**
+	 * Send a request to the server in order to receive a list of IDs which represent the IDs of the
+	 * staff members that are online
+	 * 
+	 * @return A String value
+	 */
+	public static String sendOnlineStaffRequest() {
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Online staff request", "SEND");
+
+		String[] messageHeaders = new String[] {};
+		String[] messages = new String[] {};
+
+		return ConnectionManager.sendMessage(ConnectionManager.URL_CHAT, messageHeaders, messages);
 	}
 
 	/**
