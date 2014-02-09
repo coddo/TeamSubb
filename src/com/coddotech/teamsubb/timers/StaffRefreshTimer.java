@@ -18,11 +18,11 @@ public class StaffRefreshTimer extends Thread {
 	public void run() {
 		while (!staff.isDisposed()) {
 			threadPause();
-			
+
 			staff.refreshOnlineStaffList();
 		}
 	}
-	
+
 	private void threadPause() {
 		try {
 

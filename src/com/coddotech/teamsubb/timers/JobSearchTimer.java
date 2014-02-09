@@ -38,6 +38,7 @@ public class JobSearchTimer implements Observer {
 
 			ActivityLogger.logActivity(this.getClass().getName(), "Dispose");
 		}
+
 		catch (Exception ex) {
 			ActivityLogger.logException(this.getClass().getName(), "Dispose", ex);
 
