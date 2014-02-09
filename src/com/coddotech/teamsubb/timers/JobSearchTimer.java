@@ -1,4 +1,4 @@
-package com.coddotech.teamsubb.jobs.model;
+package com.coddotech.teamsubb.timers;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -6,6 +6,7 @@ import java.util.Observer;
 import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
+import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 import com.coddotech.teamsubb.settings.model.Settings;
