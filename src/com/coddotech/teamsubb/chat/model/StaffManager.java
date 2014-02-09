@@ -18,6 +18,8 @@ import com.coddotech.teamsubb.timers.StaffRefreshTimer;
  */
 public class StaffManager extends Observable {
 
+	public static final String ONLINE_STAFF_LIST = "online";
+
 	private static final String STAFF_LIST = "staff";
 
 	private StaffMember[] staff = null;
@@ -50,42 +52,6 @@ public class StaffManager extends Observable {
 	}
 
 	/**
-	 * Get the list of staff that are currently online
-	 * 
-	 * @return A StaffMember collection
-	 */
-	public StaffMember[] getOnlineStaff() {
-		List<StaffMember> list = new ArrayList<StaffMember>();
-
-		for (StaffMember member : staff) {
-
-			if (member.isOnline())
-				list.add(member);
-
-		}
-
-		return list.toArray(new StaffMember[list.size()]);
-	}
-
-	/**
-	 * Get the list of staff that are currently offline
-	 * 
-	 * @return A StaffMember collection
-	 */
-	public StaffMember[] getOfflineStaff() {
-		List<StaffMember> list = new ArrayList<StaffMember>();
-
-		for (StaffMember member : staff) {
-
-			if (!member.isOnline())
-				list.add(member);
-
-		}
-
-		return list.toArray(new StaffMember[list.size()]);
-	}
-
-	/**
 	 * Refresh the list containing the staff details (fethes the data from the server)
 	 */
 	public void refreshStaffList() {
@@ -114,7 +80,8 @@ public class StaffManager extends Observable {
 		resetOnlineStatus();
 
 		// set only the appropriate staff members as online
-		String[] response = ConnectionManager.sendOnlineStaffRequest().split(JobManager.SEPARATOR_DATA);
+		String[] response = ConnectionManager.sendChatDetailsRequest(ONLINE_STAFF_LIST)
+				.split(JobManager.SEPARATOR_DATA);
 
 		for (String ID : response) {
 			StaffMember member = getUserByID(Integer.parseInt(ID));
@@ -133,6 +100,42 @@ public class StaffManager extends Observable {
 		// notify the observers about the new staff list
 		notifyStaffList();
 
+	}
+
+	/**
+	 * Get the list of staff that are currently online
+	 * 
+	 * @return A StaffMember collection
+	 */
+	private StaffMember[] getOnlineStaff() {
+		List<StaffMember> list = new ArrayList<StaffMember>();
+
+		for (StaffMember member : staff) {
+
+			if (member.isOnline())
+				list.add(member);
+
+		}
+
+		return list.toArray(new StaffMember[list.size()]);
+	}
+
+	/**
+	 * Get the list of staff that are currently offline
+	 * 
+	 * @return A StaffMember collection
+	 */
+	private StaffMember[] getOfflineStaff() {
+		List<StaffMember> list = new ArrayList<StaffMember>();
+
+		for (StaffMember member : staff) {
+
+			if (!member.isOnline())
+				list.add(member);
+
+		}
+
+		return list.toArray(new StaffMember[list.size()]);
 	}
 
 	/**
@@ -204,7 +207,7 @@ public class StaffManager extends Observable {
 
 				String[] jobs = user.getJobNames();
 
-				staffStrings[i] = user.name + ": ";
+				staffStrings[i] = user.getName() + ": ";
 
 				for (int j = 0; j < jobs.length - 1; j++)
 					staffStrings[i] += jobs[j] + " | ";

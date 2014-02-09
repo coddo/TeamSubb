@@ -9,20 +9,28 @@ public abstract class User {
 
 	protected static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator", "Administrator", "Fondator" };
 
-	protected int id = -1;
+	private int id = -1;
 
-	protected String code = null;
-	protected String name = null;
-	protected String email = null;
-	protected String rank = null;
+	private String code = null;
+	private String name = null;
+	private String email = null;
+	private String rank = null;
 
-	protected boolean[] jobs = null;
+	private boolean[] jobs = null;
 
-	protected int jobsArrayStartIndex = 5;
+	private int jobsArrayStartIndex = 5;
+
+	public void setJobsArrayStartIndex(int index) {
+		this.jobsArrayStartIndex = index;
+	}
 
 	public int getId() {
 		return id;
 
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getCode() {
@@ -30,9 +38,17 @@ public abstract class User {
 
 	}
 
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public String getName() {
 		return name;
 
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getEmail() {
@@ -40,9 +56,17 @@ public abstract class User {
 
 	}
 
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public String getRank() {
 		return rank;
 
+	}
+
+	public void setRank(String rank) {
+		this.rank = rank;
 	}
 
 	public boolean[] getJobs() {
