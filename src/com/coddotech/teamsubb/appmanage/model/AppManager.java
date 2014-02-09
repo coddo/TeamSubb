@@ -10,10 +10,10 @@ import com.coddotech.teamsubb.connection.gui.LoginWindow;
 import com.coddotech.teamsubb.connection.model.Login;
 import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
-import com.coddotech.teamsubb.jobs.model.JobSearchTimer;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 import com.coddotech.teamsubb.settings.model.Settings;
+import com.coddotech.teamsubb.timers.JobSearchTimer;
 
 public class AppManager {
 
@@ -45,6 +45,7 @@ public class AppManager {
 			}
 
 		}
+		
 		catch (Exception ex) {
 			ActivityLogger.logActivity("Main", "App runtime", "FATAL ERROR !!!");
 
@@ -55,8 +56,10 @@ public class AppManager {
 			AppManager.deleteAppInstanceLock();
 
 		}
+		
 		finally {
 			AppManager.performExitOperations();
+			
 		}
 	}
 
@@ -103,9 +106,11 @@ public class AppManager {
 
 			else {
 				new Login().doLogin(data[0], data[1], false);
+				
 			}
 
 		}
+		
 		else {
 			displayLoginWindow = true;
 		}
@@ -144,7 +149,9 @@ public class AppManager {
 
 		try {
 			Display.getDefault().dispose();
+			
 		}
+		
 		catch (Exception ex) {
 
 		}

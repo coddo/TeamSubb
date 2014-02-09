@@ -16,6 +16,7 @@ import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
+import com.coddotech.teamsubb.notifications.gui.ProgressDialog;
 import com.coddotech.teamsubb.settings.gui.SettingsWindow;
 
 /**
@@ -176,8 +177,9 @@ public class JobController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-
 			model.acceptJob(view.getSelectedJobID());
+
+			displayAcceptJobDialog();
 
 		}
 
@@ -437,5 +439,18 @@ public class JobController extends CustomController {
 		}
 
 	};
+
+	private void displayProgressDialog(String message) {
+		ProgressDialog prog = new ProgressDialog(message);
+		JobManager.getInstance().addObserver(prog);
+
+		prog.open();
+	}
+
+	private void displayAcceptJobDialog() {
+		String message = "Accepting job";
+
+		displayProgressDialog(message);
+	}
 
 }

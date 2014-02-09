@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Display;
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
+import com.coddotech.teamsubb.timers.AnimationTimer;
 
 /**
  * Class which has the purpose to guide the gadget's animation. It also observes
@@ -51,8 +52,8 @@ public class AnimationRenderer extends Observable implements Observer {
 	private static final String DIR_LOW = RESOURCE_DIR + File.separator + "low";
 	private static final String DIR_HIGH = RESOURCE_DIR + File.separator + "high";
 
-	// interval used to
-	private int imageInterval = 300;
+	private boolean disposed = false;
+	private boolean paused = false;
 
 	// the image collections with the help of which the animation is done
 	private Image[] idle;
@@ -62,10 +63,8 @@ public class AnimationRenderer extends Observable implements Observer {
 	private int type;
 	private int counter = 0;
 
-	private boolean paused = false;
 	private AnimationTimer timer;
 
-	private boolean disposed = false;
 
 	/**
 	 * Class constructor
@@ -79,7 +78,7 @@ public class AnimationRenderer extends Observable implements Observer {
 	 */
 	public void dispose() {
 		try {
-			this.disposed = true;
+			disposed = true;
 
 			timer.interrupt();
 			disposeAnimationData();
@@ -96,7 +95,15 @@ public class AnimationRenderer extends Observable implements Observer {
 
 		}
 	}
-
+	
+	public boolean isDisposed() {
+		return this.disposed;
+	}
+	
+	public boolean isPaused() {
+		return this.paused;
+	}
+	
 	public void disposeAnimationData() {
 		if (idle == null)
 			return;
@@ -128,11 +135,13 @@ public class AnimationRenderer extends Observable implements Observer {
 	 * Start animating the gadget
 	 */
 	public void startAnimation() {
-		timer = new AnimationTimer();
+		timer = new AnimationTimer(this);
 
 		try {
 			timer.start();
+			
 		}
+		
 		catch (Exception ex) {
 			ActivityLogger.logException(this.getClass().getName(), "ANIMATION TIMER", ex);;
 		}
@@ -146,82 +155,38 @@ public class AnimationRenderer extends Observable implements Observer {
 		paused = false;
 	}
 
-	/**
-	 * Timer used for changing the resources between them at set intervals in order to perform the
-	 * animation for the gadget
-	 */
-	private class AnimationTimer extends Thread {
+	public void sendAnimationData() {
+		// mark this model as being changed
+		this.setChanged();
+		
+		switch (type) {
 
-		@Override
-		public void run() {
+			case AnimationRenderer.TYPE_IDLE: {
+				if (counter == idle.length)
+					counter = 0;
 
-			while (!disposed) {
-
-				threadPause();
-
-				try {
-
-					if (!paused && !disposed) {
-
-						// mark this model as being changed
-						setChanged();
-
-						// send the animation data to the gadget based on the animation type
-						// currently selected
-						sendAnimationData();
-
-						counter++;
-					}
-				}
-
-				catch (Exception ex) {
-					ActivityLogger.logException(this.getClass().getName(), "Animation rendering", ex);
-				}
-
+				notifyObservers(idle[counter]);
 			}
+				break;
 
+			case AnimationRenderer.TYPE_LOW_PRIORITY: {
+				if (counter == lowPriority.length)
+					counter = 0;
+
+				notifyObservers(lowPriority[counter]);
+			}
+				break;
+
+			case AnimationRenderer.TYPE_HIGH_PRIORITY: {
+				if (counter == highPriority.length)
+					counter = 0;
+
+				notifyObservers(highPriority[counter]);
+			}
+				break;
 		}
-
-		private void sendAnimationData() {
-			switch (type) {
-
-				case AnimationRenderer.TYPE_IDLE: {
-					if (counter == idle.length)
-						counter = 0;
-
-					notifyObservers(idle[counter]);
-				}
-					break;
-
-				case AnimationRenderer.TYPE_LOW_PRIORITY: {
-					if (counter == lowPriority.length)
-						counter = 0;
-
-					notifyObservers(lowPriority[counter]);
-				}
-					break;
-
-				case AnimationRenderer.TYPE_HIGH_PRIORITY: {
-					if (counter == highPriority.length)
-						counter = 0;
-
-					notifyObservers(highPriority[counter]);
-				}
-					break;
-			}
-		}
-
-		private void threadPause() {
-			try {
-
-				Thread.sleep(imageInterval);
-
-			}
-
-			catch (InterruptedException e) {
-			}
-		}
-
+		
+		counter++;
 	}
 
 	@Override
