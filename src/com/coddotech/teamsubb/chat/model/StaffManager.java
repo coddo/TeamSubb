@@ -1,5 +1,11 @@
 package com.coddotech.teamsubb.chat.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+
+import org.eclipse.swt.widgets.Display;
+
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -10,13 +16,64 @@ import com.coddotech.teamsubb.main.CustomWindow;
  * 
  * @author Coddo
  */
-public class StaffManager {
+public class StaffManager extends Observable {
 
+	private static final int STAFF_REFRESH_INTERVAL = 15000; // 1 sec = 1000 ms => 15 sec = 15000 ms
+	
 	private StaffMember[] staff = null;
+	
+	private boolean disposed = false;
+	
+	public void dispose() {
+		this.disposed = true;
+		
+		staff = null;
+	}
 
+	/**
+	 * Get the list of staff members
+	 * 
+	 * @return A StaffMember collection
+	 */
 	public StaffMember[] getStaff() {
 		return this.staff;
 
+	}
+
+	/**
+	 * Get the list of staff that are currently online
+	 * 
+	 * @return A StaffMember collection
+	 */
+	public StaffMember[] getOnlineStaff() {
+		List<StaffMember> list = new ArrayList<StaffMember>();
+
+		for (StaffMember member : staff) {
+
+			if (member.getOnlineStatus())
+				list.add(member);
+
+		}
+
+		return list.toArray(new StaffMember[list.size()]);
+	}
+
+	/**
+	 * Get the list of staff that are currently offline
+	 * 
+	 * @return A StaffMember collection
+	 */
+	public StaffMember[] getOfflineStaff() {
+		List<StaffMember> list = new ArrayList<StaffMember>();
+
+		for (StaffMember member : staff) {
+
+			if (!member.getOnlineStatus())
+				list.add(member);
+
+		}
+
+		return list.toArray(new StaffMember[list.size()]);
 	}
 
 	/**
@@ -36,6 +93,18 @@ public class StaffManager {
 		StaffRefresher refresher = new StaffRefresher();
 		refresher.start();
 	}
+	
+//	private Runnable refreshTimer = new Runnable() {
+//		
+//		@Override
+//		public void run() {
+//			if (!disposed) {
+//				refreshStaffList();
+//				
+//				Display.getDefault().timerExec(STAFF_REFRESH_INTERVAL, this);
+//			
+//		}
+//	};
 
 	/**
 	 * Fetch the staff list from the server.<br>
