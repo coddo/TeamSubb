@@ -38,7 +38,7 @@ public class IRCWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void performInitializations() {
+	public void performInitializations() {
 		controller = new IRCController(this);
 
 		chatBox = new StyledText(this.getShell(), SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL | SWT.WRAP);
@@ -48,7 +48,7 @@ public class IRCWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createObjectProperties() {
+	public void createObjectProperties() {
 		chatBox.setFont(CustomWindow.DEFAULT_FONT);
 		chatBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
@@ -62,7 +62,7 @@ public class IRCWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createShellProperties() {
+	public void createShellProperties() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.makeColumnsEqualWidth = true;
@@ -74,7 +74,7 @@ public class IRCWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createListeners() {
+	public void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 
 		this.msgBox.addListener(SWT.Traverse, controller.keyPressed);

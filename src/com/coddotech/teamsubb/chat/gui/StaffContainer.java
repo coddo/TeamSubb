@@ -3,8 +3,10 @@ package com.coddotech.teamsubb.chat.gui;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
+import com.coddotech.teamsubb.main.Widget;
 
-public class StaffContainer extends Composite {
+
+public class StaffContainer extends Composite implements Widget {
 
 	private Table staff;
 	
@@ -21,6 +23,30 @@ public class StaffContainer extends Composite {
 	}
 	
 	public void removeItem(StaffItem item) {
+		
+	}
+
+	@Override
+	public void performInitializations() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void createObjectProperties() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void createShellProperties() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void createListeners() {
+		// TODO Auto-generated method stub
 		
 	}
 

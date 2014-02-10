@@ -144,7 +144,7 @@ public class GadgetWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void performInitializations() {
+	public void performInitializations() {
 		controller = new GadgetController(this);
 
 		imageContainer = new Label(getShell(), SWT.NO_TRIM);
@@ -158,7 +158,7 @@ public class GadgetWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createObjectProperties() {
+	public void createObjectProperties() {
 		imageContainer.setLocation(-10, -11);
 		imageContainer.setSize(110, 110);
 
@@ -172,7 +172,7 @@ public class GadgetWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createShellProperties() {
+	public void createShellProperties() {
 		this.getShell().setText("Gadget");
 		this.getShell().setSize(200, 200);
 		this.getShell().setMenu(trayMenu);
@@ -180,7 +180,7 @@ public class GadgetWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createListeners() {
+	public void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 		this.getShell().addPaintListener(controller.shellPaint);
