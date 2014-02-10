@@ -239,7 +239,7 @@ public class PushJobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void performInitializations() {
+	public void performInitializations() {
 		controller = new PushJobController(this);
 
 		panel = new Composite(this.getShell(), SWT.BORDER);
@@ -267,7 +267,7 @@ public class PushJobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createObjectProperties() {
+	public void createObjectProperties() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 
@@ -346,7 +346,7 @@ public class PushJobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createShellProperties() {
+	public void createShellProperties() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
@@ -359,7 +359,7 @@ public class PushJobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createListeners() {
+	public void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 
 		this.finish.addSelectionListener(controller.finishButtonClicked);

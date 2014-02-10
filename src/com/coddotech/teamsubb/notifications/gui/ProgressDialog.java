@@ -52,14 +52,14 @@ public class ProgressDialog extends CustomWindow {
 	}
 
 	@Override
-	protected void performInitializations() {
+	public void performInitializations() {
 		title = new Label(this.getShell(), SWT.WRAP);
 		dots = new Label(this.getShell(), SWT.None);
 
 	}
 
 	@Override
-	protected void createObjectProperties() {
+	public void createObjectProperties() {
 		title.setFont(CustomWindow.DEFAULT_FONT);
 		title.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
 		title.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
@@ -72,7 +72,7 @@ public class ProgressDialog extends CustomWindow {
 	}
 
 	@Override
-	protected void createShellProperties() {
+	public void createShellProperties() {
 		this.getShell().setSize(200, 50);
 		this.getShell().setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 		this.getShell().setAlpha(200);
@@ -82,7 +82,7 @@ public class ProgressDialog extends CustomWindow {
 	}
 
 	@Override
-	protected void createListeners() {
+	public void createListeners() {
 		this.getShell().addListener(SWT.Show, new Listener() {
 
 			@Override

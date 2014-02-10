@@ -385,7 +385,7 @@ public class JobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void performInitializations() {
+	public void performInitializations() {
 		controller = new JobController(this);
 
 		// window objects
@@ -458,7 +458,7 @@ public class JobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createObjectProperties() {
+	public void createObjectProperties() {
 		// create layouts for different sectiions
 		GridLayout userInfoLayout = new GridLayout();
 		userInfoLayout.numColumns = 2;
@@ -629,7 +629,7 @@ public class JobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createShellProperties() {
+	public void createShellProperties() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
@@ -642,7 +642,7 @@ public class JobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createListeners() {
+	public void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 

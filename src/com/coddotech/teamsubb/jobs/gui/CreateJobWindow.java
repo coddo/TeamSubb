@@ -234,7 +234,7 @@ public class CreateJobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void performInitializations() {
+	public void performInitializations() {
 		controller = new CreateJobController(this);
 
 		panel = new Composite(this.getShell(), SWT.BORDER);
@@ -269,7 +269,7 @@ public class CreateJobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createObjectProperties() {
+	public void createObjectProperties() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 
@@ -362,7 +362,7 @@ public class CreateJobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createShellProperties() {
+	public void createShellProperties() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
@@ -375,7 +375,7 @@ public class CreateJobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createListeners() {
+	public void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 
 		cancel.addSelectionListener(controller.cancelClicked);
