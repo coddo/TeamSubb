@@ -6,6 +6,8 @@ import java.net.ServerSocket;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import com.coddotech.teamsubb.chat.gui.StaffItem;
+import com.coddotech.teamsubb.chat.model.Messaging;
 import com.coddotech.teamsubb.connection.gui.LoginWindow;
 import com.coddotech.teamsubb.connection.model.Login;
 import com.coddotech.teamsubb.gadget.gui.GadgetWindow;
@@ -28,9 +30,6 @@ public class AppManager {
 
 			if (AppManager.createAppInstanceLock()) {
 
-				// read the settings for the first time
-				Settings.getInstance().readSettings();
-
 				AppManager.performUserLogin(); // locks the main thread
 
 				AppManager.startMainComponents(); // locks the main thread
@@ -41,11 +40,11 @@ public class AppManager {
 			// display a message telling the user that the app is already running
 			else {
 				PopUpMessages.getInstance().areadyRunning();
-				
+
 			}
 
 		}
-		
+
 		catch (Exception ex) {
 			ActivityLogger.logActivity("Main", "App runtime", "FATAL ERROR !!!");
 
@@ -56,10 +55,10 @@ public class AppManager {
 			AppManager.deleteAppInstanceLock();
 
 		}
-		
+
 		finally {
 			AppManager.performExitOperations();
-			
+
 		}
 	}
 
@@ -88,12 +87,19 @@ public class AppManager {
 
 			timer.startTimer();
 
-			final GadgetWindow gadget = new GadgetWindow();
+			// start the chat modules
+			Messaging.getInstance();
+
+			// open the gadget
+			GadgetWindow gadget = new GadgetWindow();
 			gadget.open();
 		}
 	}
 
 	private static void performUserLogin() {
+		// read the settings for the first time
+		Settings.getInstance().readSettings();
+
 		boolean displayLoginWindow = false;
 
 		if (AppManager.isAutoLogin()) {
@@ -106,11 +112,11 @@ public class AppManager {
 
 			else {
 				new Login().doLogin(data[0], data[1], false);
-				
+
 			}
 
 		}
-		
+
 		else {
 			displayLoginWindow = true;
 		}
@@ -141,17 +147,23 @@ public class AppManager {
 		JobSearchTimer.getInstance().dispose();
 		JobManager.getInstance().dispose();
 		Settings.getInstance().dispose();
+		Messaging.getInstance().dispose();
 
 		// resources
 		CustomWindow.APP_ICON.dispose();
 		CustomWindow.BOLD_FONT.dispose();
 		CustomWindow.DEFAULT_FONT.dispose();
 
+		StaffItem.OFFLINE.dispose();
+		StaffItem.ONLINE.dispose();
+		StaffItem.SELECTED.dispose();
+		StaffItem.DESELECTED.dispose();
+
 		try {
 			Display.getDefault().dispose();
-			
+
 		}
-		
+
 		catch (Exception ex) {
 
 		}
