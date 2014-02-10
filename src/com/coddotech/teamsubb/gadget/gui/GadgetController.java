@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.appmanage.model.AppManager;
+import com.coddotech.teamsubb.chat.gui.IRCWindow;
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
@@ -40,7 +41,6 @@ public class GadgetController extends CustomController {
 	private JobWindow jobsWindow;
 
 	private Settings settings;
-	private SettingsWindow settingsWindow;
 
 	private AnimationRenderer animations;
 	private GadgetProfiler profiler;
@@ -94,7 +94,6 @@ public class GadgetController extends CustomController {
 			jobs.dispose();
 			jobs = null;
 
-			settingsWindow = null;
 			settings.dispose();
 			settings = null;
 
@@ -237,7 +236,7 @@ public class GadgetController extends CustomController {
 
 			}
 			else if (e.button == 3) {
-				openSettingsWindow();
+				openChatWindow();
 			}
 
 			// don't let the window be moved because it was a double-click
@@ -343,11 +342,16 @@ public class GadgetController extends CustomController {
 		}
 	}
 
+	private void openChatWindow() {
+		IRCWindow chat = new IRCWindow();
+
+		chat.open();
+	}
+
 	private void openSettingsWindow() {
-		settingsWindow = new SettingsWindow();
+		SettingsWindow set = new SettingsWindow();
 
-		settingsWindow.open();
-
+		set.open();
 	}
 
 	/**
