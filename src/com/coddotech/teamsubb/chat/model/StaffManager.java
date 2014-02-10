@@ -28,7 +28,7 @@ public class StaffManager extends Observable {
 
 	public StaffManager() {
 		StaffRefreshTimer timer = new StaffRefreshTimer(this);
-		timer.run();
+		timer.start();
 	}
 
 	public void dispose() {
@@ -69,7 +69,7 @@ public class StaffManager extends Observable {
 		}
 
 		StaffRefresher refresher = new StaffRefresher();
-		refresher.start();
+		refresher.run();
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class StaffManager extends Observable {
 				.split(JobManager.SEPARATOR_DATA);
 
 		for (String ID : response) {
-			StaffMember member = getUserByID(Integer.parseInt(ID));
+			StaffMember member = getUserByID(ID);
 
 			// if an ID is not in the list, then the staff list needs to be refreshed
 			if (member == null) {
@@ -145,7 +145,18 @@ public class StaffManager extends Observable {
 	 *            The ID for which to search
 	 * @return A StaffMember instance
 	 */
-	private StaffMember getUserByID(int id) {
+	private StaffMember getUserByID(String idString) {
+		int id = -1;
+
+		if (idString.equals(""))
+			return null;
+
+		else
+			id = Integer.parseInt(idString);
+
+		if (staff == null)
+			return null;
+
 		for (StaffMember member : staff) {
 
 			if (member.getId() == id)
@@ -160,6 +171,9 @@ public class StaffManager extends Observable {
 	 * Set all the staff members as offline
 	 */
 	private void resetOnlineStatus() {
+
+		if (staff == null)
+			return;
 
 		for (StaffMember member : staff)
 			member.setOnline(false);

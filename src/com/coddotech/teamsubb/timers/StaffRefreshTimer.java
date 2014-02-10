@@ -17,9 +17,9 @@ public class StaffRefreshTimer extends Thread {
 	@Override
 	public void run() {
 		while (!staff.isDisposed()) {
-			threadPause();
-
 			staff.refreshOnlineStaffList();
+
+			threadPause();
 		}
 	}
 

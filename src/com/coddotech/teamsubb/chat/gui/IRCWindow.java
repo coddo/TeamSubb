@@ -3,37 +3,98 @@ package com.coddotech.teamsubb.chat.gui;
 import java.util.Observable;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Text;
 
+import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
+import com.coddotech.teamsubb.chat.model.StaffManager;
+import com.coddotech.teamsubb.chat.model.StaffMember;
 import com.coddotech.teamsubb.main.CustomWindow;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 public class IRCWindow extends CustomWindow {
 
-	StyledText chatBox;
-	Text msgBox;
-	Group composite;
-	IRCController controller;
+	private StaffContainer staff;
+
+	private IRCController controller;
 
 	public IRCWindow() {
-
+		initializeComponents();
 	}
 
 	@Override
 	public void dispose() {
-		chatBox.dispose();
-		msgBox.dispose();
-		composite.dispose();
 		controller.dispose();
 
+		staff.dispose();
 	}
 
 	@Override
 	protected void updateGUI(Observable obs, Object obj) {
-		// TODO Auto-generated method stub
+		if (obs instanceof StaffManager) {
+			NotificationEntity notif = (NotificationEntity) obj;
+
+			staff.clearList();
+
+			StaffMember[][] members = (StaffMember[][]) notif.getStaff();
+
+			StaffMember[] items = new StaffMember[members[0].length + members[1].length];
+			int index = 0;
+
+			for (int i = 0; i < members[0].length; i++, index++)
+				items[index] = members[0][i];
+
+			for (int i = 0; i < members[1].length; i++, index++)
+				items[index] = members[1][i];
+
+			staff.setItems(items);
+		}
+	}
+
+	/**
+	 * Initializez all the components that are used in this GUI
+	 */
+	protected void initializeComponents() {
+
+		// initializations
+		try {
+			this.performInitializations();
+
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "GUI Initialization", ex);
+
+		}
+
+		// object properties
+		try {
+			this.createObjectProperties();
+
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Create object properties", ex);
+
+		}
+
+		// shell properties
+		try {
+			this.createShellProperties();
+
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Create shell properties", ex);
+
+		}
+
+		// listeners
+		try {
+			this.createListeners();
+
+		}
+		catch (Exception ex) {
+			ActivityLogger.logException(this.getClass().getName(), "Create listeners", ex);
+
+		}
 
 	}
 
@@ -41,30 +102,19 @@ public class IRCWindow extends CustomWindow {
 	public void performInitializations() {
 		controller = new IRCController(this);
 
-		chatBox = new StyledText(this.getShell(), SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL | SWT.WRAP);
-		composite = new Group(getShell(), SWT.BORDER);
-		msgBox = new Text(this.getShell(), SWT.BORDER | SWT.H_SCROLL | SWT.SINGLE);
-
+		staff = new StaffContainer(this.getShell(), SWT.BORDER | SWT.V_SCROLL);
 	}
 
 	@Override
 	public void createObjectProperties() {
-		chatBox.setFont(CustomWindow.DEFAULT_FONT);
-		chatBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-
-		composite.setFont(CustomWindow.DEFAULT_FONT);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3));
-		composite.setText("afgasfasf");
-
-		msgBox.setFont(CustomWindow.DEFAULT_FONT);
-		msgBox.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false, 2, 1));
-
+		staff.setFont(CustomWindow.DEFAULT_FONT);
+		staff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	}
 
 	@Override
 	public void createShellProperties() {
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 1;
 		layout.makeColumnsEqualWidth = true;
 
 		this.getShell().setLayout(layout);
@@ -76,9 +126,7 @@ public class IRCWindow extends CustomWindow {
 	@Override
 	public void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
-
-		this.msgBox.addListener(SWT.Traverse, controller.keyPressed);
-
+		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 	}
 
 }

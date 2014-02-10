@@ -11,28 +11,21 @@ public class Messaging extends Observable {
 	public static final String MESSAGE = "msg";
 	public static final String IRC = "irc";
 	public static final String PRIVATE = "prv";
-
-	private StaffManager staff = null;
+	public static final String OPEN_PRIVATE_CHAT = "op_prv_chat";
 
 	private static Messaging instance = null;
 
 	private boolean disposed = false;
 
 	private Messaging() {
-		staff = new StaffManager();
-		staff.refreshStaffList();
-
-		this.refreshMessages();
-
 		MessageTimer timer = new MessageTimer();
-		timer.run();
+		timer.start();
 
 	}
 
 	public void dispose() {
 		this.disposed = true;
 
-		staff.dispose();
 	}
 
 	public boolean isDisposed() {
@@ -55,6 +48,14 @@ public class Messaging extends Observable {
 	public void sendPrivateMessage(final String message, final StaffMember receiver) {
 		this.sendChatMessage(receiver.getId(), message);
 
+	}
+
+	public void openPrivateChat(StaffMember member) {
+		this.setChanged();
+
+		NotificationEntity notif = new NotificationEntity(OPEN_PRIVATE_CHAT, member);
+
+		notifyObservers(notif);
 	}
 
 	public void refreshMessages() {

@@ -1,5 +1,6 @@
 package com.coddotech.teamsubb.notifications.model;
 
+import com.coddotech.teamsubb.chat.model.StaffMember;
 import com.coddotech.teamsubb.jobs.model.Job;
 
 public final class NotificationEntity {
@@ -43,6 +44,10 @@ public final class NotificationEntity {
 
 	public Job[] getJobList() {
 		return (Job[]) argument;
+	}
+	
+	public StaffMember[][] getStaff() {
+		return (StaffMember[][]) argument;
 	}
 
 	public Object[] getExtraArguments() {
