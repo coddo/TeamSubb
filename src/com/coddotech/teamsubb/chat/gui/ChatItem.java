@@ -102,7 +102,8 @@ public class ChatItem extends CTabItem {
 	}
 
 	private StyleRange getUserStyle(int start, int length) {
-		StyleRange style = this.getStyle(start, length, IRCWindow.getRankColor(staff));
+		Color c = IRCWindow.getRankColor(staff);
+		StyleRange style = this.getStyle(start, length, c);
 		style.fontStyle = SWT.BOLD;
 
 		return style;

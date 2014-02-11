@@ -31,7 +31,7 @@ public class IRCWindow extends CustomWindow {
 
 	private StaffManager manager;
 
-	private ChatContainer chat;
+	public ChatContainer chat;
 
 	private IRCController controller;
 
@@ -138,7 +138,7 @@ public class IRCWindow extends CustomWindow {
 		Display.getDefault().asyncExec(updater);
 	}
 
-	private Message[] createMessageArray(String data) {
+	public Message[] createMessageArray(String data) {
 		String[] messages = data.split(JobManager.SEPARATOR_ENTITY);
 
 		Message[] msg = new Message[messages.length];
@@ -147,6 +147,17 @@ public class IRCWindow extends CustomWindow {
 			msg[i] = new Message(messages[i], manager);
 
 		return msg;
+	}
+
+	public static boolean isOpen() {
+		for (Shell shell : Display.getDefault().getShells()) {
+
+			if (shell.getText().equals("TeamSubb staff chat"))
+				return true;
+
+		}
+
+		return false;
 	}
 
 	/**
@@ -224,6 +235,7 @@ public class IRCWindow extends CustomWindow {
 
 		this.getShell().setLayout(layout);
 		this.getShell().setSize(800, 600);
+		this.getShell().setText("TeamSubb staff chat");
 		this.placeToCenter();
 
 	}

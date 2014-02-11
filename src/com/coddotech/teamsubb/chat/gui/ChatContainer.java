@@ -31,7 +31,12 @@ public class ChatContainer extends CTabFolder {
 		for (int i = 0; i < chats.size(); i++)
 			chats.get(i).dispose();
 
-		super.dispose();
+		try {
+			super.dispose();
+		}
+		catch (Exception ex) {
+
+		}
 
 	}
 

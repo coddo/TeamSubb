@@ -13,6 +13,8 @@ public class Messaging extends Observable {
 	public static final String PRIVATE = "prv";
 	public static final String OPEN_PRIVATE_CHAT = "op_prv_chat";
 
+	private String buffer = "null";
+
 	private static Messaging instance = null;
 
 	private boolean disposed = false;
@@ -31,6 +33,14 @@ public class Messaging extends Observable {
 	public boolean isDisposed() {
 		return this.disposed;
 
+	}
+
+	public String flushBuffer() {
+		String aux = this.buffer;
+
+		this.buffer = null;
+
+		return aux;
 	}
 
 	public static Messaging getInstance() {
@@ -83,6 +93,8 @@ public class Messaging extends Observable {
 
 	private void refreshIRCMessages() {
 		String message = ConnectionManager.sendChatDetailsRequest(Messaging.IRC);
+
+		buffer = message;
 
 		NotificationEntity notif = new NotificationEntity(Messaging.IRC, message);
 

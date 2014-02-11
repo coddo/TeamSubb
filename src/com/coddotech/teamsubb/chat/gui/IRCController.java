@@ -31,13 +31,16 @@ public class IRCController {
 
 		}
 	};
-	
+
 	public Listener shellShownListener = new Listener() {
-		
+
 		@Override
 		public void handleEvent(Event arg0) {
-			Messaging.getInstance().refreshMessages();
-			
+			String buffer = Messaging.getInstance().flushBuffer();
+
+			if (!buffer.equals("null"))
+				view.chat.openIRCMessages(view.createMessageArray(buffer));
+
 		}
 	};
 

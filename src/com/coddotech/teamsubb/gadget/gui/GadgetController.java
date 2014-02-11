@@ -236,7 +236,9 @@ public class GadgetController extends CustomController {
 
 			}
 			else if (e.button == 3) {
-				openChatWindow();
+				IRCWindow chat = new IRCWindow();
+
+				chat.open();
 			}
 
 			// don't let the window be moved because it was a double-click
@@ -340,12 +342,6 @@ public class GadgetController extends CustomController {
 			jobsWindow.getShell().forceActive();
 
 		}
-	}
-
-	private void openChatWindow() {
-		IRCWindow chat = new IRCWindow();
-
-		chat.open();
 	}
 
 	private void openSettingsWindow() {
