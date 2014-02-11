@@ -22,8 +22,6 @@ public class StaffContainer extends ScrolledComposite {
 
 		this.setExpandHorizontal(true);
 		this.setExpandVertical(true);
-
-		refreshContent();
 	}
 
 	@Override
@@ -33,21 +31,15 @@ public class StaffContainer extends ScrolledComposite {
 		super.dispose();
 	}
 
-	public void setItems(final StaffMember[] staff) {
+	public void refreshStaff(final StaffMember[] staff) {
 		Runnable updater = new Runnable() {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 
-				for (int i = 0; i < staff.length; i++) {
-					StaffItem item = new StaffItem(content, getThis(), SWT.BORDER, staff[i]);
+				for (int i = 0; i < staff.length; i++)
+					items.get(i).changeStaff(staff[i]);
 
-					items.add(item);
-				}
-
-				setContent(content);
-				setMinSize(content.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			}
 		};
 
@@ -55,55 +47,72 @@ public class StaffContainer extends ScrolledComposite {
 
 	}
 
-	public void clearList() {
-		for (int i = 0; i < items.size(); i++) {
-
-			try {
-				items.get(i).dispose();
-			}
-
-			catch (Exception ex) {
-
-			}
-
-		}
-
-		items.clear();
-
-		refreshContent();
-	}
-
-	public void resizeItems() {
-
-		for (StaffItem item : items)
-			item.resize();
+	public boolean checkStaffList(int size) {
+		return size == items.size();
 
 	}
 
 	public void deselectAll(StaffItem item) {
 		for (StaffItem it : items) {
+
 			if (!it.equals(item))
 				it.deselect();
+
 		}
 	}
 
-	private void refreshContent() {
-		Runnable contentUpdate = new Runnable() {
+	public void generateList(final StaffMember[] staff) {
+		Runnable updater = new Runnable() {
 
 			@Override
 			public void run() {
-				if (content != null)
-					content.dispose();
+				clearList();
 
-				content = new Composite(getThis(), SWT.None);
-				content.setLayout(new GridLayout(1, true));
+				createContent();
+
+				populateList(staff);
 
 			}
 		};
 
-		Display.getDefault().syncExec(contentUpdate);
-		// contentUpdate.run();
+		Display.getDefault().syncExec(updater);
+	}
 
+	private void clearList() {
+		for (int i = 0; i < items.size(); i++) {
+			items.get(i).dispose();
+
+		}
+
+		items.clear();
+	}
+
+	private void createContent() {
+		if (content != null)
+			content.dispose();
+
+		content = new Composite(getThis(), SWT.None);
+		content.setLayout(new GridLayout(1, true));
+
+		setContent(content);
+
+	}
+
+	private void populateList(StaffMember[] staff) {
+
+		for (int i = 0; i < staff.length; i++) {
+			createStaffItem(staff[i]);
+
+		}
+
+		this.setMinSize(content.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+	}
+
+	private void createStaffItem(StaffMember staff) {
+		StaffItem item = new StaffItem(content, getThis(), SWT.BORDER, staff);
+
+		items.add(item);
 	}
 
 	private StaffContainer getThis() {

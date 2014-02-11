@@ -34,11 +34,11 @@ public class IRCWindow extends CustomWindow {
 		if (obs instanceof StaffManager) {
 			NotificationEntity notif = (NotificationEntity) obj;
 
-			staff.clearList();
-
 			StaffMember[][] members = (StaffMember[][]) notif.getStaff();
 
-			StaffMember[] items = new StaffMember[members[0].length + members[1].length];
+			int size = members[0].length + members[1].length;
+
+			StaffMember[] items = new StaffMember[size];
 			int index = 0;
 
 			for (int i = 0; i < members[0].length; i++, index++)
@@ -47,7 +47,12 @@ public class IRCWindow extends CustomWindow {
 			for (int i = 0; i < members[1].length; i++, index++)
 				items[index] = members[1][i];
 
-			staff.setItems(items);
+			if (!staff.checkStaffList(size))
+				staff.generateList(items);
+
+			else
+				staff.refreshStaff(items);
+
 		}
 	}
 

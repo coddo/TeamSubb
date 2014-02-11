@@ -68,9 +68,8 @@ public class StaffItem extends Composite implements Widget {
 		super.dispose();
 	}
 
-	public void resize() {
-		// this.setSize(length, this.getSize().y);
-
+	public StaffMember getStaff() {
+		return this.staff;
 	}
 
 	public void select() {
@@ -85,6 +84,12 @@ public class StaffItem extends Composite implements Widget {
 		image.setBackground(DESELECTED);
 		name.setBackground(DESELECTED);
 		rank.setBackground(DESELECTED);
+	}
+
+	public void changeStaff(StaffMember staff) {
+		this.staff = staff;
+
+		this.setMemberData();
 	}
 
 	/**
@@ -154,18 +159,13 @@ public class StaffItem extends Composite implements Widget {
 	@Override
 	public void createObjectProperties() {
 		image.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, true, 1, 2));
-		image.setImage(StaffItem.OFFLINE);
 		image.setSize(60, 40);
 
 		name.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		name.setFont(CustomWindow.BOLD_FONT);
-		name.setText(staff.getName());
-		name.pack();
 
 		rank.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		rank.setFont(CustomWindow.DEFAULT_FONT);
-		rank.setText(staff.getRank());
-		rank.pack();
 	}
 
 	@Override
@@ -224,10 +224,14 @@ public class StaffItem extends Composite implements Widget {
 	}
 
 	private void setMemberData() {
-		if (staff.isOnline()) {
-			this.image.setImage(StaffItem.ONLINE);
+		this.image.setImage(staff.isOnline() ? StaffItem.ONLINE : StaffItem.OFFLINE);
 
-		}
+		this.name.setText(this.staff.getName());
+		this.rank.setText(this.staff.getRank());
+
+		this.name.pack();
+		this.rank.pack();
+
 	}
 
 	private StaffItem getThis() {
