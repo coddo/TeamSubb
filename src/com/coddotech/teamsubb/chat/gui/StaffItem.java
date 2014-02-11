@@ -4,8 +4,6 @@ import java.io.File;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
@@ -29,11 +27,6 @@ public class StaffItem extends Composite implements Widget {
 
 	private static final Color SELECTED = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 	private static final Color DESELECTED = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-
-	private static final Color COLOR_ADMIN = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);
-	private static final Color COLOR_MODERATOR = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);
-	private static final Color COLOR_FONDATOR = Display.getDefault().getSystemColor(SWT.COLOR_RED);
-	private static final Color COLOR_MEMBER = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 
 	public static final Image ONLINE = new Image(Display.getDefault(), ICODIR + "online.ico");
 	public static final Image OFFLINE = new Image(Display.getDefault(), ICODIR + "offline.ico");
@@ -189,22 +182,7 @@ public class StaffItem extends Composite implements Widget {
 
 	@Override
 	public void createListeners() {
-		this.addFocusListener(new FocusListener() {
-
-			@Override
-			public void focusLost(FocusEvent arg0) {
-				deselect();
-
-			}
-
-			@Override
-			public void focusGained(FocusEvent arg0) {
-				select();
-
-			}
-		});
-
-		this.addMouseListener(new MouseListener() {
+		MouseListener itemClicked = new MouseListener() {
 
 			@Override
 			public void mouseUp(MouseEvent arg0) {
@@ -224,7 +202,13 @@ public class StaffItem extends Composite implements Widget {
 				Messaging.getInstance().openPrivateChat(staff);
 
 			}
-		});
+
+		};
+
+		this.addMouseListener(itemClicked);
+		this.name.addMouseListener(itemClicked);
+		this.rank.addMouseListener(itemClicked);
+		this.image.addMouseListener(itemClicked);
 
 	}
 
@@ -237,22 +221,8 @@ public class StaffItem extends Composite implements Widget {
 		this.name.pack();
 		this.rank.pack();
 
-		 this.rank.setForeground(this.getRankColor());
+		this.rank.setForeground(IRCWindow.getRankColor(staff));
 
-	}
-
-	private Color getRankColor() {
-		if (staff.isFondator())
-			return COLOR_FONDATOR;
-
-		else if (staff.isAdmin())
-			return COLOR_ADMIN;
-
-		else if (staff.isModerator())
-			return COLOR_MODERATOR;
-
-		else
-			return COLOR_MEMBER;
 	}
 
 	private StaffItem getThis() {

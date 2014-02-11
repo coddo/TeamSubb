@@ -1,40 +1,28 @@
 package com.coddotech.teamsubb.chat.gui;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StyledText;
 
-import com.coddotech.teamsubb.main.Widget;
+import com.coddotech.teamsubb.chat.model.StaffMember;
 
+public class ChatItem extends CTabItem {
 
-public class ChatItem extends CTabItem implements Widget{
+	private StaffMember staff = null;
 
-	public ChatItem(CTabFolder arg0, int arg1) {
+	private StyledText text = null;
+
+	private ChatItem(CTabFolder arg0, int arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
+
+		text = new StyledText(arg0, SWT.BORDER);
 	}
 
-	@Override
-	public void performInitializations() {
-		// TODO Auto-generated method stub
-		
-	}
+	public ChatItem(CTabFolder arg0, int arg1, StaffMember staff) {
+		super(arg0, arg1);
 
-	@Override
-	public void createObjectProperties() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void createShellProperties() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void createListeners() {
-		// TODO Auto-generated method stub
-		
+		this.staff = staff;
 	}
 
 }
