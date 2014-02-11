@@ -216,7 +216,7 @@ public class JobWindow extends CustomWindow {
 			itemAcceptedLabel.dispose();
 			itemImportantColor.dispose();
 			itemImportantLabel.dispose();
-
+			
 			this.logDispose();
 
 		}
@@ -291,7 +291,7 @@ public class JobWindow extends CustomWindow {
 				openJobDirectoryMenuItem.setEnabled(false);
 			}
 
-			else if (this.getSelectedJobColor().equals(JobWindow.COLOR_ACCEPTED)) {
+			else if (this.getSelectedJobColor().equals(COLOR_ACCEPTED)) {
 				acceptJobMenuItem.setEnabled(false);
 				cancelJobMenuItem.setEnabled(true);
 				forceCancelJobMenuItem.setEnabled(true);
@@ -598,17 +598,17 @@ public class JobWindow extends CustomWindow {
 
 		// help chart item
 		itemAcceptedColor.setText("          ");
-		itemAcceptedColor.setBackground(JobWindow.COLOR_ACCEPTED);
+		itemAcceptedColor.setBackground(COLOR_ACCEPTED);
 		itemAcceptedColor.setFont(CustomWindow.DEFAULT_FONT);
 		itemAcceptedColor.pack();
 
 		itemAcceptableColor.setText("          ");
-		itemAcceptableColor.setBackground(JobWindow.COLOR_ACCEPTABLE);
+		itemAcceptableColor.setBackground(COLOR_ACCEPTABLE);
 		itemAcceptableColor.setFont(CustomWindow.DEFAULT_FONT);
 		itemAcceptableColor.pack();
 
 		itemImportantColor.setText("          ");
-		itemImportantColor.setBackground(JobWindow.COLOR_IMPORTANT);
+		itemImportantColor.setBackground(COLOR_IMPORTANT);
 		itemImportantColor.setFont(CustomWindow.DEFAULT_FONT);
 		itemImportantColor.pack();
 
@@ -704,7 +704,7 @@ public class JobWindow extends CustomWindow {
 				item.setText(job.getName());
 				item.setData(job.getID());
 
-				item.setBackground(JobWindow.COLOR_ACCEPTED);
+				item.setBackground(COLOR_ACCEPTED);
 
 			}
 		}
@@ -718,10 +718,10 @@ public class JobWindow extends CustomWindow {
 				item.setData(job.getID());
 
 				if (job.getIntendedTo().equals(LoggedUser.getInstance().getName()))
-					item.setBackground(JobWindow.COLOR_IMPORTANT);
+					item.setBackground(COLOR_IMPORTANT);
 
 				else if (job.isAcceptable())
-					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
+					item.setBackground(COLOR_ACCEPTABLE);
 			}
 
 		}

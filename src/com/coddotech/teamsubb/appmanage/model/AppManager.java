@@ -156,8 +156,6 @@ public class AppManager {
 
 		StaffItem.OFFLINE.dispose();
 		StaffItem.ONLINE.dispose();
-		StaffItem.SELECTED.dispose();
-		StaffItem.DESELECTED.dispose();
 
 		try {
 			Display.getDefault().dispose();

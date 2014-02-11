@@ -27,8 +27,13 @@ public class StaffItem extends Composite implements Widget {
 	private static final String ICODIR = System.getProperty("user.dir") + File.separator + "resources" + File.separator
 			+ "staff" + File.separator;
 
-	public static final Color SELECTED = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
-	public static final Color DESELECTED = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+	private static final Color SELECTED = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
+	private static final Color DESELECTED = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+
+	private static final Color COLOR_ADMIN = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);
+	private static final Color COLOR_MODERATOR = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);
+	private static final Color COLOR_FONDATOR = Display.getDefault().getSystemColor(SWT.COLOR_RED);
+	private static final Color COLOR_MEMBER = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 
 	public static final Image ONLINE = new Image(Display.getDefault(), ICODIR + "online.ico");
 	public static final Image OFFLINE = new Image(Display.getDefault(), ICODIR + "offline.ico");
@@ -232,6 +237,22 @@ public class StaffItem extends Composite implements Widget {
 		this.name.pack();
 		this.rank.pack();
 
+		 this.rank.setForeground(this.getRankColor());
+
+	}
+
+	private Color getRankColor() {
+		if (staff.isFondator())
+			return COLOR_FONDATOR;
+
+		else if (staff.isAdmin())
+			return COLOR_ADMIN;
+
+		else if (staff.isModerator())
+			return COLOR_MODERATOR;
+
+		else
+			return COLOR_MEMBER;
 	}
 
 	private StaffItem getThis() {

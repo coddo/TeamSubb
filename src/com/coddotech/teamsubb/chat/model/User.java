@@ -7,7 +7,7 @@ public abstract class User {
 	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator", "Verificator", "Encoder", "Typesetter",
 			"Manga", "Stiri", "Postator" };
 
-	protected static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator", "Administrator", "Fondator" };
+	public static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator", "Administrator", "Fondator" };
 
 	private int id = -1;
 
@@ -101,7 +101,19 @@ public abstract class User {
 		return userJobs;
 
 	}
-
+	
+	public boolean isFondator() {
+		return this.getRank().equals(User.DEFAULT_USER_RANKS[3]);
+	}
+	
+	public boolean isAdmin() {
+		return this.getRank().equals(User.DEFAULT_USER_RANKS[2]);
+	}
+	
+	public boolean isModerator() {
+		return this.getRank().equals(User.DEFAULT_USER_RANKS[1]);
+	}
+	
 	public void setUserDetails(String rawData) {
 		String[] data = rawData.split(JobManager.SEPARATOR_DATA);
 

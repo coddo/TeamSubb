@@ -60,6 +60,9 @@ public class StaffManager extends Observable {
 
 			@Override
 			public void run() {
+				if (!CustomWindow.isConnected(false))
+					return;
+
 				// create the list of staff
 				staff = StaffManager.createStaffArray();
 
@@ -76,6 +79,9 @@ public class StaffManager extends Observable {
 	 * Refresh the staff list in order to have an updated list with who is online and who is not
 	 */
 	public void refreshOnlineStaffList() {
+		if (!CustomWindow.isConnected(false))
+			return;
+
 		// set all the staff members as offline
 		resetOnlineStatus();
 

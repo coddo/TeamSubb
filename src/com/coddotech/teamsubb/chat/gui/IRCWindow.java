@@ -16,6 +16,8 @@ public class IRCWindow extends CustomWindow {
 
 	private StaffContainer staff;
 
+	private ChatContainer chat;
+
 	private IRCController controller;
 
 	public IRCWindow() {
@@ -27,6 +29,7 @@ public class IRCWindow extends CustomWindow {
 		controller.dispose();
 
 		staff.dispose();
+		chat.dispose();
 	}
 
 	@Override
@@ -107,19 +110,23 @@ public class IRCWindow extends CustomWindow {
 	public void performInitializations() {
 		controller = new IRCController(this);
 
+		chat = new ChatContainer(this.getShell(), SWT.BORDER);
 		staff = new StaffContainer(this.getShell(), SWT.BORDER | SWT.V_SCROLL);
 	}
 
 	@Override
 	public void createObjectProperties() {
 		staff.setFont(CustomWindow.DEFAULT_FONT);
-		staff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		staff.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
+
+		chat.setFont(CustomWindow.DEFAULT_FONT);
+		chat.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 	}
 
 	@Override
 	public void createShellProperties() {
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
+		layout.numColumns = 3;
 		layout.makeColumnsEqualWidth = true;
 
 		this.getShell().setLayout(layout);

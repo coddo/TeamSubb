@@ -5,7 +5,7 @@ import com.coddotech.teamsubb.chat.model.StaffManager;
 public class StaffRefreshTimer extends Thread {
 
 	// 1 sec = 1000 ms => 15 sec = 15000 ms
-	private static final int refreshInterval = 15000;
+	private static final int refreshInterval = 10000;
 
 	private StaffManager staff;
 
