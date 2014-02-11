@@ -39,12 +39,4 @@ public class IRCController {
 		}
 	};
 
-	public Listener shellShownListener = new Listener() {
-
-		@Override
-		public void handleEvent(Event arg0) {
-			staff.refreshStaffList();
-
-		}
-	};
 }

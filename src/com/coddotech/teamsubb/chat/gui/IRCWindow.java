@@ -126,7 +126,6 @@ public class IRCWindow extends CustomWindow {
 	@Override
 	public void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
-		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 	}
 
 }

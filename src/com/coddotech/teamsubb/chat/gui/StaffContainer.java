@@ -7,19 +7,23 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.chat.model.StaffMember;
 
 public class StaffContainer extends ScrolledComposite {
 
-	private Composite content;
+	private Composite content = null;
 
 	private List<StaffItem> items = new ArrayList<StaffItem>();
 
 	public StaffContainer(Composite arg0, int arg1) {
 		super(arg0, arg1);
 
-		initializeContent();
+		this.setExpandHorizontal(true);
+		this.setExpandVertical(true);
+
+		refreshContent();
 	}
 
 	@Override
@@ -29,14 +33,25 @@ public class StaffContainer extends ScrolledComposite {
 		super.dispose();
 	}
 
-	public void setItems(StaffMember[] staff) {
-		for (int i = 0; i < staff.length; i++) {
-			StaffItem item = new StaffItem(content, this, SWT.BORDER, staff[i]);
+	public void setItems(final StaffMember[] staff) {
+		Runnable updater = new Runnable() {
 
-			items.add(item);
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
 
-			this.setMinSize(content.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		}
+				for (int i = 0; i < staff.length; i++) {
+					StaffItem item = new StaffItem(content, getThis(), SWT.BORDER, staff[i]);
+
+					items.add(item);
+				}
+
+				setContent(content);
+				setMinSize(content.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			}
+		};
+
+		Display.getDefault().syncExec(updater);
 
 	}
 
@@ -54,6 +69,8 @@ public class StaffContainer extends ScrolledComposite {
 		}
 
 		items.clear();
+
+		refreshContent();
 	}
 
 	public void resizeItems() {
@@ -70,14 +87,27 @@ public class StaffContainer extends ScrolledComposite {
 		}
 	}
 
-	private void initializeContent() {
-		content = new Composite(this, SWT.None);
-		content.setLayout(new GridLayout(1, true));
+	private void refreshContent() {
+		Runnable contentUpdate = new Runnable() {
 
-		this.setExpandHorizontal(true);
-		this.setExpandVertical(true);
+			@Override
+			public void run() {
+				if (content != null)
+					content.dispose();
 
-		this.setContent(content);
+				content = new Composite(getThis(), SWT.None);
+				content.setLayout(new GridLayout(1, true));
+
+			}
+		};
+
+		Display.getDefault().syncExec(contentUpdate);
+		// contentUpdate.run();
+
+	}
+
+	private StaffContainer getThis() {
+		return this;
 	}
 
 }
