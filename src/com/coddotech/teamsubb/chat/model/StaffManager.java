@@ -109,6 +109,35 @@ public class StaffManager extends Observable {
 	}
 
 	/**
+	 * Find a staff member
+	 * 
+	 * @param id
+	 *            The ID for which to search
+	 * @return A StaffMember instance
+	 */
+	public StaffMember getUserByID(String idString) {
+		int id = -1;
+	
+		if (idString.equals(""))
+			return null;
+	
+		else
+			id = Integer.parseInt(idString);
+	
+		if (staff == null)
+			return null;
+	
+		for (StaffMember member : staff) {
+	
+			if (member.getId() == id)
+				return member;
+	
+		}
+	
+		return null;
+	}
+
+	/**
 	 * Get the list of staff that are currently online
 	 * 
 	 * @return A StaffMember collection
@@ -142,35 +171,6 @@ public class StaffManager extends Observable {
 		}
 
 		return list.toArray(new StaffMember[list.size()]);
-	}
-
-	/**
-	 * Find a staff member
-	 * 
-	 * @param id
-	 *            The ID for which to search
-	 * @return A StaffMember instance
-	 */
-	private StaffMember getUserByID(String idString) {
-		int id = -1;
-
-		if (idString.equals(""))
-			return null;
-
-		else
-			id = Integer.parseInt(idString);
-
-		if (staff == null)
-			return null;
-
-		for (StaffMember member : staff) {
-
-			if (member.getId() == id)
-				return member;
-
-		}
-
-		return null;
 	}
 
 	/**

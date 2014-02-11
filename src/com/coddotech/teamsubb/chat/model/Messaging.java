@@ -40,20 +40,10 @@ public class Messaging extends Observable {
 		return instance;
 	}
 
-	public void sendIRCMessage(final String message) {
-		this.sendChatMessage(0, message);
-
-	}
-
-	public void sendPrivateMessage(final String message, final StaffMember receiver) {
-		this.sendChatMessage(receiver.getId(), message);
-
-	}
-
-	public void openPrivateChat(StaffMember member) {
+	public void openPrivateChat(StaffMember user) {
 		this.setChanged();
 
-		NotificationEntity notif = new NotificationEntity(OPEN_PRIVATE_CHAT, member);
+		NotificationEntity notif = new NotificationEntity(OPEN_PRIVATE_CHAT, user);
 
 		notifyObservers(notif);
 	}
@@ -74,11 +64,13 @@ public class Messaging extends Observable {
 
 	}
 
-	private void sendChatMessage(final int id, final String message) {
+	public void sendChatMessage(final StaffMember staff, final String message) {
 		class MessageSender extends Thread {
 
 			@Override
 			public void run() {
+				int id = (staff == null) ? 0 : staff.getId();
+
 				boolean result = ConnectionManager.sendChatMessageRequest(id, message);
 
 				notifyMessage(result);
@@ -90,7 +82,7 @@ public class Messaging extends Observable {
 	}
 
 	private void refreshIRCMessages() {
-		String message = ConnectionManager.sendChatDetailsRequest(IRC);
+		String message = ConnectionManager.sendChatDetailsRequest(Messaging.IRC);
 
 		NotificationEntity notif = new NotificationEntity(Messaging.IRC, message);
 
@@ -98,7 +90,7 @@ public class Messaging extends Observable {
 	}
 
 	private void refreshPrivateMessages() {
-		String message = ConnectionManager.sendChatDetailsRequest(PRIVATE);
+		String message = ConnectionManager.sendChatDetailsRequest(Messaging.PRIVATE);
 
 		NotificationEntity notif = new NotificationEntity(Messaging.PRIVATE, message);
 

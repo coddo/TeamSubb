@@ -33,7 +33,7 @@ public final class NotificationEntity {
 	public Boolean getBoolean() {
 		return Boolean.parseBoolean(argument.toString());
 	}
-	
+
 	public int getInteger() {
 		return Integer.parseInt(argument.toString());
 	}
@@ -45,9 +45,13 @@ public final class NotificationEntity {
 	public Job[] getJobList() {
 		return (Job[]) argument;
 	}
-	
+
 	public StaffMember[][] getStaff() {
 		return (StaffMember[][]) argument;
+	}
+
+	public StaffMember getStaffMember() {
+		return (StaffMember) argument;
 	}
 
 	public Object[] getExtraArguments() {

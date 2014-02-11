@@ -4,7 +4,7 @@ import com.coddotech.teamsubb.chat.model.Messaging;
 
 public class MessageTimer extends Thread {
 
-	private static final int refreshInterval = 2000;
+	private static final int refreshInterval = 1000;
 
 	@Override
 	public void run() {
@@ -12,6 +12,7 @@ public class MessageTimer extends Thread {
 			Messaging.getInstance().refreshMessages();
 
 			threadPause();
+			
 		}
 
 	}

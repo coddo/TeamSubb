@@ -4,12 +4,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.chat.model.Messaging;
-import com.coddotech.teamsubb.chat.model.StaffManager;
 
 public class IRCController {
 
 	private Messaging messenger;
-	private StaffManager staff;
 
 	private IRCWindow view;
 
@@ -19,15 +17,10 @@ public class IRCController {
 		messenger = Messaging.getInstance();
 		messenger.addObserver(view);
 
-		staff = new StaffManager();
-		staff.addObserver(view);
 	}
 
 	public void dispose() {
 		messenger.deleteObserver(view);
-		staff.deleteObserver(view);
-
-		staff.dispose();
 	}
 
 	public Listener shellClosingListener = new Listener() {
@@ -36,6 +29,15 @@ public class IRCController {
 		public void handleEvent(Event arg0) {
 			view.dispose();
 
+		}
+	};
+	
+	public Listener shellShownListener = new Listener() {
+		
+		@Override
+		public void handleEvent(Event arg0) {
+			Messaging.getInstance().refreshMessages();
+			
 		}
 	};
 
