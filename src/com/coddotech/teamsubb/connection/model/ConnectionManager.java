@@ -362,21 +362,6 @@ public final class ConnectionManager {
 	}
 
 	/**
-	 * Send a request to the server in order to receive a list of all the registered staff and their
-	 * attributes
-	 * 
-	 * @return A String value
-	 */
-	public static String sendStaffRequest() {
-		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Fonts request", "SEND");
-
-		String[] messageHeaders = new String[] { "liststaff" };
-		String[] message = new String[] { "1" };
-
-		return ConnectionManager.sendMessage(ConnectionManager.URL_CHAT, messageHeaders, message);
-	}
-
-	/**
 	 * Send a request to the server in order to receive a list of all the fonts existent on the
 	 * server
 	 * 
@@ -386,9 +371,62 @@ public final class ConnectionManager {
 		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Fonts request", "SEND");
 
 		String[] messageHeaders = new String[] { "listfonts" };
-		String[] message = new String[] { "1" };
+		String[] messages = new String[] { "1" };
 
-		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, message);
+		return ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeaders, messages);
+	}
+
+	/**
+	 * Send a request to the server in order to receive a list of all the registered staff and their
+	 * attributes
+	 * 
+	 * @return A String value
+	 */
+	public static String sendStaffRequest() {
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Staff request", "SEND");
+
+		String[] messageHeaders = new String[] { "liststaff" };
+		String[] messages = new String[] { "1" };
+
+		return ConnectionManager.sendMessage(ConnectionManager.URL_CHAT, messageHeaders, messages);
+	}
+
+	/**
+	 * Send a request to the chat module of the server (irc history, private history, online staff
+	 * list).
+	 * 
+	 * @param type
+	 *            A String value indicating the type of message that is sent
+	 * @return A String value
+	 */
+	public static String sendChatDetailsRequest(String type) {
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Send chat request", "type");
+
+		String[] messageHeaders = new String[] { "chat" };
+		String[] messages = new String[] { type };
+
+		return ConnectionManager.sendMessage(ConnectionManager.URL_CHAT, messageHeaders, messages);
+	}
+
+	/**
+	 * Send a chat message
+	 * 
+	 * @param destination
+	 *            The ID (integer) of the person that receives the message. 0 means it is and IRC
+	 *            (mass) message
+	 * @param message
+	 *            The message to be sent
+	 * @return A Logical value representing the status (sent or not) of the message
+	 */
+	public static boolean sendChatMessageRequest(int destination, String message) {
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Send chat request", "type");
+
+		String[] messageHeaders = new String[] { "chat", "dest", "msg" };
+		String[] messages = new String[] { "msg", Integer.toString(destination), message };
+
+		String response = ConnectionManager.sendMessage(ConnectionManager.URL_CHAT, messageHeaders, messages);
+
+		return Boolean.parseBoolean(response);
 	}
 
 	/**

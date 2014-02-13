@@ -16,7 +16,7 @@ import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 
-public abstract class CustomWindow implements Observer {
+public abstract class CustomWindow implements Observer, Widget {
 
 	public static final Font DEFAULT_FONT = new Font(Display.getDefault(), "Calibri", 12, SWT.NORMAL);
 	public static final Font BOLD_FONT = new Font(Display.getDefault(), "Calibri", 12, SWT.BOLD);
@@ -66,6 +66,8 @@ public abstract class CustomWindow implements Observer {
 		this.shell = shell;
 
 		this.shell.addListener(SWT.Close, this.disposeListener);
+
+		this.getShell().setImage(CustomWindow.APP_ICON);
 	}
 
 	/**
@@ -140,6 +142,8 @@ public abstract class CustomWindow implements Observer {
 		this.shell = new Shell(Display.getDefault(), SWT.SHELL_TRIM ^ SWT.RESIZE ^ SWT.DIALOG_TRIM);
 
 		this.shell.addListener(SWT.Close, this.disposeListener);
+
+		this.getShell().setImage(CustomWindow.APP_ICON);
 	}
 
 	private Listener disposeListener = new Listener() {
@@ -164,6 +168,11 @@ public abstract class CustomWindow implements Observer {
 	protected void logDiposeFail(Exception ex) {
 		ActivityLogger.logException(this.getClass().getName(), "GUI dispose", ex);
 	}
+
+	/**
+	 * Updates the GUI based on the way the models have changed
+	 */
+	protected abstract void updateGUI(final Observable obs, final Object obj);
 
 	/**
 	 * Initializez all the components that are used in this GUI
@@ -218,46 +227,6 @@ public abstract class CustomWindow implements Observer {
 
 		}
 
-		// set the icon for the shell
-		try {
-			this.getShell().setImage(CustomWindow.APP_ICON);
-
-			ActivityLogger.logActivity(this.getClass().getName(), "Set shell type (super class)");
-
-		}
-		catch (Exception ex) {
-			ActivityLogger.logException(this.getClass().getName(), "Set shell type (super class)", ex);
-
-		}
 	}
 
-	/**
-	 * Updates the GUI based on the way the models have changed
-	 */
-	protected abstract void updateGUI(final Observable obs, final Object obj);
-
-	/**
-	 * Dispose all the components for this class
-	 */
-	public abstract void dispose();
-
-	/**
-	 * Object initializations and instance creation
-	 */
-	protected abstract void performInitializations();
-
-	/**
-	 * Set the properties for all the components used in this GUI instance
-	 */
-	protected abstract void createObjectProperties();
-
-	/**
-	 * Set the shell properties for this GUI instance
-	 */
-	protected abstract void createShellProperties();
-
-	/**
-	 * Set the listeners that will be used in this GUI instance
-	 */
-	protected abstract void createListeners();
 }

@@ -59,7 +59,7 @@ public class ApplicationInformation extends CustomWindow {
 	}
 
 	@Override
-	protected void performInitializations() {
+	public void performInitializations() {
 		font = new Font(Display.getDefault(), "Calibri", 15, SWT.BOLD);
 
 		applicationName = new Label(this.getShell(), SWT.None);
@@ -71,7 +71,7 @@ public class ApplicationInformation extends CustomWindow {
 	}
 
 	@Override
-	protected void createObjectProperties() {
+	public void createObjectProperties() {
 		applicationName.setFont(font);
 		applicationName.setLocation(100, 10);
 		applicationName.setText("TeamSubb");
@@ -99,7 +99,7 @@ public class ApplicationInformation extends CustomWindow {
 	}
 
 	@Override
-	protected void createShellProperties() {
+	public void createShellProperties() {
 		this.getShell().setText("About");
 		this.getShell().setSize(300, 200);
 		this.placeToCenter();
@@ -107,7 +107,7 @@ public class ApplicationInformation extends CustomWindow {
 	}
 
 	@Override
-	protected void createListeners() {
+	public void createListeners() {
 		this.getShell().addListener(SWT.Close, new Listener() {
 
 			@Override

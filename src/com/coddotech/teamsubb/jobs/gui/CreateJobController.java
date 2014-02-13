@@ -15,6 +15,7 @@ import com.coddotech.teamsubb.jobs.model.FontsManager;
 import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
+import com.coddotech.teamsubb.notifications.gui.ProgressDialog;
 
 public class CreateJobController extends CustomController {
 
@@ -166,11 +167,12 @@ public class CreateJobController extends CustomController {
 		public void widgetSelected(SelectionEvent arg0) {
 
 			if (verifyFields()) {
-
 				String[] fonts = FontsManager.excludeServerFontsAsStrings(view.getFonts());
 
 				model.createJob(view.getName(), view.getType(), view.getComments(), view.getNextStaff(),
 						view.getTorrentLink(), view.getSub(), fonts);
+		
+				displayProgressDialog();
 			}
 
 		}
@@ -229,5 +231,14 @@ public class CreateJobController extends CustomController {
 		}
 
 		return true;
+	}
+	
+	private void displayProgressDialog() {
+		String message = "Creating job";
+		
+		ProgressDialog prog = new ProgressDialog(message);
+		JobManager.getInstance().addObserver(prog);
+		
+		prog.open();
 	}
 }
