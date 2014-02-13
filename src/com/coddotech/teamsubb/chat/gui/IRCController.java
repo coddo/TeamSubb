@@ -3,6 +3,7 @@ package com.coddotech.teamsubb.chat.gui;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import com.coddotech.teamsubb.chat.model.Message;
 import com.coddotech.teamsubb.chat.model.Messaging;
 
 public class IRCController {
@@ -38,8 +39,16 @@ public class IRCController {
 		public void handleEvent(Event arg0) {
 			String buffer = Messaging.getInstance().flushBuffer();
 
-			if (buffer != null)
-				view.chat.openIRCMessages(view.createMessageArray(buffer));
+			if (buffer != null) {
+
+				try {
+					view.chat.openIRCMessages(Message.createMessageArray(buffer, view.manager));
+				}
+
+				catch (Exception ex) {
+
+				}
+			}
 
 		}
 	};

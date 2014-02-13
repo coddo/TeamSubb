@@ -14,24 +14,22 @@ import com.coddotech.teamsubb.chat.model.Message;
 import com.coddotech.teamsubb.chat.model.Messaging;
 import com.coddotech.teamsubb.chat.model.StaffManager;
 import com.coddotech.teamsubb.chat.model.StaffMember;
-import com.coddotech.teamsubb.jobs.model.JobManager;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 public class IRCWindow extends CustomWindow {
 
-	private static final Color COLOR_ADMIN = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);
-	private static final Color COLOR_MODERATOR = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);
-	private static final Color COLOR_FONDATOR = Display.getDefault().getSystemColor(SWT.COLOR_RED);
-	private static final Color COLOR_MEMBER = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
-	private static final Color COLOR_SYSTEM = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);
+	public static final Color COLOR_ADMIN = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);
+	public static final Color COLOR_MODERATOR = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);
+	public static final Color COLOR_FONDATOR = Display.getDefault().getSystemColor(SWT.COLOR_RED);
+	public static final Color COLOR_MEMBER = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
+	public static final Color COLOR_SYSTEM = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);
+
+	public StaffManager manager;
+	public ChatContainer chat;
 
 	private StaffContainer staff;
-
-	private StaffManager manager;
-
-	public ChatContainer chat;
 
 	private IRCController controller;
 
@@ -61,23 +59,6 @@ public class IRCWindow extends CustomWindow {
 
 	public static boolean isOpen() {
 		return IRCWindow.open;
-	}
-
-	public static Color getRankColor(StaffMember user) {
-		if (user == null)
-			return COLOR_SYSTEM;
-
-		if (user.isFondator())
-			return COLOR_FONDATOR;
-
-		else if (user.isAdmin())
-			return COLOR_ADMIN;
-
-		else if (user.isModerator())
-			return COLOR_MODERATOR;
-
-		else
-			return COLOR_MEMBER;
 	}
 
 	@Override
@@ -123,14 +104,30 @@ public class IRCWindow extends CustomWindow {
 							break;
 
 						case Messaging.IRC: {
-							if (!notif.getString().isEmpty())
-								chat.openIRCMessages(createMessageArray(notif.getString()));
+							if (!notif.getString().isEmpty()) {
+
+								try {
+									chat.openIRCMessages(Message.createMessageArray(notif.getString(), manager));
+								}
+
+								catch (Exception ex) {
+
+								}
+							}
 						}
 							break;
 
 						case Messaging.PRIVATE: {
-							if (!notif.getString().isEmpty())
-								chat.openPrivateMessages(createMessageArray(notif.getString()));
+							if (!notif.getString().isEmpty()) {
+
+								try {
+									chat.openPrivateMessages(Message.createMessageArray(notif.getString(), manager));
+								}
+
+								catch (Exception ex) {
+
+								}
+							}
 						}
 							break;
 
@@ -147,17 +144,6 @@ public class IRCWindow extends CustomWindow {
 		};
 
 		Display.getDefault().asyncExec(updater);
-	}
-
-	public Message[] createMessageArray(String data) {
-		String[] messages = data.split(JobManager.SEPARATOR_ENTITY);
-
-		Message[] msg = new Message[messages.length];
-
-		for (int i = 0; i < msg.length; i++)
-			msg[i] = new Message(messages[i], manager);
-
-		return msg;
 	}
 
 	/**

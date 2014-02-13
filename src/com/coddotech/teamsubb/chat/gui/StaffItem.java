@@ -221,7 +221,7 @@ public class StaffItem extends Composite implements Widget {
 		this.name.pack();
 		this.rank.pack();
 
-		this.rank.setForeground(IRCWindow.getRankColor(staff));
+		this.rank.setForeground(StaffMember.getRankColor(staff));
 
 	}
 
