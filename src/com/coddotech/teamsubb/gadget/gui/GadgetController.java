@@ -40,6 +40,8 @@ public class GadgetController extends CustomController {
 	private JobManager jobs;
 	private JobWindow jobsWindow;
 
+	private IRCWindow chat;
+
 	private Settings settings;
 
 	private AnimationRenderer animations;
@@ -236,9 +238,8 @@ public class GadgetController extends CustomController {
 
 			}
 			else if (e.button == 3) {
-				IRCWindow chat = new IRCWindow();
+				openChatWindow();
 
-				chat.open();
 			}
 
 			// don't let the window be moved because it was a double-click
@@ -321,20 +322,11 @@ public class GadgetController extends CustomController {
 	};
 
 	private void openJobsWindow() {
-		try {
-
-			if (jobsWindow.getShell().isDisposed())
-				jobsWindow = new JobWindow();
-
-		}
-		catch (Exception ex) {
-
+		if (!JobWindow.isOpen()) {
 			jobsWindow = new JobWindow();
 
-		}
-
-		if (!jobsWindow.getShell().isVisible())
 			jobsWindow.open();
+		}
 
 		else {
 			jobsWindow.getShell().setMinimized(false);
@@ -348,6 +340,20 @@ public class GadgetController extends CustomController {
 		SettingsWindow set = new SettingsWindow();
 
 		set.open();
+	}
+
+	public void openChatWindow() {
+		if (!IRCWindow.isOpen()) {
+			chat = new IRCWindow();
+
+			chat.open();
+		}
+
+		else {
+			chat.getShell().setMinimized(false);
+
+			chat.getShell().forceActive();
+		}
 	}
 
 	/**

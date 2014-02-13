@@ -39,6 +39,8 @@ public class JobWindow extends CustomWindow {
 	private static final Color COLOR_ACCEPTABLE = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
 	private static final Color COLOR_IMPORTANT = Display.getDefault().getSystemColor(SWT.COLOR_MAGENTA);
 
+	private static boolean open = false;
+
 	// auxiliary data
 	private boolean exiting = false;
 	private boolean isTestUser = true;
@@ -132,11 +134,14 @@ public class JobWindow extends CustomWindow {
 
 		this.initializeComponents();
 		this.exiting = false;
+
+		JobWindow.open = true;
 	}
 
 	@Override
 	public void dispose() {
 		try {
+			JobWindow.open = false;
 
 			// controller
 			controller.dispose();
@@ -216,7 +221,7 @@ public class JobWindow extends CustomWindow {
 			itemAcceptedLabel.dispose();
 			itemImportantColor.dispose();
 			itemImportantLabel.dispose();
-			
+
 			this.logDispose();
 
 		}
@@ -224,6 +229,10 @@ public class JobWindow extends CustomWindow {
 			this.logDiposeFail(ex);
 
 		}
+	}
+
+	public static boolean isOpen() {
+		return JobWindow.open;
 	}
 
 	public boolean isExiting() {
