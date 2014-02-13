@@ -156,6 +156,8 @@ public class AppManager {
 
 		StaffItem.OFFLINE.dispose();
 		StaffItem.ONLINE.dispose();
+		StaffItem.FONT_RANK.dispose();
+		StaffItem.FONT_USER.dispose();
 
 		try {
 			Display.getDefault().dispose();

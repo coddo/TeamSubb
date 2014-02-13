@@ -7,6 +7,7 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -17,7 +18,6 @@ import org.eclipse.swt.widgets.Label;
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.chat.model.Messaging;
 import com.coddotech.teamsubb.chat.model.StaffMember;
-import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.main.Widget;
 
 public class StaffItem extends Composite implements Widget {
@@ -27,9 +27,12 @@ public class StaffItem extends Composite implements Widget {
 
 	private static final Color SELECTED = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 	private static final Color DESELECTED = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-
+	
 	public static final Image ONLINE = new Image(Display.getDefault(), ICODIR + "online.ico");
 	public static final Image OFFLINE = new Image(Display.getDefault(), ICODIR + "offline.ico");
+
+	public static final Font FONT_RANK = new Font(Display.getDefault(), "Calibri", 10, SWT.NORMAL);
+	public static final Font FONT_USER = new Font(Display.getDefault(), "Calibri", 10, SWT.BOLD);
 
 	private CLabel image;
 	private Label name;
@@ -157,13 +160,13 @@ public class StaffItem extends Composite implements Widget {
 	@Override
 	public void createObjectProperties() {
 		image.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, true, 1, 2));
-		image.setSize(60, 40);
+		image.setSize(40, 20);
 
 		name.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		name.setFont(CustomWindow.BOLD_FONT);
+		name.setFont(FONT_USER);
 
 		rank.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		rank.setFont(CustomWindow.DEFAULT_FONT);
+		rank.setFont(FONT_RANK);
 	}
 
 	@Override
@@ -172,7 +175,7 @@ public class StaffItem extends Composite implements Widget {
 		layout.numColumns = 2;
 
 		this.setLayout(layout);
-		this.setSize(length, 50);
+		this.setSize(length, 15);
 
 		this.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 

@@ -234,7 +234,7 @@ public class AnimationRenderer extends Observable implements Observer {
 	 * 
 	 * @return An Image entity representing the resized image
 	 */
-	private Image resizeImage(Image image, int width, int height) {
+	public static Image resizeImage(Image image, int width, int height) {
 		Image scaled = new Image(Display.getDefault(), width, height);
 
 		GC gc = new GC(scaled);
