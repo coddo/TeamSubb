@@ -51,7 +51,7 @@ public class GadgetWindow extends CustomWindow {
 	 */
 	public GadgetWindow() {
 		super();
-
+		
 		this.setShell(new Shell(Display.getDefault(), SWT.NO_TRIM | SWT.Hide));
 
 		this.initializeComponents();

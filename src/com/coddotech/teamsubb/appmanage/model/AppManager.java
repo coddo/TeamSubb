@@ -19,9 +19,13 @@ import com.coddotech.teamsubb.timers.JobSearchTimer;
 
 public class AppManager {
 
+	private static final String APPNAME = "TeamSubb";
+
 	private static ServerSocket instanceLock = null;
 
 	public static void startApp() {
+		Display.setAppName(APPNAME);
+
 		ActivityLogger.performInitializations();
 
 		ActivityLogger.logActivity("Main", "App initialization");

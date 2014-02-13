@@ -7,12 +7,24 @@ import com.coddotech.teamsubb.chat.model.Message;
 import com.coddotech.teamsubb.chat.model.Messaging;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
+/**
+ * Controller for the IRCWindow GUI class
+ * 
+ * @author coddo
+ * 
+ */
 public class IRCController {
 
 	private Messaging messenger;
 
 	private IRCWindow view;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param view
+	 *            The IRCWindow class that uses this controller
+	 */
 	public IRCController(IRCWindow view) {
 		this.view = view;
 
@@ -21,10 +33,16 @@ public class IRCController {
 
 	}
 
+	/**
+	 * Dispose all the components used by this class
+	 */
 	public void dispose() {
 		messenger.deleteObserver(view);
 	}
 
+	/**
+	 * Listener for when the view class is closing
+	 */
 	public Listener shellClosingListener = new Listener() {
 
 		@Override
@@ -34,6 +52,10 @@ public class IRCController {
 		}
 	};
 
+	/**
+	 * Listener for when the shell is displayed. At the view startup, all the public and private
+	 * messages that have not been seen by the user are displayed
+	 */
 	public Listener shellShownListener = new Listener() {
 
 		@Override

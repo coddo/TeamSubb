@@ -20,6 +20,12 @@ import com.coddotech.teamsubb.chat.model.Messaging;
 import com.coddotech.teamsubb.chat.model.StaffMember;
 import com.coddotech.teamsubb.main.Widget;
 
+/**
+ * Items used by the StaffContainer class, representing a certain staff member within the chat
+ * 
+ * @author coddo
+ * 
+ */
 public class StaffItem extends Composite implements Widget {
 
 	private static final String ICODIR = System.getProperty("user.dir") + File.separator + "resources" + File.separator
@@ -27,7 +33,7 @@ public class StaffItem extends Composite implements Widget {
 
 	private static final Color SELECTED = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 	private static final Color DESELECTED = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-	
+
 	public static final Image ONLINE = new Image(Display.getDefault(), ICODIR + "online.ico");
 	public static final Image OFFLINE = new Image(Display.getDefault(), ICODIR + "offline.ico");
 
@@ -44,11 +50,29 @@ public class StaffItem extends Composite implements Widget {
 
 	private StaffContainer parent = null;
 
-	private StaffItem(Composite c, int type) {
-		super(c, type);
+	/**
+	 * Main Constructor
+	 * 
+	 * @param c
+	 *            The parent widget
+	 * @param style
+	 *            The style for this widget
+	 */
+	private StaffItem(Composite c, int style) {
+		super(c, style);
 
 	}
 
+	/**
+	 * Main Constructor
+	 * 
+	 * @param c
+	 *            The parent widget
+	 * @param style
+	 *            The style for this widget
+	 * @param staff
+	 *            The StaffMember instance reprezenting this item
+	 */
 	public StaffItem(Composite c, StaffContainer parent, int type, StaffMember staff) {
 		this(c, type);
 
@@ -69,10 +93,18 @@ public class StaffItem extends Composite implements Widget {
 		super.dispose();
 	}
 
+	/**
+	 * Get the representing staff member for this item
+	 * 
+	 * @return A StaffMember instance
+	 */
 	public StaffMember getStaff() {
 		return this.staff;
 	}
 
+	/**
+	 * Make this widget visible as selected by setting the appropriate colors
+	 */
 	public void select() {
 		this.setBackground(SELECTED);
 		image.setBackground(SELECTED);
@@ -80,6 +112,9 @@ public class StaffItem extends Composite implements Widget {
 		rank.setBackground(SELECTED);
 	}
 
+	/**
+	 * Make this widget visible as deselected by setting the appropriate colors
+	 */
 	public void deselect() {
 		this.setBackground(DESELECTED);
 		image.setBackground(DESELECTED);
@@ -87,6 +122,12 @@ public class StaffItem extends Composite implements Widget {
 		rank.setBackground(DESELECTED);
 	}
 
+	/**
+	 * Change the representing staff member for this widget
+	 * 
+	 * @param staff
+	 *            A StaffMember instance
+	 */
 	public void changeStaff(StaffMember staff) {
 		this.staff = staff;
 
@@ -215,6 +256,9 @@ public class StaffItem extends Composite implements Widget {
 
 	}
 
+	/**
+	 * Display the appropriate data in the GUI, according to the representing staff details
+	 */
 	private void setMemberData() {
 		this.image.setImage(staff.isOnline() ? StaffItem.ONLINE : StaffItem.OFFLINE);
 
@@ -228,6 +272,11 @@ public class StaffItem extends Composite implements Widget {
 
 	}
 
+	/**
+	 * Get an instance for this class
+	 * 
+	 * @return A StaffItem instance
+	 */
 	private StaffItem getThis() {
 		return this;
 	}

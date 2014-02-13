@@ -18,6 +18,15 @@ import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
+/**
+ * Main chat window which contains all the chats. Has the style of IRC clients which were very
+ * popular in the past.
+ * 
+ * This GUI class is a singleton
+ * 
+ * @author coddo
+ * 
+ */
 public class IRCWindow extends CustomWindow {
 
 	public static final Color COLOR_ADMIN = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);
@@ -34,19 +43,30 @@ public class IRCWindow extends CustomWindow {
 	private IRCController controller;
 
 	private static IRCWindow instance = null;
-	
+
 	private NotificationEntity privateBuffer = null;
 
+	/**
+	 * Constructor
+	 */
 	private IRCWindow() {
 		this.setShell(new Shell(Display.getDefault(), SWT.SHELL_TRIM));
 
 		initializeComponents();
 	}
 
+	/**
+	 * Open the chat window if it's closed or brings it back to the front of the desktop if it is
+	 * already opened
+	 * 
+	 * @param notif
+	 *            A NotificationEntity instance, representing the buffer with private messages that
+	 *            need to be displayed at startup
+	 */
 	public static void openChat(NotificationEntity notif) {
 		if (instance == null) {
 			instance = new IRCWindow();
-			
+
 			instance.privateBuffer = notif;
 
 			instance.open();
@@ -58,12 +78,17 @@ public class IRCWindow extends CustomWindow {
 			instance.getShell().forceActive();
 		}
 	}
-	
+
+	/**
+	 * Get the private messages buffer and clear it afterwards
+	 * 
+	 * @return A NotificationEntity instance
+	 */
 	public NotificationEntity flushPrivateBuffer() {
 		NotificationEntity aux = this.privateBuffer;
-		
+
 		this.privateBuffer = null;
-		
+
 		return aux;
 	}
 
@@ -82,6 +107,12 @@ public class IRCWindow extends CustomWindow {
 		Messaging.getInstance().flushBuffer();
 	}
 
+	/**
+	 * Open the tabs with all the private messages stored in the notification entity
+	 * 
+	 * @param notif
+	 *            The buffer with messages
+	 */
 	public void openPrivateMessages(NotificationEntity notif) {
 		try {
 			chat.openPrivateMessages(Message.createMessageArray(notif.getString(), manager));

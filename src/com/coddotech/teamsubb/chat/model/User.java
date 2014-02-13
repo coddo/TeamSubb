@@ -2,6 +2,12 @@ package com.coddotech.teamsubb.chat.model;
 
 import com.coddotech.teamsubb.jobs.model.JobManager;
 
+/**
+ * Class representing a user for this app.
+ * 
+ * @author coddo
+ * 
+ */
 public abstract class User {
 
 	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator", "Verificator", "Encoder", "Typesetter",
@@ -74,6 +80,11 @@ public abstract class User {
 
 	}
 
+	/**
+	 * Get the names of the Jobs that can be done by this user
+	 * 
+	 * @return A String collection
+	 */
 	public String[] getJobNames() {
 		int available = 0;
 
@@ -101,19 +112,25 @@ public abstract class User {
 		return userJobs;
 
 	}
-	
+
 	public boolean isFondator() {
 		return this.getRank().equals(User.DEFAULT_USER_RANKS[3]);
 	}
-	
+
 	public boolean isAdmin() {
 		return this.getRank().equals(User.DEFAULT_USER_RANKS[2]);
 	}
-	
+
 	public boolean isModerator() {
 		return this.getRank().equals(User.DEFAULT_USER_RANKS[1]);
 	}
-	
+
+	/**
+	 * Parse and set the user details from a raw String.
+	 * 
+	 * @param rawData
+	 *            A String value
+	 */
 	public void setUserDetails(String rawData) {
 		String[] data = rawData.split(JobManager.SEPARATOR_DATA);
 

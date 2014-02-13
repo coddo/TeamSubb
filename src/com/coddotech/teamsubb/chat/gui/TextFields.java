@@ -16,6 +16,13 @@ import com.coddotech.teamsubb.chat.model.StaffMember;
 import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.main.Widget;
 
+/**
+ * Class containing the fields used for displayng and writing chat texts. This is the main content
+ * used by the ChatItem class
+ * 
+ * @author coddo
+ * 
+ */
 public class TextFields extends Composite implements Widget {
 
 	private StaffMember staff;
@@ -23,18 +30,38 @@ public class TextFields extends Composite implements Widget {
 	public StyledText text;
 	public Text write;
 
+	/**
+	 * Main constructor
+	 * 
+	 * @param arg0
+	 *            Parent widget
+	 * @param arg1
+	 *            Style for this widget
+	 */
 	private TextFields(Composite arg0, int arg1) {
 		super(arg0, arg1);
 
 		initializeComponents();
+
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param arg0
+	 *            Parent widget
+	 * @param arg1
+	 *            Style for this widget
+	 */
 	public TextFields(Composite c, int style, StaffMember staff) {
 		this(c, style);
 
 		this.staff = staff;
 	}
 
+	/**
+	 * Dispose all the components used by this class
+	 */
 	public void dispose() {
 		text.dispose();
 		write.dispose();
@@ -42,15 +69,32 @@ public class TextFields extends Composite implements Widget {
 		super.dispose();
 	}
 
+	/**
+	 * Append text to the chat window
+	 * 
+	 * @param text
+	 *            A String value
+	 */
 	public void append(String text) {
 		this.text.append(text);
 		this.text.setSelection(this.text.getCharCount());
 	}
 
+	/**
+	 * Apply a font style to a certain part of the chat
+	 * 
+	 * @param style
+	 *            A StyleRange value
+	 */
 	public void setStyleRange(StyleRange style) {
 		this.text.setStyleRange(style);
 	}
 
+	/**
+	 * Get the text in this chat entity
+	 * 
+	 * @return A String value
+	 */
 	public String getText() {
 		return this.text.getText();
 	}
@@ -148,7 +192,6 @@ public class TextFields extends Composite implements Widget {
 				}
 			}
 		});
-
 	}
 
 }
