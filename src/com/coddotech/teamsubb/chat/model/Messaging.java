@@ -59,17 +59,6 @@ public class Messaging extends Observable {
 	}
 
 	public void sendChatMessage(final StaffMember staff, final String message) {
-		// class MessageSender extends Thread {
-		//
-		// @Override
-		// public void run() {
-		//
-		// }
-		// }
-		//
-		// MessageSender sender = new MessageSender();
-		// sender.run();
-
 		int id = (staff == null) ? 0 : staff.getId();
 
 		boolean result = ConnectionManager.sendChatMessageRequest(id, message);
@@ -96,7 +85,6 @@ public class Messaging extends Observable {
 	private void refreshIRCMessages() {
 		String message = ConnectionManager.sendChatDetailsRequest(Messaging.IRC);
 
-		System.out.println(message);
 		if (buffer == null && !message.isEmpty())
 			buffer = message;
 

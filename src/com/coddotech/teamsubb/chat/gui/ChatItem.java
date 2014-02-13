@@ -20,9 +20,9 @@ public class ChatItem extends CTabItem {
 	private static final String USER_SYSTEM = "[SYSTEM MESSSAGE]";
 	private static final String IRCTEXT = "Public chat";
 
-	private StaffMember staff;
-
 	private ChatContainer parent;
+
+	private StaffMember staff;
 
 	private TextFields text = null;
 
@@ -35,11 +35,11 @@ public class ChatItem extends CTabItem {
 	}
 
 	public ChatItem(CTabFolder arg0, int arg1, StaffMember staff) {
-		super(arg0, arg1);
-
-		this.setText((staff == null) ? IRCTEXT : staff.getName());
+		this(arg0, arg1);
 
 		this.staff = staff;
+
+		this.setText((staff == null) ? IRCTEXT : staff.getName());
 
 		text = new TextFields(arg0, SWT.BORDER, staff);
 		text.setFont(CustomWindow.DEFAULT_FONT);
@@ -47,21 +47,16 @@ public class ChatItem extends CTabItem {
 		this.setControl(text);
 	}
 
+	public StaffMember getStaff() {
+		return this.staff;
+	}
+
 	public void dispose() {
 		text.dispose();
 
-		try {
-			parent.closePrivateChat(this);
-		}
-		catch (Exception ex) {
-
-		}
-
 		super.dispose();
-	}
 
-	public StaffMember getStaff() {
-		return this.staff;
+		parent.closePrivateChats();
 	}
 
 	public void appendMessages(Message[] messages) {

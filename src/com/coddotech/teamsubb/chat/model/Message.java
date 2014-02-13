@@ -9,6 +9,8 @@ public class Message {
 	public String date;
 	public String message;
 
+	public StaffMember dest = null;
+
 	public Message(String rawData, StaffManager manager) {
 		String[] data = rawData.split(JobManager.SEPARATOR_DATA);
 
@@ -16,5 +18,12 @@ public class Message {
 
 		date = data[1];
 		message = data[2];
+
+		if (data.length == 4)
+			dest = manager.getUserByID(data[3]);
+	}
+
+	public boolean isPrivate() {
+		return dest != null;
 	}
 }

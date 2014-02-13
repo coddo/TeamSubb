@@ -8,6 +8,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import com.coddotech.teamsubb.chat.model.LoggedUser;
 import com.coddotech.teamsubb.chat.model.Message;
 import com.coddotech.teamsubb.chat.model.StaffMember;
 
@@ -46,7 +47,12 @@ public class ChatContainer extends CTabFolder {
 
 	public void openPrivateMessages(Message[] msg) {
 		for (int i = 0; i < msg.length; i++) {
-			this.openPrivateChat(msg[i].staff).appendMessage(msg[i]);
+			ChatItem item;
+
+			item = (msg[i].staff.getId() == LoggedUser.getInstance().getId()) ? openPrivateChat(msg[i].dest)
+					: openPrivateChat(msg[i].staff);
+
+			item.appendMessage(msg[i]);
 		}
 	}
 
@@ -69,9 +75,9 @@ public class ChatContainer extends CTabFolder {
 		return item;
 	}
 
-	public void closePrivateChat(ChatItem item) {
+	public void closePrivateChats() {
 		for (int i = 0; i < chats.size(); i++)
-			if (chats.get(i).equals(item))
+			if (chats.get(i).isDisposed())
 				chats.remove(i);
 	}
 
