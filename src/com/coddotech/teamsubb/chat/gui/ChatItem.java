@@ -72,7 +72,7 @@ public class ChatItem extends CTabItem {
 	public void appendMessage(Message message) {
 		this.appendSystemData(message.date + " ");
 
-		this.appendUser((message.staff == null) ? USER_SYSTEM : message.staff.getName());
+		this.appendUser(message.staff);
 
 		this.appendMessage(message.message);
 	}
@@ -85,12 +85,20 @@ public class ChatItem extends CTabItem {
 		text.setStyleRange(this.getSystemStyle(start, data.length()));
 	}
 
-	private void appendUser(String user) {
+	private void appendUser(StaffMember user) {
 		int start = getStyleStartPoint();
 
-		text.append(user + ": ");
+		int length = USER_SYSTEM.length() + 1;
+		String name = null;
 
-		text.setStyleRange(this.getUserStyle(start, user.length() + 1));
+		if (user != null) {
+			name = user.getName();
+			length = name.length() + 1;
+		}
+
+		text.append(name + ": ");
+
+		text.setStyleRange(this.getUserStyle(user, start, length));
 	}
 
 	private void appendMessage(String msg) {
@@ -101,9 +109,8 @@ public class ChatItem extends CTabItem {
 		return this.getStyle(start, length, ChatItem.SYSTEM);
 	}
 
-	private StyleRange getUserStyle(int start, int length) {
-		Color c = IRCWindow.getRankColor(staff);
-		StyleRange style = this.getStyle(start, length, c);
+	private StyleRange getUserStyle(StaffMember staff, int start, int length) {
+		StyleRange style = this.getStyle(start, length, IRCWindow.getRankColor(staff));
 		style.fontStyle = SWT.BOLD;
 
 		return style;

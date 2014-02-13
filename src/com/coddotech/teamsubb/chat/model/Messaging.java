@@ -13,7 +13,7 @@ public class Messaging extends Observable {
 	public static final String PRIVATE = "prv";
 	public static final String OPEN_PRIVATE_CHAT = "op_prv_chat";
 
-	private String buffer = "null";
+	private String buffer = null;
 
 	private static Messaging instance = null;
 
@@ -58,6 +58,25 @@ public class Messaging extends Observable {
 		notifyObservers(notif);
 	}
 
+	public void sendChatMessage(final StaffMember staff, final String message) {
+		// class MessageSender extends Thread {
+		//
+		// @Override
+		// public void run() {
+		//
+		// }
+		// }
+		//
+		// MessageSender sender = new MessageSender();
+		// sender.run();
+
+		int id = (staff == null) ? 0 : staff.getId();
+
+		boolean result = ConnectionManager.sendChatMessageRequest(id, message);
+
+		notifyMessage(result);
+	}
+
 	public void refreshMessages() {
 		class Refresher extends Thread {
 
@@ -74,27 +93,12 @@ public class Messaging extends Observable {
 
 	}
 
-	public void sendChatMessage(final StaffMember staff, final String message) {
-		class MessageSender extends Thread {
-
-			@Override
-			public void run() {
-				int id = (staff == null) ? 0 : staff.getId();
-
-				boolean result = ConnectionManager.sendChatMessageRequest(id, message);
-
-				notifyMessage(result);
-			}
-		}
-
-		MessageSender sender = new MessageSender();
-		sender.run();
-	}
-
 	private void refreshIRCMessages() {
 		String message = ConnectionManager.sendChatDetailsRequest(Messaging.IRC);
 
-		buffer = message;
+		System.out.println(message);
+		if (buffer == null && !message.isEmpty())
+			buffer = message;
 
 		NotificationEntity notif = new NotificationEntity(Messaging.IRC, message);
 

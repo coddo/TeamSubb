@@ -27,6 +27,8 @@ public class StaffManager extends Observable {
 	private boolean disposed = false;
 
 	public StaffManager() {
+		this.refreshStaffListAsync();
+
 		StaffRefreshTimer timer = new StaffRefreshTimer(this);
 		timer.start();
 	}
@@ -54,20 +56,13 @@ public class StaffManager extends Observable {
 	/**
 	 * Refresh the list containing the staff details (fethes the data from the server)
 	 */
-	public void refreshStaffList() {
+	public void refreshStaffListAsync() {
 
 		class StaffRefresher extends Thread {
 
 			@Override
 			public void run() {
-				if (!CustomWindow.isConnected(false))
-					return;
-
-				// create the list of staff
-				staff = StaffManager.createStaffArray();
-
-				// get the list of online staff
-				refreshOnlineStaffList();
+				refreshStaffList();
 			}
 		}
 
@@ -75,13 +70,21 @@ public class StaffManager extends Observable {
 		refresher.run();
 	}
 
+	public void refreshStaffList() {
+		if (!CustomWindow.isConnected(false))
+			return;
+
+		// create the list of staff
+		staff = StaffManager.createStaffArray();
+
+		// get the list of online staff
+		refreshOnlineStaffList();
+	}
+
 	/**
 	 * Refresh the staff list in order to have an updated list with who is online and who is not
 	 */
 	public void refreshOnlineStaffList() {
-		if (!CustomWindow.isConnected(false))
-			return;
-
 		// set all the staff members as offline
 		resetOnlineStatus();
 
@@ -94,7 +97,7 @@ public class StaffManager extends Observable {
 
 			// if an ID is not in the list, then the staff list needs to be refreshed
 			if (member == null) {
-				refreshStaffList();
+				refreshStaffListAsync();
 
 				break;
 			}
@@ -116,24 +119,24 @@ public class StaffManager extends Observable {
 	 * @return A StaffMember instance
 	 */
 	public StaffMember getUserByID(String idString) {
-		int id = -1;
-	
-		if (idString.equals(""))
-			return null;
-	
-		else
-			id = Integer.parseInt(idString);
-	
 		if (staff == null)
 			return null;
-	
+
+		int id = -1;
+
+		if (idString.equals(""))
+			return null;
+
+		else
+			id = Integer.parseInt(idString);
+
 		for (StaffMember member : staff) {
-	
+
 			if (member.getId() == id)
 				return member;
-	
+
 		}
-	
+
 		return null;
 	}
 

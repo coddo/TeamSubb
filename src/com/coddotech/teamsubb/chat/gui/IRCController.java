@@ -38,7 +38,7 @@ public class IRCController {
 		public void handleEvent(Event arg0) {
 			String buffer = Messaging.getInstance().flushBuffer();
 
-			if (!buffer.equals("null"))
+			if (buffer != null)
 				view.chat.openIRCMessages(view.createMessageArray(buffer));
 
 		}

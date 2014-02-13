@@ -1,6 +1,7 @@
 package com.coddotech.teamsubb.timers;
 
 import com.coddotech.teamsubb.chat.model.StaffManager;
+import com.coddotech.teamsubb.main.CustomWindow;
 
 public class StaffRefreshTimer extends Thread {
 
@@ -17,6 +18,9 @@ public class StaffRefreshTimer extends Thread {
 	@Override
 	public void run() {
 		while (!staff.isDisposed()) {
+			if (!CustomWindow.isConnected(false))
+				return;
+
 			staff.refreshOnlineStaffList();
 
 			threadPause();

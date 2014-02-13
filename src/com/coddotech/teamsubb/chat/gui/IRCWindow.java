@@ -35,14 +35,19 @@ public class IRCWindow extends CustomWindow {
 
 	private IRCController controller;
 
+	private static boolean open = false;
+
 	public IRCWindow() {
 		this.setShell(new Shell(Display.getDefault(), SWT.SHELL_TRIM));
 
 		initializeComponents();
+		IRCWindow.open = true;
 	}
 
 	@Override
 	public void dispose() {
+		IRCWindow.open = false;
+
 		controller.dispose();
 
 		staff.dispose();
@@ -50,6 +55,12 @@ public class IRCWindow extends CustomWindow {
 
 		manager.deleteObserver(this);
 		manager.dispose();
+
+		Messaging.getInstance().flushBuffer();
+	}
+
+	public static boolean isOpen() {
+		return IRCWindow.open;
 	}
 
 	public static Color getRankColor(StaffMember user) {
@@ -112,13 +123,13 @@ public class IRCWindow extends CustomWindow {
 							break;
 
 						case Messaging.IRC: {
-							if (!notif.getString().equals("null"))
+							if (!notif.getString().isEmpty())
 								chat.openIRCMessages(createMessageArray(notif.getString()));
 						}
 							break;
 
 						case Messaging.PRIVATE: {
-							if (!notif.getString().equals("null"))
+							if (!notif.getString().isEmpty())
 								chat.openPrivateMessages(createMessageArray(notif.getString()));
 						}
 							break;
@@ -147,17 +158,6 @@ public class IRCWindow extends CustomWindow {
 			msg[i] = new Message(messages[i], manager);
 
 		return msg;
-	}
-
-	public static boolean isOpen() {
-		for (Shell shell : Display.getDefault().getShells()) {
-
-			if (shell.getText().equals("TeamSubb staff chat"))
-				return true;
-
-		}
-
-		return false;
 	}
 
 	/**
@@ -209,8 +209,8 @@ public class IRCWindow extends CustomWindow {
 
 	@Override
 	public void performInitializations() {
-		controller = new IRCController(this);
 		manager = new StaffManager();
+		controller = new IRCController(this);
 
 		chat = new ChatContainer(this.getShell(), SWT.BORDER);
 		staff = new StaffContainer(this.getShell(), SWT.BORDER | SWT.V_SCROLL);

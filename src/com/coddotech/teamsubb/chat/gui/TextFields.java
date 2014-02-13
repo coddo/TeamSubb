@@ -104,7 +104,7 @@ public class TextFields extends Composite implements Widget {
 
 	@Override
 	public void performInitializations() {
-		text = new StyledText(this, SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
+		text = new StyledText(this, SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY | SWT.WRAP);
 		write = new Text(this, SWT.BORDER | SWT.SINGLE);
 
 	}
