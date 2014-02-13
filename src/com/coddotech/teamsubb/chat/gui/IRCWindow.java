@@ -33,18 +33,31 @@ public class IRCWindow extends CustomWindow {
 
 	private IRCController controller;
 
-	private static boolean open = false;
+	private static IRCWindow instance = null;
 
-	public IRCWindow() {
+	private IRCWindow() {
 		this.setShell(new Shell(Display.getDefault(), SWT.SHELL_TRIM));
 
 		initializeComponents();
-		IRCWindow.open = true;
+	}
+
+	public static void openChat() {
+		if (instance == null) {
+			instance = new IRCWindow();
+
+			instance.open();
+		}
+
+		else {
+			instance.getShell().setMinimized(false);
+
+			instance.getShell().forceActive();
+		}
 	}
 
 	@Override
 	public void dispose() {
-		IRCWindow.open = false;
+		IRCWindow.instance = null;
 
 		controller.dispose();
 
@@ -55,10 +68,6 @@ public class IRCWindow extends CustomWindow {
 		manager.dispose();
 
 		Messaging.getInstance().flushBuffer();
-	}
-
-	public static boolean isOpen() {
-		return IRCWindow.open;
 	}
 
 	@Override
@@ -198,7 +207,7 @@ public class IRCWindow extends CustomWindow {
 		manager = new StaffManager();
 		controller = new IRCController(this);
 
-		chat = new ChatContainer(this.getShell(), SWT.BORDER);
+		chat = new ChatContainer(this.getShell(), SWT.None);
 		staff = new StaffContainer(this.getShell(), SWT.BORDER | SWT.V_SCROLL);
 	}
 

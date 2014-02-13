@@ -40,8 +40,6 @@ public class GadgetController extends CustomController {
 	private JobManager jobs;
 	private JobWindow jobsWindow;
 
-	private IRCWindow chat;
-
 	private Settings settings;
 
 	private AnimationRenderer animations;
@@ -176,6 +174,21 @@ public class GadgetController extends CustomController {
 		}
 	};
 
+	public SelectionListener openChatClicked = new SelectionListener() {
+
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			IRCWindow.openChat();
+
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
 	public SelectionListener openSettingsClicked = new SelectionListener() {
 
 		@Override
@@ -238,7 +251,7 @@ public class GadgetController extends CustomController {
 
 			}
 			else if (e.button == 3) {
-				openChatWindow();
+				IRCWindow.openChat();
 
 			}
 
@@ -340,20 +353,6 @@ public class GadgetController extends CustomController {
 		SettingsWindow set = new SettingsWindow();
 
 		set.open();
-	}
-
-	public void openChatWindow() {
-		if (!IRCWindow.isOpen()) {
-			chat = new IRCWindow();
-
-			chat.open();
-		}
-
-		else {
-			chat.getShell().setMinimized(false);
-
-			chat.getShell().forceActive();
-		}
 	}
 
 	/**

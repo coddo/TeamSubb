@@ -37,6 +37,7 @@ public class GadgetWindow extends CustomWindow {
 
 	private Menu trayMenu;
 	private MenuItem openJobs;
+	private MenuItem openChat;
 	private MenuItem openSettings;
 	private MenuItem exitApp;
 
@@ -65,6 +66,7 @@ public class GadgetWindow extends CustomWindow {
 			imageContainer.dispose();
 
 			openJobs.dispose();
+			openChat.dispose();
 			openSettings.dispose();
 			exitApp.dispose();
 			trayMenu.dispose();
@@ -114,7 +116,7 @@ public class GadgetWindow extends CustomWindow {
 
 							int x = Integer.parseInt(notif.getString().split(",")[0]);
 							int y = Integer.parseInt(notif.getString().split(",")[1]);
-					
+
 							getShell().setLocation(x, y);
 
 							getShell().setAlpha(255);
@@ -152,7 +154,9 @@ public class GadgetWindow extends CustomWindow {
 		tray = new TrayItem(Display.getDefault().getSystemTray(), SWT.NONE);
 
 		trayMenu = new Menu(this.getShell(), SWT.POP_UP);
+
 		openJobs = new MenuItem(trayMenu, SWT.PUSH);
+		openChat = new MenuItem(trayMenu, SWT.PUSH);
 		openSettings = new MenuItem(trayMenu, SWT.PUSH);
 		exitApp = new MenuItem(trayMenu, SWT.PUSH);
 	}
@@ -166,9 +170,10 @@ public class GadgetWindow extends CustomWindow {
 		tray.setToolTipText("TeamSubb");
 		tray.setImage(CustomWindow.APP_ICON);
 
-		exitApp.setText("Quit");
 		openJobs.setText("View Jobs");
+		openChat.setText("Open Chat");
 		openSettings.setText("Settings");
+		exitApp.setText("Quit");
 	}
 
 	@Override
@@ -192,6 +197,7 @@ public class GadgetWindow extends CustomWindow {
 		this.tray.addMenuDetectListener(controller.trayMenuDetected);
 
 		this.openJobs.addSelectionListener(controller.openJobsClicked);
+		this.openChat.addSelectionListener(controller.openChatClicked);
 		this.openSettings.addSelectionListener(controller.openSettingsClicked);
 		this.exitApp.addSelectionListener(controller.exitAppClicked);
 	}
