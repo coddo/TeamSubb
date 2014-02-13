@@ -140,6 +140,9 @@ public class TextFields extends Composite implements Widget {
 					if (!CustomWindow.isConnected(true))
 						return;
 
+					if (write.getText().replaceAll(" ", "").isEmpty())
+						return;
+
 					Messaging.getInstance().sendChatMessage(staff, write.getText());
 					write.setText("");
 				}
