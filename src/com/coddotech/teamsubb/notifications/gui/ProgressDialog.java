@@ -2,6 +2,13 @@ package com.coddotech.teamsubb.notifications.gui;
 
 import java.util.Observable;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+
 import com.coddotech.teamsubb.main.CustomWindow;
 
 /**
@@ -12,52 +19,109 @@ import com.coddotech.teamsubb.main.CustomWindow;
  */
 public class ProgressDialog extends CustomWindow {
 
+	private boolean disposed = false;
+
+	private Label title;
+	private Label dots;
+
+	private int dotCount = 0;
+
 	public ProgressDialog(String message) {
+		this.setShell(new Shell(Display.getDefault(), SWT.ON_TOP | SWT.NO_TRIM));
+
 		this.initializeComponents();
 
+		title.setText(message);
+		title.pack();
+		title.setLocation(this.getShell().getSize().x / 2 - title.getSize().x / 2, title.getSize().y);
 	}
 
 	@Override
 	public void dispose() {
+		disposed = true;
 
-	}
-
-	public void setNumberOfSteps(int steps) {
-
-	}
-
-	public void performStep() {
-
+		title.dispose();
+		dots.dispose();
 	}
 
 	@Override
 	protected void updateGUI(Observable obs, Object obj) {
-		// TODO Auto-generated method stub
+		obs.deleteObserver(this);
+
+		dispose();
+	}
+
+	@Override
+	public void performInitializations() {
+		title = new Label(this.getShell(), SWT.WRAP);
+		dots = new Label(this.getShell(), SWT.None);
 
 	}
 
 	@Override
-	protected void performInitializations() {
-		// TODO Auto-generated method stub
+	public void createObjectProperties() {
+		title.setFont(CustomWindow.DEFAULT_FONT);
+		title.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
+		title.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+
+		dots.setFont(CustomWindow.DEFAULT_FONT);
+		dots.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
+		dots.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+		dots.setLocation(80, 30);
 
 	}
 
 	@Override
-	protected void createObjectProperties() {
-		// TODO Auto-generated method stub
+	public void createShellProperties() {
+		this.getShell().setSize(200, 50);
+		this.getShell().setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+		this.getShell().setAlpha(200);
+
+		this.placeToCenter();
 
 	}
 
 	@Override
-	protected void createShellProperties() {
-		// TODO Auto-generated method stub
+	public void createListeners() {
+		this.getShell().addListener(SWT.Show, new Listener() {
+
+			@Override
+			public void handleEvent(Event e) {
+				animation.run();
+
+			}
+		});
 
 	}
 
-	@Override
-	protected void createListeners() {
-		// TODO Auto-generated method stub
+	Runnable animation = new Runnable() {
 
-	}
+		@Override
+		public void run() {
+
+			if (disposed) {
+				close();
+
+			}
+			
+			else {
+
+				if (dotCount == 7) {
+					dotCount = 1;
+					dots.setText(".");
+				}
+
+				else {
+					dots.setText("." + dots.getText());
+					dots.pack();
+
+					dotCount++;
+				}
+
+				Display.getCurrent().timerExec(50, this);
+			}
+
+		}
+	};
 
 }

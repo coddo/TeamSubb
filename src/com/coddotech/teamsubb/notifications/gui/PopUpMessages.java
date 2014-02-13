@@ -221,9 +221,17 @@ public class PopUpMessages implements NotificationCenter {
 	public void connectionError() {
 		String title = "Connection failed";
 		String text = "A connection error has occured.\n\nPlease try again later...";
-		
+
 		this.dispplayMessage(title, text, SWT.ICON_ERROR);
-		
+
+	}
+
+	@Override
+	public void messageSendError() {
+		String title = "Error";
+		String text = "There was an error in sending the message !";
+
+		this.dispplayMessage(title, text, SWT.ICON_ERROR);
 	}
 
 	@Override

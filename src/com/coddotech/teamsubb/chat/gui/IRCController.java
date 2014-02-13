@@ -1,19 +1,28 @@
 package com.coddotech.teamsubb.chat.gui;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import com.coddotech.teamsubb.chat.model.Message;
+import com.coddotech.teamsubb.chat.model.Messaging;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
+
 public class IRCController {
 
-	IRCWindow view;
+	private Messaging messenger;
+
+	private IRCWindow view;
 
 	public IRCController(IRCWindow view) {
 		this.view = view;
+
+		messenger = Messaging.getInstance();
+		messenger.addObserver(view);
+
 	}
 
 	public void dispose() {
-
+		messenger.deleteObserver(view);
 	}
 
 	public Listener shellClosingListener = new Listener() {
@@ -25,15 +34,27 @@ public class IRCController {
 		}
 	};
 
-	public Listener keyPressed = new Listener() {
+	public Listener shellShownListener = new Listener() {
 
 		@Override
-		public void handleEvent(Event e) {
+		public void handleEvent(Event arg0) {
+			String buffer = Messaging.getInstance().flushBuffer();
 
-			if (e.detail == SWT.TRAVERSE_RETURN) {
+			try {
+				if (buffer != null)
+					view.chat.openIRCMessages(Message.createMessageArray(buffer, view.manager));
+
+				NotificationEntity privateBuffer = view.flushPrivateBuffer();
+
+				if (privateBuffer != null)
+					view.chat.openPrivateMessages(Message.createMessageArray(privateBuffer.getString(), view.manager));
+			}
+
+			catch (Exception ex) {
 
 			}
 
 		}
 	};
+
 }

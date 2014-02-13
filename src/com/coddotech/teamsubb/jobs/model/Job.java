@@ -529,6 +529,7 @@ public final class Job {
 			return true;
 
 		}
+		
 		catch (Exception ex) {
 			ActivityLogger.logException(this.getClass().getName(), "Accept job", ex);
 

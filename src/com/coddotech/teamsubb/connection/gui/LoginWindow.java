@@ -126,7 +126,7 @@ public class LoginWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void performInitializations() {
+	public void performInitializations() {
 		controller = new LoginController(this);
 
 		userLabel = new Label(this.getShell(), SWT.None);
@@ -139,7 +139,7 @@ public class LoginWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createObjectProperties() {
+	public void createObjectProperties() {
 		userLabel.setFont(DEFAULT_FONT);
 		userLabel.setText("User name:");
 		userLabel.setLocation(10, 10);
@@ -175,14 +175,14 @@ public class LoginWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createShellProperties() {
+	public void createShellProperties() {
 		this.getShell().setText("Login into your account");
 		this.getShell().setSize(290, 160);
 		this.placeToCenter();
 	}
 
 	@Override
-	protected void createListeners() {
+	public void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 
 		userBox.addListener(SWT.Traverse, controller.keyPressed);

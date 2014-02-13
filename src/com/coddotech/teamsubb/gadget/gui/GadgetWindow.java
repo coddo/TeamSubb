@@ -11,6 +11,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TrayItem;
 
+import com.coddotech.teamsubb.chat.gui.IRCWindow;
+import com.coddotech.teamsubb.chat.model.Messaging;
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -37,6 +39,7 @@ public class GadgetWindow extends CustomWindow {
 
 	private Menu trayMenu;
 	private MenuItem openJobs;
+	private MenuItem openChat;
 	private MenuItem openSettings;
 	private MenuItem exitApp;
 
@@ -65,6 +68,7 @@ public class GadgetWindow extends CustomWindow {
 			imageContainer.dispose();
 
 			openJobs.dispose();
+			openChat.dispose();
 			openSettings.dispose();
 			exitApp.dispose();
 			trayMenu.dispose();
@@ -114,7 +118,7 @@ public class GadgetWindow extends CustomWindow {
 
 							int x = Integer.parseInt(notif.getString().split(",")[0]);
 							int y = Integer.parseInt(notif.getString().split(",")[1]);
-					
+
 							getShell().setLocation(x, y);
 
 							getShell().setAlpha(255);
@@ -134,6 +138,17 @@ public class GadgetWindow extends CustomWindow {
 						}
 					}
 
+					else if (obs instanceof Messaging) {
+						notif = (NotificationEntity) obj;
+
+						if (notif.getMessage().equals(Messaging.PRIVATE))
+							if (!notif.getString().isEmpty()) {
+								IRCWindow.openChat(notif);
+
+							}
+
+					}
+
 				}
 
 			}
@@ -144,7 +159,7 @@ public class GadgetWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void performInitializations() {
+	public void performInitializations() {
 		controller = new GadgetController(this);
 
 		imageContainer = new Label(getShell(), SWT.NO_TRIM);
@@ -152,13 +167,15 @@ public class GadgetWindow extends CustomWindow {
 		tray = new TrayItem(Display.getDefault().getSystemTray(), SWT.NONE);
 
 		trayMenu = new Menu(this.getShell(), SWT.POP_UP);
+
 		openJobs = new MenuItem(trayMenu, SWT.PUSH);
+		openChat = new MenuItem(trayMenu, SWT.PUSH);
 		openSettings = new MenuItem(trayMenu, SWT.PUSH);
 		exitApp = new MenuItem(trayMenu, SWT.PUSH);
 	}
 
 	@Override
-	protected void createObjectProperties() {
+	public void createObjectProperties() {
 		imageContainer.setLocation(-10, -11);
 		imageContainer.setSize(110, 110);
 
@@ -166,13 +183,14 @@ public class GadgetWindow extends CustomWindow {
 		tray.setToolTipText("TeamSubb");
 		tray.setImage(CustomWindow.APP_ICON);
 
-		exitApp.setText("Quit");
 		openJobs.setText("View Jobs");
+		openChat.setText("Open Chat");
 		openSettings.setText("Settings");
+		exitApp.setText("Quit");
 	}
 
 	@Override
-	protected void createShellProperties() {
+	public void createShellProperties() {
 		this.getShell().setText("Gadget");
 		this.getShell().setSize(200, 200);
 		this.getShell().setMenu(trayMenu);
@@ -180,7 +198,7 @@ public class GadgetWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createListeners() {
+	public void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 		this.getShell().addPaintListener(controller.shellPaint);
@@ -192,6 +210,7 @@ public class GadgetWindow extends CustomWindow {
 		this.tray.addMenuDetectListener(controller.trayMenuDetected);
 
 		this.openJobs.addSelectionListener(controller.openJobsClicked);
+		this.openChat.addSelectionListener(controller.openChatClicked);
 		this.openSettings.addSelectionListener(controller.openSettingsClicked);
 		this.exitApp.addSelectionListener(controller.exitAppClicked);
 	}

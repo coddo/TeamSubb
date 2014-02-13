@@ -7,22 +7,30 @@ public abstract class User {
 	public static final String[] DEFAULT_JOBS_INFO_HEADERS = { "Traducator", "Verificator", "Encoder", "Typesetter",
 			"Manga", "Stiri", "Postator" };
 
-	protected static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator", "Administrator", "Fondator" };
+	public static final String[] DEFAULT_USER_RANKS = { "Membru", "Moderator", "Administrator", "Fondator" };
 
-	protected int id = -1;
+	private int id = -1;
 
-	protected String code = null;
-	protected String name = null;
-	protected String email = null;
-	protected String rank = null;
+	private String code = null;
+	private String name = null;
+	private String email = null;
+	private String rank = null;
 
-	protected boolean[] jobs = null;
+	private boolean[] jobs = null;
 
-	protected int jobsArrayStartIndex = 5;
+	private int jobsArrayStartIndex = 5;
+
+	public void setJobsArrayStartIndex(int index) {
+		this.jobsArrayStartIndex = index;
+	}
 
 	public int getId() {
 		return id;
 
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getCode() {
@@ -30,9 +38,17 @@ public abstract class User {
 
 	}
 
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public String getName() {
 		return name;
 
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getEmail() {
@@ -40,9 +56,17 @@ public abstract class User {
 
 	}
 
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public String getRank() {
 		return rank;
 
+	}
+
+	public void setRank(String rank) {
+		this.rank = rank;
 	}
 
 	public boolean[] getJobs() {
@@ -77,7 +101,19 @@ public abstract class User {
 		return userJobs;
 
 	}
-
+	
+	public boolean isFondator() {
+		return this.getRank().equals(User.DEFAULT_USER_RANKS[3]);
+	}
+	
+	public boolean isAdmin() {
+		return this.getRank().equals(User.DEFAULT_USER_RANKS[2]);
+	}
+	
+	public boolean isModerator() {
+		return this.getRank().equals(User.DEFAULT_USER_RANKS[1]);
+	}
+	
 	public void setUserDetails(String rawData) {
 		String[] data = rawData.split(JobManager.SEPARATOR_DATA);
 

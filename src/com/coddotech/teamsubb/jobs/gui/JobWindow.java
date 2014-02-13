@@ -39,6 +39,8 @@ public class JobWindow extends CustomWindow {
 	private static final Color COLOR_ACCEPTABLE = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
 	private static final Color COLOR_IMPORTANT = Display.getDefault().getSystemColor(SWT.COLOR_MAGENTA);
 
+	private static boolean open = false;
+
 	// auxiliary data
 	private boolean exiting = false;
 	private boolean isTestUser = true;
@@ -132,11 +134,14 @@ public class JobWindow extends CustomWindow {
 
 		this.initializeComponents();
 		this.exiting = false;
+
+		JobWindow.open = true;
 	}
 
 	@Override
 	public void dispose() {
 		try {
+			JobWindow.open = false;
 
 			// controller
 			controller.dispose();
@@ -226,6 +231,10 @@ public class JobWindow extends CustomWindow {
 		}
 	}
 
+	public static boolean isOpen() {
+		return JobWindow.open;
+	}
+
 	public boolean isExiting() {
 		return this.exiting;
 	}
@@ -291,7 +300,7 @@ public class JobWindow extends CustomWindow {
 				openJobDirectoryMenuItem.setEnabled(false);
 			}
 
-			else if (this.getSelectedJobColor().equals(JobWindow.COLOR_ACCEPTED)) {
+			else if (this.getSelectedJobColor().equals(COLOR_ACCEPTED)) {
 				acceptJobMenuItem.setEnabled(false);
 				cancelJobMenuItem.setEnabled(true);
 				forceCancelJobMenuItem.setEnabled(true);
@@ -385,7 +394,7 @@ public class JobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void performInitializations() {
+	public void performInitializations() {
 		controller = new JobController(this);
 
 		// window objects
@@ -458,7 +467,7 @@ public class JobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createObjectProperties() {
+	public void createObjectProperties() {
 		// create layouts for different sectiions
 		GridLayout userInfoLayout = new GridLayout();
 		userInfoLayout.numColumns = 2;
@@ -598,17 +607,17 @@ public class JobWindow extends CustomWindow {
 
 		// help chart item
 		itemAcceptedColor.setText("          ");
-		itemAcceptedColor.setBackground(JobWindow.COLOR_ACCEPTED);
+		itemAcceptedColor.setBackground(COLOR_ACCEPTED);
 		itemAcceptedColor.setFont(CustomWindow.DEFAULT_FONT);
 		itemAcceptedColor.pack();
 
 		itemAcceptableColor.setText("          ");
-		itemAcceptableColor.setBackground(JobWindow.COLOR_ACCEPTABLE);
+		itemAcceptableColor.setBackground(COLOR_ACCEPTABLE);
 		itemAcceptableColor.setFont(CustomWindow.DEFAULT_FONT);
 		itemAcceptableColor.pack();
 
 		itemImportantColor.setText("          ");
-		itemImportantColor.setBackground(JobWindow.COLOR_IMPORTANT);
+		itemImportantColor.setBackground(COLOR_IMPORTANT);
 		itemImportantColor.setFont(CustomWindow.DEFAULT_FONT);
 		itemImportantColor.pack();
 
@@ -629,7 +638,7 @@ public class JobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createShellProperties() {
+	public void createShellProperties() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
@@ -642,7 +651,7 @@ public class JobWindow extends CustomWindow {
 	}
 
 	@Override
-	protected void createListeners() {
+	public void createListeners() {
 		this.getShell().addListener(SWT.Close, controller.shellClosingListener);
 		this.getShell().addListener(SWT.Show, controller.shellShownListener);
 
@@ -704,7 +713,7 @@ public class JobWindow extends CustomWindow {
 				item.setText(job.getName());
 				item.setData(job.getID());
 
-				item.setBackground(JobWindow.COLOR_ACCEPTED);
+				item.setBackground(COLOR_ACCEPTED);
 
 			}
 		}
@@ -718,10 +727,10 @@ public class JobWindow extends CustomWindow {
 				item.setData(job.getID());
 
 				if (job.getIntendedTo().equals(LoggedUser.getInstance().getName()))
-					item.setBackground(JobWindow.COLOR_IMPORTANT);
+					item.setBackground(COLOR_IMPORTANT);
 
 				else if (job.isAcceptable())
-					item.setBackground(JobWindow.COLOR_ACCEPTABLE);
+					item.setBackground(COLOR_ACCEPTABLE);
 			}
 
 		}
