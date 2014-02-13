@@ -11,6 +11,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TrayItem;
 
+import com.coddotech.teamsubb.chat.gui.IRCWindow;
+import com.coddotech.teamsubb.chat.model.Messaging;
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.main.CustomWindow;
@@ -134,6 +136,17 @@ public class GadgetWindow extends CustomWindow {
 							imageContainer.setLocation(GadgetProfiler.getInstance().getOffset());
 
 						}
+					}
+
+					else if (obs instanceof Messaging) {
+						notif = (NotificationEntity) obj;
+
+						if (notif.getMessage().equals(Messaging.PRIVATE))
+							if (!notif.getString().isEmpty()) {
+								IRCWindow.openChat(notif);
+
+							}
+
 					}
 
 				}

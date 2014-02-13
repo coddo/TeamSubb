@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.chat.model.Message;
 import com.coddotech.teamsubb.chat.model.Messaging;
+import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 public class IRCController {
 
@@ -39,15 +40,18 @@ public class IRCController {
 		public void handleEvent(Event arg0) {
 			String buffer = Messaging.getInstance().flushBuffer();
 
-			if (buffer != null) {
-
-				try {
+			try {
+				if (buffer != null)
 					view.chat.openIRCMessages(Message.createMessageArray(buffer, view.manager));
-				}
 
-				catch (Exception ex) {
+				NotificationEntity privateBuffer = view.flushPrivateBuffer();
 
-				}
+				if (privateBuffer != null)
+					view.chat.openPrivateMessages(Message.createMessageArray(privateBuffer.getString(), view.manager));
+			}
+
+			catch (Exception ex) {
+
 			}
 
 		}

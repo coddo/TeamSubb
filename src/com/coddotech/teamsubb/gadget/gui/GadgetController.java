@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.appmanage.model.AppManager;
 import com.coddotech.teamsubb.chat.gui.IRCWindow;
+import com.coddotech.teamsubb.chat.model.Messaging;
 import com.coddotech.teamsubb.gadget.model.AnimationRenderer;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
 import com.coddotech.teamsubb.jobs.gui.JobWindow;
@@ -81,9 +82,10 @@ public class GadgetController extends CustomController {
 				if (!jobsWindow.isDisposed() && !jobsWindow.isExiting())
 					jobsWindow.close();
 
-			settings.deleteObserver(this.gadget);
 			jobs.deleteObserver(this.animations);
+			settings.deleteObserver(this.gadget);
 			animations.deleteObserver(this.gadget);
+			Messaging.getInstance().deleteObserver(this.gadget);
 
 			animations.dispose();
 			animations = null;
@@ -178,7 +180,7 @@ public class GadgetController extends CustomController {
 
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			IRCWindow.openChat();
+			IRCWindow.openChat(null);
 
 		}
 
@@ -251,7 +253,7 @@ public class GadgetController extends CustomController {
 
 			}
 			else if (e.button == 3) {
-				IRCWindow.openChat();
+				IRCWindow.openChat(null);
 
 			}
 
@@ -367,9 +369,10 @@ public class GadgetController extends CustomController {
 		animations = new AnimationRenderer();
 
 		// set the observers for the models
-		settings.addObserver(this.gadget);
 		jobs.addObserver(this.animations);
+		settings.addObserver(this.gadget);
 		animations.addObserver(this.gadget);
+		Messaging.getInstance().addObserver(this.gadget);
 	}
 
 }

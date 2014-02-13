@@ -34,6 +34,8 @@ public class IRCWindow extends CustomWindow {
 	private IRCController controller;
 
 	private static IRCWindow instance = null;
+	
+	private NotificationEntity privateBuffer = null;
 
 	private IRCWindow() {
 		this.setShell(new Shell(Display.getDefault(), SWT.SHELL_TRIM));
@@ -41,9 +43,11 @@ public class IRCWindow extends CustomWindow {
 		initializeComponents();
 	}
 
-	public static void openChat() {
+	public static void openChat(NotificationEntity notif) {
 		if (instance == null) {
 			instance = new IRCWindow();
+			
+			instance.privateBuffer = notif;
 
 			instance.open();
 		}
@@ -53,6 +57,14 @@ public class IRCWindow extends CustomWindow {
 
 			instance.getShell().forceActive();
 		}
+	}
+	
+	public NotificationEntity flushPrivateBuffer() {
+		NotificationEntity aux = this.privateBuffer;
+		
+		this.privateBuffer = null;
+		
+		return aux;
 	}
 
 	@Override
@@ -68,6 +80,16 @@ public class IRCWindow extends CustomWindow {
 		manager.dispose();
 
 		Messaging.getInstance().flushBuffer();
+	}
+
+	public void openPrivateMessages(NotificationEntity notif) {
+		try {
+			chat.openPrivateMessages(Message.createMessageArray(notif.getString(), manager));
+		}
+
+		catch (Exception ex) {
+
+		}
 	}
 
 	@Override
