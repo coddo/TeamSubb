@@ -7,7 +7,6 @@ import org.eclipse.swt.widgets.Listener;
 
 import com.coddotech.teamsubb.main.CustomController;
 import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
-import com.coddotech.teamsubb.notifications.gui.ProgressDialog;
 import com.coddotech.teamsubb.settings.model.Settings;
 import com.coddotech.teamsubb.connection.model.Login;
 import com.coddotech.teamsubb.gadget.model.GadgetProfiler;
@@ -63,8 +62,6 @@ public class SettingsController extends CustomController {
 		public void widgetSelected(SelectionEvent arg0) {
 
 			if (verifySettings()) {
-				displayProgressDialog();
-
 				applySettings();
 
 			}
@@ -221,15 +218,6 @@ public class SettingsController extends CustomController {
 
 			return false;
 		}
-	}
-
-	private void displayProgressDialog() {
-		String message = "Applying settings";
-
-		ProgressDialog prog = new ProgressDialog(message);
-		Settings.getInstance().addObserver(prog);
-
-		prog.open();
 	}
 
 }

@@ -31,9 +31,9 @@ public class PopUpMessages {
 	}
 
 	protected boolean displayYesNoQuestion(String title, String text) {
-		Shell shell = new Shell(Display.getDefault(), SWT.ICON_QUESTION);
+		Shell shell = new Shell(Display.getDefault());
 
-		MessageBox message = new MessageBox(shell);
+		MessageBox message = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 
 		message.setText(title);
 		message.setMessage(text);

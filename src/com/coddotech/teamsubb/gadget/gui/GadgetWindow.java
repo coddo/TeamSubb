@@ -51,7 +51,7 @@ public class GadgetWindow extends CustomWindow {
 	 */
 	public GadgetWindow() {
 		super();
-		
+
 		this.setShell(new Shell(Display.getDefault(), SWT.NO_TRIM | SWT.Hide));
 
 		this.initializeComponents();
@@ -141,11 +141,10 @@ public class GadgetWindow extends CustomWindow {
 					else if (obs instanceof Messaging) {
 						notif = (NotificationEntity) obj;
 
-						if (notif.getMessage().equals(Messaging.PRIVATE))
-							if (!notif.getString().isEmpty()) {
-								IRCWindow.openChat(notif);
-
-							}
+						if (notif != null)
+							if (notif.getMessage().equals(Messaging.PRIVATE))
+								if (!notif.getString().isEmpty())
+									IRCWindow.openChat(notif);
 
 					}
 
