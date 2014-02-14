@@ -181,14 +181,12 @@ public class TextFields extends Composite implements Widget {
 			@Override
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_RETURN) {
-					if (!CustomWindow.isConnected(true))
-						return;
-
 					if (write.getText().replaceAll(" ", "").isEmpty())
 						return;
 
-					Messaging.getInstance().sendChatMessage(staff, write.getText());
 					write.setText("");
+
+					Messaging.getInstance().sendChatMessage(staff, write.getText());
 				}
 			}
 		});

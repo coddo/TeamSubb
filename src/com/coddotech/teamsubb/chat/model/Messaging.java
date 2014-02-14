@@ -134,6 +134,9 @@ public class Messaging extends Observable {
 	private void refreshIRCMessages() {
 		String message = ConnectionManager.sendChatDetailsRequest(Messaging.IRC);
 
+		if (message == null)
+			return;
+
 		if (buffer == null && !message.isEmpty())
 			buffer = message;
 
@@ -147,6 +150,9 @@ public class Messaging extends Observable {
 	 */
 	private void refreshPrivateMessages() {
 		String message = ConnectionManager.sendChatDetailsRequest(Messaging.PRIVATE);
+
+		if (message == null)
+			return;
 
 		NotificationEntity notif = new NotificationEntity(Messaging.PRIVATE, message);
 

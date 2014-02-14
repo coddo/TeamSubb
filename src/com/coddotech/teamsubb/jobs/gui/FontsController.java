@@ -25,7 +25,7 @@ import com.coddotech.teamsubb.main.CustomController;
  */
 public class FontsController extends CustomController {
 
-	FontsManager model;
+	private FontsManager model;
 
 	private Job job;
 

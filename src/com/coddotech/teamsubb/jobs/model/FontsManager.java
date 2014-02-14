@@ -45,6 +45,7 @@ public class FontsManager extends Observable {
 		for (int i = 0; i < fonts.length; i++) {
 
 			File source = new File(fonts[i]);
+
 			fontFiles[i] = new File(job.getDirectoryPath() + File.separator + source.getName());
 
 			try {
@@ -202,7 +203,9 @@ public class FontsManager extends Observable {
 	private static List<String> getServerFonts() {
 		String response = ConnectionManager.sendFontsRequest();
 
-		return Arrays.asList(response.split(Pattern.quote(JobManager.SEPARATOR_DATA)));
+		String[] fonts = (response == null) ? null : response.split(Pattern.quote(JobManager.SEPARATOR_DATA));
+
+		return (fonts == null) ? null : Arrays.asList(fonts);
 	}
 
 	/**

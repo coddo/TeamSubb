@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.apache.http.HttpResponse;
@@ -36,21 +35,6 @@ public final class ConnectionManager {
 	private static final String URL_USER_LOGGING = "http://anime4fun.ro/wlogin.php";
 	private static final String URL_JOBS = "http://anime4fun.ro/jobs.php";
 	private static final String URL_CHAT = "http://anime4fun.ro/chat.php";
-
-	/**
-	 * Check whether there is any connection to the internet or not
-	 * 
-	 * @return A logical value representing the connection state
-	 */
-	public static boolean isConnected() {
-
-		String[] messageHeader = new String[] { "ping" };
-		String[] message = new String[] { "1" };
-
-		String pingResult = ConnectionManager.sendMessage(ConnectionManager.URL_JOBS, messageHeader, message);
-
-		return Boolean.parseBoolean(pingResult);
-	}
 
 	/**
 	 * Sends a login request to the server using the entered user details
@@ -447,7 +431,6 @@ public final class ConnectionManager {
 	 * @throws IOException
 	 */
 	private static String sendMessage(String url, MultipartEntity data) throws IllegalStateException, IOException {
-
 		// create a http client used as an interface for interacting with the server
 		HttpClient httpClient = new DefaultHttpClient();
 		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
@@ -456,7 +439,8 @@ public final class ConnectionManager {
 		// the POST type message to be sent to the server
 		HttpPost httpPost = new HttpPost(url);
 
-		// set the MultiPartEntity (containing text commands and files <if any>) for this message
+		// set the MultiPartEntity (containing text commands and files <if any>) for this
+		// message
 		httpPost.setEntity(data);
 
 		// The response from the server will be stored in this HttpResponse variable
@@ -481,6 +465,7 @@ public final class ConnectionManager {
 
 		// return the server's result
 		return result;
+
 	}
 
 	/**
@@ -500,28 +485,28 @@ public final class ConnectionManager {
 	 *         This method returns "false" if a connection error has been encountered
 	 */
 	private static String sendMessage(String url, String[] messageHeaders, String[] messages) {
+		// append special information to the text bodies
+		messageHeaders = ConnectionManager.appendSessionHeaders(messageHeaders);
+		messages = ConnectionManager.appendSessionMessages(messages);
+
+		// create a MultiPart entity which will contain the text message, representing the
+		// request that will be made to the server
+		MultipartEntity data = new MultipartEntity();
+
 		try {
-
-			// append special information to the text bodies
-			messageHeaders = ConnectionManager.appendSessionHeaders(messageHeaders);
-			messages = ConnectionManager.appendSessionMessages(messages);
-
-			// create a MultiPart entity which will contain the text message, representing the
-			// request that will be made to the server
-			MultipartEntity data = new MultipartEntity();
-
 			for (int i = 0; i < messages.length; i++) {
 				data.addPart(messageHeaders[i], new StringBody(encodeMessage(messages[i])));
 			}
 
 			return ConnectionManager.sendMessage(url, data);
-
 		}
+
 		catch (Exception ex) {
 			ActivityLogger.logException(ConnectionManager.class.getName(), "Server request", ex);
 
-			return "false";
+			return null;
 		}
+
 	}
 
 	/**
@@ -549,16 +534,16 @@ public final class ConnectionManager {
 	 */
 	private static String sendMessage(String url, String[] messageHeaders, String[] messages, String[] fileHeaders,
 			String[] files) {
+
+		// append special information to the text bodies
+		messageHeaders = ConnectionManager.appendSessionHeaders(messageHeaders);
+		messages = ConnectionManager.appendSessionMessages(messages);
+
+		// create a MultiPart entity which will contain the text message and
+		// files, representing the request that will be made to the server
+		MultipartEntity data = new MultipartEntity();
+
 		try {
-
-			// append special information to the text bodies
-			messageHeaders = ConnectionManager.appendSessionHeaders(messageHeaders);
-			messages = ConnectionManager.appendSessionMessages(messages);
-
-			// create a MultiPart entity which will contain the text message and
-			// files, representing the request that will be made to the server
-			MultipartEntity data = new MultipartEntity();
-
 			for (int i = 0; i < messages.length; i++) {
 				data.addPart(messageHeaders[i], new StringBody(encodeMessage(messages[i])));
 
@@ -575,7 +560,7 @@ public final class ConnectionManager {
 		catch (Exception ex) {
 			ActivityLogger.logException(ConnectionManager.class.getName(), "Server request", ex);
 
-			return "false";
+			return null;
 		}
 	}
 
@@ -611,7 +596,7 @@ public final class ConnectionManager {
 		return data;
 	}
 
-	private static String encodeMessage(String message) throws UnsupportedEncodingException {
+	private static String encodeMessage(String message) throws Exception {
 		return URLEncoder.encode(message, "UTF-8");
 	}
 

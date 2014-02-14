@@ -5,7 +5,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-public class PopUpMessages implements NotificationCenter {
+public class PopUpMessages {
 
 	private static PopUpMessages instance = null;
 
@@ -16,8 +16,7 @@ public class PopUpMessages implements NotificationCenter {
 		return instance;
 	}
 
-	@Override
-	public void dispplayMessage(String title, String text, int ICON) {
+	protected void dispplayMessage(String title, String text, int ICON) {
 		Shell shell = new Shell(Display.getDefault());
 
 		MessageBox message = new MessageBox(shell, ICON);
@@ -31,8 +30,7 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
-	public boolean displayYesNoQuestion(String title, String text) {
+	protected boolean displayYesNoQuestion(String title, String text) {
 		Shell shell = new Shell(Display.getDefault(), SWT.ICON_QUESTION);
 
 		MessageBox message = new MessageBox(shell);
@@ -47,7 +45,6 @@ public class PopUpMessages implements NotificationCenter {
 		return result;
 	}
 
-	@Override
 	public void areadyRunning() {
 		String title = "Already running";
 		String text = "TeamSubb is already running !\n\n Stop the currently active instance in order to start a new one.";
@@ -55,7 +52,6 @@ public class PopUpMessages implements NotificationCenter {
 		this.dispplayMessage(title, text, SWT.ICON_CANCEL);
 	}
 
-	@Override
 	public void fatalError() {
 		String title = "TeamSubb";
 		String text = "A FATAL ERROR has occured and the app has stopped working !";
@@ -64,7 +60,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void incorrectUserOrPass() {
 		String title = "Wrong credentials";
 		String text = "The entered username or password is incorrect";
@@ -73,7 +68,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void emptyFields() {
 		String title = "Empty fields";
 		String text = "Starred fields cannot be empty !";
@@ -82,7 +76,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void jobPushSuccess() {
 		String title = "Success";
 		String text = "The job has been successfully sent back to the server !";
@@ -91,7 +84,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void jobPushError() {
 		String title = "Error";
 		String text = "The job could not be finished !\n\n The server may have refused your request...";
@@ -100,7 +92,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void jobEndError() {
 		String title = "Error";
 		String text = "There was an error while ending the job";
@@ -109,7 +100,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void jobAcceptSuccess() {
 		String title = "Success";
 		String text = "The job has been successfully accepted !";
@@ -118,7 +108,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void jobAcceptError() {
 		String title = "Error";
 		String text = "There was an error while accepting the job !";
@@ -127,7 +116,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void jobCancelError() {
 		String title = "Error";
 		String text = "There was an error while cancelling the job !";
@@ -136,7 +124,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void jobCreateSuccess() {
 		String title = "Success";
 		String text = "The job has been successfully created !";
@@ -145,7 +132,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void jobCreateError() {
 		String title = "Error";
 		String text = "There was a problem while creating the job";
@@ -154,7 +140,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void fontsAddSuccess() {
 		String title = "Success";
 		String text = "The fonts have been added to the job !";
@@ -163,7 +148,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void fontsAddError() {
 		String title = "Error";
 		String text = "An error has occured while adding the fonts to the job";
@@ -172,7 +156,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void invalidSubFile() {
 		String title = "Invalid sub file";
 		String text = "The entered sub file doesn't exist or it is corrupted !";
@@ -181,7 +164,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void numberOutOfBounds() {
 		String title = "Number error";
 		String text = "The entered number is out of bounds. The search interval must be an integer between 1 and 60";
@@ -190,7 +172,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void numberFormatError() {
 		String title = "Format error";
 		String text = "The search interval must be an INTEGER between 1 and 60 !";
@@ -199,7 +180,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void saveSettingsSuccess() {
 		String title = "Success";
 		String text = "The settings have been successfully applied !";
@@ -208,7 +188,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
 	public void saveSettingsError() {
 		String title = "Error";
 		String text = "An error has been encountered while saving the changes !";
@@ -217,16 +196,6 @@ public class PopUpMessages implements NotificationCenter {
 
 	}
 
-	@Override
-	public void connectionError() {
-		String title = "Connection failed";
-		String text = "A connection error has occured.\n\nPlease try again later...";
-
-		this.dispplayMessage(title, text, SWT.ICON_ERROR);
-
-	}
-
-	@Override
 	public void messageSendError() {
 		String title = "Error";
 		String text = "There was an error in sending the message !";
@@ -234,7 +203,6 @@ public class PopUpMessages implements NotificationCenter {
 		this.dispplayMessage(title, text, SWT.ICON_ERROR);
 	}
 
-	@Override
 	public boolean unsavedChanges() {
 		String title = "Unsaved changes";
 		String text = "The are unsaved changes !\n\n Do you want to save them now ?";

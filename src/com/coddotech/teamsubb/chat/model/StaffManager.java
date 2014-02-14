@@ -6,7 +6,6 @@ import java.util.Observable;
 
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.jobs.model.JobManager;
-import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 import com.coddotech.teamsubb.timers.StaffRefreshTimer;
 
@@ -71,26 +70,27 @@ public class StaffManager extends Observable {
 	}
 
 	public void refreshStaffList() {
-		if (!CustomWindow.isConnected(false))
-			return;
-
 		// create the list of staff
-		staff = StaffManager.createStaffArray();
+		StaffMember[] staff = StaffManager.createStaffArray();
 
-		// get the list of online staff
-		refreshOnlineStaffList();
+		if (staff != null) {
+			this.staff = staff;
+
+			// get the list of online staff
+			refreshOnlineStaffList();
+		}
 	}
 
 	/**
 	 * Refresh the staff list in order to have an updated list with who is online and who is not
 	 */
 	public void refreshOnlineStaffList() {
-		// set all the staff members as offline
-		resetOnlineStatus();
-
 		// set only the appropriate staff members as online
 		String[] response = ConnectionManager.sendChatDetailsRequest(ONLINE_STAFF_LIST)
 				.split(JobManager.SEPARATOR_DATA);
+
+		if (response == null)
+			return;
 
 		for (String ID : response) {
 			StaffMember member = getUserByID(ID);
@@ -177,19 +177,6 @@ public class StaffManager extends Observable {
 	}
 
 	/**
-	 * Set all the staff members as offline
-	 */
-	private void resetOnlineStatus() {
-
-		if (staff == null)
-			return;
-
-		for (StaffMember member : staff)
-			member.setOnline(false);
-
-	}
-
-	/**
 	 * Notify observers about the staff list when updated
 	 */
 	private void notifyStaffList() {
@@ -255,19 +242,22 @@ public class StaffManager extends Observable {
 	private static StaffMember[] createStaffArray() {
 		StaffMember[] staffArray = null;
 
-		if (CustomWindow.isConnected(false)) {
-			String[] staffData = ConnectionManager.sendStaffRequest().split(JobManager.SEPARATOR_ENTITY);
+		String response = ConnectionManager.sendStaffRequest();
 
-			if (staffData == null)
-				return null;
+		if (response == null)
+			return null;
 
-			staffArray = new StaffMember[staffData.length];
+		String[] staffData = response.split(JobManager.SEPARATOR_ENTITY);
 
-			for (int i = 0; i < staffArray.length; i++) {
-				staffArray[i] = new StaffMember();
+		if (staffData == null)
+			return null;
 
-				staffArray[i].setUserDetails(staffData[i]);
-			}
+		staffArray = new StaffMember[staffData.length];
+
+		for (int i = 0; i < staffArray.length; i++) {
+			staffArray[i] = new StaffMember();
+
+			staffArray[i].setUserDetails(staffData[i]);
 		}
 
 		return staffArray;

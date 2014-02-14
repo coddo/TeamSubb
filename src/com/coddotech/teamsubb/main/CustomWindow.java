@@ -13,8 +13,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
-import com.coddotech.teamsubb.connection.model.ConnectionManager;
-import com.coddotech.teamsubb.notifications.gui.PopUpMessages;
 
 public abstract class CustomWindow implements Observer, Widget {
 
@@ -103,21 +101,6 @@ public abstract class CustomWindow implements Observer, Widget {
 		int y = Display.getDefault().getMonitors()[0].getClientArea().height / 2;
 
 		shell.setLocation(x - getShell().getSize().x / 2, y - getShell().getSize().y / 2);
-	}
-
-	/**
-	 * Displays an error message telling the user that the connection to the server was unsuccessful
-	 * if the app cannot establish a a connection to the server.
-	 */
-	public static boolean isConnected(boolean displayMessage) {
-		boolean connected = ConnectionManager.isConnected();
-
-		if (!connected && displayMessage) {
-			PopUpMessages.getInstance().connectionError();
-
-		}
-
-		return connected;
 	}
 
 	@Override

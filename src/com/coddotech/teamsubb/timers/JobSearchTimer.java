@@ -7,7 +7,6 @@ import org.eclipse.swt.widgets.Display;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.jobs.model.JobManager;
-import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 import com.coddotech.teamsubb.settings.model.Settings;
 
@@ -80,8 +79,7 @@ public class JobSearchTimer implements Observer {
 		public void run() {
 			if (!disposed) {
 
-				if (CustomWindow.isConnected(false))
-					JobManager.getInstance().findJobs();
+				JobManager.getInstance().findJobs();
 
 				Display.getDefault().timerExec(searchInterval, this);
 			}

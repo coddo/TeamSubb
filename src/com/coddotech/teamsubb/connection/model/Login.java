@@ -27,9 +27,14 @@ public class Login extends Observable {
 		try {
 			String response = ConnectionManager.sendLoginRequest(user, pass);
 
-			String responseValue = response.substring(0, response.indexOf(JobManager.SEPARATOR_DATA));
+			String responseValue = null;
 
-			Login.loginSuccess = Boolean.parseBoolean(responseValue);
+			if (response != null) {
+
+				responseValue = response.substring(0, response.indexOf(JobManager.SEPARATOR_DATA));
+
+				Login.loginSuccess = Boolean.parseBoolean(responseValue);
+			}
 
 			// notify the views about the success or failure of the login
 			// process that took place
@@ -47,6 +52,7 @@ public class Login extends Observable {
 
 			if (Login.loginSuccess) {
 				String userDetails = response.replace(responseValue, "");
+
 				userDetails = userDetails.replaceFirst(JobManager.SEPARATOR_DATA, "");
 
 				LoggedUser.getInstance().setUserDetails(userDetails);

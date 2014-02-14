@@ -12,7 +12,6 @@ import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.appmanage.model.AppManager;
 import com.coddotech.teamsubb.chat.model.LoggedUser;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
-import com.coddotech.teamsubb.main.CustomWindow;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 
 /**
@@ -221,9 +220,6 @@ public class JobManager extends Observable {
 			@Override
 			public void run() {
 
-				if (!CustomWindow.isConnected(true))
-					return;
-
 				waitForThreadsToComplete();
 
 				createJobRunning = true;
@@ -284,10 +280,6 @@ public class JobManager extends Observable {
 
 			@Override
 			public void run() {
-
-				// check for an internet connection
-				if (!CustomWindow.isConnected(true))
-					return;
 
 				waitForThreadsToComplete();
 
@@ -362,10 +354,6 @@ public class JobManager extends Observable {
 			@Override
 			public void run() {
 
-				// check for an internet connection
-				if (!CustomWindow.isConnected(false))
-					return;
-
 				waitForThreadsToComplete();
 
 				try {
@@ -378,7 +366,7 @@ public class JobManager extends Observable {
 
 					// in case everything is ok, start processing the response that was received
 					// from the server
-					if (!response.equals("false") && !response.equals("")) {
+					if ((response != null) && (!response.equals(""))) {
 
 						String[] jobFragments = response.split(JobManager.SEPARATOR_ENTITY);
 
@@ -430,9 +418,6 @@ public class JobManager extends Observable {
 
 			@Override
 			public void run() {
-
-				if (!CustomWindow.isConnected(true))
-					return;
 
 				waitForThreadsToComplete();
 
@@ -509,9 +494,6 @@ public class JobManager extends Observable {
 			@Override
 			public void run() {
 
-				if (!CustomWindow.isConnected(true))
-					return;
-
 				waitForThreadsToComplete();
 
 				cancelJobRunning = true;
@@ -581,9 +563,6 @@ public class JobManager extends Observable {
 
 			@Override
 			public void run() {
-
-				if (!CustomWindow.isConnected(true))
-					return;
 
 				waitForThreadsToComplete();
 
