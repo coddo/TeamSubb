@@ -30,11 +30,14 @@ public class FileDownloader {
 	 * 
 	 * @throws Exception
 	 */
-	public static File downloadFile(String fileName, String link, String dir) throws Exception {
+	public static File downloadFile(String fileName, String protocol, String domain, String fileLinkPart,
+			String dir) throws Exception {
 
 		File file = new File(dir + File.separator + fileName);
 
-		URI uri = new URI("http", "anime4fun.ro", link.split(Pattern.quote("anime4fun.ro"))[1], null);
+		// URI uri = new URI("http", "anime4fun.ro", link.split(Pattern.quote("anime4fun.ro"))[1],
+		// null);
+		URI uri = new URI(protocol, domain, fileLinkPart, null);
 
 		FileUtils.copyURLToFile(uri.toURL(), file);
 
@@ -56,34 +59,12 @@ public class FileDownloader {
 	 */
 	public static File downloadFile(String link, String dir) throws Exception {
 
-		String fileName = FileDownloader.extractFileName(link);
+		String fileName = extractFileName(link);
+		String protocol = extractProtocol(link);
+		String domain = extractDomain(link, protocol);
+		String fileLink = extractFileLink(link, domain);
 
-		return FileDownloader.downloadFile(fileName, link, dir);
-	}
-
-	/**
-	 * Download multiple files from the web.
-	 * 
-	 * @param fileNames
-	 *            The names of the files to be created
-	 * 
-	 * @param links
-	 *            The links from where the files have to be fetched
-	 * 
-	 * @param dir
-	 *            The directory path where to save the file
-	 * @return A collection of File entities representing the downloaded files
-	 * 
-	 * @throws Exception
-	 */
-	public static File[] downloadFiles(String[] fileNames, String[] links, String dir) throws Exception {
-
-		File[] files = new File[links.length];
-
-		for (int i = 0; i < links.length; i++)
-			files[i] = FileDownloader.downloadFile(fileNames[i], links[i], dir);
-
-		return files;
+		return downloadFile(fileName, protocol, domain, fileLink, dir);
 	}
 
 	/**
@@ -100,13 +81,12 @@ public class FileDownloader {
 	 * @throws Exception
 	 */
 	public static File[] downloadFiles(String[] links, String dir) throws Exception {
+		File[] files = new File[links.length];
 
-		String[] fileNames = new String[links.length];
+		for (int i = 0; i < files.length; i++)
+			files[i] = downloadFile(links[i], dir);
 
-		for (int i = 0; i < links.length; i++)
-			fileNames[i] = FileDownloader.extractFileName(links[i]);
-
-		return FileDownloader.downloadFiles(fileNames, links, dir);
+		return files;
 	}
 
 	/**
@@ -121,6 +101,21 @@ public class FileDownloader {
 		String[] data = link.split(Pattern.quote("/"));
 
 		return data[data.length - 1];
+	}
+
+	private static String extractProtocol(String link) {
+		return link.split(Pattern.quote("://"))[0];
+	}
+
+	private static String extractDomain(String link, String protocol) {
+		String aux = link.replaceAll(protocol, "");
+		aux = aux.replace(aux.substring(0, 3), "");
+
+		return aux.substring(0, aux.indexOf("/"));
+	}
+
+	private static String extractFileLink(String link, String domain) {
+		return link.split(Pattern.quote(domain))[1];
 	}
 
 }
