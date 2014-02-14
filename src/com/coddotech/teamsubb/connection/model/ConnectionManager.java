@@ -384,7 +384,7 @@ public final class ConnectionManager {
 	 * @return A String value
 	 */
 	public static String sendChatDetailsRequest(String type) {
-		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Send chat request", "type");
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Send chat request", type);
 
 		String[] messageHeaders = new String[] { "chat" };
 		String[] messages = new String[] { type };
@@ -403,7 +403,7 @@ public final class ConnectionManager {
 	 * @return A Logical value representing the status (sent or not) of the message
 	 */
 	public static boolean sendChatMessageRequest(int destination, String message) {
-		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Send chat request", "type");
+		ActivityLogger.logActivity(ConnectionManager.class.getName(), "Send chat message request", "SEND");
 
 		String[] messageHeaders = new String[] { "chat", "dest", "msg" };
 		String[] messages = new String[] { "msg", Integer.toString(destination), message };

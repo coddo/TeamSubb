@@ -104,7 +104,7 @@ public abstract class CustomWindow implements Observer, Widget {
 	}
 
 	@Override
-	public void update(Observable obs, Object obj) {
+	public void update(final Observable obs, final Object obj) {
 		try {
 			this.updateGUI(obs, obj);
 

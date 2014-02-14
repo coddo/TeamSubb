@@ -45,10 +45,19 @@ public class ProgressDialog extends CustomWindow {
 	}
 
 	@Override
-	protected void updateGUI(Observable obs, Object obj) {
-		obs.deleteObserver(this);
+	protected void updateGUI(final Observable obs, final Object obj) {
+		Runnable updater = new Runnable() {
 
-		dispose();
+			@Override
+			public void run() {
+				obs.deleteObserver(getThis());
+
+				dispose();
+
+			}
+		};
+
+		Display.getDefault().asyncExec(updater);
 	}
 
 	@Override
@@ -103,7 +112,7 @@ public class ProgressDialog extends CustomWindow {
 				close();
 
 			}
-			
+
 			else {
 
 				if (dotCount == 7) {
@@ -123,5 +132,9 @@ public class ProgressDialog extends CustomWindow {
 
 		}
 	};
+
+	private ProgressDialog getThis() {
+		return this;
+	}
 
 }

@@ -86,14 +86,15 @@ public class StaffManager extends Observable {
 	 */
 	public void refreshOnlineStaffList() {
 		// set only the appropriate staff members as online
-		String[] response = ConnectionManager.sendChatDetailsRequest(ONLINE_STAFF_LIST)
-				.split(JobManager.SEPARATOR_DATA);
+		String response = ConnectionManager.sendChatDetailsRequest(ONLINE_STAFF_LIST);
 
 		if (response == null)
 			return;
 
-		for (String ID : response) {
-			StaffMember member = getUserByID(ID);
+		String[] ids = response.split(JobManager.SEPARATOR_DATA);
+
+		for (String id : ids) {
+			StaffMember member = getUserByID(id);
 
 			// if an ID is not in the list, then the staff list needs to be refreshed
 			if (member == null) {

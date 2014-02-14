@@ -229,7 +229,7 @@ public class CreateJobWindow extends CustomWindow {
 			}
 		};
 
-		Display.getDefault().syncExec(update);
+		Display.getDefault().asyncExec(update);
 
 	}
 
