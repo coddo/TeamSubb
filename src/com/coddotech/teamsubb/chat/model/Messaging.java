@@ -3,6 +3,7 @@ package com.coddotech.teamsubb.chat.model;
 import java.util.Observable;
 
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
+import com.coddotech.teamsubb.main.SoundPlayer;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
 import com.coddotech.teamsubb.timers.MessageTimer;
 
@@ -151,8 +152,10 @@ public class Messaging extends Observable {
 	private void refreshPrivateMessages() {
 		String message = ConnectionManager.sendChatDetailsRequest(Messaging.PRIVATE);
 
-		if (message == null)
+		if (message == null || message.equals(""))
 			return;
+
+		SoundPlayer.playChatSound();
 
 		NotificationEntity notif = new NotificationEntity(Messaging.PRIVATE, message);
 

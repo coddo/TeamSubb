@@ -13,6 +13,7 @@ import com.coddotech.teamsubb.appmanage.model.AppManager;
 import com.coddotech.teamsubb.chat.model.LoggedUser;
 import com.coddotech.teamsubb.connection.model.ConnectionManager;
 import com.coddotech.teamsubb.notifications.model.NotificationEntity;
+import com.coddotech.teamsubb.timers.JobSoundTimer;
 
 /**
  * Class used for realizing the communication between this client and the target
@@ -55,6 +56,8 @@ public class JobManager extends Observable {
 
 	private static JobManager instance = null;
 
+	private boolean disposed = false;
+
 	/**
 	 * Main class construcotr
 	 * 
@@ -70,6 +73,8 @@ public class JobManager extends Observable {
 
 		initializeWorkingDirectory();
 
+		JobSoundTimer sounds = new JobSoundTimer();
+		sounds.start();
 	}
 
 	/**
@@ -84,11 +89,16 @@ public class JobManager extends Observable {
 		return instance;
 	}
 
+	public boolean isDisposed() {
+		return this.disposed;
+	}
+
 	/**
 	 * Clear memory from this class and its resources
 	 */
 	public void dispose() {
 		try {
+			this.disposed = true;
 
 			// clear lists
 			this.clearJobList(jobs);
@@ -104,6 +114,19 @@ public class JobManager extends Observable {
 			ActivityLogger.logException(this.getClass().getName(), "Dispose", ex);
 
 		}
+	}
+
+	public boolean hasAcceptedJobs() {
+		return this.acceptedJobs.size() > 0;
+	}
+
+	public boolean hasAcceptableJobs() {
+		for (Job job : jobs) {
+			if (job.isAcceptable())
+				return true;
+		}
+
+		return false;
 	}
 
 	/**
