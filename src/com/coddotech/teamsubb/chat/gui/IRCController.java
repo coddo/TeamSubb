@@ -70,6 +70,7 @@ public class IRCController {
 
 				if (privateBuffer != null)
 					view.chat.openPrivateMessages(Message.createMessageArray(privateBuffer.getString(), view.manager));
+
 			}
 
 			catch (Exception ex) {

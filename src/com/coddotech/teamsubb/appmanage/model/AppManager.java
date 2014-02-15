@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.coddotech.teamsubb.chat.gui.StaffItem;
+import com.coddotech.teamsubb.chat.gui.TextFields;
 import com.coddotech.teamsubb.chat.model.Messaging;
 import com.coddotech.teamsubb.connection.gui.LoginWindow;
 import com.coddotech.teamsubb.connection.model.Login;
@@ -162,6 +163,8 @@ public class AppManager {
 		StaffItem.ONLINE.dispose();
 		StaffItem.FONT_RANK.dispose();
 		StaffItem.FONT_USER.dispose();
+		
+		TextFields.FONT_CHAT.dispose();
 
 		try {
 			Display.getDefault().dispose();

@@ -26,8 +26,6 @@ public class StaffManager extends Observable {
 	private boolean disposed = false;
 
 	public StaffManager() {
-		this.refreshStaffListAsync();
-
 		StaffRefreshTimer timer = new StaffRefreshTimer(this);
 		timer.start();
 	}

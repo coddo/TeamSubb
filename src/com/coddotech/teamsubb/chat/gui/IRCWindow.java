@@ -53,6 +53,8 @@ public class IRCWindow extends CustomWindow {
 		this.setShell(new Shell(Display.getDefault(), SWT.SHELL_TRIM));
 
 		initializeComponents();
+		
+		manager.refreshStaffListAsync();
 	}
 
 	/**

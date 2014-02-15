@@ -5,9 +5,11 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
@@ -24,6 +26,8 @@ import com.coddotech.teamsubb.main.Widget;
  * 
  */
 public class TextFields extends Composite implements Widget {
+
+	public static final Font FONT_CHAT = new Font(Display.getDefault(), "Calibri", 11, SWT.NORMAL);
 
 	private StaffMember staff;
 
@@ -155,7 +159,7 @@ public class TextFields extends Composite implements Widget {
 
 	@Override
 	public void createObjectProperties() {
-		text.setFont(CustomWindow.DEFAULT_FONT);
+		text.setFont(FONT_CHAT);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 6));
 
 		write.setFont(CustomWindow.DEFAULT_FONT);
@@ -184,9 +188,9 @@ public class TextFields extends Composite implements Widget {
 					if (write.getText().replaceAll(" ", "").isEmpty())
 						return;
 
-					write.setText("");
-
 					Messaging.getInstance().sendChatMessage(staff, write.getText());
+
+					write.setText("");
 				}
 			}
 		});
