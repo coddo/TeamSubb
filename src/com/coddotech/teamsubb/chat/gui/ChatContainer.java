@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Composite;
 import com.coddotech.teamsubb.chat.model.LoggedUser;
 import com.coddotech.teamsubb.chat.model.Message;
 import com.coddotech.teamsubb.chat.model.StaffMember;
+import com.coddotech.teamsubb.main.SoundPlayer;
 
 /**
  * A Tabbed pane used to distinguish between the public chat and private chats with different staff
@@ -74,8 +75,8 @@ public class ChatContainer extends CTabFolder {
 		for (int i = 0; i < msg.length; i++) {
 			ChatItem item;
 
-			item = (msg[i].staff.getId() == LoggedUser.getInstance().getId()) ? openPrivateChat(msg[i].dest)
-					: openPrivateChat(msg[i].staff);
+			item = (msg[i].staff.getId() == LoggedUser.getInstance().getId()) ? openPrivateChat(msg[i].dest, false)
+					: openPrivateChat(msg[i].staff, true);
 
 			item.appendMessage(msg[i]);
 		}
@@ -88,7 +89,10 @@ public class ChatContainer extends CTabFolder {
 	 *            The staff member with who to chat
 	 * @return A ChatItem instance
 	 */
-	public ChatItem openPrivateChat(StaffMember staff) {
+	public ChatItem openPrivateChat(StaffMember staff, boolean playSound) {
+		if (playSound)
+			SoundPlayer.playChatSound();
+
 		for (ChatItem item : chats) {
 
 			if (item.getStaff().getId() == staff.getId()) {

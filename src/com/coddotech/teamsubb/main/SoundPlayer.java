@@ -33,10 +33,10 @@ public class SoundPlayer {
 	}
 
 	public static void playJobSound() {
-		// playSound(AUDIO_RESOURCE + File.separator + JOB);
+		 playSound(AUDIO_RESOURCE + File.separator + JOB);
 	}
 
 	public static void playChatSound() {
-		// playSound(AUDIO_RESOURCE + File.separator + CHAT);
+		playSound(AUDIO_RESOURCE + File.separator + CHAT);
 	}
 }

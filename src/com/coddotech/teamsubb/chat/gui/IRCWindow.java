@@ -53,7 +53,7 @@ public class IRCWindow extends CustomWindow {
 		this.setShell(new Shell(Display.getDefault(), SWT.SHELL_TRIM));
 
 		initializeComponents();
-		
+
 		manager.refreshStaffListAsync();
 	}
 
@@ -196,7 +196,7 @@ public class IRCWindow extends CustomWindow {
 							break;
 
 						case Messaging.OPEN_PRIVATE_CHAT: {
-							chat.openPrivateChat(notif.getStaffMember());
+							chat.openPrivateChat(notif.getStaffMember(), false);
 
 						}
 							break;
