@@ -9,7 +9,7 @@ bin/
 Jobs/
 DUMP/
 *.lin
-*.xml
+#*.xml
 *.out
 *.in
 
