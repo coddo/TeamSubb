@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 
 import com.coddotech.teamsubb.appmanage.model.ActivityLogger;
 import com.coddotech.teamsubb.chat.model.LoggedUser;
@@ -107,7 +108,7 @@ public class JobWindow extends CustomWindow {
 	private Label jobBookedByLabel;
 	private Label jobBookedBy;
 	private Label jobCommentsLabel;
-	private Label jobComments;
+	private Text jobComments;
 
 	// help chart objects
 	private Label itemAcceptedColor;
@@ -455,7 +456,7 @@ public class JobWindow extends CustomWindow {
 		jobBookedByLabel = new Label(this.jobInfoGroup, SWT.None);
 		jobBookedBy = new Label(this.jobInfoGroup, SWT.None);
 		jobCommentsLabel = new Label(this.jobInfoGroup, SWT.None);
-		jobComments = new Label(this.jobInfoGroup, SWT.WRAP);
+		jobComments = new Text(this.jobInfoGroup, SWT.WRAP | SWT.MULTI | SWT.READ_ONLY | SWT.TRANSPARENT | SWT.V_SCROLL);
 
 		// help chart items
 		itemAcceptedColor = new Label(this.helpChartGroup, SWT.None);
@@ -493,15 +494,15 @@ public class JobWindow extends CustomWindow {
 		userJobsGroup.setText("User abilities");
 
 		jobsGroup.setLayout(jobsLayout);
-		jobsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		jobsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 4));
 		jobsGroup.setText("Job lists");
 
 		jobInfoGroup.setLayout(helpLayout);
-		jobInfoGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		jobInfoGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		jobInfoGroup.setText("Job information");
 
 		helpChartGroup.setLayout(helpLayout);
-		helpChartGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		helpChartGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		helpChartGroup.setText("Help chart");
 
 		// menu bar items
@@ -604,6 +605,8 @@ public class JobWindow extends CustomWindow {
 
 		jobComments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 5));
 		jobComments.setFont(CustomWindow.DEFAULT_FONT);
+		jobComments.setBackground(this.getShell().getBackground());
+		// jobComments.setEnabled(false);
 
 		// help chart item
 		itemAcceptedColor.setText("          ");
@@ -702,7 +705,13 @@ public class JobWindow extends CustomWindow {
 		}
 
 		catch (Exception ex) {
+			return;
+		}
 
+		finally {
+			if (jobs != null)
+				if (jobs.size() == 0)
+					this.clearJobInformation();
 		}
 
 		for (Job job : acceptedJobs) {
@@ -748,8 +757,11 @@ public class JobWindow extends CustomWindow {
 	}
 
 	private void updateJobInfo(Job job) {
-		if (job == null)
+		if (job == null) {
+			this.clearJobInformation();
+
 			return;
+		}
 
 		this.jobType.setText(Job.DEFAULT_JOB_TYPES[job.getType()]);
 		this.jobStartDate.setText(job.getStartDate());
@@ -836,8 +848,6 @@ public class JobWindow extends CustomWindow {
 	/**
 	 * Clears the fields that display the information for a selected job in the list
 	 */
-	@SuppressWarnings ("unused")
-	@Deprecated
 	private void clearJobInformation() {
 		this.jobType.setText("");
 		this.jobStartDate.setText("");

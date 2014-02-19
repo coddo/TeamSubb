@@ -12,4 +12,5 @@ DUMP/
 #*.xml
 *.out
 *.in
-
+build\ scripts/test.xml
+Settings.xml

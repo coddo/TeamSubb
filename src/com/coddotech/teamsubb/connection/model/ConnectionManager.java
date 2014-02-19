@@ -498,7 +498,9 @@ public final class ConnectionManager {
 				data.addPart(messageHeaders[i], new StringBody(encodeMessage(messages[i])));
 			}
 
-			return ConnectionManager.sendMessage(url, data);
+			String response = ConnectionManager.sendMessage(url, data);
+
+			return (response.indexOf("<!DOCTYPE") == 0) ? null : response;
 		}
 
 		catch (Exception ex) {
